@@ -11,14 +11,14 @@ class Node;
 
 class Edge {
 private:
-    Node* _start;
-    Node* _end;
-    int _edgeID;
+    Node* m_start;
+    Node* m_end;
+    int m_edgeID;
 public:
-    Edge(Node *start, Node *end) : _start(start), _end(end) {}
+    Edge(Node *start, Node *end) : m_start(start), m_end(end) {}
 
-    Node* getStart() { return _start; }
-    Node* getEnd() { return _end; }
+    Node* getStart() { return m_start; }
+    Node* getEnd() { return m_end; }
 };
 
 
