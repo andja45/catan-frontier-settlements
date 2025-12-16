@@ -30,7 +30,10 @@ void Board::randomBoard(){
         if(hexList[i] == ResourceType::Desert) m_tiles.push_back(new Tile(hexList[i], 7, hexCoordinates[i]));
         else m_tiles.push_back(new Tile(hexList[i], m_numberOrder[j++], hexCoordinates[i]));
     }
-    for(auto tile : m_tiles) std::cout << tile->toString() << std::endl;
+    for(auto tile : m_tiles) {
+        std::cout << tile->toString() << std::endl;
+        m_tilesByCoord[tile->getTileCoord()] = tile;
+    }
 }
 
 std::vector<std::tuple<int,int,int>> Board::generateCoordinates(){
@@ -62,4 +65,22 @@ std::vector<std::tuple<int,int,int>> Board::generateCoordinates(){
     };
     std::reverse(hexCoordinates.begin(), hexCoordinates.end());
     return hexCoordinates;
+}
+
+Board::~Board(){
+    for(Tile* tile : m_tiles)
+        delete tile;
+}
+
+Tile* Board::findAdjacent(Tile* tile, std::tuple<int,int,int> dir){
+    auto coord = tile->getTileCoord();
+    std::get<0>(coord) += std::get<0>(dir);
+    std::get<1>(coord) += std::get<1>(dir);
+    std::get<2>(coord) += std::get<2>(dir);
+
+    if(abs(std::get<0>(coord)) == 3) return new Tile();
+    if(abs(std::get<1>(coord)) == 3) return new Tile();
+    if(abs(std::get<2>(coord)) == 3) return new Tile();
+
+    return m_tilesByCoord[coord];
 }

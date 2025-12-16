@@ -6,6 +6,7 @@
 #include <tuple>
 #include "ResourceType.h"
 
+
 class Tile{
 private:
     ResourceType m_type;
@@ -13,14 +14,14 @@ private:
     std::vector<Tile*> m_adjacentTiles;
     std::tuple<int,int,int> m_tileCoord;
 public:
-    Tile();
-    Tile(ResourceType type, int number) : m_type(type), m_number(number) {}
+    Tile() : m_type(ResourceType::Sea) {}
     Tile(ResourceType type, int number, std::tuple<int,int,int> tileCoord) : m_type(type), m_number(number), m_tileCoord(tileCoord) {}
     ~Tile() = default;
 
     ResourceType getType() { return m_type; }
     int getNumber() { return m_number; }
     std::vector<Tile*> getAdjacentTiles() { return m_adjacentTiles; }
+    std::tuple<int,int,int> getTileCoord() { return m_tileCoord; }
 
     void setAdjacentTiles(std::vector<Tile*> adjacentTiles) { m_adjacentTiles = adjacentTiles; }
 
