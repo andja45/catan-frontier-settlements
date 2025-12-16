@@ -24,3 +24,9 @@ std::string Tile::typeToString(ResourceType type){
         }
     }
 }
+
+std::string Tile::toString(){
+    return typeToString(m_type) + " " + std::to_string(m_number) +
+           " (" + std::to_string(std::get<0>(m_tileCoord)) + ", " + std::to_string(std::get<1>(m_tileCoord)) + ", "
+           + std::to_string(std::get<2>(m_tileCoord))+ ")";
+}
