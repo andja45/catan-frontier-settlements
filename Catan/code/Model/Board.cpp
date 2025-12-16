@@ -5,7 +5,6 @@
 #include "../../headers/Board.h"
 #include <random>
 #include <algorithm>
-#include <iostream>
 
 void Board::randomBoard(){
     std::vector<ResourceType> hexList = {ResourceType::Desert};
@@ -31,7 +30,6 @@ void Board::randomBoard(){
         else m_tiles.push_back(new Tile(hexList[i], m_numberOrder[j++], hexCoordinates[i]));
     }
     for(auto tile : m_tiles) {
-        std::cout << tile->toString() << std::endl;
         m_tilesByCoord[tile->getTileCoord()] = tile;
     }
 }
