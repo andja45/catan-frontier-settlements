@@ -2,12 +2,14 @@
 #define RESOURCETYPE_H
 
 enum class ResourceType {
+    None,
     Wood,
     Brick,
     Ore,
     Wool,
     Desert,
-    Sea
+    Sea,
+    Wheat
 };
 
 #endif // RESOURCETYPE_H
