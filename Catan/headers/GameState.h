@@ -15,8 +15,8 @@ class Player;
 
 class GameState {
 private:
-    Board _board;
-    std::vector<Player*> _players;
+    Board m_board;
+    std::vector<Player*> m_players;
 public:
 
 };

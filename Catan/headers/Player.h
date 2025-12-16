@@ -16,20 +16,20 @@ class Node;
 
 class Player {
 private:
-    std::string _name;
-    int _victoryPoints;
-    std::vector<Edge*> _roads;
-    std::vector<Node*> _houses;
-    std::map<ResourceType, int> _resources;
+    std::string m_name;
+    int m_victoryPoints;
+    std::vector<Edge*> m_roads;
+    std::vector<Node*> m_houses;
+    std::map<ResourceType, int> m_resources;
 public:
-    Player(std::string name) : _name(name) {}
+    Player(std::string name) : m_name(name) {}
     ~Player() = default;
 
-    std::string getName() { return _name; }
-    int getVictoryPoints() { return _victoryPoints; }
+    std::string getName() { return m_name; }
+    int getVictoryPoints() { return m_victoryPoints; }
 
-    void setVictoryPoints(int victoryPoints) { _victoryPoints = victoryPoints; }
-    void setHouses(std::vector<Node*> houses) { _houses = houses; }
+    void setVictoryPoints(int victoryPoints) { m_victoryPoints = victoryPoints; }
+    void setHouses(std::vector<Node*> houses) { m_houses = houses; }
 };
 
 

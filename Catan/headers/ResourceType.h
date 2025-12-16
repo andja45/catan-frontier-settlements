@@ -7,6 +7,7 @@ enum class ResourceType {
     Ore,
     Wool,
     Desert,
+    Wheat,
     Sea
 };
 

@@ -7,16 +7,18 @@
 
 #include <map>
 #include <vector>
-class Tile;
-
+#include "Tile.h"
 
 class Board {
 private:
     //dodaj vectore
     //dodaj koordinate u sve?
-    std::map<int, std::vector<Tile*>> _tilesByNumber;
+    std::map<int, std::vector<Tile*>> m_tilesByNumber;
+    std::vector<Tile*> m_tiles;
 public:
-    std::map<int, std::vector<Tile*>> getTilesByNumber() { return _tilesByNumber; };
+    Board() { randomBoard(); }
+    std::map<int, std::vector<Tile*>> getTilesByNumber() { return m_tilesByNumber; };
+    void randomBoard();
 };
 
 

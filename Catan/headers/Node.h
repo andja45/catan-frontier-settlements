@@ -10,24 +10,24 @@ class Tile;
 
 class Node{
 private:
-    NodeType _type;
-    Player* _owner;
-    std::vector<Tile*> _incidentTiles;
-    std::vector<Edge*> _incidentEdges;
-    int _nodeID;
+    NodeType m_type;
+    Player* m_owner;
+    std::vector<Tile*> m_incidentTiles;
+    std::vector<Edge*> m_incidentEdges;
+    int m_nodeID;
 public:
     Node();
     ~Node() = default;
 
-    NodeType getNodeType() const { return _type; }
-    Player* getOwner() const { return _owner; }
-    std::vector<Tile*> getIncidentTiles() const { return _incidentTiles; }
-    std::vector<Edge*> getIncidentEdges() const { return _incidentEdges; }
+    NodeType getNodeType() const { return m_type; }
+    Player* getOwner() const { return m_owner; }
+    std::vector<Tile*> getIncidentTiles() const { return m_incidentTiles; }
+    std::vector<Edge*> getIncidentEdges() const { return m_incidentEdges; }
 
-    void setNodeType(NodeType nodeType) { _type = nodeType; }
-    void setOwner(Player* owner) { _owner = owner; }
-    void setIncidentTiles(std::vector<Tile*> incidentTiles) { _incidentTiles = incidentTiles; }
-    void setIncidentEdges(std::vector<Edge*> incidentEdges) { _incidentEdges = incidentEdges; }
+    void setNodeType(NodeType nodeType) { m_type = nodeType; }
+    void setOwner(Player* owner) { m_owner = owner; }
+    void setIncidentTiles(std::vector<Tile*> incidentTiles) { m_incidentTiles = incidentTiles; }
+    void setIncidentEdges(std::vector<Edge*> incidentEdges) { m_incidentEdges = incidentEdges; }
 };
 
 #endif // NODE_H
