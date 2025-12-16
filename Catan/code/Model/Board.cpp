@@ -3,3 +3,7 @@
 //
 
 #include "../../headers/Board.h"
+
+void Board::randomBoard(){
+
+}

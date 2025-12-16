@@ -16,7 +16,9 @@ private:
     //dodaj koordinate u sve?
     std::map<int, std::vector<Tile*>> _tilesByNumber;
 public:
+    Board() { randomBoard(); }
     std::map<int, std::vector<Tile*>> getTilesByNumber() { return _tilesByNumber; };
+    void randomBoard();
 };
 
 
