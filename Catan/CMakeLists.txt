@@ -20,17 +20,17 @@ set(PROJECT_SOURCES
         headers/Board/Edge.h
         headers/Board/Tile.h
         headers/Types/NodeType.h
-        sources/Model/Player/Player.cpp
+        code/Model/Player/Player.cpp
         headers/Player/Player.h
-        sources/Model/Board/Board.cpp
+        code/Model/Board/Board.cpp
         headers/Board/Board.h
-        sources/Model/Game/GameModel.cpp
+        code/Model/Game/GameModel.cpp
         headers/Game/GameModel.h
-        sources/Model/Game/GameSession.cpp
+        code/Model/Game/GameSession.cpp
         headers/Game/GameSession.h
          headers/Types/TypeAliases.hpp
         headers/Types/DevType.hpp
-        sources/Model/Board/Board.cpp
+        code/Model/Board/Board.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
