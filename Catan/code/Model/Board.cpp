@@ -70,7 +70,7 @@ Board::~Board(){
         delete tile;
 }
 
-Tile* Board::findAdjacent(Tile* tile, std::tuple<int,int,int> dir){
+Tile* Board::getAdjacent(Tile* tile, std::tuple<int,int,int> dir){
     auto coord = tile->getTileCoord();
     std::get<0>(coord) += std::get<0>(dir);
     std::get<1>(coord) += std::get<1>(dir);
@@ -81,4 +81,21 @@ Tile* Board::findAdjacent(Tile* tile, std::tuple<int,int,int> dir){
     if(abs(std::get<2>(coord)) == 3) return new Tile();
 
     return m_tilesByCoord[coord];
+}
+
+std::tuple<int,int,int> Board::directionToTuple(Direction dir){
+    switch (dir) {
+    case Direction::UpLeft:
+        return std::tuple<int,int,int>(-1, 0, 1);
+    case Direction::UpRight:
+        return std::tuple<int,int,int>(0, -1, 1);
+    case Direction::Right:
+        return std::tuple<int,int,int>(1, -1, 0);
+    case Direction::DownRight:
+        return std::tuple<int,int,int>(1, 0, -1);
+    case Direction::DownLeft:
+        return std::tuple<int,int,int>(0, 1, -1);
+    case Direction::Left:
+        return std::tuple<int,int,int>(-1, 1, 0);
+    }
 }

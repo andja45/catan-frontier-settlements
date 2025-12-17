@@ -9,6 +9,16 @@
 #include <vector>
 #include "Tile.h"
 
+enum class Direction {
+    UpLeft,
+    UpRight,
+    Right,
+    DownRight,
+    DownLeft,
+    Left
+};
+
+
 // Custom hash function for std::tuple
 struct TupleHash {
     template <class T>
@@ -33,18 +43,15 @@ private:
     std::vector<int> m_numberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
     void randomBoard();
     static std::vector<std::tuple<int,int,int>> generateCoordinates();
-    Tile* findAdjacent(Tile* tile, std::tuple<int,int,int> dir);
+    Tile* getAdjacent(Tile* tile, std::tuple<int,int,int> dir);
 public:
     Board() { randomBoard(); }
     ~Board();
     std::vector<Tile*> getTiles() { return m_tiles; };
     std::map<std::tuple<int,int,int>, Tile*> getTilesByCoord() { return m_tilesByCoord; };
-    Tile* upLeft(Tile* tile) { return findAdjacent(tile, std::tuple<int,int,int>(-1, 0, 1)); }
-    Tile* upRight(Tile* tile) { return findAdjacent(tile, std::tuple<int,int,int>(0, -1, 1)); }
-    Tile* right(Tile* tile) { return findAdjacent(tile, std::tuple<int,int,int>(1, -1, 0)); }
-    Tile* downRight(Tile* tile) { return findAdjacent(tile, std::tuple<int,int,int>(1, 0, -1)); }
-    Tile* downLeft(Tile* tile) { return findAdjacent(tile, std::tuple<int,int,int>(0, 1, -1)); }
-    Tile* left(Tile* tile) { return findAdjacent(tile, std::tuple<int,int,int>(-1, 1, 0)); }
+
+    static std::tuple<int,int,int> directionToTuple(Direction dir);
+    Tile* getAdjacent(Tile* tile, Direction dir) { return getAdjacent(tile, directionToTuple(dir)); }
 };
 
 

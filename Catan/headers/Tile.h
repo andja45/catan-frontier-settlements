@@ -21,7 +21,8 @@ public:
     std::tuple<int,int,int> getTileCoord() { return m_tileCoord; }
 
     static std::string typeToString(ResourceType type);
-    std::string toString();
+    friend std::ostream& operator<<(std::ostream& os, const Tile& tile);
+    std::string toString() const;
 };
 
 #endif // TILE_H
