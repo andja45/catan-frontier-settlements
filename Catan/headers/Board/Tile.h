@@ -15,39 +15,39 @@ class Node;
 
 class Tile {
 private:
-    ResourceType _type=ResourceType::None;
-    int _number=-1;
-    int _robber_on_tile=false;
+    ResourceType m_type=ResourceType::None;
+    int m_number=-1;
+    int m_robber_on_tile=false;
 
-    NeighbourTiles _adjacentTiles{};
-    NeighbourNodes _adjacentNodes{};
-    NeighbourEdges _adjacentEdges{};
+    NeighbourTiles m_adjacentTiles{};
+    NeighbourNodes m_adjacentNodes{};
+    NeighbourEdges m_adjacentEdges{};
 
-    int _tileId=-1;
-    HexCoords _tileCoord{-1,-1};
-    static int _numOfTiles;
+    int m_tileId=-1;
+    HexCoords m_tileCoord{-1,-1};
+    static int m_numOfTiles;
 
 public:
-    Tile() {_numOfTiles++; _tileId=_numOfTiles;}
-    Tile(int q, int r, ResourceType type, int number) : _type(type), _number(number), _adjacentTiles(), _adjacentNodes() {
-        _numOfTiles++;
-        _tileId=_numOfTiles;
-        _tileCoord={q,r};
+    Tile() {m_numOfTiles++; m_tileId=m_numOfTiles;}
+    Tile(int q, int r, ResourceType type, int number) : m_type(type), m_number(number), m_adjacentTiles(), m_adjacentNodes() {
+        m_numOfTiles++;
+        m_tileId=m_numOfTiles;
+        m_tileCoord={q,r};
     }
 
-    ResourceType getType() const { return _type; }
-    int getNumber() const { return _number; }
-    bool isRobberOnTile() const { return _robber_on_tile; }
-    NeighbourTiles getAdjacentTiles() const { return _adjacentTiles; }
-    NeighbourNodes getAdjacentNodes() const { return _adjacentNodes; }
-    HexCoords getTileCoord() const { return _tileCoord; }
-    int getTileId() const { return _tileId; }
-    Node* getNodeAt(int i) const {return _adjacentNodes[i];}
-    Edge* getEdgeAt(int i) const {return _adjacentEdges[i];}
+    ResourceType getType() const { return m_type; }
+    int getNumber() const { return m_number; }
+    bool isRobberOnTile() const { return m_robber_on_tile; }
+    NeighbourTiles getAdjacentTiles() const { return m_adjacentTiles; }
+    NeighbourNodes getAdjacentNodes() const { return m_adjacentNodes; }
+    HexCoords getTileCoord() const { return m_tileCoord; }
+    int getTileId() const { return m_tileId; }
+    Node* getNodeAt(int i) const {return m_adjacentNodes[i];}
+    Edge* getEdgeAt(int i) const {return m_adjacentEdges[i];}
 
-    void addAdjacentTile(Tile* adjacentTile, int index) { _adjacentTiles[index] = adjacentTile; }
-    void addAdjacentNode(Node* adjacentNode, int index) { _adjacentNodes[index] = adjacentNode; }
-    void addAdjacentEdge(Edge* adjacentEdge, int index) { _adjacentEdges[index] = adjacentEdge; }
+    void addAdjacentTile(Tile* adjacentTile, int index) { m_adjacentTiles[index] = adjacentTile; }
+    void addAdjacentNode(Node* adjacentNode, int index) { m_adjacentNodes[index] = adjacentNode; }
+    void addAdjacentEdge(Edge* adjacentEdge, int index) { m_adjacentEdges[index] = adjacentEdge; }
 
     static std::string typeToString(ResourceType type);
     friend std::ostream& operator<<(std::ostream& os, const Tile& tile);

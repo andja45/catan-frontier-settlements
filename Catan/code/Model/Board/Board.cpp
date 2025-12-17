@@ -112,7 +112,7 @@ void Board::initializeStandardBoard(std::vector<TileDef> tileMap) {
                 { 0, +1}
             }};
 
-            Tile* neighborTile = m_tilesByCoord[{coord.first+HEX_DIRECTIONS[corner].first,coord.second+HEX_DIRECTIONS[corner].second}].get();
+            Tile* neighborTile = m_tilesByCoord[{coord.first+HEX_DIRECTIONS[corner].first,coord.second+HEX_DIRECTIONS[corner].second}];
             t->addAdjacentTile(neighborTile,corner);
         }
     }
@@ -140,6 +140,7 @@ void Board::initializeStandardBoard(std::vector<TileDef> tileMap) {
 
 
 void Board::randomBoard(){
+    std::vector<TileDef> r;
     std::vector<ResourceType> hexList = {ResourceType::Desert};
     for(int i = 0; i < 4; i++) {
         hexList.push_back(ResourceType::Wood);
@@ -156,15 +157,15 @@ void Board::randomBoard(){
     std::shuffle(hexList.begin(), hexList.end(), g);
 
     auto hexCoordinates = generateCoordinates();
-///////////
-    int j = 0;
-    for(int i = 0; i < hexList.size(); i++){
-        if(hexList[i] == ResourceType::Desert) m_tiles.push_back(new Tile(hexList[i], 7, hexCoordinates[i]));
-        else m_tiles.push_back(new Tile(hexList[i], m_standardNumberOrder[j++], hexCoordinates[i]));
-    }
-    for(auto tile : m_tiles) {
-        m_tilesByCoord[tile->getTileCoord()] = tile;
-    }
+    // int j = 0;
+    // for(int i = 0; i < hexList.size(); i++){
+    //     if(hexList[i] == ResourceType::Desert) r.push_back(new Tile(hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], 7));
+    //     else m_tiles.push_back(new Tile(hexList[i], m_standardNumberOrder[j++], hexCoordinates[i]));
+    // }
+    // for(auto tile : m_tiles) {
+    //     m_tilesByCoord[tile->getTileCoord()] = tile;
+    // }
+    return ;
 }
 
 std::vector<HexCoords> Board::generateCoordinates(){

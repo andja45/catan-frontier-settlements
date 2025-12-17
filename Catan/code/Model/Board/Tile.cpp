@@ -25,8 +25,7 @@ std::string Tile::typeToString(ResourceType type){
 std::string Tile::toString() const{
     if(m_type == ResourceType::Sea) return "Sea";
     return typeToString(m_type) + " " + std::to_string(m_number) +
-           " (" + std::to_string(std::get<0>(m_tileCoord)) + ", " + std::to_string(std::get<1>(m_tileCoord)) + ", "
-           + std::to_string(std::get<2>(m_tileCoord))+ ")";
+           " (" + std::to_string(std::get<0>(m_tileCoord)) + ", " + std::to_string(std::get<1>(m_tileCoord)) +  ")";
 }
 
 std::ostream& operator<<(std::ostream& os, const Tile& tile)
@@ -36,6 +35,5 @@ std::ostream& operator<<(std::ostream& os, const Tile& tile)
 
     return os << Tile::typeToString(tile.m_type) << " " << tile.m_number
               << " (" << std::get<0>(tile.m_tileCoord) << ", "
-              << std::get<1>(tile.m_tileCoord) << ", "
-              << std::get<2>(tile.m_tileCoord) << ")";
+              << std::get<1>(tile.m_tileCoord) <<  ")";
 }

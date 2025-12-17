@@ -44,7 +44,7 @@ struct TupleHash {
 class Board {
 private:
 
-    static constexpr auto m_standardNumberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
+    std::vector<int> m_standardNumberOrder= {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11} ;
     static const std::vector<TileDef> basicMap;
     static HexCoords directionToCoord(Direction dir);
     static std::vector<HexCoords> generateCoordinates();
