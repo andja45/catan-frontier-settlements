@@ -1,55 +1,58 @@
 #ifndef NODE_H
 #define NODE_H
-#include <vector>
 
 #include "../Types/NodeType.h"
 #include "../Types/ResourceType.h"
 #include "../Types/TypeAliases.hpp"
 
 class Player;
+
+class Edge;
+class Tile;
+
 enum class NodeType;
 
-class Node{
+class Node {
 private:
-    NodeType _type=NodeType::None;
-    Player* _owner=nullptr;
+    NodeType m_type=NodeType::None;
+    Player* m_owner=nullptr;
 
-    IncidentTiles _incidentTiles{};
-    IncidentEdges _incidentEdges{};
+    IncidentTiles m_incidentTiles{};
+    IncidentEdges m_incidentEdges{};
 
-    int _nodeID=-1;
-    HexCoords _tileCoords = {-1,-1};
-    int _nodeIndex=-1;
-    static int _numOfNodes;
+    int m_nodeID=-1;
+    HexCoords m_tileCoords = {-1,-1};
+    int m_nodeIndex=-1;
+    static int m_numOfNodes;
 
-    bool _hasTrade=false;
-    ResourceType _tradeResource=ResourceType::None;
+    bool m_hasTrade=false;
+    ResourceType m_tradeResource=ResourceType::None;
 public:
-    Node(int q, int r, int i, bool isPort=false, ResourceType portType=ResourceType::None) : _nodeIndex(i) {
-        _numOfNodes++; _nodeID=_numOfNodes;
-        _tileCoords={q,r};
-        _hasTrade=isPort; _tradeResource=portType;
+    Node(int q, int r, int i, bool isPort=false, ResourceType portType=ResourceType::None) : m_nodeIndex(i) {
+        m_numOfNodes++; m_nodeID=m_numOfNodes;
+        m_tileCoords={q,r};
+        m_hasTrade=isPort; m_tradeResource=portType;
     }
 
-    bool isEmpty() const { return _type==NodeType::None; }
-    bool hasTrade() const { return _hasTrade; }
-    ResourceType getTradeResource() const { return _tradeResource; }
+    bool isEmpty() const { return m_type==NodeType::None; }
+    bool hasTrade() const { return m_hasTrade; }
+    ResourceType getTradeResource() const { return m_tradeResource; }
 
-    NodeType getNodeType() const { return _type; }
-    Player* getOwner() const { return _owner; }
-    IncidentTiles getIncidentTiles() const { return _incidentTiles; }
-    IncidentEdges getIncidentEdges() const { return _incidentEdges; }
+    NodeType getNodeType() const { return m_type; }
+    Player* getOwner() const { return m_owner; }
+    IncidentTiles getIncidentTiles() const { return m_incidentTiles; }
+    IncidentEdges getIncidentEdges() const { return m_incidentEdges; }
 
-    HexCoords getTileCoords() const {return _tileCoords;}
-    int getNodeIndex() const {return _nodeIndex;}
+    HexCoords getTileCoords() const {return m_tileCoords;}
+    int getNodeIndex() const {return m_nodeIndex;}
 
-    void setNodeType(const NodeType nodeType) { _type = nodeType; }
-    void setOwner(Player* owner) { _owner = owner; _type=NodeType::Settlement; }
-    void upgradeToCity() {_type=NodeType::City;}
-    void setTrade(ResourceType tradeResource) {_hasTrade=true;_tradeResource=tradeResource;}
+    void setNodeType(const NodeType nodeType) { m_type = nodeType; }
+    void setOwner(Player* owner) { m_owner = owner; m_type=NodeType::Settlement; }
+    void upgradeToCity() {m_type=NodeType::City;}
+    void setTrade(ResourceType tradeResource) {m_hasTrade=true;m_tradeResource=tradeResource;}
 
-    void setIncidentTiles(const IncidentTiles &incidentTiles) { _incidentTiles = incidentTiles; }
-    void setIncidentEdges(const IncidentEdges &incidentEdges) { _incidentEdges = incidentEdges; }
+    void setIncidentTiles(const IncidentTiles &incidentTiles) { m_incidentTiles = incidentTiles; }
+    void setIncidentEdges(const IncidentEdges &incidentEdges) { m_incidentEdges = incidentEdges; }
 
     void addAdjacentTile(Tile * tile, int corner);
     void addAdjacentEdge(Edge * edge, int corner);

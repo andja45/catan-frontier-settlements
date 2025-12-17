@@ -10,34 +10,34 @@
 
 class Edge {
 private:
-    Node* _start=nullptr;
-    Node* _end=nullptr;
+    Node* m_start=nullptr;
+    Node* m_end=nullptr;
 
-    bool _isRoad=false;
-    int _playerId=-1;
+    bool m_isRoad=false;
+    int m_playerId=-1;
 
-    int _edgeId=-1;
-    HexCoords _tileCoord{-1,-1};
-    int edgeIndex=-1;
-    static int _numOfEdges;
+    int m_edgeId=-1;
+    HexCoords m_tileCoord{-1,-1};
+    int m_edgeIndex=-1;
+    static int m_numOfEdges;
 
 public:
-    Edge() {_numOfEdges++; _edgeId=_numOfEdges;}
-    Edge(int q, int r, int i, Node *start, Node *end) : _start(start), _end(end) {
-        _numOfEdges++; _edgeId=_numOfEdges;
-        _tileCoord={q,r}; edgeIndex=i;
+    Edge() {m_numOfEdges++; m_edgeId=m_numOfEdges;}
+    Edge(int q, int r, int i, Node *start, Node *end) : m_start(start), m_end(end) {
+        m_numOfEdges++; m_edgeId=m_numOfEdges;
+        m_tileCoord={q,r}; m_edgeIndex=i;
     }
 
-    Node* getStart() const { return _start; }
-    Node* getEnd() const { return _end; }
-    bool isRoad() const { return _isRoad; }
-    int getPlayerId() const { return _playerId; }
-    int getEdgeId() const { return _edgeId; }
-    HexCoords getTileCoord() const { return _tileCoord; }
-    int getEdgeIndex() const { return edgeIndex; }
+    Node* getStart() const { return m_start; }
+    Node* getEnd() const { return m_end; }
+    bool isRoad() const { return m_isRoad; }
+    int getPlayerId() const { return m_playerId; }
+    int getEdgeId() const { return m_edgeId; }
+    HexCoords getTileCoord() const { return m_tileCoord; }
+    int getEdgeIndex() const { return m_edgeIndex; }
 
-    void setNodes(Node* node1, Node* node2) {_start=node1;_end=node2;}
-    void setRoad(int playerId) {_isRoad=true; _playerId=playerId;}
+    void setNodes(Node* node1, Node* node2) {m_start=node1;m_end=node2;}
+    void setRoad(int playerId) {m_isRoad=true; m_playerId=playerId;}
 };
 
 

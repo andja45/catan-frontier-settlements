@@ -5,12 +5,15 @@
 #include <vector>
 #include "../Types/ResourceType.h"
 #include "../Types/TypeAliases.hpp"
+#include <string>
+#include <tuple>
+#include "../Types/ResourceType.h"
 
 enum class ResourceType;
 class Tile;
 class Node;
 
-class Tile{
+class Tile {
 private:
     ResourceType _type=ResourceType::None;
     int _number=-1;
@@ -45,6 +48,10 @@ public:
     void addAdjacentTile(Tile* adjacentTile, int index) { _adjacentTiles[index] = adjacentTile; }
     void addAdjacentNode(Node* adjacentNode, int index) { _adjacentNodes[index] = adjacentNode; }
     void addAdjacentEdge(Edge* adjacentEdge, int index) { _adjacentEdges[index] = adjacentEdge; }
-};
 
+    static std::string typeToString(ResourceType type);
+    friend std::ostream& operator<<(std::ostream& os, const Tile& tile);
+    std::string toString() const;
+
+};
 #endif // TILE_H
