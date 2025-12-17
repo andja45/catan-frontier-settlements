@@ -2,7 +2,7 @@
 #define NODE_H
 #include <vector>
 
-#include "NodeType.h"
+#include "../Types/NodeType.h"
 
 class Edge;
 class Player;

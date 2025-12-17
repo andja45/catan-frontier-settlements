@@ -17,42 +17,42 @@ set(PROJECT_SOURCES
         widget.cpp
         widget.h
         widget.ui
-        code/Model/Edge.cpp
-        headers/Edge.h
-        headers/NodeType.h
-        code/Model/Player.cpp
-        headers/Player.h
-        code/Model/Board.cpp
-        headers/Board.h
-        code/Model/Move.cpp
-        headers/Move.h
-        code/Model/GameState.cpp
-        headers/GameState.h
-        code/Model/BuildRoadMove.cpp
-        headers/BuildRoadMove.h
-        code/Model/BuildSettlementMove.cpp
-        headers/BuildSettlementMove.h
-        code/Model/BuildCityMove.cpp
-        headers/BuildCityMove.h
-        code/Model/TradeMove.cpp
-        headers/TradeMove.h
-        code/Model/RollDiceMove.cpp
-        headers/RollDiceMove.h
-        code/Model/EndTurnMove.cpp
-        headers/EndTurnMove.h
-        code/Model/GameModel.cpp
-        headers/GameModel.h
-        code/Model/GameSession.cpp
-        headers/GameSession.h
+        code/Model/Board/Edge.cpp
+        headers/Board/Edge.h
+        headers/Types/NodeType.h
+        code/Model/Player/Player.cpp
+        headers/Player/Player.h
+        code/Model/Board/Board.cpp
+        headers/Board/Board.h
+        code/Model/Move/Move.cpp
+        headers/Move/Move.h
+        code/Model/Game/GameState.cpp
+        headers/Game/GameState.h
+        code/Model/Move/BuildRoadMove.cpp
+        headers/Move/BuildRoadMove.h
+        code/Model/Move/BuildSettlementMove.cpp
+        headers/Move/BuildSettlementMove.h
+        code/Model/Move/BuildCityMove.cpp
+        headers/Move/BuildCityMove.h
+        code/Model/Move/TradeMove.cpp
+        headers/Move/TradeMove.h
+        code/Model/Move/RollDiceMove.cpp
+        headers/Move/RollDiceMove.h
+        code/Model/Move/EndTurnMove.cpp
+        headers/Move/EndTurnMove.h
+        code/Model/Game/GameModel.cpp
+        headers/Game/GameModel.h
+        code/Model/Game/GameSession.cpp
+        headers/Game/GameSession.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Catan
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-            headers/Tile.h code/Model/Tile.cpp
-            headers/ResourceType.h
-            headers/Node.h code/Model/Node.cpp
+            headers/Board/Tile.h code/Model/Board/Tile.cpp
+            headers/Types/ResourceType.h
+            headers/Board/Node.h code/Model/Board/Node.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Catan APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

@@ -7,7 +7,7 @@
 
 #include <map>
 #include <vector>
-#include "Tile.h"
+#include "../Tile.h"
 
 enum class Direction {
     UpLeft,

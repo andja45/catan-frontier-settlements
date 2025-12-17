@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "ResourceType.h"
+#include "../Types/ResourceType.h"
 
 class Edge;
 class Node;

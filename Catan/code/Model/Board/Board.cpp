@@ -2,7 +2,7 @@
 // Created by andja on 10.12.25..
 //
 
-#include "../../headers/Board.h"
+#include "../../../headers/Board/Board.h"
 #include <random>
 #include <algorithm>
 

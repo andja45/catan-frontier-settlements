@@ -1,4 +1,4 @@
-#include "../../headers/Tile.h"
+#include "../../../headers/Board/Tile.h"
 #include <ostream>
 
 std::string Tile::typeToString(ResourceType type){

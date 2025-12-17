@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "Board.h"
+#include "../Board/Board.h"
 
 class Player;
 

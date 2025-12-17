@@ -3,7 +3,7 @@
 
 #include <string>
 #include <tuple>
-#include "ResourceType.h"
+#include "../Types/ResourceType.h"
 
 
 class Tile{
