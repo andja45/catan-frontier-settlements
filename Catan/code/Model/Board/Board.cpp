@@ -7,7 +7,6 @@
 #include <random>
 #include <algorithm>
 
-
 // posto sto jedna ista ivica i node pripadaju vise tajlova moramo ih jednoznacno dodeliti nekom odredjenom po dogovoru
 // vise o radialnim koordinatama na: https://www.redblobgames.com/grids/hexagons/
 void Board::standardizeCoords(HexCoords &coords, int &index) {
@@ -68,54 +67,56 @@ static const std::vector<TileDef> basicMap = {
     {  2,  2, ResourceType::Wood,    2 }
 };
 
-
-void Board::initializeStandardBoard(std::vector<TileDef> tileMap) {
-
+void Board::clearBoard() {
     m_tiles.clear();
     m_nodes.clear();
     m_edges.clear();
     m_tilesByCoord.clear();
     m_tilesByNumber.clear();
+}
+void Board::initializeBoard(std::vector<TileDef> tileMap) {
 
-    for (const auto&[q, r, res, number] : basicMap) {
-        auto t = std::make_unique<Tile>(q, r, res, number);
+    	clearBoard();
 
-        Tile* raw = t.get();
-        m_tiles.push_back(std::move(t));
-        m_tilesByCoord[{q,r}]=raw;
+    	for (const auto&[q, r, res, number] : tileMap) {
+       		auto t = std::make_unique<Tile>(q, r, res, number);
 
-        if (number >= 2 && number <= 12)
-            m_tilesByNumber[number].push_back(raw);
-    }
+      	  Tile* raw = t.get();
+        	m_tiles.push_back(std::move(t));
+        	m_tilesByCoord[{q,r}]=raw;
 
-    for ( auto&[coord, uptr] : m_tilesByCoord) {
-        Tile* t = uptr;
+        	if (number >= 2 && number <= 12)
+            	m_tilesByNumber[number].push_back(raw);
+    	}
 
-        for (int corner = 0; corner < 6; corner++) {
-            int _corner = corner;
-            HexCoords _coord=coord;
-            Board::standardizeCoords(_coord,_corner);
-            if (m_tilesByCoord[_coord]->getNodeAt(_corner)==nullptr) {
-                auto n = std::make_unique<Node>(_coord.first, _coord.second, _corner);
-                m_nodes.push_back(std::move(n));
-            }
-            Node *raw = m_tilesByCoord[_coord]->getNodeAt(_corner);
-            t->addAdjacentNode(raw,_corner);
-            raw->addAdjacentTile(t,corner);
+		for ( auto&[coord, uptr] : m_tilesByCoord) {
+      	    Tile* t = uptr;
 
-            static const std::array<std::pair<int,int>, 6> HEX_DIRECTIONS = {{
-                {+1,  0},
-                {+1, -1},
-                { 0, -1},
-                {-1,  0},
-                {-1, +1},
-                { 0, +1}
-            }};
+        	for (int corner = 0; corner < 6; corner++) {
+        	    int _corner = corner;
+        	    HexCoords _coord=coord;
+        	    Board::standardizeCoords(_coord,_corner);
+        	    if (m_tilesByCoord[_coord]->getNodeAt(_corner)==nullptr) {
+        	        auto n = std::make_unique<Node>(_coord.first, _coord.second, _corner);
+        	        m_nodes.push_back(std::move(n));
+        	    }
+        	    Node *raw = m_tilesByCoord[_coord]->getNodeAt(_corner);
+        	    t->addAdjacentNode(raw,_corner);
+        	    raw->addAdjacentTile(t,corner);
 
-            Tile* neighborTile = m_tilesByCoord[{coord.first+HEX_DIRECTIONS[corner].first,coord.second+HEX_DIRECTIONS[corner].second}];
-            t->addAdjacentTile(neighborTile,corner);
-        }
-    }
+       		     static const std::array<std::pair<int,int>, 6> HEX_DIRECTIONS = {{
+            	    {+1,  0},
+            	    {+1, -1},
+            	    { 0, -1},
+           		    {-1,  0},
+            	    {-1, +1},
+            	    { 0, +1}
+            	 }};
+
+            	Tile* neighborTile = m_tilesByCoord[{coord.first+HEX_DIRECTIONS[corner].first,coord.second+HEX_DIRECTIONS[corner].second}];
+            	t->addAdjacentTile(neighborTile,corner);
+        	}
+    	}
     for ( auto&[coord, uptr] : m_tilesByCoord) {
         for (int corner = 0; corner < 6; corner++) {
             int cornerStart=corner;
@@ -135,8 +136,59 @@ void Board::initializeStandardBoard(std::vector<TileDef> tileMap) {
             nStart->addAdjacentEdge(raw,0);
             nEnd->addAdjacentEdge(raw,1);
         }
+
     }
-}
+	void Board::initializeStandardBoard() {
+
+    	inicializeBoard(basicMap);
+    }
+
+    void Board::saveBoard( std::string saveFilePath, std::string saveName) {
+		Json::Value saveBoard(Json::arrayValue);
+		Json::Value tile;
+		for(auto t : m_tiles){
+			coords = t.getTileCoord();
+			tile["q"] = coords.first();
+			tile["r"] = coords.second();
+			tile["type"] = t.getType();
+			tile["number"] = t.getNumber();
+			saveBoard.append(tile);
+		}
+		clearBoard();
+
+		ofstream saveFile(saveFilePath);
+		Json::StreamWriterBuilder writer;
+		writer["indentation"] = "    ";
+		Json::StreamWriter* jsonWriter = writer.newStreamWriter();
+		jsonWriter->write(saveBoard, &saveFile);
+		saveFile.close();
+
+    }
+
+
+    void Board::loadSavedBoard(const std::string loadFilePath, const std::string saveName) {
+
+        clearBoard();
+
+        ifstream loadFile(loadFilePath);
+
+        Json::Value root;
+        Json::Reader reader;
+        bool parsingSuccessful = reader.parseFromStream(loadFile, root);
+        if (!parsingSuccessful)
+        {
+            cout << "Error parsing the json" << endl;
+        }
+        const Json::Value savedBoard = root[saveName]["saveBoard"];
+
+ 		std::vector<TileDef> LoadMap;
+		for (auto tile : savedBoard)
+    	{
+        	LoadMap.push_back(Tile(tile["q"],tile["r"],tile["type"],tile["number"]));
+    	}
+		inicializeBoard(LoadMap);
+        loadFile.close();
+    }
 
 
 void Board::randomBoard(){

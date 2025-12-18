@@ -8,6 +8,10 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <fstream>
+
+#include <jsoncpp>
+
 struct TileDef;
 
 enum class Direction {
