@@ -6,7 +6,6 @@
 #include "../Types/TypeAliases.hpp"
 
 enum class Direction;
-class Player;
 
 class Edge;
 class Tile;
@@ -22,7 +21,7 @@ private:
     IncidentEdges m_incidentEdges{};
 
     int m_nodeID=-1;
-    static int m_numOfNodes;
+    inline static int m_numOfNodes=0;
 
     //index is nodes id relative to tile
     HexCoords m_tileCoords = {-1,-1};

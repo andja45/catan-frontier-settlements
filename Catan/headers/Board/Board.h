@@ -70,7 +70,6 @@ private:
     static void standardizeNodeCoords(HexCoords& coords, int& index);
 
     void initializeBoard(std::vector<TileDef> tileMap);
-
     std::vector<TileDef> generateRandomBoard();
 
     std::map<HexCoords,Tile*> m_tilesByCoord;
@@ -91,9 +90,8 @@ public:
 
     Node* getNodeAtDir(HexCoords coords, PointDirection);
     Edge* getEdgeAtDir(HexCoords coords, SideDirection);
-
     Tile* getTileAtDir(HexCoords coords, SideDirection);
-    Tile* getAdjacent(Tile* tile, Direction dir) { return getAdjacent(tile, directionToCoord(dir)); }
+
 };
 
 

@@ -26,11 +26,11 @@ private:
 
     int m_tileId=-1;
     HexCoords m_tileCoord{-1,-1};
-    static int m_numOfTiles;
+    inline static int m_numOfTiles=0;
 
 
 public:
-    Tile(int q, int r, ResourceType type, int number) : m_type(type), m_number(number), m_adjacentTiles(), m_adjacentNodes() {
+    Tile(int q, int r, ResourceType type, int number) : m_type(type), m_number(number), m_adjacentNodes() {
         m_numOfTiles++;
         m_tileId=m_numOfTiles;
         m_tileCoord={q,r};
@@ -48,8 +48,8 @@ public:
     Node* getNodeAt(int i) const {return m_adjacentNodes[i];}
     Edge* getEdgeAt(int i) const {return m_adjacentEdges[i];}
 
-    Node* getNodeAtDir(PointDirection dir){ return getNodeAt(static_cast<int>(dir));}
-    Edge* getEdgeAtDir(SideDirection dir){return getEdgeAt(static_cast<int>(dir));}
+    Node* getNodeAtDir(PointDirection dir) const { return getNodeAt(static_cast<int>(dir));}
+    Edge* getEdgeAtDir(SideDirection dir) const {return getEdgeAt(static_cast<int>(dir));}
 
     void setAdjacentNode(Node* adjacentNode, int index) { m_adjacentNodes[index] = adjacentNode; }
     void setAdjacentEdge(Edge* adjacentEdge, int index) { m_adjacentEdges[index] = adjacentEdge; }

@@ -38,11 +38,11 @@ const std::array<HexCoords,19> Board::m_standardCoordinates = {{
     }
 };
 const std::array<HexCoords,6> Board::m_directionCoords = {{
-    { 0, -1 },  // top-left
-    { 1, -1 },  // top-right
+    { 0, -1 },  // top left
+    { 1, -1 },  // top right
     { 1,  0 },  // right
-    { 0,  1 },  // bottom-right
-    { -1, 1 },  // bottom-left
+    { 0,  1 },  // bottom right
+    { -1, 1 },  // bottom left
     { -1, 0 }   // left
 }};
 static const std::vector<TileDef> m_basicMap = {
@@ -84,14 +84,17 @@ void Board::standardizeNodeCoords(HexCoords &coords, int &index) {
             case 3: {
                 dir = SideDirection::BottomLeft;
                 index=1;
+                break;
             }
             case 4: {
                 dir= SideDirection::BottomLeft;
                 index=0;
+                break;
             }
             case 5: {
                 dir= SideDirection::Left;
                 index=1;
+                break;
             }
             default: {
             }
@@ -110,14 +113,17 @@ void Board::standardizeEdgeCoords(HexCoords &coords, int &index) {
         case 3: {
             dir = SideDirection::BottomLeft;
             index=0;
+            break;
         }
         case 4: {
             dir= SideDirection::Left;
             index=1;
+            break;
         }
         case 5: {
             dir= SideDirection::TopLeft;
             index=2;
+            break;
         }
         default: {
         }
@@ -212,4 +218,25 @@ std::vector<TileDef> Board::generateRandomBoard(){
         else r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], m_standardNumberOrder[j++]});
     }
     return r;
+}
+
+std::vector<Tile *> Board::getTilesWithNumber(int num) {
+}
+
+Tile * Board::getTileAt(HexCoords coords) {
+}
+
+Node * Board::getNodeAt(HexCoords coords, int index) {
+}
+
+Edge * Board::getEdgeAt(HexCoords coords, int index) {
+}
+
+Node * Board::getNodeAtDir(HexCoords coords, PointDirection) {
+}
+
+Edge * Board::getEdgeAtDir(HexCoords coords, SideDirection) {
+}
+
+Tile * Board::getTileAtDir(HexCoords coords, SideDirection) {
 }

@@ -21,7 +21,7 @@ private:
     HexCoords m_tileCoord{-1,-1};
 
     int m_edgeIndex=-1;
-    static int m_numOfEdges;
+    inline static int m_numOfEdges=0;
 
 public:
     Edge(HexCoords, int i, Node *start, Node *end) : Edge(start->getTileCoords().first, start->getTileCoords().second, i, start, end) {}
