@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 #include "../Types/ResourceType.h"
-#include "../Types/TypeAliases.hpp"
+#include "../Types/TypeAliases.h"
 #include <string>
 #include <tuple>
 #include "../Types/ResourceType.h"

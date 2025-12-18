@@ -22,7 +22,7 @@ enum class Direction {
 #include "Edge.h"
 #include "Tile.h"
 #include "Node.h"
-#include "../../headers/Types/TypeAliases.hpp"
+#include "../../headers/Types/TypeAliases.h"
 
 // Custom hash function for std::tuple
 struct TupleHash {
@@ -70,6 +70,8 @@ public:
     Tile* getTileAt(HexCoords coords);
     Node* getNodeAt(HexCoords coords, int index);
     Edge* getEdgeAt(HexCoords coords, int index);
+    Node* getNodeById(int nodeId);
+    Edge* getEdgeById(int edgeId);
 
     Tile* getAdjacent(Tile* tile, Direction dir) { return getAdjacent(tile, directionToCoord(dir)); }
 };

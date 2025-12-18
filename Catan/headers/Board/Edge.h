@@ -6,7 +6,7 @@
 #define Catan_EDGE_H
 
 #include "Node.h"
-#include "../Types/TypeAliases.hpp"
+#include "../Types/TypeAliases.h"
 
 class Edge {
 private:

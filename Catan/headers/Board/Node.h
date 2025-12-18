@@ -3,7 +3,7 @@
 
 #include "../Types/NodeType.h"
 #include "../Types/ResourceType.h"
-#include "../Types/TypeAliases.hpp"
+#include "../Types/TypeAliases.h"
 
 class Player;
 
