@@ -9,6 +9,8 @@
 #include <tuple>
 #include "../Types/ResourceType.h"
 
+enum class SideDirection;
+enum class PointDirection;
 enum class ResourceType;
 class Tile;
 class Node;
@@ -19,7 +21,6 @@ private:
     int m_number=-1;
     int m_robber_on_tile=false;
 
-    NeighbourTiles m_adjacentTiles{};
     NeighbourNodes m_adjacentNodes{};
     NeighbourEdges m_adjacentEdges{};
 
@@ -27,8 +28,8 @@ private:
     HexCoords m_tileCoord{-1,-1};
     static int m_numOfTiles;
 
+
 public:
-    Tile() {m_numOfTiles++; m_tileId=m_numOfTiles;}
     Tile(int q, int r, ResourceType type, int number) : m_type(type), m_number(number), m_adjacentTiles(), m_adjacentNodes() {
         m_numOfTiles++;
         m_tileId=m_numOfTiles;
@@ -38,16 +39,23 @@ public:
     ResourceType getType() const { return m_type; }
     int getNumber() const { return m_number; }
     bool isRobberOnTile() const { return m_robber_on_tile; }
-    NeighbourTiles getAdjacentTiles() const { return m_adjacentTiles; }
-    NeighbourNodes getAdjacentNodes() const { return m_adjacentNodes; }
+
     HexCoords getTileCoord() const { return m_tileCoord; }
     int getTileId() const { return m_tileId; }
+
+    NeighbourNodes getAdjacentNodes() const { return m_adjacentNodes; }
+
     Node* getNodeAt(int i) const {return m_adjacentNodes[i];}
     Edge* getEdgeAt(int i) const {return m_adjacentEdges[i];}
 
-    void addAdjacentTile(Tile* adjacentTile, int index) { m_adjacentTiles[index] = adjacentTile; }
-    void addAdjacentNode(Node* adjacentNode, int index) { m_adjacentNodes[index] = adjacentNode; }
-    void addAdjacentEdge(Edge* adjacentEdge, int index) { m_adjacentEdges[index] = adjacentEdge; }
+    Node* getNodeAtDir(PointDirection dir){ return getNodeAt(static_cast<int>(dir));}
+    Edge* getEdgeAtDir(SideDirection dir){return getEdgeAt(static_cast<int>(dir));}
+
+    void setAdjacentNode(Node* adjacentNode, int index) { m_adjacentNodes[index] = adjacentNode; }
+    void setAdjacentEdge(Edge* adjacentEdge, int index) { m_adjacentEdges[index] = adjacentEdge; }
+
+    void setAdjacentNodeDir(Node* adjacentNode, PointDirection dir){ setAdjacentNode(adjacentNode, static_cast<int>(dir)); }
+    void setAdjacentEdgeDir(Edge* adjacentEdge, SideDirection dir){ setAdjacentEdge(adjacentEdge, static_cast<int>(dir)); }
 
     static std::string typeToString(ResourceType type);
     friend std::ostream& operator<<(std::ostream& os, const Tile& tile);

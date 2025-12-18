@@ -17,8 +17,7 @@ enum class DevType;
 class Player {
 private:
     static int _numPlayers;
-    int _playerId      =-1;
-    std::string _name ="";
+    int _playerId =-1;
 
     std::vector<Edge*> _roads;
     std::vector<Node *> _houses;
@@ -36,9 +35,8 @@ private:
     int _numOfCitiesLeft=5;
     int _numOfSettlementsLeft=5;
 public:
-    Player(const std::string &name) : _name(name) {}
+    Player(int id) : _playerId(id) {}
 
-    std::string getName() { return _name; }
     int getPlayerId() const { return _playerId; }
     
     std::vector<Edge*> getRoads() const { return _roads; }
