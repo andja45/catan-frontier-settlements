@@ -6,7 +6,7 @@
 #define Catan_EDGE_H
 
 #include "Node.h"
-#include "../Types/TypeAliases.hpp"
+#include "../Types/TypeAliases.h"
 
 class Edge {
 private:
@@ -30,8 +30,10 @@ public:
 
     Node* getStart() const { return m_start; }
     Node* getEnd() const { return m_end; }
+    std::array<Node*,2> getNodes() const { return {m_start,m_end}; }
+    std::array<Edge*,4> adjacentEdges() const {}
     bool isRoad() const { return m_isRoad; }
-    int getPlayerId() const { return m_playerId; }
+    int getOwner() const { return m_playerId; }
     int getEdgeId() const { return m_edgeId; }
     HexCoords getTileCoord() const { return m_tileCoord; }
     int getEdgeIndex() const { return m_edgeIndex; }

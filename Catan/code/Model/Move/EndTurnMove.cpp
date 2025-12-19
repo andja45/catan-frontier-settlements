@@ -3,3 +3,13 @@
 //
 
 #include "../../../headers/Move/EndTurnMove.h"
+
+
+bool EndTurnMove::isValid(const GameSession& session) const {
+    return session.isPlayersTurn(m_playerId) && session.canEndTurn();
+}
+
+void EndTurnMove::apply(GameSession& session) const {
+    // GameSession upravlja fazama i prelazom na sledeceg igraca
+    session.endTurn();
+}
