@@ -1,5 +1,5 @@
 //
-// Created by andja on 11.12.25..
+// Created by andja on 11.12.25.
 //
 
 #include "../../../headers/Game/GameModel.h"
@@ -89,20 +89,15 @@ bool GameModel::canPlaceSettlement(int playerId, int nodeId, bool isInitialPlace
     }
 
     // mora biti povezan putem (osim initial placement faze)
-    if (!isInitialPlacement) {
-        bool connected = false;
-        for (Edge* e : node->getIncidentEdges()) {
-            if (!e) continue;
-            if (e->getOwner() == playerId) {
-                connected = true;
-                break;
-            }
-        }
-        if (!connected)
-            return false;
+    if (isInitialPlacement)
+        return true;
+
+    for (Edge* e : node->getIncidentEdges()) {
+        if (e && e->getOwner() == playerId)
+            return true;
     }
 
-    return connected;
+    return false;
 }
 
 bool GameModel::canPlaceCity(int playerId, int nodeId) const {
