@@ -15,8 +15,8 @@ private:
 public:
     BuildRoadMove(const int playerId, const int edgeId) : m_playerId(playerId), m_edgeId(edgeId) {}
 
-    bool isValid(const GameModel&, const GameSession&) const override;
-    void apply(GameModel&, GameSession&) const override;
+    bool isValid(const GameSession& session) const override;
+    void apply(GameSession& session) const override;
 };
 
 

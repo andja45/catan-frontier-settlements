@@ -1,45 +1,32 @@
 //
-// Created by andja on 17.12.25..
+// Created by andja on 17.12.25.
 //
 
 #include "../../../headers/Move/SettingRobberMove.h"
 
-bool SettingRobberMove::isValid(const GameModel& model, const GameSession& session) const{
+bool SettingRobberMove::isValid(const GameSession& session) const{
     if (!session.isPlayersTurn(m_playerId))
         return false;
-
-    if (!session.canPlaceRobber)
+    if (!session.canPlaceRobber())
         return false;
 
-    const Tile* tile = model.board().getTileById(m_tileId);
-    if (!tile)
+    const GameModel& model = session.model();
+    // po pravilima igre
+    if (!model.canPlaceRobber(m_tileId))
         return false;
-
-    if (tile->isRobberOnTile())
-        return false;
-
     if (m_victimPlayerId != -1) {
-        const Player& victim = model.player(m_victimPlayerId);
-
-        if (m_victimPlayerId == m_playerId)
-            return false;
-
-        if (victim.getNumOfResourceCards() == 0)
+        if (!model.canStealFrom(m_playerId, m_victimPlayerId))
             return false;
     }
 
     return true;
 }
 
-void SettingRobberMove::apply(GameModel& model, GameSession& session) const{
-    model.board().moveRobberTo(m_tileId);
-
+void SettingRobberMove::apply(GameSession& session) const{
+    GameModel& model = session.model();
+    model.placeRobber(m_tileId);
     if (m_victimPlayerId != -1) {
-        Player& victim = model.player(m_victimPlayerId);
-        Player& thief  = model.player(m_playerId);
-
-        ResourceType stolen = victim.takeRandomResource();
-        thief.addResource(stolen, 1);
+        model.stealRandomResource(m_playerId, m_victimPlayerId);
     }
 
     session.enterMainPhase();

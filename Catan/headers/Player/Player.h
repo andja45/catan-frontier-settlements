@@ -68,6 +68,7 @@ public:
     int getNumOfSettlementsLeft() const;
 
     void setLongestRoad(bool longestRoad) {_hasLongestRoad=longestRoad;}
+    ResourceType takeRandomResource();
 };
 
 

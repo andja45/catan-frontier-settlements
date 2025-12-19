@@ -6,66 +6,167 @@
 #include "../../../headers/Move/Move.h"
 #include <random>
 
-bool GameModel::applyMove(const Move& move) {
-    if (!move.isValid(*this, m_session))
-        return false;
-
-    move.apply(*this, m_session);
-
-    //notifyMoveApplied(move);
-    return true;
+bool GameModel::hasResource(int playerId, ResourceType type, int amount) const {
+    return m_players.at(playerId).hasResource(type, amount);
 }
 
-// === Move-ovi koriste ===
-bool GameModel::hasResources(int playerId, const ResourcePack& cost) const{
-    const Player& p = player(playerId);
-
-    for (const auto& [type, amount] : cost) {
-        if (!p.hasResource(type, amount))
+bool GameModel::hasResources(int playerId, const ResourcePack& pack) const{
+    for (const auto [type, amount] : pack) {
+        if (!hasResource(playerId, type, amount))
             return false;
     }
     return true;
 }
 
-void GameModel::consumeResources(int playerId, const ResourcePack& cost){
-    Player& p = player(playerId);
+void GameModel::consumeResource(int playerId, ResourceType type, int amount) {
+    m_players.at(playerId).takeResource(type, amount);
+}
 
-    for (const auto& [type, amount] : cost) {
-        p.takeResource(type, amount);
+void GameModel::consumeResources(int playerId, const ResourcePack& pack){
+    for (const auto [type, amount] : pack) {
+        m_players.at(playerId).takeResource(type, amount);
     }
+    notifyModelChanged();
+}
+
+void GameModel::transferResource(int playerId, ResourceType type, int amount) {
+    m_players.at(playerId).addResource(type, amount);
+}
+
+void GameModel::transferResources(int from, int to, const ResourcePack& pack) {
+    for (const auto [type, amount] : pack) {
+        m_players.at(from).takeResource(type, amount);
+        m_players.at(to).addResource(type, amount);
+    }
+}
+
+void GameModel::stealRandomResource(int thiefId, int victimId) {
+    if (m_players.at(victimId).getNumOfResourceCards() == 0) return;
+    ResourceType stolen = m_players.at(victimId).takeRandomResource();
+    m_players.at(thiefId).addResource(stolen, 1);
+}
+
+bool GameModel::canPlaceRoad(int playerId, int edgeId) const {
+    const Player& p = m_players.at(playerId);
+    if (!p.hasRoadLeft())
+        return false;
+
+    Edge* edge = m_board.getEdgeById(edgeId);
+    if (!edge)
+        return false;
+
+    if (edge->isRoad())
+        return false;
+
+    bool connected = false;
+    for (Node* n : edge->getNodes()) {
+        if (!n) continue;
+        if (n->getOwner() == playerId)
+            connected = true;
+    }
+
+    for (Edge* e : edge->adjacentEdges()) {
+        if (!e) continue;
+        if (e->getOwner() == playerId)
+            connected = true;
+    }
+
+    return connected;
+}
+
+bool GameModel::canPlaceSettlement(int playerId, int nodeId, bool isInitialPlacement) const {
+    const Player& p = m_players.at(playerId);
+    if (!p.hasSettlementLeft()) return false;
+
+    Node* node = m_board.getNodeById(nodeId);
+    if (!node) return false;
+    if (node->getOwner() != -1) return false;
+
+    for (Node* adj : node->getIncidentNodes()) {
+        if (!adj) continue;
+        if (adj->getOwner() != -1)
+            return false;
+    }
+
+    // mora biti povezan putem (osim initial placement faze)
+    if (!isInitialPlacement) {
+        bool connected = false;
+        for (Edge* e : node->getIncidentEdges()) {
+            if (!e) continue;
+            if (e->getOwner() == playerId) {
+                connected = true;
+                break;
+            }
+        }
+        if (!connected)
+            return false;
+    }
+
+    return connected;
+}
+
+bool GameModel::canPlaceCity(int playerId, int nodeId) const {
+    const Player& p = m_players.at(playerId);
+    if (!p.hasCityLeft()) return false;
+
+    Node* node = m_board.getNodeById(nodeId);
+    if (!node) return false;
+
+    // mora vec biti settlement tog igraca
+    if (node->getOwner() != playerId) return false;
+    if (node->getNodeType() != NodeType::Settlement) return false;
+
+    return true;
+}
+
+bool GameModel::canPlaceRobber(int tileId) const {
+    Tile* tile = m_board.getTileById(tileId);
+    if (!tile) return false;
+
+    // ne sme bas na svaki tile, ima ogranicenja
+    ResourceType type = tile->getType();
+    if (type == ResourceType::Desert || type == ResourceType::Sea)
+        return false;
+
+    if (tile->isRobberOnTile())
+        return false;
+
+    return true;
+}
+
+bool GameModel::canStealFrom(int thiefId, int victimId) const {
+    if (thiefId == victimId) return false;
+    return m_players.at(victimId).getNumOfResourceCards() > 0;
 }
 
 void GameModel::placeRoad(int playerId, int edgeId){
     Edge* edge = m_board.getEdgeById(edgeId);
-    Player& p = player(playerId);
 
     edge->setRoad(playerId);
-    p.addRoad(edge);
+    m_players.at(playerId).addRoad(edge);
 }
 
 void GameModel::placeSettlement(int playerId, int nodeId){
     Node* node = m_board.getNodeById(nodeId);
-    Player& p = player(playerId);
 
-    node->setOwner(&p);
-    p.addHouse(node);
+    node->setOwner(playerId);
+    m_players.at(playerId).addHouse(node);
 }
 
-void GameModel::upgradeCity(int playerId, int nodeId){
+void GameModel::placeCity(int playerId, int nodeId){
     Node* node = m_board.getNodeById(nodeId);
-
     node->upgradeToCity();
 }
 
+void GameModel::placeRobber(int tileId) {
+
+}
+
 int GameModel::tradeRatioFor(int playerId, ResourceType give) const {
-    const Player& p = player(playerId);
+    const Player& player = m_players.at(playerId);
 
-    if (p.hasTrade(give))
-        return 2;
-
-    if (p.has3for1Trade())
-        return 3;
-
+    if (player.hasTrade(give)) return 2;
+    if (player.has3for1Trade()) return 3;
     return 4;
 }
 
@@ -89,18 +190,14 @@ void GameModel::distributeResources(int dice) {
         for (Node* node : tile->getAdjacentNodes()) {
             if (!node) continue;
 
-            Player* owner = node->getOwner();
-            if (!owner) continue;
+            int playerId = node->getOwner();
+            if (playerId == -1) continue;
 
             if (node->getNodeType() == NodeType::Settlement) {
-                owner->addResource(res, 1);
-            }
-            else if (node->getNodeType() == NodeType::City) {
-                owner->addResource(res, 2);
+                m_players.at(playerId).addResource(res, 1);
+            } else if (node->getNodeType() == NodeType::City) {
+                m_players.at(playerId).addResource(res, 2);
             }
         }
     }
-}
-
-bool GameModel::canPlayerBuildSettlement(int m_player_id, int m_node_id) const {
 }

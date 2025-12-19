@@ -16,8 +16,8 @@ private:
 public:
     explicit PlayerTradeMove(int from, int to, ResourcePack offer, ResourcePack request) : m_fromPlayer(from), m_toPlayer(to), m_offer(offer), m_request(request){}
 
-    bool isValid(const GameModel&, const GameSession&) const override;
-    void apply(GameModel&, GameSession&) const override;
+    bool isValid(const GameSession&) const override;
+    void apply(GameSession&) const override;
 };
 
 

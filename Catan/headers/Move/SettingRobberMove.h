@@ -16,8 +16,8 @@ private:
 public:
     SettingRobberMove(int playerId, int tileId, int victimPlayerId) : m_playerId(playerId), m_tileId(tileId), m_victimPlayerId(victimPlayerId) {}
 
-    bool isValid(const GameModel&, const GameSession&) const override;
-    void apply(GameModel&, GameSession&) const override;
+    bool isValid(const GameSession&) const override;
+    void apply(GameSession&) const override;
 };
 
 

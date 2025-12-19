@@ -14,8 +14,8 @@ private:
 public:
     explicit EndTurnMove(int playerId) : m_playerId(playerId) {}
 
-    bool isValid(const GameModel&, const GameSession&) const override;
-    void apply(GameModel&, GameSession&) const override;
+    bool isValid(const GameSession&) const override;
+    void apply(GameSession&) const override;
 };
 
 

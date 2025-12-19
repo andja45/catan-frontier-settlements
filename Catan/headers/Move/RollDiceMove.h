@@ -15,8 +15,8 @@ public:
     explicit RollDiceMove(int playerId) : m_playerId(playerId){}
     // RollDiceMove move = 3; jer ne zelimo da moze to, samo je generisanje dozvoljeno
 
-    bool isValid(const GameModel&, const GameSession&) const override;
-    void apply(GameModel&, GameSession&) const override;
+    bool isValid(const GameSession&) const override;
+    void apply(GameSession&) const override;
 };
 
 

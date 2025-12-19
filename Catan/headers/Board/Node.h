@@ -15,7 +15,7 @@ enum class NodeType;
 class Node {
 private:
     NodeType m_type=NodeType::None;
-    Player* m_owner=nullptr;
+    int m_ownerId = -1;
 
     IncidentTiles m_incidentTiles{};
     IncidentEdges m_incidentEdges{};
@@ -39,15 +39,16 @@ public:
     ResourceType getTradeResource() const { return m_tradeResource; }
 
     NodeType getNodeType() const { return m_type; }
-    Player* getOwner() const { return m_owner; }
+    int getOwner() const { return m_ownerId; }
     IncidentTiles getIncidentTiles() const { return m_incidentTiles; }
     IncidentEdges getIncidentEdges() const { return m_incidentEdges; }
+    std::array<Node*,3> getIncidentNodes();
 
     HexCoords getTileCoords() const {return m_tileCoords;}
     int getNodeIndex() const {return m_nodeIndex;}
 
     void setNodeType(const NodeType nodeType) { m_type = nodeType; }
-    void setOwner(Player* owner) { m_owner = owner; m_type=NodeType::Settlement; }
+    void setOwner(int ownerId) { m_ownerId = ownerId; m_type=NodeType::Settlement; }
     void upgradeToCity() {m_type=NodeType::City;}
     void setTrade(ResourceType tradeResource) {m_hasTrade=true;m_tradeResource=tradeResource;}
 

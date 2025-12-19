@@ -4,18 +4,21 @@
 
 #include "../../../headers/Move/BuildRoadMove.h"
 
-bool BuildRoadMove::isValid(const GameModel& model, const GameSession& session) const {
+bool BuildRoadMove::isValid(const GameSession& session) const {
     if (!session.isPlayersTurn(m_playerId)) return false;
     if (!session.canBuild()) return false;
 
+    GameModel& model = session.model();
     // da li je pozicija validna (pravila)
-    if (!model.canPlayerBuildRoad(m_playerId, m_edgeId)) return false; // TODO dodaj u model
+    if (!model.canPlaceRoad(m_playerId, m_edgeId)) return false;
     if (!model.hasResources(m_playerId, Costs::Road)) return false;
 
     return true;
 }
 
-void BuildRoadMove::apply(GameModel& model, GameSession&) const {
+void BuildRoadMove::apply(GameSession& session) const {
+    GameModel& model = session.model();
+
     model.consumeResources(m_playerId, Costs::Road);
-    model.placeRoad(m_playerId, m_edgeId); // TODO dodaj u model
+    model.placeRoad(m_playerId, m_edgeId);
 }

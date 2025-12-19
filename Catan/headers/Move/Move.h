@@ -24,8 +24,8 @@ class Move {
 public:
     virtual ~Move() = default;
 
-    virtual bool isValid(const GameModel&, const GameSession&) const = 0;
-    virtual void apply(GameModel&, GameSession&) const = 0;
+    virtual bool isValid(const GameSession&) const = 0;
+    virtual void apply(GameSession&) const = 0;
 };
 
 

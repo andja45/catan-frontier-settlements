@@ -70,8 +70,9 @@ public:
     Tile* getTileAt(HexCoords coords);
     Node* getNodeAt(HexCoords coords, int index);
     Edge* getEdgeAt(HexCoords coords, int index);
-    Node* getNodeById(int nodeId);
-    Edge* getEdgeById(int edgeId);
+    Node* getNodeById(int nodeId) const;
+    Edge* getEdgeById(int edgeId) const;
+    Tile* getTileById(int tileId) const;
 
     Tile* getAdjacent(Tile* tile, Direction dir) { return getAdjacent(tile, directionToCoord(dir)); }
 };

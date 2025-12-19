@@ -15,8 +15,8 @@ private:
 public:
     BuildCityMove(const int playerId, const int nodeId) : m_playerId(playerId), m_nodeId(nodeId) {}
 
-    bool isValid(const GameModel&, const GameSession&) const override;
-    void apply(GameModel&, GameSession&) const override;
+    bool isValid(const GameSession& session) const override;
+    void apply(GameSession& session) const override;
 };
 
 
