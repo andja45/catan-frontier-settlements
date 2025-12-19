@@ -3,7 +3,7 @@
 
 #include "../Types/NodeType.h"
 #include "../Types/ResourceType.h"
-#include "../Types/TypeAliases.hpp"
+#include "../Types/TypeAliases.h"
 
 enum class Direction;
 
@@ -43,16 +43,16 @@ public:
     ResourceType getTradeResource() const { return m_tradeResource; }
 
     NodeType getNodeType() const { return m_type; }
-    int getOwnerId() const { return m_ownerId; }
-
+    int getOwner() const { return m_ownerId; }
     IncidentTiles getIncidentTiles() const { return m_incidentTiles; }
     IncidentEdges getIncidentEdges() const { return m_incidentEdges; }
+    std::array<Node*,3> getIncidentNodes();
 
     HexCoords getTileCoords() const {return m_tileCoords;}
     int getNodeIndex() const {return m_nodeIndex;}
 
     void setNodeType(const NodeType nodeType) { m_type = nodeType; }
-    void setOwnerId(int owner) { m_ownerId = owner; m_type=NodeType::Settlement; }
+    void setOwner(int ownerId) { m_ownerId = ownerId; m_type=NodeType::Settlement; }
     void upgradeToCity() {m_type=NodeType::City;}
     void setTrade(ResourceType tradeResource) {m_hasTrade=true;m_tradeResource=tradeResource;}
 

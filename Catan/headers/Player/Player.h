@@ -54,6 +54,7 @@ public:
     bool hasCityLeft() const;
     bool hasSettlementLeft() const;
     bool hasRoadLeft() const;
+    bool hasResource(ResourceType resourceType, int amount) const; // za gamemodel treba
 
     int getTotalPoints() const;
     int getVictoryPointsUsed() const;
@@ -65,6 +66,7 @@ public:
     int getNumOfSettlementsLeft() const;
 
     void setLongestRoad(bool longestRoad) {_hasLongestRoad=longestRoad;}
+    ResourceType takeRandomResource();
 };
 
 

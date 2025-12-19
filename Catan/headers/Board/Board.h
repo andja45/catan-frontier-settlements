@@ -11,7 +11,7 @@
 #include "Edge.h"
 #include "Tile.h"
 #include "Node.h"
-#include "../../headers/Types/TypeAliases.hpp"
+#include "../../headers/Types/TypeAliases.h"
 
 struct TileDef { int q, r; ResourceType res; int number; };
 
@@ -87,6 +87,9 @@ public:
     Tile* getTileAt(HexCoords coords);
     Node* getNodeAt(HexCoords coords, int index);
     Edge* getEdgeAt(HexCoords coords, int index);
+    Node* getNodeById(int nodeId) const;
+    Edge* getEdgeById(int edgeId) const;
+    Tile* getTileById(int tileId) const;
 
     Node* getNodeAtDir(HexCoords coords, PointDirection);
     Edge* getEdgeAtDir(HexCoords coords, SideDirection);
