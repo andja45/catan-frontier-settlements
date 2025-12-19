@@ -7,6 +7,8 @@
 #include <memory>
 #include <random>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
 struct TileDef;
 
 const std::array<int,18> Board::m_standardNumberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
@@ -144,35 +146,34 @@ void Board::clearBoard() {
     m_tilesByNumber.clear();
 }
 void Board::initializeBoard(std::vector<TileDef> tileMap) {
+    clearBoard();
 
-    	clearBoard();
+    for (const auto&[q, r, res, number] : tileMap) {
+        auto t = std::make_unique<Tile>(q, r, res, number);
 
-    	for (const auto&[q, r, res, number] : tileMap) {
-       		auto t = std::make_unique<Tile>(q, r, res, number);
+        Tile* raw = t.get();
+        m_tiles.push_back(std::move(t));
+        m_tilesByCoord[{q,r}]=raw;
 
-      	  Tile* raw = t.get();
-        	m_tiles.push_back(std::move(t));
-        	m_tilesByCoord[{q,r}]=raw;
+        if (number >= 2 && number <= 12)
+            m_tilesByNumber[number].push_back(raw);
+    }
 
-        	if (number >= 2 && number <= 12)
-            	m_tilesByNumber[number].push_back(raw);
-    	}
+    for ( auto&[coord, uptr] : m_tilesByCoord) {
+        Tile* t = uptr;
 
-		for ( auto&[coord, uptr] : m_tilesByCoord) {
-      	    Tile* t = uptr;
-
-        	for (int i = 0; i < static_cast<int>(PointDirection::End); ++i) {
-        	    PointDirection dir=static_cast<PointDirection>(i);
-        	    HexCoords _coord=coord;
-        	    Board::standardizeNodeCoords(_coord,i);
-        	    Node *raw = m_tilesByCoord[_coord]->getNodeAt(i);
+        for (int i = 0; i < static_cast<int>(PointDirection::End); ++i) {
+            PointDirection dir=static_cast<PointDirection>(i);
+            HexCoords _coord=coord;
+            Board::standardizeNodeCoords(_coord,i);
+            Node *raw = m_tilesByCoord[_coord]->getNodeAt(i);
             if (raw==nullptr) {
-        	        auto n = std::make_unique<Node>(_coord.first, _coord.second, i);
-        	        m_nodes.push_back(std::move(n));
-        	    raw=n.get();
+                auto n = std::make_unique<Node>(_coord.first, _coord.second, i);
+                m_nodes.push_back(std::move(n));
+                raw=n.get();
             }
-        	    t->setAdjacentNode(raw,i);
-        	    raw->addAdjacentTile(t);
+            t->setAdjacentNode(raw,i);
+            raw->addAdjacentTile(t);
         }
 
         for (int i = 0,j=0; i < static_cast<int>(PointDirection::End) && j< static_cast<int>(SideDirection::End); ++i,++j) {
@@ -194,53 +195,52 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) {
         }
 
     }
+}
 
-    void Board::saveBoard( std::string saveFilePath, std::string saveName) {
-		Json::Value saveBoard(Json::arrayValue);
-		Json::Value tile;
-		for(auto t : m_tiles){
-			coords = t.getTileCoord();
-			tile["q"] = coords.first();
-			tile["r"] = coords.second();
-			tile["type"] = t.getType();
-			tile["number"] = t.getNumber();
-			saveBoard.append(tile);
-		}
-		clearBoard();
+void Board::saveBoard( std::string saveFilePath, std::string saveName) {
+	Json::Value saveBoard(Json::arrayValue);
+	Json::Value tile;
+	for(auto [coords,t] : m_tilesByCoord){
+		tile["q"] = coords.first();
+		tile["r"] = coords.second();
+		tile["type"] = t->getType();
+		tile["number"] = t->getNumber();
+		saveBoard.append(tile);
+	}
 
-		ofstream saveFile(saveFilePath);
-		Json::StreamWriterBuilder writer;
-		writer["indentation"] = "    ";
-		Json::StreamWriter* jsonWriter = writer.newStreamWriter();
-		jsonWriter->write(saveBoard, &saveFile);
-		saveFile.close();
+    std::ofstream saveFile(saveFilePath);
+	Json::StreamWriterBuilder writer;
+	writer["indentation"] = "    ";
+	Json::StreamWriter* jsonWriter = writer.newStreamWriter();
+	jsonWriter->write(saveBoard, &saveFile);
+	saveFile.close();
 
+}
+
+
+std::vector<TileDef> Board::loadSavedBoard(const std::string loadFilePath, const std::string saveName) {
+
+    clearBoard();
+    std::ifstream loadFile(loadFilePath);
+
+    Json::Value root;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parseFromStream(loadFile, root);
+    if (!parsingSuccessful)
+    {
+        std::cout << "Error parsing the json" << std::endl;
     }
+    const Json::Value savedBoard = root[saveName]["saveBoard"];
 
-
-    void Board::loadSavedBoard(const std::string loadFilePath, const std::string saveName) {
-
-        clearBoard();
-
-        ifstream loadFile(loadFilePath);
-
-        Json::Value root;
-        Json::Reader reader;
-        bool parsingSuccessful = reader.parseFromStream(loadFile, root);
-        if (!parsingSuccessful)
-        {
-            cout << "Error parsing the json" << endl;
-        }
-        const Json::Value savedBoard = root[saveName]["saveBoard"];
-
- 		std::vector<TileDef> LoadMap;
-		for (auto tile : savedBoard)
-    	{
-        	LoadMap.push_back(Tile(tile["q"],tile["r"],tile["type"],tile["number"]));
-    	}
-		inicializeBoard(LoadMap);
-        loadFile.close();
+ 	std::vector<TileDef> LoadMap;
+	for (auto tile : savedBoard)
+    {
+        LoadMap.push_back({tile["q"],tile["r"],tile["type"],tile["number"]});
     }
+    loadFile.close();
+
+    return LoadMap;
+}
 
 std::vector<TileDef> Board::generateRandomBoard(){
     std::vector<TileDef> r;
