@@ -62,6 +62,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             code/Model/Move/SettingRobberMove.cpp
             code/AsciiView/BoardView.cpp
             code/AsciiView/BoardView.hpp
+            code/AsciiView/RoadView.cpp
+            code/AsciiView/RoadView.hpp
+            code/AsciiView/TileView.hpp
+            code/AsciiView/TileView.cpp
+            code/AsciiView/NodeView.cpp
+            code/AsciiView/NodeView.hpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET neee APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -85,6 +91,14 @@ else()
                 headers/Move/BankTradeMove.h
                 code/AsciiView/BoardView.cpp
                 code/AsciiView/BoardView.hpp
+                code/AsciiView/RoadView.cpp
+                code/AsciiView/RoadView.hpp
+                code/AsciiView/TileView.cpp
+                code/AsciiView/TileView.hpp
+                code/AsciiView/TileView.hpp
+                code/AsciiView/TileView.cpp
+                code/AsciiView/NodeView.cpp
+                code/AsciiView/NodeView.hpp
         )
     endif()
 endif()

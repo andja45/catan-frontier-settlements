@@ -240,3 +240,11 @@ Edge * Board::getEdgeAtDir(HexCoords coords, SideDirection) {
 
 Tile * Board::getTileAtDir(HexCoords coords, SideDirection) {
 }
+
+std::vector<HexCoords> Board::getBoardCords() {
+    std::vector<HexCoords> coords;
+    for (auto&[coord, tile] : m_tilesByCoord) {
+        coords.push_back(coord);
+    }
+    return coords;
+}
