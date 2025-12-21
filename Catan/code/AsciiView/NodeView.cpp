@@ -4,6 +4,10 @@
 
 #include "NodeView.hpp"
 
+
+#include "../../headers/Board/Node.h"
+#include "../../headers/Types/NodeType.h"
+
 void NodeView::draw(Canvas& canvas , const BoardTheme &theme) const {
     char c=0;
     switch (m_node->getNodeType()) {

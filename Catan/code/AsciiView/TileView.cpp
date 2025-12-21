@@ -3,6 +3,9 @@
 //
 
 #include "TileView.hpp"
+#include "../../headers/Board/Tile.h"
+#include "ViewTypes.hpp"
+#include "../../headers/Types/TypeAliases.h"
 
 char TileView::resourceToChar( const BoardTheme& theme) const {
     switch (m_tile->getType()) {
@@ -34,7 +37,7 @@ void TileView::draw(Canvas &canvas, const BoardTheme &theme) const {
             canvas[x+c][y+r]={' ',1};
         }
         for (; c<max_width-margin-spacing; c++) {
-            canvas[x+c][y+r]={resourceToChar(m_tile->getType(), theme),1};
+            canvas[x+c][y+r]={resourceToChar(theme),1};
         }
         spacing-=2;
         spacing=abs(spacing);

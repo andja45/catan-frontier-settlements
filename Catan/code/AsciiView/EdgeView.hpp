@@ -4,9 +4,12 @@
 
 #ifndef CATAN_ROADVIEW_HPP
 #define CATAN_ROADVIEW_HPP
-#include "BoardView.hpp"
 
-class RoadView {
+enum class PointDirection;
+class Edge;
+#include "ViewTypes.hpp"
+
+class EdgeView {
 private:
     Edge* m_edge;
 
@@ -16,7 +19,7 @@ private:
 
     char sideToChar(const BoardTheme &theme)const;
 public:
-    RoadView(Edge* edge, const ScreenCoords &start, const ScreenCoords &end, PointDirection side) : m_edge(edge), m_start(start), m_end(end), m_side(side) {}
+    EdgeView(Edge* edge, ScreenCoords start,  ScreenCoords end, PointDirection side) : m_edge(edge), m_start(start), m_end(end), m_side(side) {}
     void draw(Canvas &canvas, const BoardTheme &theme) const;
 };
 

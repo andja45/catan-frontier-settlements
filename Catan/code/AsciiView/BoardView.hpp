@@ -10,41 +10,17 @@
 #include <vector>
 
 #include "../../headers/Board/Board.h"
-
-enum class ResourceType;
+#include "ViewTypes.hpp"
+#include "TileView.hpp"
+#include "EdgeView.hpp"
+#include "NodeView.hpp"
 class Tile;
-class Board;
-
-struct BoardTheme {
-    char tileChar = ' ';
-    char upDownEdgeChar = '-';
-    char upLeftDownRightEdgeChar = '/';
-    char upRightDownLeftEdgeChar = '\\';
-
-    char woolChar='w';
-    char woodChar='T';
-    char brickChar='=';
-    char oreChar='o';
-    char wheatChar='i';
-    char seaChar='~';
-    char desertChar=',';
-
-    char settlementChar='*';
-    char cityChar='@';
-
-    char robberChar='X';
-
-    uint8_t playerColor[5];
-    uint8_t outlineColor;
-};
-
-struct Cell { char ch; std::uint8_t color; };
-using Canvas=std::vector<std::vector<Cell>>;
-using ScreenCoords=std::pair<int,int>;
-//res to char, player col
-
 class BoardView {
 private:
+    std::vector<TileView> m_tiles;
+    std::vector<EdgeView> m_edges;
+    std::vector<NodeView> m_nodes;
+
 
     static ScreenCoords constexpr sizeBig={18,7};
     static ScreenCoords constexpr sizeSmall={12,5};
@@ -54,25 +30,32 @@ private:
 
     Canvas m_cells;
 
-    ScreenCoords m_size;
+    ScreenCoords m_canvasSize;
+    ScreenCoords m_gridSize;
     ScreenCoords m_center;
 
     //std::map<int,std::pair<int,int>> m_computedTilePositions;
     //void drawTile(Tile* tile, std::pair<int,int> pos);
 
+    void computeSizes();
+
+    void processTileCords(Tile *tile, std::vector<ScreenCoords> &cords);
+
     void init();
 
-    uint8_t playerColor(int playerId);
-    char directionToChar(SideDirection dir);
-
-    ScreenCoords axialToScreen(HexCoords axial);
-
-    void printChar(ScreenCoords, char c, uint8_t color=1);
+    static HexCoords axialToOffset(HexCoords axial);
+    static ScreenCoords stepSize(ScreenCoords tileSize);
+    static ScreenCoords offsetToScreen(HexCoords offset, ScreenCoords origin, ScreenCoords tileSize);
 
     void renderBoard();
-    void blitBoard();
+
+    void printCell(Cell c, std::ostream &os);
+
+    virtual void blitBoard(std::ostream &os);
 public:
-    void drawBoard();
+    void drawBoard(std::ostream &os);
+    BoardView(Board* board, BoardTheme theme):m_board(board),m_theme(theme){}
+    void setGridSize(ScreenCoords size){m_gridSize=size;}
 };
 
 #endif //CATAN_BOARDVIEW_HPP

@@ -6,7 +6,9 @@
 #define CATAN_NODEVIEW_HPP
 #include <utility>
 
-#include "BoardView.hpp"
+#include "ViewTypes.hpp"
+struct BoardTheme;
+class Node;
 
 class NodeView {
 private:
