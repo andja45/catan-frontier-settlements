@@ -36,6 +36,7 @@ public:
 
     bool isEmpty() const { return m_type==NodeType::None; }
     bool hasTrade() const { return m_hasTrade; }
+	bool is3for1Trade() const; //TODO
     ResourceType getTradeResource() const { return m_tradeResource; }
 
     NodeType getNodeType() const { return m_type; }
