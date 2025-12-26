@@ -6,6 +6,12 @@
 #include "../../../headers/Move/Move.h"
 #include <random>
 
+void GameModel::notifyModelChanged() {
+}
+
+GameModel::GameModel(int numPlayers) {
+}
+
 bool GameModel::hasResource(int playerId, ResourceType type, int amount) const {
     return m_players.at(playerId).hasResource(type, amount);
 }
