@@ -8,7 +8,7 @@ bool BankTradeMove::isValid(const GameSession& session) const {
     if (!session.isPlayersTurn(m_playerId)) return false;
     if (!session.canTrade()) return false;
 
-    GameModel& model = session.model();
+    const GameModel& model = session.model();
     int ratio = model.tradeRatioFor(m_playerId, m_give);
     return model.hasResource(m_playerId, m_give, ratio);
 }

@@ -8,7 +8,7 @@ bool BuildCityMove::isValid(const GameSession& session) const {
     if (!session.isPlayersTurn(m_playerId)) return false;
     if (!session.canBuild()) return false;
 
-    GameModel& model = session.model();
+    const GameModel& model = session.model();
     // da li je pozicija validna (pravila)
     if (!model.canPlaceCity(m_playerId, m_nodeId)) return false;
 

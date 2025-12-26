@@ -5,7 +5,6 @@
 #ifndef Catan_GAMESESSION_H
 #define Catan_GAMESESSION_H
 #include "GameModel.h"
-#include "../Move/Move.h"
 
 /*loopovi igranje igraca/bota i provere vict points road vitezi..*/
 

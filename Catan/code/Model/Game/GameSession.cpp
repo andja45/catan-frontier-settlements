@@ -3,7 +3,7 @@
 //
 
 #include "../../../headers/Game/GameSession.h"
-
+#include "../../../headers/Move/Move.h"
 bool GameSession::applyMove(const Move& move){
     if (!move.isValid(*this)) {
         return false;
