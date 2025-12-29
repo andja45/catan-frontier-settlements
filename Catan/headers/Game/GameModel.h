@@ -4,7 +4,6 @@
 
 #ifndef Catan_GAMEMODEL_H
 #define Catan_GAMEMODEL_H
-#include "GameSession.h"
 #include "../Board/Board.h"
 #include  "../Player/Player.h"
 

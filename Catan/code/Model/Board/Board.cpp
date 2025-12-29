@@ -232,6 +232,15 @@ Node * Board::getNodeAt(HexCoords coords, int index) {
 Edge * Board::getEdgeAt(HexCoords coords, int index) {
 }
 
+Node * Board::getNodeById(int nodeId) const {
+}
+
+Edge * Board::getEdgeById(int edgeId) const {
+}
+
+Tile * Board::getTileById(int tileId) const {
+}
+
 Node * Board::getNodeAtDir(HexCoords coords, PointDirection) {
 }
 
