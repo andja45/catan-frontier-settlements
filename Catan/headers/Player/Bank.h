@@ -7,9 +7,7 @@
 #include <map>
 #include <string>
 
-#include "../Types/DevType.hpp"
 #include "ResourceHolder.h"
-#include "../../headers/Types/TypeAliases.hpp"
 
 enum class ResourceType;
 
@@ -18,8 +16,9 @@ private:
 	static const int m_standardNumOfResources= 20;
 	static const std::map<DevType,int> m_numberOfStandardDevCardsByType;
 public:
-    Bank(const std::string &name) : ResourceHolder(name) {}
+    Bank(const std::string &name) : ResourceHolder() {}
 	void initializeStandardBank();
+	DevType takeRandomDev();
 };
 
 

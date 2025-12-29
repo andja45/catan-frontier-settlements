@@ -6,7 +6,7 @@
 
 
 void Player::addSettlement(Node* node){
-	node->setOwner(this);
+	node->setOwner(m_playerId);
 	node->setNodeType(NodeType::Settlement);
 	addVictoryPoint();
 	if(node->hasTrade()){
@@ -23,3 +23,22 @@ void Player::addCity(Node* node){
 void Player::addRoad(Edge* newroad){
 	newroad->setRoad(m_playerId);
 }
+
+
+
+
+
+
+
+bool Player::hasTrade(ResourceType resourceType) const {
+}
+
+bool Player::hasLongestRoad() const {
+}
+
+ResourcePack Player::takeRandomResources(int amount) {
+}
+
+ResourceType Player::takeRandomResource() {
+}
+

@@ -13,10 +13,8 @@
 #include "../Board/Node.h"
 #include "ResourceHolder.h"
 
-
 enum class DevType;
-
-class Player : public ResourceHolder{
+class Player : public ResourceHolder {
 private:
     static int m_numPlayers;
     int m_playerId      =-1;
@@ -35,25 +33,25 @@ private:
     int m_numOfCitiesLeft=5;
     int m_numOfSettlementsLeft=5;
 
-	bool m_has3for1Trade = false;
+    bool m_has3for1Trade = false;
 
 public:
-    Player(const std::string &name) : ResourceHolder(name) {}
+    Player(const std::string &name) : ResourceHolder() {}
 
     int getPlayerId() const { return m_playerId; }
-    
+
     std::vector<Edge*> getRoads() const { return m_roads; }
     void addVictoryPoints(int points) {m_victoryPointsUsed+=points; m_totalPoints+=points;}
-	void addVictoryPoint() {addVictoryPoints(1);}
+    void addVictoryPoint() {addVictoryPoints(1);}
     void addRoad(Edge* newroad);
     void addSettlement(Node* node);
-	void addCity(Node* node);
+    void addCity(Node* node);
 
     bool has3for1Trade() const {return m_has3for1Trade;}
-    void give3for1Trade() {m_has3for1Trade=true;}
+    void give3for1Trade()  {m_has3for1Trade=true;}
 
-    bool has2for1Trade(ResourceType resourceType) const {return m_has2for1Trade.at(resourceType);}
-	void give2for1Trade(ResourceType resourceType) {m_has2for1Trade[resourceType]=true;}
+    bool has2for1Trade(ResourceType resourceType)  {return m_has2for1Trade[resourceType];}
+    void give2for1Trade(ResourceType resourceType)  {m_has2for1Trade[resourceType]=true;}
 
     bool hasCityLeft() const {return m_numOfCitiesLeft>0;}
     bool hasSettlementLeft() const {return m_numOfSettlementsLeft>0;}
@@ -65,6 +63,13 @@ public:
     int getNumOfRoadsLeft() const {return m_numOfRoadsLeft;}
     int getNumOfCitiesLeft() const {return m_numOfCitiesLeft;}
     int getNumOfSettlementsLeft() const {return m_numOfSettlementsLeft;}
+
+    bool hasTrade(ResourceType resourceType) const;
+    bool hasLongestRoad() const;
+
+    ResourcePack takeRandomResources(int amount);
+    ResourceType takeRandomResource();
+
 };
 
 

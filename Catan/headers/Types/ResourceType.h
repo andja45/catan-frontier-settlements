@@ -18,6 +18,6 @@ static const std::array<ResourceType, 5> ResourceCardTypes = {
     ResourceType::Ore,
 	ResourceType::Wool,
 	ResourceType::Wheat
-}
+};
 
 #endif // RESOURCETYPE_H

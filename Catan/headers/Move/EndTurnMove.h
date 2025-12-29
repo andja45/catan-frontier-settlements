@@ -8,7 +8,14 @@
 #include "Move.h"
 
 
-class EndTurnMove : Move{
+class EndTurnMove : public Move{
+private:
+    int m_playerId;
+public:
+    explicit EndTurnMove(int playerId) : m_playerId(playerId) {}
+
+    bool isValid(const GameSession&) const override;
+    void apply(GameSession&) const override;
 };
 
 

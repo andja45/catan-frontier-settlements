@@ -28,16 +28,14 @@ set(PROJECT_SOURCES
         headers/Board/Board.h
         code/Model/Move/Move.cpp
         headers/Move/Move.h
-        code/Model/Game/GameState.cpp
-        headers/Game/GameState.h
         code/Model/Move/BuildRoadMove.cpp
         headers/Move/BuildRoadMove.h
         code/Model/Move/BuildSettlementMove.cpp
         headers/Move/BuildSettlementMove.h
         code/Model/Move/BuildCityMove.cpp
         headers/Move/BuildCityMove.h
-        code/Model/Move/TradeMove.cpp
-        headers/Move/TradeMove.h
+        code/Model/Move/PlayerTradeMove.cpp
+        headers/Move/PlayerTradeMove.h
         code/Model/Move/RollDiceMove.cpp
         headers/Move/RollDiceMove.h
         code/Model/Move/EndTurnMove.cpp
@@ -46,9 +44,10 @@ set(PROJECT_SOURCES
         headers/Game/GameModel.h
         code/Model/Game/GameSession.cpp
         headers/Game/GameSession.h
-         headers/Types/TypeAliases.hpp
-        headers/Types/DevType.hpp
+        headers/Types/TypeAliases.h
+        headers/Types/DevType.h
         code/Model/Board/Board.cpp
+        headers/Types/Costs.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -58,6 +57,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             headers/Board/Tile.h code/Model/Board/Tile.cpp
             headers/Types/ResourceType.h
             headers/Board/Node.h code/Model/Board/Node.cpp
+            code/Model/Move/BankTradeMove.cpp
+            code/Model/Game/GameModel.cpp
+            code/Model/Move/SettingRobberMove.cpp
             code/Model/Player/ResourceHolder.cpp
             code/Model/Player/Bank.cpp
     )
@@ -77,6 +79,12 @@ else()
             ${PROJECT_SOURCES}
                 code/Model/Player/ResourceHolder.cpp
                 code/Model/Player/Bank.cpp
+                headers/Types/Costs.h
+                headers/Types/Costs.h
+                code/Model/Move/SettingRobberMove.cpp
+                headers/Move/SettingRobberMove.h
+                code/Model/Move/BankTradeMove.cpp
+                headers/Move/BankTradeMove.h
         )
     endif()
 endif()

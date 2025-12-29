@@ -12,11 +12,11 @@ enum class DevType {
     Resources,
     VictoryPoint
 };
-static const std::vector<DevType, 5> DevCardTypes = {
+static const std::array<DevType, 5> DevCardTypes = {
     DevType::Monopoly,
     DevType::Knight,
     DevType::RoadBuilding,
 	DevType::Resources,
 	DevType::VictoryPoint
-}
+};
 #endif //Catan_DEVTYPE_HPP

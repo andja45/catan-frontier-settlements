@@ -7,12 +7,13 @@
 #include <map>
 #include <string>
 
+#include "../Types/TypeAliases.h"
+
 enum class DevType;
 enum class ResourceType;
 
 class ResourceHolder {
 private:
-    std::string m_name ="";
 	int m_numOfDevCards =0;
 	int m_numOfResourceCards =0;
     std::map<ResourceType, int> m_resources;
@@ -21,9 +22,10 @@ private:
     bool m_hasLargestMilitary=false;
 
 public:
-    ResourceHolder(const std::string &name) : m_name(name) {}
+    ResourceHolder()  {}
 
-    std::string getName() { return m_name; }
+    bool hasResource(ResourceType resourceType, int amount) const { return m_resources.at(resourceType)>=amount; }
+    bool hasResources(ResourcePack pack) const;
 
     void removeResource(ResourceType resourceType, int amount) { m_resources[resourceType]-= amount; m_numOfResourceCards--;}
     void addResource(ResourceType resourceType, int amount) { m_resources[resourceType]+= amount; m_numOfResourceCards++;}

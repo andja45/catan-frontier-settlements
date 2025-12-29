@@ -3,46 +3,49 @@
 //
 
 #include "../../../headers/Board/Board.h"
+#include "../../../headers/Board/Board.h"
 #include <memory>
 #include <random>
 #include <algorithm>
+struct TileDef;
 
+const std::array<int,18> Board::m_standardNumberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
+const std::array<HexCoords,19> Board::m_standardCoordinates = {{
+        // Center
+        { 0,   0},
 
-// posto sto jedna ista ivica i node pripadaju vise tajlova moramo ih jednoznacno dodeliti nekom odredjenom po dogovoru
-// vise o radialnim koordinatama na: https://www.redblobgames.com/grids/hexagons/
-void Board::standardizeCoords(HexCoords &coords, int &index) {
-        if (index <= 2) return; //0 1 2 ostaju kako jesu
-        //3,4,5 prebaci na odgovarajuci susedni hex i index 0,1,2
+        // Ring 1 (distance = 1)
+        { 1,   0},
+        { 1,  -1},
+        { 0,  -1},
+        {-1,   0},
+        {-1,   1},
+        { 0,   1},
 
-        int dq=0, dr=0;
-        switch (index) {
-            case 3: {
-                dq=-1;
-                dr=0;
-                index=0;
-            }
-            case 4: {
-                dq=-1;
-                dr=+1;
-                index=1;
-            }
-            case 5: {
-                dq=0;
-                dr=+1;
-                index=2;
-            }
-            default: {
-                 dq=0;
-                dr=0;
-            }
-        }
-        coords.first+=dq;
-        coords.second+=dr;
+        // Ring 2 (distance = 2)
+        { 1,   1},
+        { 2,   0},
+        { 2,  -1},
+        { 2,  -2},
+        { 1,  -2},
+        { 0,  -2},
+        {-1,  -1},
+        {-2,   0},
+        {-2,   1},
+        {-2,   2},
+        {-1,   2},
+        { 0,   2}
     }
-
-struct TileDef { int q, r; ResourceType res; int number; };
-
-static const std::vector<TileDef> basicMap = {
+};
+const std::array<HexCoords,6> Board::m_directionCoords = {{
+    { 0, -1 },  // top left
+    { 1, -1 },  // top right
+    { 1,  0 },  // right
+    { 0,  1 },  // bottom right
+    { -1, 1 },  // bottom left
+    { -1, 0 }   // left
+}};
+static const std::vector<TileDef> m_basicMap = {
     { -1, -2, ResourceType::Wood,   11 },
     {  0, -2, ResourceType::Wool,  12 },
     {  1, -2, ResourceType::Brick,   9 },
@@ -69,15 +72,78 @@ static const std::vector<TileDef> basicMap = {
 };
 
 
-void Board::initializeStandardBoard(std::vector<TileDef> tileMap) {
+// multiple tiles share same vertex/edge so we standardize coordinates to canonical form by assigning it to a certain tile
+// about axial coordinate system: https://www.redblobgames.com/grids/hexagons/
 
+void Board::standardizeNodeCoords(HexCoords &coords, int &index) {
+        if (index <= 2) return; //0 1 2 same the same
+        //3,4,5 go to next hex and change index to 0,1,2
+
+        SideDirection dir=SideDirection::End;
+        switch (index) {
+            case 3: {
+                dir = SideDirection::BottomLeft;
+                index=1;
+                break;
+            }
+            case 4: {
+                dir= SideDirection::BottomLeft;
+                index=0;
+                break;
+            }
+            case 5: {
+                dir= SideDirection::Left;
+                index=1;
+                break;
+            }
+            default: {
+            }
+        }
+
+        HexCoords dq = directionToCoord(dir);
+        coords.first+=dq.first;
+        coords.second+=dq.second;
+    }
+void Board::standardizeEdgeCoords(HexCoords &coords, int &index) {
+    if (index <= 2) return; //0 1 2 same the same
+    //3,4,5 go to next hex and change index to 0,1,2
+
+    SideDirection dir=SideDirection::End;
+    switch (index) {
+        case 3: {
+            dir = SideDirection::BottomLeft;
+            index=0;
+            break;
+        }
+        case 4: {
+            dir= SideDirection::Left;
+            index=1;
+            break;
+        }
+        case 5: {
+            dir= SideDirection::TopLeft;
+            index=2;
+            break;
+        }
+        default: {
+        }
+    }
+
+    HexCoords dq = directionToCoord(dir);
+    coords.first+=dq.first;
+    coords.second+=dq.second;
+}
+
+
+
+void Board::initializeBoard(std::vector<TileDef> tileMap) {
     m_tiles.clear();
     m_nodes.clear();
     m_edges.clear();
     m_tilesByCoord.clear();
     m_tilesByNumber.clear();
 
-    for (const auto&[q, r, res, number] : basicMap) {
+    for (const auto&[q, r, res, number] : tileMap) {
         auto t = std::make_unique<Tile>(q, r, res, number);
 
         Tile* raw = t.get();
@@ -91,55 +157,44 @@ void Board::initializeStandardBoard(std::vector<TileDef> tileMap) {
     for ( auto&[coord, uptr] : m_tilesByCoord) {
         Tile* t = uptr;
 
-        for (int corner = 0; corner < 6; corner++) {
-            int _corner = corner;
+        for (int i = 0; i < static_cast<int>(PointDirection::End); ++i) {
+            PointDirection dir=static_cast<PointDirection>(i);
+
             HexCoords _coord=coord;
-            Board::standardizeCoords(_coord,_corner);
-            if (m_tilesByCoord[_coord]->getNodeAt(_corner)==nullptr) {
-                auto n = std::make_unique<Node>(_coord.first, _coord.second, _corner);
+            Board::standardizeNodeCoords(_coord,i);
+
+            Node *raw = m_tilesByCoord[_coord]->getNodeAt(i);
+            if (raw==nullptr) {
+                auto n = std::make_unique<Node>(_coord.first, _coord.second, i);
                 m_nodes.push_back(std::move(n));
+                raw=n.get();
             }
-            Node *raw = m_tilesByCoord[_coord]->getNodeAt(_corner);
-            t->addAdjacentNode(raw,_corner);
-            raw->addAdjacentTile(t,corner);
-
-            static const std::array<std::pair<int,int>, 6> HEX_DIRECTIONS = {{
-                {+1,  0},
-                {+1, -1},
-                { 0, -1},
-                {-1,  0},
-                {-1, +1},
-                { 0, +1}
-            }};
-
-            Tile* neighborTile = m_tilesByCoord[{coord.first+HEX_DIRECTIONS[corner].first,coord.second+HEX_DIRECTIONS[corner].second}];
-            t->addAdjacentTile(neighborTile,corner);
+            t->setAdjacentNode(raw,i);
+            raw->addAdjacentTile(t);
         }
-    }
-    for ( auto&[coord, uptr] : m_tilesByCoord) {
-        for (int corner = 0; corner < 6; corner++) {
-            int cornerStart=corner;
-            int cornerEnd=(corner+1)%6;
-            Node* nStart=getNodeAt(coord,cornerStart);
-            Node* nEnd=getNodeAt(coord,cornerStart);
 
-            int _corner=corner;
+        for (int i = 0,j=0; i < static_cast<int>(PointDirection::End) && j< static_cast<int>(SideDirection::End); ++i,++j) {
+            int i_next=(i+1)%static_cast<int>(PointDirection::End);
+            SideDirection edgeDir=static_cast<SideDirection>(j);
+
+            int _edgeIndex=j;
             HexCoords _coord=coord;
-            Board::standardizeCoords(_coord,_corner);
-            if (m_tilesByCoord[_coord]->getEdgeAt(_corner)==nullptr) {
-                auto e = std::make_unique<Edge>(_coord.first, _coord.second, _corner, nStart, nEnd);
+            Board::standardizeEdgeCoords(_coord,_edgeIndex);
+            Edge *raw = m_tilesByCoord[_coord]->getEdgeAt(_edgeIndex);
+            if (raw==nullptr) {
+                auto e = std::make_unique<Edge>(_coord.first, _coord.second, _edgeIndex, t->getNodeAt(i), t->getNodeAt(i_next));
                 m_edges.push_back(std::move(e));
-                m_tilesByCoord[_coord]->addAdjacentEdge(e.get(),_corner);
+                raw=e.get();
             }
-            Edge * raw = m_tilesByCoord[_coord]->getEdgeAt(_corner);
-            nStart->addAdjacentEdge(raw,0);
-            nEnd->addAdjacentEdge(raw,1);
+            t->setAdjacentEdge(raw,_edgeIndex);
+            t->getNodeAt(i)->addAdjacentEdge(raw);
+            t->getNodeAt(i_next)->addAdjacentEdge(raw);
         }
+
     }
 }
 
-
-void Board::randomBoard(){
+std::vector<TileDef> Board::generateRandomBoard(){
     std::vector<TileDef> r;
     std::vector<ResourceType> hexList = {ResourceType::Desert};
     for(int i = 0; i < 4; i++) {
@@ -156,76 +211,41 @@ void Board::randomBoard(){
     std::mt19937 g(rd());
     std::shuffle(hexList.begin(), hexList.end(), g);
 
-    auto hexCoordinates = generateCoordinates();
-    // int j = 0;
-    // for(int i = 0; i < hexList.size(); i++){
-    //     if(hexList[i] == ResourceType::Desert) r.push_back(new Tile(hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], 7));
-    //     else m_tiles.push_back(new Tile(hexList[i], m_standardNumberOrder[j++], hexCoordinates[i]));
-    // }
-    // for(auto tile : m_tiles) {
-    //     m_tilesByCoord[tile->getTileCoord()] = tile;
-    // }
-    return ;
-}
-
-std::vector<HexCoords> Board::generateCoordinates(){
-    std::vector<std::pair<int,int>> hexCoordinates = {
-        // Center
-        { 0,    0},
-
-        // Ring 1 (distance = 1)
-        { 1,   0},
-        { 1,  -1},
-        { 0,  -1},
-        {-1,   0},
-        {-1,    1},
-        { 0,   1},
-
-        // Ring 2 (distance = 2)
-        { 1,   1},
-        { 2,   0},
-        { 2,  -1},
-        { 2,  -2},
-        { 1,   -2},
-        { 0,   -2},
-        {-1,   -1},
-        {-2,    0},
-        {-2,    1},
-        {-2,    2},
-        {-1,   2},
-        { 0,   2}
-    };
-    std::reverse(hexCoordinates.begin(), hexCoordinates.end());
-    return hexCoordinates;
-}
-
-Board::~Board(){
-}
-
-Tile* Board::getAdjacent(Tile* tile, std::pair<int,int> dir){
-    auto coord = tile->getTileCoord();
-    std::get<0>(coord) += std::get<0>(dir);
-    std::get<1>(coord) += std::get<1>(dir);
-
-    if(abs(std::get<0>(coord)) == 3) return new Tile();
-    if(abs(std::get<1>(coord)) == 3) return new Tile();
-
-    return m_tilesByCoord[coord];
-}
-
-std::pair<int,int> Board::directionToCoord(Direction dir){
-    switch (dir) {
-    case Direction::UpLeft:
-        return std::pair<int,int>(-1,  1);
-    case Direction::UpRight:
-        return std::pair<int,int>(0,  1);
-    case Direction::Right:
-        return std::pair<int,int>(1,  0);
-    case Direction::DownRight:
-        return std::pair<int,int>(1, -1);
-    case Direction::DownLeft:
-        return std::pair<int,int>(0, -1);
-    case Direction::Left:
-        return std::pair<int,int>(-1, 0);
+    auto hexCoordinates = Board::m_standardCoordinates;
+    int j = 0;
+    for(int i = 0; i < hexList.size(); i++){
+        if(hexList[i] == ResourceType::Desert) r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], 7});
+        else r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], m_standardNumberOrder[j++]});
     }
+    return r;
+}
+
+std::vector<Tile *> Board::getTilesWithNumber(int num) {
+}
+
+Tile * Board::getTileAt(HexCoords coords) {
+}
+
+Node * Board::getNodeAt(HexCoords coords, int index) {
+}
+
+Edge * Board::getEdgeAt(HexCoords coords, int index) {
+}
+
+Node * Board::getNodeById(int nodeId) const {
+}
+
+Edge * Board::getEdgeById(int edgeId) const {
+}
+
+Tile * Board::getTileById(int tileId) const {
+}
+
+Node * Board::getNodeAtDir(HexCoords coords, PointDirection) {
+}
+
+Edge * Board::getEdgeAtDir(HexCoords coords, SideDirection) {
+}
+
+Tile * Board::getTileAtDir(HexCoords coords, SideDirection) {
 }

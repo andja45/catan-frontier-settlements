@@ -12,3 +12,6 @@ void removeResource(ResourceType resourceType, int amount){
 void addResource(ResourceType resourceType, int amount);
 void addDevCard(DevType devType);
 void removeDevCard(DevType devType);
+
+bool ResourceHolder::hasResources(ResourcePack pack) const {
+}

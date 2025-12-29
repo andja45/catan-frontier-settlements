@@ -4,6 +4,7 @@
 
 #include "../../../headers/Player/Bank.h"
 #include "../../../headers/Types/ResourceType.h"
+#include "../../../headers/Types/DevType.h"
 enum class ResourceType;
 
 const std::map<DevType,int> Bank::m_numberOfStandardDevCardsByType = {
@@ -21,11 +22,14 @@ void Bank::initializeStandardBank(){
 		}
 
 		for (DevType type : DevCardTypes){
-			for(int i =0; i<m_numberOfStandardDevCardsByType[type]; i++){
+			for(int i =0; i<m_numberOfStandardDevCardsByType.at(type); i++){
 				addDevCard(type);
 			}
 		}
 
 		setLongestRoad(true);
 		setLargestMilitary(true);
+}
+
+DevType Bank::takeRandomDev() {
 }
