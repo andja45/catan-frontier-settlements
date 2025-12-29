@@ -321,6 +321,15 @@ Node * Board::getNodeAt(HexCoords coords, int index) {
 Edge * Board::getEdgeAt(HexCoords coords, int index) {
 }
 
+Node * Board::getNodeById(int nodeId) const {
+}
+
+Edge * Board::getEdgeById(int edgeId) const {
+}
+
+Tile * Board::getTileById(int tileId) const {
+}
+
 Node * Board::getNodeAtDir(HexCoords coords, PointDirection) {
 }
 
@@ -328,4 +337,12 @@ Edge * Board::getEdgeAtDir(HexCoords coords, SideDirection) {
 }
 
 Tile * Board::getTileAtDir(HexCoords coords, SideDirection) {
+}
+
+std::vector<HexCoords> Board::getBoardCords() {
+    std::vector<HexCoords> coords;
+    for (auto&[coord, tile] : m_tilesByCoord) {
+        coords.push_back(coord);
+    }
+    return coords;
 }

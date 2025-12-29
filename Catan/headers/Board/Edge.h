@@ -32,7 +32,9 @@ public:
     Node* getStart() const { return m_start; }
     Node* getEnd() const { return m_end; }
     std::array<Node*,2> getNodes() const { return {m_start,m_end}; }
-    std::array<Edge*,4> adjacentEdges() const {}
+    std::array<Edge*,4> adjacentEdges() const {
+    }
+
     bool isRoad() const { return m_isRoad; }
     int getOwner() const { return m_playerId; }
     int getEdgeId() const { return m_edgeId; }

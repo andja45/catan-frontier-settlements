@@ -1,10 +1,16 @@
 //
-// Created by andja on 11.12.25..
+// Created by andja on 11.12.25.
 //
 
 #include "../../../headers/Game/GameModel.h"
 #include "../../../headers/Move/Move.h"
 #include <random>
+
+void GameModel::notifyModelChanged() {
+}
+
+GameModel::GameModel(int numPlayers) {
+}
 
 bool GameModel::hasResource(int playerId, ResourceType type, int amount) const {
     return m_players.at(playerId).hasResource(type, amount);
@@ -19,12 +25,12 @@ bool GameModel::hasResources(int playerId, const ResourcePack& pack) const{
 }
 
 void GameModel::consumeResource(int playerId, ResourceType type, int amount) {
-    m_players.at(playerId).takeResource(type, amount);
+    m_players.at(playerId).removeResource(type, amount);
 }
 
 void GameModel::consumeResources(int playerId, const ResourcePack& pack){
     for (const auto [type, amount] : pack) {
-        m_players.at(playerId).takeResource(type, amount);
+        m_players.at(playerId).removeResource(type, amount);
     }
     notifyModelChanged();
 }
@@ -35,7 +41,7 @@ void GameModel::transferResource(int playerId, ResourceType type, int amount) {
 
 void GameModel::transferResources(int from, int to, const ResourcePack& pack) {
     for (const auto [type, amount] : pack) {
-        m_players.at(from).takeResource(type, amount);
+        m_players.at(from).removeResource(type, amount);
         m_players.at(to).addResource(type, amount);
     }
 }
@@ -89,20 +95,15 @@ bool GameModel::canPlaceSettlement(int playerId, int nodeId, bool isInitialPlace
     }
 
     // mora biti povezan putem (osim initial placement faze)
-    if (!isInitialPlacement) {
-        bool connected = false;
-        for (Edge* e : node->getIncidentEdges()) {
-            if (!e) continue;
-            if (e->getOwner() == playerId) {
-                connected = true;
-                break;
-            }
-        }
-        if (!connected)
-            return false;
+    if (isInitialPlacement)
+        return true;
+
+    for (Edge* e : node->getIncidentEdges()) {
+        if (e && e->getOwner() == playerId)
+            return true;
     }
 
-    return connected;
+    return false;
 }
 
 bool GameModel::canPlaceCity(int playerId, int nodeId) const {
@@ -150,7 +151,7 @@ void GameModel::placeSettlement(int playerId, int nodeId){
     Node* node = m_board.getNodeById(nodeId);
 
     node->setOwner(playerId);
-    m_players.at(playerId).addHouse(node);
+    m_players.at(playerId).addSettlement(node);
 }
 
 void GameModel::placeCity(int playerId, int nodeId){

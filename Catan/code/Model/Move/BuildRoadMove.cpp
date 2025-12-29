@@ -8,7 +8,7 @@ bool BuildRoadMove::isValid(const GameSession& session) const {
     if (!session.isPlayersTurn(m_playerId)) return false;
     if (!session.canBuild()) return false;
 
-    GameModel& model = session.model();
+    const GameModel& model = session.model();
     // da li je pozicija validna (pravila)
     if (!model.canPlaceRoad(m_playerId, m_edgeId)) return false;
     if (!model.hasResources(m_playerId, Costs::Road)) return false;

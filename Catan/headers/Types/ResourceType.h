@@ -2,6 +2,7 @@
 #define RESOURCETYPE_H
 #include <map>
 #include <string>
+#include <array>
 
 enum class ResourceType {
     None,
@@ -28,5 +29,12 @@ static ResourceType fromString(const std::string& s) {
         return mapStringToRes.at(s);
     }
 
+static const std::array<ResourceType, 5> ResourceCardTypes = {
+    ResourceType::Wood,
+    ResourceType::Brick,
+    ResourceType::Ore,
+	ResourceType::Wool,
+	ResourceType::Wheat
+};
 
 #endif // RESOURCETYPE_H

@@ -1,9 +1,9 @@
 //
-// Created by andja on 11.12.25..
+// Created by andja on 11.12.25.
 //
 
 #include "../../../headers/Game/GameSession.h"
-
+#include "../../../headers/Move/Move.h"
 bool GameSession::applyMove(const Move& move){
     if (!move.isValid(*this)) {
         return false;
@@ -53,3 +53,9 @@ void GameSession::endTurn() {
     // inace ide u rolldice - ali nije tako jednostavno, treba impl i izlazak
     // iz initialplacement(svi se postavili)
 }
+
+// TODO
+// za mrezu, drugi igraci imaju model i view + trenutno stanje iz gamesession
+// (za crtanje koji dugmici su sivi-unclickable), samo treba resiti negde se cuva koji
+// playerid si ti -> od toga isto zavisi tvoj view(karte ime)
+// startgame dugme pravi gamesession i popunjava igrace(pokupi info pre starta dobijen)
