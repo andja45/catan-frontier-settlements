@@ -62,6 +62,15 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             code/Model/Move/SettingRobberMove.cpp
             code/Model/Player/ResourceHolder.cpp
             code/Model/Player/Bank.cpp
+            code/AsciiView/BoardView.cpp
+            code/AsciiView/BoardView.hpp
+            code/AsciiView/EdgeView.cpp
+            code/AsciiView/EdgeView.hpp
+            code/AsciiView/TileView.hpp
+            code/AsciiView/TileView.cpp
+            code/AsciiView/NodeView.cpp
+            code/AsciiView/NodeView.hpp
+            code/AsciiView/ViewTypes.hpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET neee APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -85,6 +94,17 @@ else()
                 headers/Move/SettingRobberMove.h
                 code/Model/Move/BankTradeMove.cpp
                 headers/Move/BankTradeMove.h
+                code/AsciiView/BoardView.cpp
+                code/AsciiView/BoardView.hpp
+                code/AsciiView/EdgeView.cpp
+                code/AsciiView/EdgeView.hpp
+                code/AsciiView/TileView.cpp
+                code/AsciiView/TileView.hpp
+                code/AsciiView/TileView.hpp
+                code/AsciiView/TileView.cpp
+                code/AsciiView/NodeView.cpp
+                code/AsciiView/NodeView.hpp
+                code/AsciiView/ViewTypes.hpp
         )
     endif()
 endif()

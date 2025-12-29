@@ -95,6 +95,8 @@ public:
     Edge* getEdgeAtDir(HexCoords coords, SideDirection);
     Tile* getTileAtDir(HexCoords coords, SideDirection);
 
+    std::vector<HexCoords> getBoardCords();
+
 };
 
 
