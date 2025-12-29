@@ -3,6 +3,7 @@
 //
 
 #include "EdgeView.hpp"
+#include "../../headers/Board/Board.h"
 
 char EdgeView::sideToChar(const BoardTheme &theme) const {
     switch (m_side) {

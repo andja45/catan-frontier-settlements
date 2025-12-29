@@ -203,8 +203,8 @@ void Board::saveBoard(const std::string& saveFilePath) {
 
     for (auto [coords, t] : m_tilesByCoord) {
         saveBoard.push_back({
-            {"q", coords.first()},
-            {"r", coords.second()},
+            {"q", coords.first},
+            {"r", coords.second},
             {"type", t->getType()},
             {"number", t->getNumber()}
         });
