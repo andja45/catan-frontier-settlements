@@ -58,6 +58,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             headers/Board/Tile.h code/Model/Board/Tile.cpp
             headers/Types/ResourceType.h
             headers/Board/Node.h code/Model/Board/Node.cpp
+            code/Model/Player/ResourceHolder.cpp
+            code/Model/Player/Bank.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET neee APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -73,6 +75,8 @@ else()
     else()
         add_executable(Catan
             ${PROJECT_SOURCES}
+                code/Model/Player/ResourceHolder.cpp
+                code/Model/Player/Bank.cpp
         )
     endif()
 endif()

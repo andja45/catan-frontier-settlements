@@ -50,21 +50,21 @@ public:
 	void addCity(Node* node);
 
     bool has3for1Trade() const {return m_has3for1Trade;}
-    void give3for1Trade() const {m_has3for1Trade=true;}
+    void give3for1Trade() {m_has3for1Trade=true;}
 
-    bool has2for1Trade(ResourceType resourceType) const {return m_has2for1Trade[resourceType];}
-	void give2for1Trade(ResourceType resourceType) const {m_has2for1Trade[resourceType]=true;}
+    bool has2for1Trade(ResourceType resourceType) const {return m_has2for1Trade.at(resourceType);}
+	void give2for1Trade(ResourceType resourceType) {m_has2for1Trade[resourceType]=true;}
 
-    bool hasCityLeft() const {return m_numofCitiesLeft>0;}
-    bool hasSettlementLeft() const {return m_numofSettlementsLeft>0;}
-    bool hasRoadLeft() const {return m_numofRoadsLeft>0;}
+    bool hasCityLeft() const {return m_numOfCitiesLeft>0;}
+    bool hasSettlementLeft() const {return m_numOfSettlementsLeft>0;}
+    bool hasRoadLeft() const {return m_numOfRoadsLeft>0;}
 
     int getTotalPoints() const {return m_totalPoints;}
     int getVictoryPointsUsed() const {return m_victoryPointsUsed;}
     int getKnightsUsed() const {return m_knightsUsed;}
-    int getNumOfRoadsLeft() const {return m_numofRoadsLeft;}
-    int getNumOfCitiesLeft() const {return m_numofCitiesLeft;}
-    int getNumOfSettlementsLeft() const {return m_numofSettlementsLeft;}
+    int getNumOfRoadsLeft() const {return m_numOfRoadsLeft;}
+    int getNumOfCitiesLeft() const {return m_numOfCitiesLeft;}
+    int getNumOfSettlementsLeft() const {return m_numOfSettlementsLeft;}
 };
 
 

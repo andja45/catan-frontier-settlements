@@ -1,5 +1,6 @@
 #ifndef RESOURCETYPE_H
 #define RESOURCETYPE_H
+#include <array>
 
 enum class ResourceType {
     None,
@@ -11,7 +12,7 @@ enum class ResourceType {
     Sea,
     Wheat
 };
-static const std::vector<ResourceType, 5> ResourceCardTypes = {
+static const std::array<ResourceType, 5> ResourceCardTypes = {
     ResourceType::Wood,
     ResourceType::Brick,
     ResourceType::Ore,

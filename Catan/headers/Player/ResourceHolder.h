@@ -4,8 +4,12 @@
 
 #ifndef CATAN_RESOURCEHOLDER_H
 #define CATAN_RESOURCEHOLDER_H
+#include <map>
+#include <string>
 
-#include "../Types/ResourceHolder.h"
+enum class DevType;
+enum class ResourceType;
+
 class ResourceHolder {
 private:
     std::string m_name ="";

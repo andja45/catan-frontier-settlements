@@ -3,6 +3,8 @@
 //
 
 #include "../../../headers/Player/ResourceHolder.h"
+#include "../../../headers/Types/ResourceType.h"
+enum class DevType;
 
 void removeResource(ResourceType resourceType, int amount){
 
