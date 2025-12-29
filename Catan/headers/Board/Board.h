@@ -74,9 +74,11 @@ private:
 
     void initializeBoard(std::vector<TileDef> tileMap);
 
-    void saveBoard(std::string saveFilePath, std::string saveName);
+    void saveBoard(const std::string &saveFilePath);
 
-    std::vector<TileDef> loadSavedBoard(std::string loadFilePath, std::string saveName);
+    std::vector<TileDef> loadSavedBoard(const std::string &loadFilePath);
+
+    std::vector<TileDef> loadBoardFromTextFile(const std::string &loadFilePath);
 
     std::vector<TileDef> generateRandomBoard();
 
