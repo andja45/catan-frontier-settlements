@@ -1,0 +1,46 @@
+add_library(catan_game
+        board/Edge.h
+        board/Tile.h
+        board/Edge.cpp
+        board/Edge.h
+        types/NodeType.h
+        player/Player.cpp
+        player/Player.h
+        board/Board.cpp
+        board/Board.h
+        move/Move.cpp
+        move/Move.h
+        move/BuildRoadMove.cpp
+        move/BuildRoadMove.h
+        move/BuildSettlementMove.cpp
+        move/BuildSettlementMove.h
+        move/BuildCityMove.cpp
+        move/BuildCityMove.h
+        move/PlayerTradeMove.cpp
+        move/PlayerTradeMove.h
+        move/RollDiceMove.cpp
+        move/RollDiceMove.h
+        move/EndTurnMove.cpp
+        move/EndTurnMove.h
+        gamemodel/GameModel.cpp
+        gamemodel/GameModel.h
+        gamemodel/GameSession.cpp
+        gamemodel/GameSession.h
+        types/TypeAliases.h
+        types/DevType.h
+        board/Board.cpp
+        types/Costs.h
+        player/Bank.cpp
+)
+
+target_include_directories(catan_game
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(catan_game
+        PUBLIC
+        catan_libs
+)
+
+target_compile_features(catan_game PUBLIC cxx_std_17)
