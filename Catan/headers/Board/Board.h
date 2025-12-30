@@ -67,9 +67,19 @@ private:
     static int directionToIndex(PointDirection dir){return static_cast<int>(dir);}
 
     static void standardizeEdgeCoords(HexCoords& coords, int& index);
+
+    void clearBoard();
+
     static void standardizeNodeCoords(HexCoords& coords, int& index);
 
     void initializeBoard(std::vector<TileDef> tileMap);
+
+    void saveBoard(const std::string &saveFilePath);
+
+    std::vector<TileDef> loadSavedBoard(const std::string &loadFilePath);
+
+    std::vector<TileDef> loadBoardFromTextFile(const std::string &loadFilePath);
+
     std::vector<TileDef> generateRandomBoard();
 
     std::map<HexCoords,Tile*> m_tilesByCoord;
@@ -94,6 +104,8 @@ public:
     Node* getNodeAtDir(HexCoords coords, PointDirection);
     Edge* getEdgeAtDir(HexCoords coords, SideDirection);
     Tile* getTileAtDir(HexCoords coords, SideDirection);
+
+    std::vector<HexCoords> getBoardCords();
 
 };
 

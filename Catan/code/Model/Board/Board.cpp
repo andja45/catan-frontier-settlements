@@ -7,7 +7,11 @@
 #include <memory>
 #include <random>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+#include "json.hpp"
 struct TileDef;
+using json = nlohmann::json;
 
 const std::array<int,18> Board::m_standardNumberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
 const std::array<HexCoords,19> Board::m_standardCoordinates = {{
@@ -136,12 +140,15 @@ void Board::standardizeEdgeCoords(HexCoords &coords, int &index) {
 
 
 
-void Board::initializeBoard(std::vector<TileDef> tileMap) {
+void Board::clearBoard() {
     m_tiles.clear();
     m_nodes.clear();
     m_edges.clear();
     m_tilesByCoord.clear();
     m_tilesByNumber.clear();
+}
+void Board::initializeBoard(std::vector<TileDef> tileMap) {
+    clearBoard();
 
     for (const auto&[q, r, res, number] : tileMap) {
         auto t = std::make_unique<Tile>(q, r, res, number);
@@ -159,10 +166,8 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) {
 
         for (int i = 0; i < static_cast<int>(PointDirection::End); ++i) {
             PointDirection dir=static_cast<PointDirection>(i);
-
             HexCoords _coord=coord;
             Board::standardizeNodeCoords(_coord,i);
-
             Node *raw = m_tilesByCoord[_coord]->getNodeAt(i);
             if (raw==nullptr) {
                 auto n = std::make_unique<Node>(_coord.first, _coord.second, i);
@@ -193,6 +198,90 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) {
 
     }
 }
+void Board::saveBoard(const std::string& saveFilePath) {
+    json saveBoard = json::array();
+
+    for (auto [coords, t] : m_tilesByCoord) {
+        saveBoard.push_back({
+            {"q", coords.first},
+            {"r", coords.second},
+            {"type", t->getType()},
+            {"number", t->getNumber()}
+        });
+    }
+
+    json root;
+    root = saveBoard;
+
+    std::ofstream saveFile(saveFilePath);
+    if (!saveFile.is_open()) {
+        std::cerr << "Cannot open file for writing: " << saveFilePath << std::endl;
+        return;
+    }
+
+    saveFile << root.dump(4);
+    saveFile.close();
+}
+
+
+std::vector<TileDef> Board::loadSavedBoard(const std::string& loadFilePath) {
+
+    std::ifstream loadFile(loadFilePath);
+    if (!loadFile.is_open()) {
+        std::cerr << "Cannot open file for reading: " << loadFilePath << std::endl;
+        return {};
+    }
+
+    json root;
+    try {
+        loadFile >> root;
+    } catch (json::parse_error& e) {
+        std::cerr << "Error parsing JSON: " << e.what() << std::endl;
+        return {};
+    }
+
+    const json& savedBoard = root;
+    std::vector<TileDef> loadMap;
+
+    for (const auto& tile : savedBoard) {
+        loadMap.push_back({
+            tile.at("q").get<int>(),
+            tile.at("r").get<int>(),
+            fromString( tile.at("type").get<std::string>()),
+            tile.at("number").get<int>()
+        });
+    }
+
+    return loadMap;
+}
+
+std::vector<TileDef> Board::loadBoardFromTextFile(const std::string& loadFilePath) {
+    clearBoard();
+    std::ifstream loadFile(loadFilePath);
+    if (!loadFile.is_open()) {
+        std::cerr << "Cannot open file: " << loadFilePath << std::endl;
+        return {};
+    }
+
+    std::vector<TileDef> loadMap;
+    int q, r, number;
+    std::string type;
+
+    std::string line;
+    while (std::getline(loadFile, line)) {
+        if (line.empty()) continue;
+        std::istringstream iss(line);
+        if (!(iss >> q >> r >> type >> number)) {
+            std::cerr << "Error in line: " << line << std::endl;
+            continue;
+        }
+
+        loadMap.push_back({q, r, fromString(type), number});
+    }
+
+    return loadMap;
+}
+
 
 std::vector<TileDef> Board::generateRandomBoard(){
     std::vector<TileDef> r;
@@ -248,4 +337,12 @@ Edge * Board::getEdgeAtDir(HexCoords coords, SideDirection) {
 }
 
 Tile * Board::getTileAtDir(HexCoords coords, SideDirection) {
+}
+
+std::vector<HexCoords> Board::getBoardCords() {
+    std::vector<HexCoords> coords;
+    for (auto&[coord, tile] : m_tilesByCoord) {
+        coords.push_back(coord);
+    }
+    return coords;
 }

@@ -11,62 +11,65 @@
 
 #include "../Board/Edge.h"
 #include "../Board/Node.h"
+#include "ResourceHolder.h"
 
 enum class DevType;
-
-class Player {
+class Player : public ResourceHolder {
 private:
-    static int _numPlayers;
-    int _playerId =-1;
+    static int m_numPlayers;
+    int m_playerId      =-1;
 
-    std::vector<Edge*> _roads;
-    std::vector<Node *> _houses;
+    std::vector<Edge*> m_roads;
+    std::vector<Node *> m_houses;
 
-    std::map<ResourceType,bool> _hasTrade;
+    std::map<ResourceType,bool> m_has2for1Trade;
 
-    std::map<ResourceType, int> _resources;
-    std::map<DevType, int> _devCards;
+    int m_knightsUsed=0;
+    int m_victoryPointsUsed=0;
 
-    int _knightsUsed=0;
-    int _victoryPointsUsed=0;
-    bool _hasLongestRoad=false;
+    int m_totalPoints=0;
 
-    int _numOfRoadsLeft=15;
-    int _numOfCitiesLeft=5;
-    int _numOfSettlementsLeft=5;
+    int m_numOfRoadsLeft=15;
+    int m_numOfCitiesLeft=5;
+    int m_numOfSettlementsLeft=5;
+
+    bool m_has3for1Trade = false;
+
 public:
-    Player(int id) : _playerId(id) {}
+    Player(const std::string &name) : ResourceHolder() {}
 
-    int getPlayerId() const { return _playerId; }
-    
-    std::vector<Edge*> getRoads() const { return _roads; }
-    void takeResource(ResourceType resourceType, int amount);
-    void addResource(ResourceType resourceType, int amount);
-    void addDevCard(DevType devType);
-    void useDevCard(DevType devType);
-    void addVictoryPoints(int points);
-    void addRoad(Edge* road);
-    void addHouse(Node* house);
+    int getPlayerId() const { return m_playerId; }
 
-    bool has3for1Trade() const;
+    std::vector<Edge*> getRoads() const { return m_roads; }
+    void addVictoryPoints(int points) {m_victoryPointsUsed+=points; m_totalPoints+=points;}
+    void addVictoryPoint() {addVictoryPoints(1);}
+    void addRoad(Edge* newroad);
+    void addSettlement(Node* node);
+    void addCity(Node* node);
+
+    bool has3for1Trade() const {return m_has3for1Trade;}
+    void give3for1Trade()  {m_has3for1Trade=true;}
+
+    bool has2for1Trade(ResourceType resourceType)  {return m_has2for1Trade[resourceType];}
+    void give2for1Trade(ResourceType resourceType)  {m_has2for1Trade[resourceType]=true;}
+
+    bool hasCityLeft() const {return m_numOfCitiesLeft>0;}
+    bool hasSettlementLeft() const {return m_numOfSettlementsLeft>0;}
+    bool hasRoadLeft() const {return m_numOfRoadsLeft>0;}
+
+    int getTotalPoints() const {return m_totalPoints;}
+    int getVictoryPointsUsed() const {return m_victoryPointsUsed;}
+    int getKnightsUsed() const {return m_knightsUsed;}
+    int getNumOfRoadsLeft() const {return m_numOfRoadsLeft;}
+    int getNumOfCitiesLeft() const {return m_numOfCitiesLeft;}
+    int getNumOfSettlementsLeft() const {return m_numOfSettlementsLeft;}
+
     bool hasTrade(ResourceType resourceType) const;
     bool hasLongestRoad() const;
-    bool hasCityLeft() const;
-    bool hasSettlementLeft() const;
-    bool hasRoadLeft() const;
-    bool hasResource(ResourceType resourceType, int amount) const; // za gamemodel treba
 
-    int getTotalPoints() const;
-    int getVictoryPointsUsed() const;
-    int getKnightsUsed() const;
-    int getNumOfDevCards() const;
-    int getNumOfResourceCards() const;
-    int getNumOfRoadsLeft() const;
-    int getNumOfCitiesLeft() const;
-    int getNumOfSettlementsLeft() const;
-
-    void setLongestRoad(bool longestRoad) {_hasLongestRoad=longestRoad;}
+    ResourcePack takeRandomResources(int amount);
     ResourceType takeRandomResource();
+
 };
 
 

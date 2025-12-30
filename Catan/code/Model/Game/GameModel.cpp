@@ -25,12 +25,12 @@ bool GameModel::hasResources(int playerId, const ResourcePack& pack) const{
 }
 
 void GameModel::consumeResource(int playerId, ResourceType type, int amount) {
-    m_players.at(playerId).takeResource(type, amount);
+    m_players.at(playerId).removeResource(type, amount);
 }
 
 void GameModel::consumeResources(int playerId, const ResourcePack& pack){
     for (const auto [type, amount] : pack) {
-        m_players.at(playerId).takeResource(type, amount);
+        m_players.at(playerId).removeResource(type, amount);
     }
     notifyModelChanged();
 }
@@ -41,7 +41,7 @@ void GameModel::transferResource(int playerId, ResourceType type, int amount) {
 
 void GameModel::transferResources(int from, int to, const ResourcePack& pack) {
     for (const auto [type, amount] : pack) {
-        m_players.at(from).takeResource(type, amount);
+        m_players.at(from).removeResource(type, amount);
         m_players.at(to).addResource(type, amount);
     }
 }
@@ -151,7 +151,7 @@ void GameModel::placeSettlement(int playerId, int nodeId){
     Node* node = m_board.getNodeById(nodeId);
 
     node->setOwner(playerId);
-    m_players.at(playerId).addHouse(node);
+    m_players.at(playerId).addSettlement(node);
 }
 
 void GameModel::placeCity(int playerId, int nodeId){

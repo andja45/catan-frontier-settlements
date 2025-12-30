@@ -4,29 +4,31 @@
 
 #include "../../../headers/Player/Player.h"
 
-void Player::takeResource(ResourceType resourceType, int amount) {
+
+void Player::addSettlement(Node* node){
+	node->setOwner(m_playerId);
+	node->setNodeType(NodeType::Settlement);
+	addVictoryPoint();
+	if(node->hasTrade()){
+		if(node->is3for1Trade()) give3for1Trade();
+		else give2for1Trade(node->getTradeResource());
+	}
+}
+void Player::addCity(Node* node){
+	node->upgradeToCity();
+	addVictoryPoint();
+
+
+}
+void Player::addRoad(Edge* newroad){
+	newroad->setRoad(m_playerId);
 }
 
-void Player::addResource(ResourceType resourceType, int amount) {
-}
 
-void Player::addDevCard(DevType devType) {
-}
 
-void Player::useDevCard(DevType devType) {
-}
 
-void Player::addVictoryPoints(int points) {
-}
 
-void Player::addRoad(Edge *road) {
-}
 
-void Player::addHouse(Node *house) {
-}
-
-bool Player::has3for1Trade() const {
-}
 
 bool Player::hasTrade(ResourceType resourceType) const {
 }
@@ -34,41 +36,9 @@ bool Player::hasTrade(ResourceType resourceType) const {
 bool Player::hasLongestRoad() const {
 }
 
-bool Player::hasCityLeft() const {
-}
-
-bool Player::hasSettlementLeft() const {
-}
-
-bool Player::hasRoadLeft() const {
-}
-
-bool Player::hasResource(ResourceType resourceType, int amount) const {
-}
-
-int Player::getTotalPoints() const {
-}
-
-int Player::getVictoryPointsUsed() const {
-}
-
-int Player::getKnightsUsed() const {
-}
-
-int Player::getNumOfDevCards() const {
-}
-
-int Player::getNumOfResourceCards() const {
-}
-
-int Player::getNumOfRoadsLeft() const {
-}
-
-int Player::getNumOfCitiesLeft() const {
-}
-
-int Player::getNumOfSettlementsLeft() const {
+ResourcePack Player::takeRandomResources(int amount) {
 }
 
 ResourceType Player::takeRandomResource() {
 }
+
