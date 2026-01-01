@@ -60,6 +60,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
             code/Model/Move/BankTradeMove.cpp
             code/Model/Game/GameModel.cpp
             code/Model/Move/SettingRobberMove.cpp
+            catanhexwidget.h catanhexwidget.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET neee APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
