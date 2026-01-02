@@ -12,6 +12,7 @@ class CatanHexWidget : public QWidget {
     Q_OBJECT
 public:
     explicit CatanHexWidget(Board* board, QWidget *parent = nullptr);
+    Board* getBoard() { return m_board; }
 
 protected:
     void paintEvent(QPaintEvent *event) override;
