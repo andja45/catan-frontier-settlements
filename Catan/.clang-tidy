@@ -1,0 +1,102 @@
+# ============================================================
+#   - Classes / Structs / Enums      - CamelCase
+#   - Functions / Methods            - camelCase
+#   - Member variables               - m_ + camelCase
+#   - Local variables / Parameters   - camelCase
+#   - Constants                      - camelCase
+#   - Namespaces                     - lower_case
+#   - Macros                         - UPPER_CASE
+# ============================================================
+
+Checks: >
+  -*,
+  clang-analyzer-*,
+  bugprone-*,
+  performance-*,
+  modernize-*,
+  readability-*,
+
+WarningsAsErrors: ''
+
+# Don't check third party libs 
+HeaderFilterRegex: '^(?!.*libs).*'
+
+
+CheckOptions:
+  # Types: classes / structs / unions - CamelCase
+  # Example: GameBoard, PlayerState
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.UnionCase
+    value: CamelCase
+
+  # Enums and enum values - CamelCase
+  # Example: ResourceType::Wood
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumConstantCase
+    value: CamelCase
+
+  # Namespaces - lower_case
+  # Example: catan::engine::board
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+
+  # Free functions and methods - camelCase
+  # Example: computeScore(), setText()
+  - key: readability-identifier-naming.FunctionCase
+    value: camelBack
+  - key: readability-identifier-naming.MethodCase
+    value: camelBack
+
+  # Local variables and parameters - camelCase
+  # Example: playerId, diceRoll
+  - key: readability-identifier-naming.LocalVariableCase
+    value: camelBack
+  - key: readability-identifier-naming.ParameterCase
+    value: camelBack
+
+  # Member variables - m_ + camelCase
+  # Example: m_score, m_playerName
+  - key: readability-identifier-naming.PrivateMemberCase
+    value: camelBack
+  - key: readability-identifier-naming.PrivateMemberPrefix
+    value: m_
+
+  - key: readability-identifier-naming.ProtectedMemberCase
+    value: camelBack
+  - key: readability-identifier-naming.ProtectedMemberPrefix
+    value: m_
+
+  - key: readability-identifier-naming.PublicMemberCase
+    value: camelBack
+  - key: readability-identifier-naming.PublicMemberPrefix
+    value: m_
+
+  # Constants - camelCase
+  # Example: maxPlayers, epsilon
+  - key: readability-identifier-naming.ConstantCase
+    value: camelBack
+
+  # Static class members - s_ + camelCase
+  # Example: s_instanceCount
+  - key: readability-identifier-naming.StaticMemberCase
+    value: camelBack
+  - key: readability-identifier-naming.StaticMemberPrefix
+    value: s_
+
+  # Global variables - g_ + camelCase
+  # Example: g_debugMode
+  - key: readability-identifier-naming.GlobalVariableCase
+    value: camelBack
+  - key: readability-identifier-naming.GlobalVariablePrefix
+    value: g_
+
+  # Macros - UPPER_CASE
+  # Example: MAX_BUFFER_SIZE
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+
+  
