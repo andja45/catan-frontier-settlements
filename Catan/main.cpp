@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "catanhexwidget.h"
+#include "headers/Board/Board.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,8 +12,10 @@ int main(int argc, char *argv[])
     //Widget w;
     //w.show();
 
+    auto board = new Board();
+
     QMainWindow win;
-    auto *w = new CatanHexWidget();
+    auto *w = new CatanHexWidget(board);
     win.setCentralWidget(w);
     win.resize(900, 900);
     win.show();

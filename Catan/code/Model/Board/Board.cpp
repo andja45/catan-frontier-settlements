@@ -136,12 +136,14 @@ void Board::standardizeEdgeCoords(HexCoords &coords, int &index) {
 
 
 
-void Board::initializeBoard(std::vector<TileDef> tileMap) {
+void Board::initializeBoard() {
     m_tiles.clear();
     m_nodes.clear();
     m_edges.clear();
     m_tilesByCoord.clear();
     m_tilesByNumber.clear();
+
+    std::vector<TileDef> tileMap = generateRandomBoard();
 
     for (const auto&[q, r, res, number] : tileMap) {
         auto t = std::make_unique<Tile>(q, r, res, number);
@@ -154,6 +156,36 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) {
             m_tilesByNumber[number].push_back(raw);
     }
 
+    //connectBoardElements();
+}
+
+std::vector<TileDef> Board::generateRandomBoard(){
+    std::vector<TileDef> r;
+    std::vector<ResourceType> hexList = {ResourceType::Desert};
+    for(int i = 0; i < 4; i++) {
+        hexList.push_back(ResourceType::Wood);
+        hexList.push_back(ResourceType::Wheat);
+        hexList.push_back(ResourceType::Wool);
+    }
+    for(int i = 0; i < 3; i++) {
+        hexList.push_back(ResourceType::Ore);
+        hexList.push_back(ResourceType::Brick);
+    }
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(hexList.begin(), hexList.end(), g);
+
+    auto hexCoordinates = Board::m_standardCoordinates;
+    int j = 0;
+    for(int i = 0; i < hexList.size(); i++){
+        if(hexList[i] == ResourceType::Desert) r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], 7});
+        else r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], m_standardNumberOrder[j++]});
+    }
+    return r;
+}
+
+void Board::connectBoardElements(){
     for ( auto&[coord, uptr] : m_tilesByCoord) {
         Tile* t = uptr;
 
@@ -190,34 +222,7 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) {
             t->getNodeAt(i)->addAdjacentEdge(raw);
             t->getNodeAt(i_next)->addAdjacentEdge(raw);
         }
-
     }
-}
-
-std::vector<TileDef> Board::generateRandomBoard(){
-    std::vector<TileDef> r;
-    std::vector<ResourceType> hexList = {ResourceType::Desert};
-    for(int i = 0; i < 4; i++) {
-        hexList.push_back(ResourceType::Wood);
-        hexList.push_back(ResourceType::Wheat);
-        hexList.push_back(ResourceType::Wool);
-    }
-    for(int i = 0; i < 3; i++) {
-        hexList.push_back(ResourceType::Ore);
-        hexList.push_back(ResourceType::Brick);
-    }
-
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(hexList.begin(), hexList.end(), g);
-
-    auto hexCoordinates = Board::m_standardCoordinates;
-    int j = 0;
-    for(int i = 0; i < hexList.size(); i++){
-        if(hexList[i] == ResourceType::Desert) r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], 7});
-        else r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], m_standardNumberOrder[j++]});
-    }
-    return r;
 }
 
 std::vector<Tile *> Board::getTilesWithNumber(int num) {
