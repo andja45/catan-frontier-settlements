@@ -1,5 +1,5 @@
-#ifndef CATANHEXWIDGET_H
-#define CATANHEXWIDGET_H
+#ifndef QBOARD_H
+#define QBOARD_H
 
 #include <QWidget>
 #include <QVector>
@@ -28,4 +28,4 @@ private:
     QRectF boundsForLayout(double size) const;
 };
 
-#endif // CATANHEXWIDGET_H
+#endif // QBOARD_H

@@ -5,7 +5,7 @@
 #include "./ui/ui_widget.h"
 
 
-#include "catanhexwidget.h"
+#include "QBoard.h"
 #include <board/Board.h>
 
 Widget::Widget(QWidget *parent)

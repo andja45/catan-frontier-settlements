@@ -18,7 +18,7 @@
 struct TileDef;
 using json = nlohmann::json;
 
-const std::array<int,18> Board::m_standardNumberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
+std::array<int,18> Board::m_standardNumberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
 const std::array<HexCoords,19> Board::m_standardCoordinates = {{
         // Center
         { 0,   0},
@@ -188,6 +188,7 @@ std::vector<TileDef> Board::generateRandomBoard(){
     std::mt19937 g(rd());
     std::shuffle(hexList.begin(), hexList.end(), g);
 
+    std::reverse(m_standardNumberOrder.begin(), m_standardNumberOrder.end());
     auto hexCoordinates = Board::m_standardCoordinates;
     int j = 0;
     for(int i = 0; i < hexList.size(); i++){

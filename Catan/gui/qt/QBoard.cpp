@@ -1,4 +1,4 @@
-#include "catanhexwidget.h"
+#include "QBoard.h"
 
 #include <QPainter>
 #include <QtMath>
