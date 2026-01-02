@@ -120,7 +120,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
             brush = QBrush(QColor(178, 74, 34));      // firebrick red
             break;
         case ResourceType::Ore:
-            brush = QBrush(QColor(145, 145, 145));    // dim gray
+            brush = QBrush(QColor(160, 160, 160));    // dim gray
             break;
         case ResourceType::Wool:
             brush = QBrush(QColor(144, 238, 144));    // light green
@@ -143,6 +143,14 @@ void QBoard::paintEvent(QPaintEvent *event) {
         p.setBrush(brush);
         p.drawPolygon(poly);
 
+        if (m_placingRobber && h.get() == m_hoveredTile) {
+            // overlay highlight
+            p.save();
+            p.setBrush(QBrush(QColor(255, 255, 255, 60))); // translucent
+            p.drawPolygon(poly);
+            p.restore();
+        }
+
         //draw circle and number
         if(h->getNumber() == 7) continue;
         p.setBrush(QColor(240, 240, 210));
@@ -157,14 +165,6 @@ void QBoard::paintEvent(QPaintEvent *event) {
         }
         p.drawText(poly.boundingRect(), Qt::AlignCenter, QString::number(h->getNumber()));
         p.setPen(pen);
-
-        if (m_placingRobber && h.get() == m_hoveredTile) {
-            // overlay highlight
-            p.save();
-            p.setBrush(QBrush(QColor(255, 255, 255, 60))); // translucent
-            p.drawPolygon(poly);
-            p.restore();
-        }
     }
 
 }
