@@ -8,20 +8,6 @@
 static constexpr double SQRT3 = 1.7320508075688772;
 
 CatanHexWidget::CatanHexWidget(Board* board, QWidget *parent) : m_board(board), QWidget(parent) {
-    // Standard Catan land layout is a hexagon of radius 2 in hex-grid terms (total 19 tiles).
-    // Axial coords (q, r) for hexagon radius 2:
-    // all (q, r) with |q|<=2, |r|<=2, |q+r|<=2
-    /*
-    for (int q = -2; q <= 2; ++q) {
-        for (int r = -2; r <= 2; ++r) {
-            int s = -q - r;
-            if (std::abs(q) <= 2 && std::abs(r) <= 2 && std::abs(s) <= 2) {
-                m_hexes.push_back({q, r});
-            }
-        }
-    }
-    */
-
     setMinimumSize(300, 300);
     setAutoFillBackground(true);
 }
@@ -127,10 +113,10 @@ void CatanHexWidget::paintEvent(QPaintEvent *event) {
             brush = QBrush(QColor(34, 139, 34));      // forest green
             break;
         case ResourceType::Brick:
-            brush = QBrush(QColor(178, 64, 34));      // firebrick red
+            brush = QBrush(QColor(178, 74, 34));      // firebrick red
             break;
         case ResourceType::Ore:
-            brush = QBrush(QColor(135, 135, 135));    // dim gray
+            brush = QBrush(QColor(145, 145, 145));    // dim gray
             break;
         case ResourceType::Wool:
             brush = QBrush(QColor(144, 238, 144));    // light green
@@ -139,10 +125,10 @@ void CatanHexWidget::paintEvent(QPaintEvent *event) {
             brush = QBrush(QColor(230, 205, 22));     // goldenrod
             break;
         case ResourceType::Desert:
-            brush = QBrush(QColor(208, 165, 72));     // sand
+            brush = QBrush(QColor(200, 165, 112));     // sand
             break;
         case ResourceType::Sea:
-            brush = QBrush(QColor(70, 130, 180));     // steel blue
+            brush = QBrush(QColor(80, 140, 200));     // steel blue
             break;
         case ResourceType::None:
         default:
