@@ -6,6 +6,8 @@ add_library(catan_gui_qt
         widget.cpp
         widget.h
         ui/widget.ui
+        catanhexwidget.cpp
+        catanhexwidget.h
 )
 
 target_include_directories(catan_gui_qt

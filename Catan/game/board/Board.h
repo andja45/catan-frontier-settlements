@@ -72,7 +72,7 @@ private:
 
     static void standardizeNodeCoords(HexCoords& coords, int& index);
 
-    void initializeBoard(std::vector<TileDef> tileMap);
+    void initializeBoard();
 
     void saveBoard(const std::string &saveFilePath);
 
@@ -81,6 +81,7 @@ private:
     std::vector<TileDef> loadBoardFromTextFile(const std::string &loadFilePath);
 
     std::vector<TileDef> generateRandomBoard();
+    void connectBoardElements();
 
     std::map<HexCoords,Tile*> m_tilesByCoord;
     std::map<int, std::vector<Tile*>> m_tilesByNumber;
@@ -90,7 +91,7 @@ private:
     std::vector<std::unique_ptr<Edge>> m_edges;
 
 public:
-    Board() {  }
+    Board() { initializeBoard(); }
 
     std::vector<Tile*> getTilesWithNumber(int num);
 
@@ -107,6 +108,7 @@ public:
 
     std::vector<HexCoords> getBoardCords();
 
+    const std::vector<std::unique_ptr<Tile>>& getTiles() const { return m_tiles; }
 };
 
 
