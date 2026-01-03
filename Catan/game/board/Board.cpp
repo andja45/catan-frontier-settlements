@@ -155,6 +155,7 @@ void Board::clearBoard() {
 void Board::initializeBoard() {
     clearBoard();
 
+    std::reverse(m_standardNumberOrder.begin(), m_standardNumberOrder.end());
     std::vector<TileDef> tileMap = generateRandomBoard();
 
     for (const auto&[q, r, res, number] : tileMap) {
@@ -188,7 +189,6 @@ std::vector<TileDef> Board::generateRandomBoard(){
     std::mt19937 g(rd());
     std::shuffle(hexList.begin(), hexList.end(), g);
 
-    std::reverse(m_standardNumberOrder.begin(), m_standardNumberOrder.end());
     auto hexCoordinates = Board::m_standardCoordinates;
     int j = 0;
     for(int i = 0; i < hexList.size(); i++){
