@@ -16,8 +16,7 @@
 enum class DevType;
 class Player : public ResourceHolder {
 private:
-    static int m_numPlayers;
-    int m_playerId      =-1;
+    PlayerId m_playerId      =-1;
 
     std::vector<Edge*> m_roads;
     std::vector<Node *> m_houses;
@@ -36,9 +35,9 @@ private:
     bool m_has3for1Trade = false;
 
 public:
-    Player(const std::string &name) : ResourceHolder() {}
+    explicit Player(PlayerId id) : ResourceHolder(), m_playerId(id) {} // pravim playere po id koji dobiju kad joinuju sobu
 
-    int getPlayerId() const { return m_playerId; }
+    PlayerId getPlayerId() const { return m_playerId; }
 
     std::vector<Edge*> getRoads() const { return m_roads; }
     void addVictoryPoints(int points) {m_victoryPointsUsed+=points; m_totalPoints+=points;}

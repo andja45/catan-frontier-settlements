@@ -3,56 +3,49 @@
 //
 
 #include "GameSession.h"
-#include "../move/Move.h"
-bool GameSession::applyMove(const Move& move){
-    if (!move.isValid(*this)) {
-        return false;
-    }
 
+#include <cassert>
+
+GameSession::GameSession(int numPlayers,
+                         PlayerId localPlayer,
+                         uint32_t seed)
+    : m_board(std::make_unique<Board>())
+    , m_players()
+    , m_localPlayerId(localPlayer)
+    , m_currentPlayerId(0)
+    , m_phase(TurnPhase::InitialPlacement)
+    , m_rng(seed)
+{
+    m_players.reserve(numPlayers);
+
+    for (PlayerId id = 0; id < numPlayers; ++id) {
+        m_players.push_back(std::make_unique<Player>(id));
+    }
+}
+
+bool GameSession::applyMove(const Move& move){
+    if (!move.isValid(*this))
+        return false;
     move.apply(*this);
 
-    // updatePhaseAfterMove(move);
-
+    //notifyModelChanged(); notify view
     return true;
 }
 
-// --- Guards (koristi ih Move::isValid) ---
-bool GameSession::canRollDice() const {
-    return m_phase == TurnPhase::RollDice;
+int GameSession::rollDice() {
+    assert(m_phase == TurnPhase::RollDice);
+
+    int dice1 = m_d6(m_rng);
+    int dice2 = m_d6(m_rng);
+    return dice1 + dice2;
 }
 
-bool GameSession::canBuild() const {
-    return m_phase == TurnPhase::Main
-        || m_phase == TurnPhase::InitialPlacement;
-}
 
-bool GameSession::canTrade() const {
-    return m_phase == TurnPhase::Main;
-}
 
-bool GameSession::canPlaceRobber() const {
-    return m_phase == TurnPhase::Robber;
-}
 
-bool GameSession::canEndTurn() const {
-    return m_phase == TurnPhase::Main;
-}
-
-// --- Transitions ---
-void GameSession::enterRobberPhase() {
-    m_phase = TurnPhase::Robber;
-}
-
-void GameSession::enterMainPhase() {
-    m_phase = TurnPhase::Main;
-}
-
-void GameSession::endTurn() {
-    // TODO
-    // dodaj prelaz na sl igraca, ako je u initalplacement ostaje tu,
-    // inace ide u rolldice - ali nije tako jednostavno, treba impl i izlazak
-    // iz initialplacement(svi se postavili)
-}
+// dodaj prelaz na sl igraca, ako je u initalplacement ostaje tu,
+// inace ide u rolldice - ali nije tako jednostavno, treba impl i izlazak
+// iz initialplacement(svi se postavili)
 
 // TODO
 // za mrezu, drugi igraci imaju model i view + trenutno stanje iz gamesession

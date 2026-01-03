@@ -24,4 +24,6 @@ using IncidentTiles = std::array<Tile*,3>;
 
 using ResourcePack = std::map<ResourceType, int>;
 
+using PlayerId = int; // TODO dodati za sve sto ima id
+
 #endif //Catan_TYPEALIASES_HPP

@@ -9,7 +9,9 @@
     BuildRoad,
     BuildSettlement,
     BuildCity,
-    Trade,
+    SettingRobber,
+    BankTrade,
+    PlayerTrade,
     RollDice,
     EndTurn
 };*/
