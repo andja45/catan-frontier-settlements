@@ -13,7 +13,7 @@
 class QBoard : public QWidget {
     Q_OBJECT
 public:
-    explicit QBoard(Board* board, QWidget *parent = nullptr);
+    explicit QBoard(QWidget* parent = nullptr, Board* board = nullptr);
     Board* getBoard() { return m_board; }
     void setPlacingRobber(bool on) { m_placingRobber = on; update(); }
 

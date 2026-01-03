@@ -7,7 +7,9 @@
 
 static constexpr double SQRT3 = 1.7320508075688772;
 
-QBoard::QBoard(Board* board, QWidget *parent) : m_board(board), QWidget(parent) {
+QBoard::QBoard(QWidget *parent, Board* board) : QWidget(parent), m_board(board) {
+    if(m_board == nullptr)
+        m_board = new Board();
     setMinimumSize(300, 300);
     setAutoFillBackground(true);
     setMouseTracking(true);
