@@ -6,7 +6,7 @@
 
 
 #include <board/Node.h>
-#include <game/types/NodeType.h>
+#include <types/NodeType.h>
 
 void NodeView::draw(Canvas& canvas , const BoardTheme &theme) const {
     char c=0;

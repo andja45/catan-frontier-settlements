@@ -57,7 +57,7 @@ struct TupleHash {
 
 class Board {
 private:
-    static const std::array<int,18> m_standardNumberOrder;
+    static std::array<int,18> m_standardNumberOrder;
     static const std::array<HexCoords,19> m_standardCoordinates;
     static const std::vector<TileDef> m_basicMap;
     static const std::array<HexCoords,6> m_directionCoords;

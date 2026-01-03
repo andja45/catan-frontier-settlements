@@ -5,7 +5,7 @@
 #include "./ui/ui_widget.h"
 
 
-#include "catanhexwidget.h"
+#include "QBoard.h"
 #include <board/Board.h>
 
 Widget::Widget(QWidget *parent)
@@ -14,7 +14,7 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    auto *board = new CatanHexWidget(new Board(), this);
+    auto *board = new QBoard(new Board(), this);
 
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0,0,0,0);
