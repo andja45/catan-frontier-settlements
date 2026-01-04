@@ -321,33 +321,71 @@ std::vector<TileDef> Board::loadBoardFromTextFile(const std::string& loadFilePat
 }
 
 std::vector<Tile *> Board::getTilesWithNumber(int num) {
+    std::vector<Tile *> tiles;
+
+    for (tile : m_tiles) {
+        if (tile->getNumber()==num) {
+            tiles.push_back(tile.get());
+        }
+    }
+    return tiles;
+
 }
 
 Tile * Board::getTileAt(HexCoords coords) {
+    return m_tilesByCoord[coords];
 }
 
 Node * Board::getNodeAt(HexCoords coords, NodeIndex index) {
+    return m_tilesByCoord[coords]->getNodeAt(index);
 }
 
 Edge * Board::getEdgeAt(HexCoords coords, EdgeIndex index) {
+    return m_tilesByCoord[coords]->getEdgeAt(index);
 }
 
 Node * Board::getNodeById(NodeId nodeId) const {
+    return m_nodes[nodeId];
 }
 
 Edge * Board::getEdgeById(EdgeId edgeId) const {
+    return m_edges[edgeId];
 }
 
 Tile * Board::getTileById(TileId tileId) const {
+    return m_tiles[tileId];
 }
 
-Node * Board::getNodeAtDir(HexCoords coords, PointDirection) {
+Node * Board::getNodeAtDir(HexCoords coords, PointDirection direction) {
+    return m_tilesByCoord[coords]->getNodeAtDir(direction);
 }
 
-Edge * Board::getEdgeAtDir(HexCoords coords, SideDirection) {
+Edge * Board::getEdgeAtDir(HexCoords coords, SideDirection direction) {
+    return m_tilesByCoord[coords]->getEdgeAtDir(direction);
 }
 
-Tile * Board::getTileAtDir(HexCoords coords, SideDirection) {
+Tile * Board::getTileAtDir(HexCoords coords, SideDirection direction) {
+    HexCoords tileCoords = coords;
+    if (direction == SideDirection::Left) {
+        coords += {-1, 0};
+    }
+    if (direction == SideDirection::Right) {
+        coords += {1, 0};
+    }
+    if (direction == SideDirection::TopLeft) {
+        coords += {0, -1};
+    }
+    if (direction == SideDirection::BottomRight) {
+        coords += {0, 1};
+    }
+    if (direction == SideDirection::TopRight) {
+        coords += {1, -1};
+    }
+    if (direction == SideDirection::BottomLeft) {
+        coords += {-1, 1};
+    }
+
+    return m_tilesByCoord[coords];
 }
 
 std::vector<HexCoords> Board::getBoardCords() {
