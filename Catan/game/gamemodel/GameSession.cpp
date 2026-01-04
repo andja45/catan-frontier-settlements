@@ -6,14 +6,17 @@
 
 #include <cassert>
 
+InitialPlacementStep GameSession::initialPlacementStep() const {
+    return (m_initialPlacementsCount % 2 == 0)
+        ? InitialPlacementStep::PlaceSettlement
+        : InitialPlacementStep::PlaceRoad;
+}
+
 GameSession::GameSession(int numPlayers,
                          PlayerId localPlayer,
                          uint32_t seed)
     : m_board(std::make_unique<Board>())
-    , m_players()
     , m_localPlayerId(localPlayer)
-    , m_currentPlayerId(0)
-    , m_phase(TurnPhase::InitialPlacement)
     , m_rng(seed)
 {
     m_players.reserve(numPlayers);
@@ -26,10 +29,70 @@ GameSession::GameSession(int numPlayers,
 bool GameSession::applyMove(const Move& move){
     if (!move.isValid(*this))
         return false;
-    move.apply(*this);
 
-    //notifyModelChanged(); notify view
+    move.apply(*this);
+    advancePhaseAfterMove(move); // only session can advance phases, move only reads them
+    //notifyModelChanged(); //notify view
+
     return true;
+}
+
+void GameSession::advancePhaseAfterMove(const Move& move) {
+    if (m_phase == TurnPhase::InitialPlacement) {
+        advanceInitialPlacement();
+        return;
+    }
+
+    switch (move.type()) {
+        case MoveType::RollDice:
+            setPhase(TurnPhase::Main);
+            break;
+
+        case MoveType::EndTurn:
+            advancePlayer();
+            setPhase(TurnPhase::RollDice);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void GameSession::advanceInitialPlacement() {
+    const int playerCount = numPlayers();
+    if (playerCount == 0) return;
+
+    m_initialPlacementsCount += 1;
+
+    const int totalPlacementMoves = playerCount * 4; // *2 for both directios *2 for settlemet/road
+
+    if (m_initialPlacementsCount >= totalPlacementMoves) {
+        m_initialPlacementsCount = 0;
+        m_turnIndex = 0;
+        m_currentPlayerId = m_players[m_turnIndex]->getPlayerId(); // first player starts
+        setPhase(TurnPhase::RollDice);
+        return;
+    }
+
+    const int placementTurn = m_initialPlacementsCount / 2; // each player gets settlement + road in one placing
+
+    int playerIndex;
+    if (placementTurn < playerCount) {
+        playerIndex = placementTurn;
+    }
+    else {
+        playerIndex = (playerCount - 1) - (placementTurn - playerCount);
+    }
+
+    m_currentPlayerId = m_players[playerIndex]->getPlayerId();
+}
+
+
+void GameSession::advancePlayer() { // TODO maybe change later - add shuffling with same seed every client model uses
+    if (m_players.empty()) return;
+
+    m_turnIndex = (m_turnIndex + 1) % m_players.size();
+    m_currentPlayerId = m_players[m_turnIndex]->getPlayerId();
 }
 
 int GameSession::rollDice() {
@@ -39,16 +102,3 @@ int GameSession::rollDice() {
     int dice2 = m_d6(m_rng);
     return dice1 + dice2;
 }
-
-
-
-
-// dodaj prelaz na sl igraca, ako je u initalplacement ostaje tu,
-// inace ide u rolldice - ali nije tako jednostavno, treba impl i izlazak
-// iz initialplacement(svi se postavili)
-
-// TODO
-// za mrezu, drugi igraci imaju model i view + trenutno stanje iz gamesession
-// (za crtanje koji dugmici su sivi-unclickable), samo treba resiti negde se cuva koji
-// playerid si ti -> od toga isto zavisi tvoj view(karte ime)
-// startgame dugme pravi gamesession i popunjava igrace(pokupi info pre starta dobijen)

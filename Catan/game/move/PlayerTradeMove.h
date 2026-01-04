@@ -9,12 +9,12 @@
 
 class PlayerTradeMove : public Move{
 private:
-    int m_fromPlayer;
-    int m_toPlayer;
+    PlayerId m_fromPlayer;
+    PlayerId m_toPlayer;
     ResourcePack m_offer;
     ResourcePack m_request;
 public:
-    explicit PlayerTradeMove(int from, int to, ResourcePack offer, ResourcePack request) : m_fromPlayer(from), m_toPlayer(to), m_offer(offer), m_request(request){}
+    explicit PlayerTradeMove(PlayerId from, PlayerId to, ResourcePack offer, ResourcePack request) : m_fromPlayer(from), m_toPlayer(to), m_offer(offer), m_request(request){}
 
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;

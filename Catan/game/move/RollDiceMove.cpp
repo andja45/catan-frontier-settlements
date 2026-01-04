@@ -1,20 +1,43 @@
 //
-// Created by andja on 10.12.25..
+// Created by andja on 10.12.25.
 //
 
 #include "RollDiceMove.h"
 
 bool RollDiceMove::isValid(const GameSession& session) const {
-    return session.isPlayersTurn(m_playerId) && session.canRollDice();
+    if (session.currentPlayer() != m_playerId) // TODO game should be playable even without multiplayer, but in gui we will set buttons unclickable if currplayer != localplayer cus only he can make moves on his gui, other clients send him their moves
+        return false;
+
+    if (session.phase() != TurnPhase::RollDice)
+        return false;
+
+    return true;
 }
 
 void RollDiceMove::apply(GameSession& session) const {
-    GameModel& model = session.model();
-    int dice = model.rollDice(); // necemo svaki put generisati random seed, ima jedna kockica i drzi je model
+    Board& board = session.board();
 
-    if (dice == 7) {
+    const int diceRoll = session.rollDice();
+    if (diceRoll == 7) {
         session.enterRobberPhase(); // TODO resi problem odbacivanja karata
-    } else {
-        model.distributeResources(dice);
+        return;
+    }
+
+    for (const Tile* tile : board.getTilesWithNumber(diceRoll)) {
+        if (tile->isRobberOnTile())
+            continue;
+
+        ResourceType resource = tile->getType();
+
+        for (const Node* node : tile->getAdjacentNodes()) {
+            if (!node) continue;
+
+            const PlayerId owner = node->getOwner();
+            if (owner == -1)
+                continue;
+
+            const int amount = node->isCity() ? 2 : 1;
+            session.player(owner).addResource(resource, amount);
+        }
     }
 }

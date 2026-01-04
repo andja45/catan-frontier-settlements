@@ -10,10 +10,11 @@
 
 class EndTurnMove : public Move{
 private:
-    int m_playerId;
+    PlayerId m_playerId;
 public:
-    explicit EndTurnMove(int playerId) : m_playerId(playerId) {}
+    explicit EndTurnMove(PlayerId playerId) : m_playerId(playerId) {}
 
+    MoveType type() const override { return MoveType::EndTurn; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
 };
