@@ -11,6 +11,7 @@
 #include <memory>
 #include <random>
 #include <sstream>
+#include <types/TypeAliases.h>
 #include <algorithm>
 
 #include <json.hpp>
@@ -18,69 +19,10 @@
 struct TileDef;
 using json = nlohmann::json;
 
-std::array<int,18> Board::m_standardNumberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
-const std::array<HexCoords,19> Board::m_standardCoordinates = {{
-        // Center
-        { 0,   0},
+// inits static fields, in separate files to avoid clutter
+#include "BoardData.h"
 
-        // Ring 1 (distance = 1)
-        { 1,   0},
-        { 1,  -1},
-        { 0,  -1},
-        {-1,   0},
-        {-1,   1},
-        { 0,   1},
-
-        // Ring 2 (distance = 2)
-        { 1,   1},
-        { 2,   0},
-        { 2,  -1},
-        { 2,  -2},
-        { 1,  -2},
-        { 0,  -2},
-        {-1,  -1},
-        {-2,   0},
-        {-2,   1},
-        {-2,   2},
-        {-1,   2},
-        { 0,   2}
-    }
-};
-const std::array<HexCoords,6> Board::m_directionCoords = {{
-    { 0, -1 },  // top left
-    { 1, -1 },  // top right
-    { 1,  0 },  // right
-    { 0,  1 },  // bottom right
-    { -1, 1 },  // bottom left
-    { -1, 0 }   // left
-}};
-static const std::vector<TileDef> m_basicMap = {
-    { -1, -2, ResourceType::Wood,   11 },
-    {  0, -2, ResourceType::Wool,  12 },
-    {  1, -2, ResourceType::Brick,   9 },
-
-    { -2, -1, ResourceType::Wheat,   4 },
-    { -1, -1, ResourceType::Ore,     6 },
-    {  0, -1, ResourceType::Wood,    5 },
-    {  1, -1, ResourceType::Wool,  10 },
-
-    { -2,  0, ResourceType::Brick,   8 },
-    { -1,  0, ResourceType::Wheat,   3 },
-    {  0,  0, ResourceType::Desert,  0 },
-    {  1,  0, ResourceType::Wheat,  11 },
-    {  2,  0, ResourceType::Ore,     4 },
-
-    { -1,  1, ResourceType::Wool,   9 },
-    {  0,  1, ResourceType::Wood,   10 },
-    {  1,  1, ResourceType::Ore,     3 },
-    {  2,  1, ResourceType::Brick,   5 },
-
-    {  0,  2, ResourceType::Wool,   6 },
-    {  1,  2, ResourceType::Wheat,   8 },
-    {  2,  2, ResourceType::Wood,    2 }
-};
-
-
+// helper functions to standardize coordinates of nodes and edges
 // multiple tiles share same vertex/edge so we standardize coordinates to canonical form by assigning it to a certain tile
 // about axial coordinate system: https://www.redblobgames.com/grids/hexagons/
 
@@ -143,8 +85,6 @@ void Board::standardizeEdgeCoords(HexCoords &coords, int &index) {
     coords.second+=dq.second;
 }
 
-
-
 void Board::clearBoard() {
     m_tiles.clear();
     m_nodes.clear();
@@ -155,7 +95,7 @@ void Board::clearBoard() {
 void Board::initializeBoard() {
     clearBoard();
 
-    std::vector<TileDef> tileMap = generateRandomBoard();
+    std::vector<TileDef> tileMap = generateRandomBoard();  // TODO why only random?
 
     for (const auto&[q, r, res, number] : tileMap) {
         auto t = std::make_unique<Tile>(q, r, res, number);
@@ -168,7 +108,7 @@ void Board::initializeBoard() {
             m_tilesByNumber[number].push_back(raw);
     }
 
-    //connectBoardElements();
+    connectBoardElements();
 }
 
 std::vector<TileDef> Board::generateRandomBoard(){
@@ -199,12 +139,13 @@ std::vector<TileDef> Board::generateRandomBoard(){
 }
 
 void Board::connectBoardElements(){
-    for ( auto&[coord, uptr] : m_tilesByCoord) {
-        Tile* t = uptr;
+    for ( auto&[coord, ptr] : m_tilesByCoord) {
+        Tile* t = ptr;
 
-        for (int i = 0; i < static_cast<int>(PointDirection::End); ++i) {
+        for (int i = static_cast<int>(PointDirection::Top); i < static_cast<int>(PointDirection::End); ++i) {
             PointDirection dir=static_cast<PointDirection>(i);
             HexCoords _coord=coord;
+
             Board::standardizeNodeCoords(_coord,i);
             Node *raw = m_tilesByCoord[_coord]->getNodeAt(i);
             if (raw==nullptr) {

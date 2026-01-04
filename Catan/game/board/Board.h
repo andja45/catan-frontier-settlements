@@ -13,9 +13,10 @@
 #include <board/Node.h>
 #include <types/TypeAliases.h>
 
+// helper struct to specify board layout and pass parametars to create tiles
 struct TileDef { int q, r; ResourceType res; int number; };
 
-
+// directions for accessing adjacent elements and orientation
 enum class PointDirection {
     Top,
     RightTop,
@@ -57,38 +58,38 @@ struct TupleHash {
 
 class Board {
 private:
-    static std::array<int,18> m_standardNumberOrder;
-    static const std::array<HexCoords,19> m_standardCoordinates;
-    static const std::vector<TileDef> m_basicMap;
-    static const std::array<HexCoords,6> m_directionCoords;
+    // default catan setup
+    static std::array<int,18> m_standardNumberOrder;    // number ordering specified in clockwise order, can be used with any tile tile type rearrangement of standard 3-4-5-4-3 catan map
+    static const std::array<HexCoords,19> m_standardCoordinates; // coordinates of tiles in standard board, can be used to assign random or standard numbers
+    static const std::vector<TileDef> m_basicMap;  // one default standard catan map with fixed numbering, tile position and tile types
+    static const std::array<HexCoords,6> m_directionCoords; // Coordinate vectors for each direction, for adjacent tiles
 
+    // TODO factory?
+    std::vector<TileDef> generateRandomBoard();
+
+    // TODO coors classes? dir in tile?
     static HexCoords directionToCoord(SideDirection dir) {return m_directionCoords[directionToIndex(dir)];}
     static int directionToIndex(SideDirection dir){return static_cast<int>(dir);}
     static int directionToIndex(PointDirection dir){return static_cast<int>(dir);}
-
     static void standardizeEdgeCoords(HexCoords& coords, int& index);
-
-    void clearBoard();
-
     static void standardizeNodeCoords(HexCoords& coords, int& index);
 
+    void clearBoard();
     void initializeBoard();
-
-    void saveBoard(const std::string &saveFilePath);
-
-    std::vector<TileDef> loadSavedBoard(const std::string &loadFilePath);
-
-    std::vector<TileDef> loadBoardFromTextFile(const std::string &loadFilePath);
-
-    std::vector<TileDef> generateRandomBoard();
     void connectBoardElements();
 
-    std::map<HexCoords,Tile*> m_tilesByCoord;
-    std::map<int, std::vector<Tile*>> m_tilesByNumber;
+    // TODO separate class
+    void saveBoard(const std::string &saveFilePath);
+    std::vector<TileDef> loadSavedBoard(const std::string &loadFilePath);
+    std::vector<TileDef> loadBoardFromTextFile(const std::string &loadFilePath);
 
+    // board is owner of all its elements, raw pointers are used inside to connect elements for convinience and optimization
     std::vector<std::unique_ptr<Tile>> m_tiles;
     std::vector<std::unique_ptr<Node>> m_nodes;
     std::vector<std::unique_ptr<Edge>> m_edges;
+
+    std::map<HexCoords,Tile*> m_tilesByCoord;
+    std::map<int, std::vector<Tile*>> m_tilesByNumber;
 
 public:
     Board() { initializeBoard(); }
@@ -107,7 +108,6 @@ public:
     Tile* getTileAtDir(HexCoords coords, SideDirection);
 
     std::vector<HexCoords> getBoardCords();
-
     const std::vector<std::unique_ptr<Tile>>& getTiles() const { return m_tiles; }
 };
 
