@@ -8,13 +8,14 @@
 #include "Move.h"
 
 
-class BuildRoadMove : public Move{
+class BuildRoadMove final : public Move{ // final - no classes than extend this class
 private:
-    int m_playerId;
-    int m_edgeId; // ili HexCoords + edgeIndex
+    PlayerId m_playerId;
+    EdgeId m_edgeId; // or HexCoords + edgeIndex
 public:
-    BuildRoadMove(const int playerId, const int edgeId) : m_playerId(playerId), m_edgeId(edgeId) {}
+    BuildRoadMove(PlayerId playerId, EdgeId edgeId) : m_playerId(playerId), m_edgeId(edgeId) {}
 
+    MoveType type() const override { return MoveType::BuildRoad; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
 };

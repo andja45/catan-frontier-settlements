@@ -267,19 +267,19 @@ std::vector<Tile *> Board::getTilesWithNumber(int num) {
 Tile * Board::getTileAt(HexCoords coords) {
 }
 
-Node * Board::getNodeAt(HexCoords coords, int index) {
+Node * Board::getNodeAt(HexCoords coords, NodeIndex index) {
 }
 
-Edge * Board::getEdgeAt(HexCoords coords, int index) {
+Edge * Board::getEdgeAt(HexCoords coords, EdgeIndex index) {
 }
 
-Node * Board::getNodeById(int nodeId) const {
+Node * Board::getNodeById(NodeId nodeId) const {
 }
 
-Edge * Board::getEdgeById(int edgeId) const {
+Edge * Board::getEdgeById(EdgeId edgeId) const {
 }
 
-Tile * Board::getTileById(int tileId) const {
+Tile * Board::getTileById(TileId tileId) const {
 }
 
 Node * Board::getNodeAtDir(HexCoords coords, PointDirection) {

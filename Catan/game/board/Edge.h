@@ -14,16 +14,16 @@ private:
     Node* m_end   =nullptr;
 
     bool m_isRoad  =false;
-    int m_playerId =-1;
+    PlayerId m_playerId =-1;
 
-    int m_edgeId=-1;
+    EdgeId m_edgeId=-1;
     HexCoords m_tileCoord{-1,-1};
 
-    int m_edgeIndex=-1;
+    EdgeIndex m_edgeIndex=-1;
     inline static int m_numOfEdges=0;
 
 public:
-    Edge(HexCoords, int i, Node *start, Node *end) : Edge(start->getTileCoords().first, start->getTileCoords().second, i, start, end) {}
+    Edge(HexCoords, EdgeIndex i, Node *start, Node *end) : Edge(start->getTileCoords().first, start->getTileCoords().second, i, start, end) {}
     Edge(int q, int r, int i, Node *start, Node *end) : m_start(start), m_end(end) {
         m_numOfEdges++; m_edgeId =m_numOfEdges;
         m_tileCoord              ={q,r}; m_edgeIndex=i;

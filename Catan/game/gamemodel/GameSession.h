@@ -4,52 +4,73 @@
 
 #ifndef Catan_GAMESESSION_H
 #define Catan_GAMESESSION_H
-#include "GameModel.h"
+
+#include <random>
+
+#include "board/Board.h"
+#include "move/Move.h"
+#include "player/Player.h"
+#include "types/TypeAliases.h"
 
 /*loopovi igranje igraca/bota i provere vict points road vitezi..*/
 
 enum class TurnPhase {
  RollDice,
  Main, // regularan potez, build/trade/kupuje devcards, nakon rolldice
- Robber,
+ Robber, // mozda nije faza?
+ DiscardCards, //
  InitialPlacement,
- End
+ End // mozda nije faza?
 }; // drzi to stanje sve dok ne dobije signal da je uradjeno nesto sto ga menja
    // tj to je stanje koje ceka, ne ono koje sledi
 
+enum class InitialPlacementStep {
+ PlaceSettlement,
+ PlaceRoad
+};
+
 class GameSession {
 private:
- GameModel m_model;
- int m_currentPlayer = -1;
- int m_numPlayers = -1;
+ std::unique_ptr<Board> m_board;
+ std::vector<std::unique_ptr<Player>> m_players;
+
+ int m_turnIndex = 0;
+ PlayerId m_currentPlayerId = m_players[m_turnIndex]->getPlayerId();
+ PlayerId m_localPlayerId   = -1; // ko sam ja?
  TurnPhase m_phase = TurnPhase::InitialPlacement;
+
+ // phase logic
+ int m_initialPlacementsCount = 0;
+ bool m_initialPlacementsReverse = false;
+ void advanceInitialPlacement();
+ void advancePlayer();
+ void setPhase(TurnPhase phase) { m_phase = phase; } // add if needed later, for now direct setting
+
+ // dice
+ std::mt19937 m_rng; // TODO dice can be with client-host
+ std::uniform_int_distribution<int> m_d6{1, 6};
 public:
- explicit GameSession(int numPlayers) : m_model(numPlayers), m_numPlayers(numPlayers) {}
+ GameSession(int numPlayers, PlayerId localPlayer, uint32_t seed);
+
+ InitialPlacementStep initialPlacementStep() const;
+ void advancePhaseAfterMove(const Move &move);
+ void enterRobberPhase() { setPhase(TurnPhase::Robber); }
 
  bool applyMove(const Move& move);
+ int rollDice();
 
- // --- Info ---
- int currentPlayer() const { return m_currentPlayer; }
- int numPlayers() const { return m_numPlayers; }
+ PlayerId localPlayer()   const { return m_localPlayerId; }
+ PlayerId currentPlayer() const { return m_currentPlayerId; }
+ int numPlayers() const { return static_cast<int>(m_players.size()); }
  TurnPhase phase() const { return m_phase; }
- bool isPlayersTurn(int playerId) const { return playerId == m_currentPlayer; }
- bool isInitialPlacement() const { return m_phase == TurnPhase::InitialPlacement; }
 
- // --- Guards (koristi ih Move::isValid) ---
- bool canRollDice() const;
- bool canBuild() const;
- bool canTrade() const;
- bool canPlaceRobber() const;
- bool canEndTurn() const;
+ Board& board() { return *m_board; }
+ const Board& board() const { return *m_board; }
 
- // --- Transitions ---
- void enterRobberPhase();
- void enterMainPhase();
- void endTurn();
+ const Player& player(PlayerId id) const { return *m_players.at(id); }
+ Player& player(PlayerId id) { return *m_players.at(id); }
 
- // --- Model ---
- GameModel& model() { return m_model; }
- const GameModel& model() const { return m_model; }
+ void updateLongestRoad();
 };
 
 // TODO treba da se doda, tj vodi racuna o poenima, longestroad/vitez/devcards poeni isto!

@@ -16,11 +16,10 @@
 enum class DevType;
 class Player : public ResourceHolder {
 private:
-    static int m_numPlayers;
-    int m_playerId      =-1;
+    PlayerId m_playerId      =-1;
 
-    std::vector<Edge*> m_roads;
-    std::vector<Node *> m_houses;
+    std::vector<Edge*> m_roads; // TODO remove in the future when session remembers last move(from that we will read lastsettlement so this isnt needed)
+    std::vector<Node*> m_houses;
 
     std::map<ResourceType,bool> m_has2for1Trade;
 
@@ -36,16 +35,16 @@ private:
     bool m_has3for1Trade = false;
 
 public:
-    Player(const std::string &name) : ResourceHolder() {}
+    explicit Player(PlayerId id) : ResourceHolder(), m_playerId(id) {} // pravim playere po id koji dobiju kad joinuju sobu
 
-    int getPlayerId() const { return m_playerId; }
+    PlayerId getPlayerId() const { return m_playerId; }
 
     std::vector<Edge*> getRoads() const { return m_roads; }
+    std::vector<Node*> getHouses() const { return m_houses; }
     void addVictoryPoints(int points) {m_victoryPointsUsed+=points; m_totalPoints+=points;}
-    void addVictoryPoint() {addVictoryPoints(1);}
-    void addRoad(Edge* newroad);
+
+    void addRoad(Edge* edge);
     void addSettlement(Node* node);
-    void addCity(Node* node);
 
     bool has3for1Trade() const {return m_has3for1Trade;}
     void give3for1Trade()  {m_has3for1Trade=true;}
@@ -70,6 +69,9 @@ public:
     ResourcePack takeRandomResources(int amount);
     ResourceType takeRandomResource();
 
+    bool canAfford(const ResourcePack & map) const; // TODO implement
+    void spendResources(const ResourcePack & map) const;  // TODO implement | refer to GameModel -> consumeResources
+    NodeId getSettlementAt(int i) const; // TODO implement | from list of player settlemets gets i-th if there isnt i-th settlement return -1
 };
 
 

@@ -5,21 +5,34 @@
 #include "BuildCityMove.h"
 
 bool BuildCityMove::isValid(const GameSession& session) const {
-    if (!session.isPlayersTurn(m_playerId)) return false;
-    if (!session.canBuild()) return false;
+    const Board& board = session.board();
+    const Player& player = session.player(m_playerId);
 
-    const GameModel& model = session.model();
-    // da li je pozicija validna (pravila)
-    if (!model.canPlaceCity(m_playerId, m_nodeId)) return false;
+    if (session.currentPlayer() != m_playerId) // TODO game should be playable even without multiplayer, but in gui we will set buttons unclickable if currplayer != localplayer cus only he can make moves on his gui, other clients send him their moves
+        return false;
 
-    if (!model.hasResources(m_playerId, Costs::City)) return false;
+    if (session.phase() != TurnPhase::Main) // only happens in main
+        return false;
+
+    if (!player.hasCityLeft())
+        return false;
+
+    if (!player.canAfford(Costs::Settlement))
+        return false;
+
+    if (!board.isSettlementOwnedBy(m_playerId, m_nodeId)) // is settlement + playerid is owner
+        return false;
 
     return true;
 }
 
 void BuildCityMove::apply(GameSession& session) const {
-    GameModel& model = session.model();
+    Board& board = session.board();
+    Player& player = session.player(m_playerId);
 
-    model.consumeResources(m_playerId, Costs::City);
-    model.placeCity(m_playerId, m_nodeId);
+    player.spendResources(Costs::City);
+
+    player.addVictoryPoints(1);
+
+    board.placeCity(m_playerId, m_nodeId);
 }

@@ -5,7 +5,7 @@
 #include "Player.h"
 
 
-void Player::addSettlement(Node* node){
+/*void Player::addSettlement(Node* node){
 	node->setOwner(m_playerId);
 	node->setNodeType(NodeType::Settlement);
 	addVictoryPoint();
@@ -14,15 +14,11 @@ void Player::addSettlement(Node* node){
 		else give2for1Trade(node->getTradeResource());
 	}
 }
-void Player::addCity(Node* node){
-	node->upgradeToCity();
-	addVictoryPoint();
-
 
 }
-void Player::addRoad(Edge* newroad){
-	newroad->setRoad(m_playerId);
-}
+void Player::addRoad(Edge* newroad){ // FIXME this should also decrement numOfRoadsLeft, same for other similar functions
+	newroad->setRoad(m_playerId); // FIXME board does that, this adds to list of that players edges and decrements numofroads left
+}*/
 
 
 

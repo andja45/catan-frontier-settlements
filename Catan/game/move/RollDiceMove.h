@@ -8,13 +8,14 @@
 #include "Move.h"
 
 
-class RollDiceMove : public Move{
+class RollDiceMove final : public Move{
 private:
-    int m_playerId;
+    PlayerId m_playerId;
 public:
-    explicit RollDiceMove(int playerId) : m_playerId(playerId){}
+    explicit RollDiceMove(PlayerId playerId) : m_playerId(playerId){}
     // RollDiceMove move = 3; jer ne zelimo da moze to, samo je generisanje dozvoljeno
 
+    MoveType type() const override { return MoveType::RollDice; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
 };

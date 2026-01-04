@@ -71,6 +71,7 @@ private:
     static HexCoords directionToCoord(SideDirection dir) {return m_directionCoords[directionToIndex(dir)];}
     static int directionToIndex(SideDirection dir){return static_cast<int>(dir);}
     static int directionToIndex(PointDirection dir){return static_cast<int>(dir);}
+
     static void standardizeEdgeCoords(HexCoords& coords, int& index);
     static void standardizeNodeCoords(HexCoords& coords, int& index);
 
@@ -99,9 +100,9 @@ public:
     Tile* getTileAt(HexCoords coords);
     Node* getNodeAt(HexCoords coords, int index);
     Edge* getEdgeAt(HexCoords coords, int index);
-    Node* getNodeById(int nodeId) const;
-    Edge* getEdgeById(int edgeId) const;
-    Tile* getTileById(int tileId) const;
+    Node* getNodeById(NodeId nodeId) const;
+    Edge* getEdgeById(EdgeId edgeId) const;
+    Tile* getTileById(TileId tileId) const;
 
     Node* getNodeAtDir(HexCoords coords, PointDirection);
     Edge* getEdgeAtDir(HexCoords coords, SideDirection);
@@ -109,6 +110,20 @@ public:
 
     std::vector<HexCoords> getBoardCords();
     const std::vector<std::unique_ptr<Tile>>& getTiles() const { return m_tiles; }
+
+    bool isEdgeFree(EdgeId edgeId) const; // TODO implement
+    bool isNodeFree(NodeId nodeId) const;
+    bool edgeTouchesPlayerHouse(PlayerId playerId, EdgeId edgeId) const; // TODO implement | refer to GameModel -> canPlaceRoad | one side of edge is either settlement or city owned by this player
+    bool edgeTouchesPlayerSettlement(NodeId settlementId, EdgeId edgeId) const; // TODO implement | one side of edge touches this settlement
+    bool edgeTouchesPlayerRoad(PlayerId playerId, EdgeId edgeId) const;
+    bool nodeTouchesAnySettlement(int nodeId) const; // TODO implement | refer to GameModel -> canPlaceSettlement
+    bool nodeTouchesPlayerRoad(int playerId, int nodeId) const;
+
+
+    void placeRoad(PlayerId playerId, EdgeId edgeId) const; // TODO implement | refer to GameModel -> placeRoad
+    void placeSettlement(PlayerId playerId, NodeId nodeId); // TODO implement | refer to GameModel -> placeSettlement
+    bool isSettlementOwnedBy(PlayerId playerId, NodeId nodeId) const; // TODO implement | first false if not settlement then false if owner isnt playerid
+    void placeCity(PlayerId playerId, NodeId nodeId); // TODO implement | node upgradToCity (player has pointers so it will be registered)
 };
 
 
