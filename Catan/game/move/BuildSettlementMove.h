@@ -8,13 +8,14 @@
 #include "Move.h"
 
 
-class BuildSettlementMove : public Move{
+class BuildSettlementMove final : public Move{
 private:
-    int m_playerId;
-    int m_nodeId; // ili HexCoords + nodeIndex
+    PlayerId m_playerId;
+    NodeId m_nodeId; // or HexCoords + nodeIndex
 public:
-    BuildSettlementMove(const int playerId, const int nodeId) : m_playerId(playerId), m_nodeId(nodeId) {}
+    BuildSettlementMove(const PlayerId playerId, const NodeId nodeId) : m_playerId(playerId), m_nodeId(nodeId) {}
 
+    MoveType type() const override { return MoveType::BuildSettlement; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
 };

@@ -19,12 +19,12 @@ class Tile {
 private:
     ResourceType m_type=ResourceType::None;
     int m_number=-1;
-    int m_robber_on_tile=false;
+    bool m_robber_on_tile=false;
 
     NeighbourNodes m_adjacentNodes{};
     NeighbourEdges m_adjacentEdges{};
 
-    int m_tileId=-1;
+    TileId m_tileId=-1;
     HexCoords m_tileCoord{-1,-1};
     inline static int m_numOfTiles=0;
 
@@ -41,7 +41,7 @@ public:
     bool isRobberOnTile() const { return m_robber_on_tile; }
 
     HexCoords getTileCoord() const { return m_tileCoord; }
-    int getTileId() const { return m_tileId; }
+    TileId getTileId() const { return m_tileId; }
 
     NeighbourNodes getAdjacentNodes() const { return m_adjacentNodes; }
 

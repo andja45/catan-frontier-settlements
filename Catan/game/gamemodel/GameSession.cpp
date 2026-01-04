@@ -3,59 +3,102 @@
 //
 
 #include "GameSession.h"
-#include "../move/Move.h"
-bool GameSession::applyMove(const Move& move){
-    if (!move.isValid(*this)) {
-        return false;
+
+#include <cassert>
+
+InitialPlacementStep GameSession::initialPlacementStep() const {
+    return (m_initialPlacementsCount % 2 == 0)
+        ? InitialPlacementStep::PlaceSettlement
+        : InitialPlacementStep::PlaceRoad;
+}
+
+GameSession::GameSession(int numPlayers,
+                         PlayerId localPlayer,
+                         uint32_t seed)
+    : m_board(std::make_unique<Board>())
+    , m_localPlayerId(localPlayer)
+    , m_rng(seed)
+{
+    m_players.reserve(numPlayers);
+
+    for (PlayerId id = 0; id < numPlayers; ++id) {
+        m_players.push_back(std::make_unique<Player>(id));
     }
+}
+
+bool GameSession::applyMove(const Move& move){
+    if (!move.isValid(*this))
+        return false;
 
     move.apply(*this);
-
-    // updatePhaseAfterMove(move);
+    advancePhaseAfterMove(move); // only session can advance phases, move only reads them
+    //notifyModelChanged(); //notify view
 
     return true;
 }
 
-// --- Guards (koristi ih Move::isValid) ---
-bool GameSession::canRollDice() const {
-    return m_phase == TurnPhase::RollDice;
+void GameSession::advancePhaseAfterMove(const Move& move) {
+    if (m_phase == TurnPhase::InitialPlacement) {
+        advanceInitialPlacement();
+        return;
+    }
+
+    switch (move.type()) {
+        case MoveType::RollDice:
+            setPhase(TurnPhase::Main);
+            break;
+
+        case MoveType::EndTurn:
+            advancePlayer();
+            setPhase(TurnPhase::RollDice);
+            break;
+
+        default:
+            break;
+    }
 }
 
-bool GameSession::canBuild() const {
-    return m_phase == TurnPhase::Main
-        || m_phase == TurnPhase::InitialPlacement;
+void GameSession::advanceInitialPlacement() {
+    const int playerCount = numPlayers();
+    if (playerCount == 0) return;
+
+    m_initialPlacementsCount += 1;
+
+    const int totalPlacementMoves = playerCount * 4; // *2 for both directios *2 for settlemet/road
+
+    if (m_initialPlacementsCount >= totalPlacementMoves) {
+        m_initialPlacementsCount = 0;
+        m_turnIndex = 0;
+        m_currentPlayerId = m_players[m_turnIndex]->getPlayerId(); // first player starts
+        setPhase(TurnPhase::RollDice);
+        return;
+    }
+
+    const int placementTurn = m_initialPlacementsCount / 2; // each player gets settlement + road in one placing
+
+    int playerIndex;
+    if (placementTurn < playerCount) {
+        playerIndex = placementTurn;
+    }
+    else {
+        playerIndex = (playerCount - 1) - (placementTurn - playerCount);
+    }
+
+    m_currentPlayerId = m_players[playerIndex]->getPlayerId();
 }
 
-bool GameSession::canTrade() const {
-    return m_phase == TurnPhase::Main;
+
+void GameSession::advancePlayer() { // TODO maybe change later - add shuffling with same seed every client model uses
+    if (m_players.empty()) return;
+
+    m_turnIndex = (m_turnIndex + 1) % m_players.size();
+    m_currentPlayerId = m_players[m_turnIndex]->getPlayerId();
 }
 
-bool GameSession::canPlaceRobber() const {
-    return m_phase == TurnPhase::Robber;
-}
+int GameSession::rollDice() {
+    assert(m_phase == TurnPhase::RollDice);
 
-bool GameSession::canEndTurn() const {
-    return m_phase == TurnPhase::Main;
+    int dice1 = m_d6(m_rng);
+    int dice2 = m_d6(m_rng);
+    return dice1 + dice2;
 }
-
-// --- Transitions ---
-void GameSession::enterRobberPhase() {
-    m_phase = TurnPhase::Robber;
-}
-
-void GameSession::enterMainPhase() {
-    m_phase = TurnPhase::Main;
-}
-
-void GameSession::endTurn() {
-    // TODO
-    // dodaj prelaz na sl igraca, ako je u initalplacement ostaje tu,
-    // inace ide u rolldice - ali nije tako jednostavno, treba impl i izlazak
-    // iz initialplacement(svi se postavili)
-}
-
-// TODO
-// za mrezu, drugi igraci imaju model i view + trenutno stanje iz gamesession
-// (za crtanje koji dugmici su sivi-unclickable), samo treba resiti negde se cuva koji
-// playerid si ti -> od toga isto zavisi tvoj view(karte ime)
-// startgame dugme pravi gamesession i popunjava igrace(pokupi info pre starta dobijen)

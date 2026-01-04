@@ -15,24 +15,24 @@ enum class NodeType;
 class Node {
 private:
     NodeType m_type=NodeType::None;
-    int m_ownerId=-1;
+    PlayerId m_ownerId=-1;
 
     IncidentTiles m_incidentTiles{};
     IncidentEdges m_incidentEdges{};
 
-    int m_nodeID=-1;
+    NodeId m_nodeId=-1;
     inline static int m_numOfNodes=0;
 
     //index is nodes id relative to tile
     HexCoords m_tileCoords = {-1,-1};
-    int m_nodeIndex=-1;
+    NodeIndex m_nodeIndex=-1;
 
     bool m_hasTrade=false;
     ResourceType m_tradeResource=ResourceType::None;
 public:
-    Node(HexCoords coords, int index,bool isPort=false, ResourceType portType=ResourceType::None) : Node(coords.first, coords.second, index, isPort, portType) {}
+    Node(HexCoords coords, NodeIndex index,bool isPort=false, ResourceType portType=ResourceType::None) : Node(coords.first, coords.second, index, isPort, portType) {}
     Node(int q, int r, int i, bool isPort=false, ResourceType portType=ResourceType::None) : m_nodeIndex(i) {
-        m_numOfNodes++; m_nodeID =m_numOfNodes;
+        m_numOfNodes++; m_nodeId =m_numOfNodes;
         m_tileCoords={q,r};
         m_hasTrade=isPort; m_tradeResource=portType;
     }
@@ -44,13 +44,13 @@ public:
     ResourceType getTradeResource() const { return m_tradeResource; }
 
     NodeType getNodeType() const { return m_type; }
-    int getOwner() const { return m_ownerId; }
+    PlayerId getOwner() const { return m_ownerId; }
     IncidentTiles getIncidentTiles() const { return m_incidentTiles; }
     IncidentEdges getIncidentEdges() const { return m_incidentEdges; }
     std::array<Node*,3> getIncidentNodes();
 
     HexCoords getTileCoords() const {return m_tileCoords;}
-    int getNodeIndex() const {return m_nodeIndex;}
+    NodeIndex getNodeIndex() const {return m_nodeIndex;}
 
     void setNodeType(const NodeType nodeType) { m_type = nodeType; }
     void setOwner(int ownerId) { m_ownerId = ownerId; m_type=NodeType::Settlement; }
@@ -61,11 +61,13 @@ public:
     void addAdjacentEdge(Edge * edge){static int i=0; m_incidentEdges.at(i++)=edge;}
 
     friend bool operator==(const Node &lhs, const Node &rhs) {
-        return lhs.m_nodeID == rhs.m_nodeID;
+        return lhs.m_nodeId == rhs.m_nodeId;
     }
     friend bool operator!=(const Node &lhs, const Node &rhs) {
         return !(lhs == rhs);
     }
+
+    bool isCity() const { return getNodeType() == NodeType::City; }
 };
 
 #endif // NODE_H

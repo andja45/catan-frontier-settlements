@@ -11,12 +11,13 @@
 
 class Move;
 
+// TO BE DELETED SOON, ONLY LEFT FOR LOOKING AT ITS CODE
 class GameModel {
 private:
     Board m_board;
     std::vector<Player> m_players;
 
-    //std::vector<GameObserver*> m_observers; // controller ce biti u toj listi da registruje izmene internih stanja
+    //std::vector<GameObserver*> m_observers;
     void notifyModelChanged();
 public:
     explicit GameModel(int numPlayers);

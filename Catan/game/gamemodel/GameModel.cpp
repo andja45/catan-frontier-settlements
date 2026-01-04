@@ -144,7 +144,6 @@ void GameModel::placeRoad(int playerId, int edgeId){
     Edge* edge = m_board.getEdgeById(edgeId);
 
     edge->setRoad(playerId);
-    m_players.at(playerId).addRoad(edge);
 }
 
 void GameModel::placeSettlement(int playerId, int nodeId){
