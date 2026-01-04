@@ -5,7 +5,6 @@
 #include <types/ResourceType.h>
 #include <types/TypeAliases.h>
 
-enum class Direction;
 
 class Edge;
 class Tile;

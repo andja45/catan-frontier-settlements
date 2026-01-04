@@ -16,27 +16,6 @@
 // helper struct to specify board layout and pass parametars to create tiles
 struct TileDef { int q, r; ResourceType res; int number; };
 
-// directions for accessing adjacent elements and orientation
-enum class PointDirection {
-    Top,
-    RightTop,
-    RightBottom,
-    Bottom,
-    LeftBottom,
-    LeftTop,
-    End
-};
-enum class SideDirection {
-    TopRight,
-    Right,
-    BottomRight,
-    BottomLeft,
-    Left,
-    TopLeft,
-    End
-};
-
-
 // Custom hash function for tuple
 struct TupleHash {
     template <class T>
@@ -89,6 +68,8 @@ private:
     std::vector<std::unique_ptr<Node>> m_nodes;
     std::vector<std::unique_ptr<Edge>> m_edges;
 
+    std::map<NodeCoords,Node*> m_nodesByCoord;
+    std::map<EdgeCoords,Node*> m_edgesByCoord;
     std::map<HexCoords,Tile*> m_tilesByCoord;
     std::map<int, std::vector<Tile*>> m_tilesByNumber;
 

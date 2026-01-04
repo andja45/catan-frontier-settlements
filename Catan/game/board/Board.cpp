@@ -21,68 +21,7 @@ using json = nlohmann::json;
 
 // inits static fields, in separate files to avoid clutter
 #include "BoardData.h"
-
-// helper functions to standardize coordinates of nodes and edges
-// multiple tiles share same vertex/edge so we standardize coordinates to canonical form by assigning it to a certain tile
-// about axial coordinate system: https://www.redblobgames.com/grids/hexagons/
-
-void Board::standardizeNodeCoords(HexCoords &coords, int &index) {
-        if (index <= 2) return; //0 1 2 same the same
-        //3,4,5 go to next hex and change index to 0,1,2
-
-        SideDirection dir=SideDirection::End;
-        switch (index) {
-            case 3: {
-                dir = SideDirection::BottomLeft;
-                index=1;
-                break;
-            }
-            case 4: {
-                dir= SideDirection::BottomLeft;
-                index=0;
-                break;
-            }
-            case 5: {
-                dir= SideDirection::Left;
-                index=1;
-                break;
-            }
-            default: {
-            }
-        }
-
-        HexCoords dq = directionToCoord(dir);
-        coords.first+=dq.first;
-        coords.second+=dq.second;
-    }
 void Board::standardizeEdgeCoords(HexCoords &coords, int &index) {
-    if (index <= 2) return; //0 1 2 same the same
-    //3,4,5 go to next hex and change index to 0,1,2
-
-    SideDirection dir=SideDirection::End;
-    switch (index) {
-        case 3: {
-            dir = SideDirection::BottomLeft;
-            index=0;
-            break;
-        }
-        case 4: {
-            dir= SideDirection::Left;
-            index=1;
-            break;
-        }
-        case 5: {
-            dir= SideDirection::TopLeft;
-            index=2;
-            break;
-        }
-        default: {
-        }
-    }
-
-    HexCoords dq = directionToCoord(dir);
-    coords.first+=dq.first;
-    coords.second+=dq.second;
 }
 
 void Board::clearBoard() {
@@ -92,6 +31,8 @@ void Board::clearBoard() {
     m_tilesByCoord.clear();
     m_tilesByNumber.clear();
 }
+
+// initialize tiles edge nodes and connects them together
 void Board::initializeBoard() {
     clearBoard();
 
@@ -110,34 +51,6 @@ void Board::initializeBoard() {
 
     connectBoardElements();
 }
-
-std::vector<TileDef> Board::generateRandomBoard(){
-    std::vector<TileDef> r;
-    std::vector<ResourceType> hexList = {ResourceType::Desert};
-    for(int i = 0; i < 4; i++) {
-        hexList.push_back(ResourceType::Wood);
-        hexList.push_back(ResourceType::Wheat);
-        hexList.push_back(ResourceType::Wool);
-    }
-    for(int i = 0; i < 3; i++) {
-        hexList.push_back(ResourceType::Ore);
-        hexList.push_back(ResourceType::Brick);
-    }
-
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(hexList.begin(), hexList.end(), g);
-
-    std::reverse(m_standardNumberOrder.begin(), m_standardNumberOrder.end());
-    auto hexCoordinates = Board::m_standardCoordinates;
-    int j = 0;
-    for(int i = 0; i < hexList.size(); i++){
-        if(hexList[i] == ResourceType::Desert) r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], 7});
-        else r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], m_standardNumberOrder[j++]});
-    }
-    return r;
-}
-
 void Board::connectBoardElements(){
     for ( auto&[coord, ptr] : m_tilesByCoord) {
         Tile* t = ptr;
@@ -145,8 +58,8 @@ void Board::connectBoardElements(){
         for (int i = static_cast<int>(PointDirection::Top); i < static_cast<int>(PointDirection::End); ++i) {
             PointDirection dir=static_cast<PointDirection>(i);
             HexCoords _coord=coord;
-
-            Board::standardizeNodeCoords(_coord,i);
+            NodeIndex _index=i;
+            Board::standardizeNodeCoords(_coord,_index);
             Node *raw = m_tilesByCoord[_coord]->getNodeAt(i);
             if (raw==nullptr) {
                 auto n = std::make_unique<Node>(_coord.first, _coord.second, i);
@@ -177,6 +90,35 @@ void Board::connectBoardElements(){
 
     }
 }
+
+// generates standard catan map with random resource distribution
+std::vector<TileDef> Board::generateRandomBoard(){
+    std::vector<TileDef> r;
+    std::vector<ResourceType> hexList = {ResourceType::Desert};
+    for(int i = 0; i < 4; i++) {
+        hexList.push_back(ResourceType::Wood);
+        hexList.push_back(ResourceType::Wheat);
+        hexList.push_back(ResourceType::Wool);
+    }
+    for(int i = 0; i < 3; i++) {
+        hexList.push_back(ResourceType::Ore);
+        hexList.push_back(ResourceType::Brick);
+    }
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(hexList.begin(), hexList.end(), g);
+
+    std::reverse(m_standardNumberOrder.begin(), m_standardNumberOrder.end());
+    auto hexCoordinates = Board::m_standardCoordinates;
+    int j = 0;
+    for(int i = 0; i < hexList.size(); i++){
+        if(hexList[i] == ResourceType::Desert) r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], 7});
+        else r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], m_standardNumberOrder[j++]});
+    }
+    return r;
+}
+
 void Board::saveBoard(const std::string& saveFilePath) {
     json saveBoard = json::array();
 

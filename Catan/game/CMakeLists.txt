@@ -31,6 +31,14 @@ add_library(catan_game
         board/Board.cpp
         types/Costs.h
         player/Bank.cpp
+        board/Coords/AxialCoords.cpp
+        board/Coords/AxialCoords.hpp
+        board/Coords/ElementCoords.hpp
+        types/Directions.h
+        board/Coords/EdgeCoords.cpp
+        board/Coords/EdgeCoords.hpp
+        board/Coords/NodeCoords.cpp
+        board/Coords/NodeCoords.hpp
 )
 
 target_include_directories(catan_game
