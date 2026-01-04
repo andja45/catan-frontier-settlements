@@ -3,6 +3,7 @@
 //
 
 #include "BuildRoadMove.h"
+#include "gamemodel/GameSession.h"
 
 bool BuildRoadMove::isValid(const GameSession& session) const {
     const Board& board = session.board();

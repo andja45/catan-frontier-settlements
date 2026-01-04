@@ -8,9 +8,9 @@
 #include <random>
 
 #include "board/Board.h"
-#include "move/Move.h"
 #include "player/Player.h"
 #include "types/TypeAliases.h"
+class Move;
 
 /*loopovi igranje igraca/bota i provere vict points road vitezi..*/
 

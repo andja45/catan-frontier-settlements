@@ -16,6 +16,7 @@ private:
 public:
     explicit BankTradeMove(PlayerId playerId, ResourceType give, ResourceType receive) : m_playerId(playerId), m_give(give), m_receive(receive) {}
 
+    MoveType type() const override { return MoveType::BankTrade; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
 };

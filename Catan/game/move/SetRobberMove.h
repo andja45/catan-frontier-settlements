@@ -16,6 +16,7 @@ private:
 public:
     SetRobberMove(PlayerId playerId, TileId tileId, PlayerId victimPlayerId) : m_playerId(playerId), m_tileId(tileId), m_victimPlayerId(victimPlayerId) {}
 
+    MoveType type() const override { return MoveType::SetRobber; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
 };

@@ -3,6 +3,7 @@
 //
 
 #include "RollDiceMove.h"
+#include "gamemodel/GameSession.h"
 
 bool RollDiceMove::isValid(const GameSession& session) const {
     if (session.currentPlayer() != m_playerId) // TODO game should be playable even without multiplayer, but in gui we will set buttons unclickable if currplayer != localplayer cus only he can make moves on his gui, other clients send him their moves

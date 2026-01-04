@@ -16,6 +16,7 @@ private:
 public:
     explicit PlayerTradeMove(PlayerId from, PlayerId to, ResourcePack offer, ResourcePack request) : m_fromPlayer(from), m_toPlayer(to), m_offer(offer), m_request(request){}
 
+    MoveType type() const override { return MoveType::PlayerTrade; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
 };

@@ -3,6 +3,8 @@
 //
 
 #include "BuildCityMove.h"
+#include "gamemodel/GameSession.h"
+
 
 bool BuildCityMove::isValid(const GameSession& session) const {
     const Board& board = session.board();

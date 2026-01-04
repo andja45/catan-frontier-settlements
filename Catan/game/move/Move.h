@@ -27,7 +27,8 @@ enum class MoveType {
 #include "../types/TypeAliases.h"
 #include "../types/Costs.h"
 #include "../types/ResourceType.h"
-#include "../gamemodel/GameSession.h"
+
+class GameSession;
 
 class Move {
 public:

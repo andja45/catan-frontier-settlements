@@ -3,8 +3,7 @@
 //
 
 #include "BuildSettlementMove.h"
-
-#include "../gamemodel/GameModel.h"
+#include "gamemodel/GameSession.h"
 
 bool BuildSettlementMove::isValid(const GameSession& session) const {
     const Board& board = session.board();
