@@ -13,7 +13,7 @@ QBoard::QBoard(Board* board, QWidget *parent) : m_board(board), QWidget(parent) 
     setMouseTracking(true);
 }
 
-QPointF QBoard::axialToPixelPointy(const HexCoords& a, double size) {
+QPointF QBoard::axialToPixelPointy(const TileCoords& a, double size) {
     // hexcoord -> pixel
     // x = size * sqrt(3) * (q + r/2)
     // y = size * 3/2 * r

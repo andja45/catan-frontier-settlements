@@ -25,7 +25,7 @@ private:
     NeighbourEdges m_adjacentEdges{};
 
     TileId m_tileId=-1;
-    HexCoords m_tileCoord{-1,-1};
+    TileCoords m_tileCoord{-1,-1};
     inline static int m_numOfTiles=0;
 
 
@@ -40,7 +40,7 @@ public:
     int getNumber() const { return m_number; }
     bool isRobberOnTile() const { return m_robber_on_tile; }
 
-    HexCoords getTileCoord() const { return m_tileCoord; }
+    TileCoords getTileCoord() const { return m_tileCoord; }
     TileId getTileId() const { return m_tileId; }
 
     NeighbourNodes getAdjacentNodes() const { return m_adjacentNodes; }
@@ -51,11 +51,9 @@ public:
     Node* getNodeAtDir(PointDirection dir) const { return getNodeAt(static_cast<int>(dir));}
     Edge* getEdgeAtDir(SideDirection dir) const {return getEdgeAt(static_cast<int>(dir));}
 
-    void setAdjacentNode(Node* adjacentNode, int index) { m_adjacentNodes[index] = adjacentNode; }
-    void setAdjacentEdge(Edge* adjacentEdge, int index) { m_adjacentEdges[index] = adjacentEdge; }
+    void addAdjacentNode(Node* adjacentNode) { m_adjacentNodes.push_back(adjacentNode); }
 
-    void setAdjacentNodeDir(Node* adjacentNode, PointDirection dir){ setAdjacentNode(adjacentNode, static_cast<int>(dir)); }
-    void setAdjacentEdgeDir(Edge* adjacentEdge, SideDirection dir){ setAdjacentEdge(adjacentEdge, static_cast<int>(dir)); }
+    void setAdjacentNodeDir(Node* adjacentNode, PointDirection dir){ addAdjacentNode(adjacentNode, static_cast<int>(dir)); }
 
     static std::string typeToString(ResourceType type);
     friend std::ostream& operator<<(std::ostream& os, const Tile& tile);

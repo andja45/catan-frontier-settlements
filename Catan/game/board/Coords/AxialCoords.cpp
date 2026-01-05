@@ -5,6 +5,7 @@
 #include "./AxialCoords.hpp"
 #include "EdgeCoords.hpp"
 #include "NodeCoords.hpp"
+#include <functional>
 
 
 AxialCoords AxialCoords::operator+(const AxialCoords &other) const {
@@ -40,7 +41,7 @@ std::vector<EdgeCoords> AxialCoords::getEdgeCoords() {
     return coords;
 }
 
-std::vector<NodeCoords> AxialCoords::getNodes() {
+std::vector<NodeCoords> AxialCoords::getNodeCoords() {
     std::vector<NodeCoords> coords;
     for (int i = 0; i < static_cast<int>(NodeDirection::End); i++) {
         coords.push_back(getNodeCoordsAt(static_cast<NodeDirection>(i)));

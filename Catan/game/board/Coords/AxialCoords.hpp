@@ -8,14 +8,15 @@
 #include <types/Directions.h>
 #include <types/TypeAliases.h>
 #include <vector>
+
 class EdgeCoords;
 class NodeCoords;
-
 class AxialCoords {
 private:
     int m_q;
     int m_r;
 public:
+    AxialCoords() = default;
     AxialCoords(int q, int r) : m_q(q), m_r(r) {}
     int q() const { return m_q; }
     int r() const { return m_r; }
@@ -27,7 +28,7 @@ public:
     NodeCoords getNodeCoordsAt(NodeDirection dir) const;
 
     std::vector<EdgeCoords> getEdgeCoords();
-    std::vector<NodeCoords> getNodes();
+    std::vector<NodeCoords> getNodeCoords();
 
     friend bool operator==(const AxialCoords &lhs, const AxialCoords &rhs) {
         return lhs.m_q == rhs.m_q
@@ -37,5 +38,17 @@ public:
         return !(lhs == rhs);
     }
 };
+
+
+namespace std {
+    template <>
+    struct hash<AxialCoords> {
+        std::size_t operator()(const AxialCoords& a) const noexcept {
+            std::size_t h1 = std::hash<int>{}(a.q());
+            std::size_t h2 = std::hash<int>{}(a.r());
+            return h1 ^ (h2 << 1);
+        }
+    };
+}
 
 #endif //CATAN_AXIALCOORDS_HPP

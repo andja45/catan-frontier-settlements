@@ -16,14 +16,14 @@ class Edge;
 class Node;
 class Tile;
 
-using HexCoords      = AxialCoords ;
+using TileCoords      = AxialCoords ;
 
-using NeighbourTiles = std::array<Tile*,6>; // TODO class with iterator, keep in board instead of tile?
-using NeighbourNodes = std::array<Node*,6>;
-using NeighbourEdges = std::array<Edge*,6>;
+using NeighbourTiles = std::vector<Tile*>; // TODO class with iterator, keep in board instead of tile?
+using NeighbourNodes = std::vector<Node*>;
+using NeighbourEdges = std::vector<Edge*>;
 
-using IncidentEdges = std::array<Edge*,3>;
-using IncidentTiles = std::array<Tile*,3>;
+using IncidentEdges = std::vector<Edge*>;
+using IncidentTiles = std::vector<Tile*>;
 
 using ResourcePack = std::map<ResourceType, int>;
 

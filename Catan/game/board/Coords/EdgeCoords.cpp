@@ -3,6 +3,7 @@
 //
 
 #include "EdgeCoords.hpp"
+#include "NodeCoords.hpp"
 
 // see explanation for node coords
 class EdgeCoords EdgeCoords::standardize() const {
@@ -35,4 +36,15 @@ EdgeCoords EdgeCoords::next() const {
     int edgeCount=static_cast<int>(EdgeDirection::End);
     EdgeDirection nextDir = static_cast<EdgeDirection>((static_cast<int>(direction())+1)%edgeCount);
     return EdgeCoords(this->getAxialCoords(),nextDir);
+}
+
+NodeCoords EdgeCoords::getNodeCoordAfter() {
+    NodeDirection dir1=static_cast<NodeDirection>(this->m_i);
+    return this->getAxialCoords().getNodeCoordsAt(dir1);
+}
+
+NodeCoords EdgeCoords::getNodeCoordBefore() {
+
+    NodeDirection dir2=static_cast<NodeDirection>(this->next().m_i);
+    return this->getAxialCoords().getNodeCoordsAt(dir2);
 }

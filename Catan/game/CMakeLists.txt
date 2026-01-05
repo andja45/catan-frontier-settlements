@@ -39,6 +39,17 @@ add_library(catan_game
         board/Coords/EdgeCoords.hpp
         board/Coords/NodeCoords.cpp
         board/Coords/NodeCoords.hpp
+        board/BoardFactory/AbstractBoardCreator.hpp
+        board/BoardFactory/BoardCatalog.hpp
+        board/BoardSerializers/BoardLayoutToJson.cpp
+        board/BoardSerializers/BoardLayoutToJson.hpp
+        board/BoardSerializers/AbstractBoardSerializer.hpp
+        board/BoardFactory/RandomStandardSmallCreator.cpp
+        board/BoardFactory/RandomStandardSmallCreator.hpp
+        board/BoardFactory/RandomStandarsExtendedCreator.cpp
+        board/BoardFactory/RandomStandarsExtendedCreator.hpp
+        board/BoardFactory/LoadFromFileCreator.cpp
+        board/BoardFactory/LoadFromFileCreator.hpp
 )
 
 target_include_directories(catan_game

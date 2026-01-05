@@ -35,7 +35,7 @@ private:
 
     bool m_placingRobber = true;
 
-    static QPointF axialToPixelPointy(const HexCoords& a, double size);
+    static QPointF axialToPixelPointy(const TileCoords& a, double size);
     static QVector<QPointF> hexPolygonPointy(const QPointF& center, double size);
 
     QRectF boundsForLayout(double size) const;

@@ -23,13 +23,13 @@ private:
     inline static int m_numOfNodes=0;
 
     //index is nodes id relative to tile
-    HexCoords m_tileCoords = {-1,-1};
+    TileCoords m_tileCoords = {-1,-1};
     NodeIndex m_nodeIndex=-1;
 
     bool m_hasTrade=false;
     ResourceType m_tradeResource=ResourceType::None;
 public:
-    Node(HexCoords coords, NodeIndex index,bool isPort=false, ResourceType portType=ResourceType::None) : Node(coords.first, coords.second, index, isPort, portType) {}
+    Node(NodeCoords coords,bool isPort=false, ResourceType portType=ResourceType::None) : Node(coords.first, coords.second, index, isPort, portType) {}
     Node(int q, int r, int i, bool isPort=false, ResourceType portType=ResourceType::None) : m_nodeIndex(i) {
         m_numOfNodes++; m_nodeId =m_numOfNodes;
         m_tileCoords={q,r};
@@ -48,7 +48,7 @@ public:
     IncidentEdges getIncidentEdges() const { return m_incidentEdges; }
     std::array<Node*,3> getIncidentNodes();
 
-    HexCoords getTileCoords() const {return m_tileCoords;}
+    TileCoords getTileCoords() const {return m_tileCoords;}
     NodeIndex getNodeIndex() const {return m_nodeIndex;}
 
     void setNodeType(const NodeType nodeType) { m_type = nodeType; }

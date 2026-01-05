@@ -1,0 +1,18 @@
+//
+// Created by matija on 1/5/26.
+//
+
+#ifndef CATAN_RANDOMSTANDARSEXTENDEDCREATOR_HPP
+#define CATAN_RANDOMSTANDARSEXTENDEDCREATOR_HPP
+#include <board/Board.h>
+#include <board/BoardFactory/AbstractBoardCreator.hpp>
+
+class RandomStandarsExtendedCreator : public AbstractBoardCreator{
+private:
+    static std::vector<TileDef> generateRandomBoard();
+public:
+    std::unique_ptr<Board> getBoard() override;
+
+};
+
+#endif //CATAN_RANDOMSTANDARSEXTENDEDCREATOR_HPP
