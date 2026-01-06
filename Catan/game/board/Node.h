@@ -24,7 +24,7 @@ private:
     NodeId m_nodeId=-1;
 
     bool m_hasTrade=false; //TODO consider separate class, stored in board? player?
-    ResourceType m_tradeResource=ResourceType::None; // if has trade than this resolve which resource its for
+    TradeType m_tradeResource=TradeType::None; // if has trade than this resolve which resource its for
 public:
     Node(NodeId id,bool isPort=false, ResourceType portType=ResourceType::None) {
         m_nodeId=id;
@@ -34,7 +34,7 @@ public:
 
     bool isEmpty() const { return m_type==NodeType::None; }
     bool hasTrade() const { return m_hasTrade; }
-	bool is3for1Trade() const{return hasTrade() && getTradeResource() == ResourceType::None;}
+	bool is3for1Trade() const{return hasTrade() && getTradeResource() == TradeType::None;}
     bool isTradeFor(ResourceType resourceType) const { return m_tradeResource==resourceType; }
     ResourceType getTradeResource() const { return m_tradeResource; }
 
@@ -46,7 +46,7 @@ public:
 
     void setNodeBuildingType(const NodeType nodeType) { m_type = nodeType; }
     void setOwner(PlayerId ownerId) { m_ownerId = ownerId;}
-    void setTrade(ResourceType tradeResource) {m_tradeResource=tradeResource;}
+    void setTrade(TradeType tradeResource) {m_tradeResource=tradeResource;}
 
     void addAdjacentTile(Tile * tile){ m_incidentTiles.push_back(tile);}
     void addAdjacentEdge(Edge * edge){ m_incidentEdges.push_back(edge);}

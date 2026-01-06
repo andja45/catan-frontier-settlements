@@ -5,14 +5,14 @@
 #include <array>
 
 enum class ResourceType {
-    None,
     Wood,
     Brick,
     Ore,
     Wool,
-    Desert,
-    Sea,
-    Wheat
+    Wheat,
+    None, // special type for ports and non-resource tiles
+    Desert, // for desert tiles
+    Sea, // for sea tiles
 };
 static const inline std::map<std::string,ResourceType> mapStringToRes = {
     {"None",ResourceType::None},

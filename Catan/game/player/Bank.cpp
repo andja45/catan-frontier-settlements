@@ -15,20 +15,30 @@ const std::map<DevType,int> Bank::m_numberOfStandardDevCardsByType = {
 	{DevType::Knight, 14}
 };
 
-void Bank::initializeStandardBank(){
+Bank::Bank() {
+	ResourcePack res;
+	for (auto r : ResourceType::)
+	initializeBank(ResourcePack{},m_numberOfStandardDevCardsByType);
+}
 
-		for (ResourceType type : ResourceCardTypes){
-			addResource(type, m_standardNumOfResources);
+Bank::Bank(const ResourcePack &res, const DevPack &devCards) {
+	initializeBank(res,devCards);
+}
+
+void Bank::initializeBank(const ResourcePack &res, const DevPack &devCards) {
+
+	m_name="Bank";
+	for(auto [fst, snd]:res){
+		addResource(fst,snd);
+	}
+	for(auto [fst, snd]:devCards){
+		for(int i =0; i<snd; i++){
+			addDevCard(fst);
 		}
+	}
 
-		for (DevType type : DevCardTypes){
-			for(int i =0; i<m_numberOfStandardDevCardsByType.at(type); i++){
-				addDevCard(type);
-			}
-		}
-
-		setLongestRoad(true);
-		setLargestMilitary(true);
+	setLongestRoad(true);
+	setLargestMilitary(true);
 }
 
 DevType Bank::takeRandomDev() {

@@ -4,19 +4,19 @@
 
 #ifndef Catan_TYPEALIASES_HPP
 #define Catan_TYPEALIASES_HPP
-#include <array>
 #include <map>
-#include <utility>
-#include <board/Coords/AxialCoords.hpp>
-#include <types/Directions.h>
 
-#include "ResourceType.h"
 
+enum class DevType;
 class Edge;
 class Node;
 class Tile;
+class AxialCoords;
+enum class ResourceType;
+enum class SideDirection;
+enum class PointDirection;
 
-using TileCoords      = AxialCoords ;
+using TileCoords = AxialCoords ;
 
 using NeighbourTiles = std::vector<Tile*>; // TODO class with iterator, keep in board instead of tile?
 using NeighbourNodes = std::vector<Node*>;
@@ -26,6 +26,7 @@ using IncidentEdges = std::vector<Edge*>;
 using IncidentTiles = std::vector<Tile*>;
 
 using ResourcePack = std::map<ResourceType, int>;
+using DevPack = std::map<DevType,int>;
 
 using PlayerId = int;
 using NodeId = int;
@@ -37,5 +38,9 @@ using NodeIndex = int;
 using EdgeDirection = SideDirection;
 using NodeDirection = PointDirection;
 using TileDirection = SideDirection;
+
+using TileType = ResourceType;
+using TradeType = ResourceType;
+using ResourceCardType = ResourceType;
 
 #endif //Catan_TYPEALIASES_HPP
