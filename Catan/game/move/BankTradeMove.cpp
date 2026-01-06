@@ -6,7 +6,6 @@
 #include "gamemodel/GameSession.h"
 
 bool BankTradeMove::isValid(const GameSession& session) const {
-
 }
 
 void BankTradeMove::apply(GameSession& session) const {
