@@ -117,4 +117,36 @@ std::vector<Node *> Board::getAdjacentNodes(EdgeId edgeId) const {
     return getEdgeById(edgeId)->getNodes();
 }
 
+std::vector<Tile *> Board::getTilesWithNumber(int num) {
+    std::vector<Tile *> tiles;
 
+    for (tile : m_tiles) {
+        if (tile->getNumber()==num) {
+            tiles.push_back(tile.get());
+        }
+    }
+    return tiles;
+
+}
+
+Tile * Board::getTileAt(TileCoords coords) {
+    return m_tilesByCoord[coords];
+}
+
+Node * Board::getNodeAt(NodeCoords) {
+}
+
+Edge * Board::getEdgeAt(EdgeCoords) {
+}
+
+Node * Board::getNodeById(NodeId nodeId) const {
+    return m_nodes[nodeId];
+}
+
+Edge * Board::getEdgeById(EdgeId edgeId) const {
+    return m_edges[edgeId];
+}
+
+Tile * Board::getTileById(TileId tileId) const {
+    return m_tiles[tileId];
+}
