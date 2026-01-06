@@ -35,6 +35,9 @@ private:
 
     std::unordered_map<int, std::vector<Tile*>> m_tilesByNumber;
 public:
+    Board() = default;
+    ~Board()=default;
+
     void initializeBoard(std::vector<TileDef> tileDefs);
 
     std::vector<Tile*> getTilesWithNumber(int num);

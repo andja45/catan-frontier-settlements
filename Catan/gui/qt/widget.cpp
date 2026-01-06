@@ -7,6 +7,8 @@
 
 #include "QBoard.h"
 #include <board/Board.h>
+#include <board/BoardFactory/AbstractBoardCreator.hpp>
+#include <board/BoardFactory/RandomStandardSmallCreator.hpp>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -14,13 +16,16 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    auto *board = new QBoard(this);
+    AbstractBoardCreator *creator = new RandomStandardSmallCreator();
+    board=(creator->getBoard());
+    auto *qboard = new QBoard(this,board.get());
 
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0,0,0,0);
-    layout->addWidget(board);
+    layout->addWidget(qboard);
     setLayout(layout);
 }
+
 
 Widget::~Widget()
 {

@@ -15,7 +15,7 @@ bool BuildSettlementMove::isValid(const GameSession& session) const {
     if (!player.hasSettlementLeft())
         return false;
 
-    if (!player.canAfford(Costs::Settlement))
+    if (!player.hasResources(Costs::Settlement))
         return false;
 
     if (!board.isNodeFree(m_nodeId))
@@ -26,7 +26,7 @@ bool BuildSettlementMove::isValid(const GameSession& session) const {
 
     bool connected = false;
     if (session.phase() == TurnPhase::Main) {
-        if (!player.canAfford(Costs::Road))
+        if (!player.hasResources(Costs::Road))
             return false;
 
         connected =
@@ -48,10 +48,10 @@ void BuildSettlementMove::apply(GameSession& session) const {
     Player& player = session.player(m_playerId);
 
     if (session.phase() == TurnPhase::Main) {
-        player.spendResources(Costs::Settlement);
+        player.removeResources(Costs::Settlement);
     }
 
-    player.addVictoryPoints(1);
+    player.addPoints(1);
 
     Node* node = session.board().getNodeById(m_nodeId);
     player.addSettlement(node); // adds to list of that players houses and decrements numofsettlements left

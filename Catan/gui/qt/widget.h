@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+class Board;
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class Widget;
@@ -14,10 +15,13 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
+
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
 private:
     Ui::Widget *ui;
+    std::unique_ptr<Board>board;
+
 };
 #endif // WIDGET_H

@@ -6,6 +6,7 @@
 #define CATAN_COSTS_H
 
 #include  "../types/TypeAliases.h"
+#include <types/ResourceType.h>
 
 namespace Costs {
         inline const ResourcePack Road {

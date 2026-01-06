@@ -71,11 +71,11 @@ bool GameModel::canPlaceRoad(int playerId, int edgeId) const {
             connected = true;
     }
 
-    for (Edge* e : edge->adjacentEdges()) {
-        if (!e) continue;
-        if (e->getOwner() == playerId)
-            connected = true;
-    }
+    // for (Edge* e : edge->adjacentEdges()) {
+    //     if (!e) continue;
+    //     if (e->getOwner() == playerId)
+    //         connected = true;
+    // }
 
     return connected;
 }
@@ -88,11 +88,11 @@ bool GameModel::canPlaceSettlement(int playerId, int nodeId, bool isInitialPlace
     if (!node) return false;
     if (node->getOwner() != -1) return false;
 
-    for (Node* adj : node->getIncidentNodes()) {
-        if (!adj) continue;
-        if (adj->getOwner() != -1)
-            return false;
-    }
+    // for (Node* adj : node->getIncidentNodes()) {
+    //     if (!adj) continue;
+    //     if (adj->getOwner() != -1)
+    //         return false;
+    // }
 
     // mora biti povezan putem (osim initial placement faze)
     if (isInitialPlacement)
@@ -152,11 +152,11 @@ void GameModel::placeSettlement(int playerId, int nodeId){
     node->setOwner(playerId);
     m_players.at(playerId).addSettlement(node);
 }
-
-void GameModel::placeCity(int playerId, int nodeId){
-    Node* node = m_board.getNodeById(nodeId);
-    node->upgradeToCity();
-}
+//
+// void GameModel::placeCity(int playerId, int nodeId){
+//     Node* node = m_board.getNodeById(nodeId);
+//     node->upgradeToCity();
+// }
 
 void GameModel::placeRobber(int tileId) {
 

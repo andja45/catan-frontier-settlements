@@ -33,6 +33,7 @@ public:
     }
 
     bool isEmpty() const { return m_type==NodeType::None; }
+    bool isCity() const { return m_type==NodeType::City; }
     bool hasTrade() const { return m_hasTrade; }
 	bool is3for1Trade() const{return hasTrade() && getTradeResource() == TradeType::None;}
     bool isTradeFor(ResourceType resourceType) const { return m_tradeResource==resourceType; }

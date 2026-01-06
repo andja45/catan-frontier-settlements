@@ -62,22 +62,22 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
             m_edgesByCoord[ec]=rawEdge;
         }
 
-        // connect elements
-        for (int i=0; i<numOfElements; i++) {
-            NodeCoords nc=nodeCoords[i];
-            NodeCoords nnc=nodeCoords[(i+1)%numOfElements];
-            EdgeCoords ec=edgeCoords[i];
-
-            Edge* edge=getEdgeAt(ec);
-            Node* node=getNodeAt(nc);
-            Node* nextNode=getNodeAt(nnc);
-
-            edge->setNodes(node,nextNode);
-            node->addAdjacentEdge(edge);
-            nextNode->addAdjacentEdge(edge);
-
-            node->addAdjacentTile(rawTile);
-        }
+        // // connect elements
+        // for (int i=0; i<numOfElements; i++) {
+        //     NodeCoords nc=nodeCoords[i];
+        //     NodeCoords nnc=nodeCoords[(i+1)%numOfElements];
+        //     EdgeCoords ec=edgeCoords[i];
+        //
+        //     Edge* edge=getEdgeAt(ec);
+        //     Node* node=getNodeAt(nc);
+        //     Node* nextNode=getNodeAt(nnc);
+        //
+        //     edge->setNodes(node,nextNode);
+        //     node->addAdjacentEdge(edge);
+        //     nextNode->addAdjacentEdge(edge);
+        //
+        //     node->addAdjacentTile(rawTile);
+        // }
 
     }
 
@@ -97,7 +97,21 @@ Node * Board::getNodeBetweenEdges(EdgeId edge1Id, EdgeId edge2Id) const {
 }
 
 std::vector<Edge *> Board::getIncidentContinuous(EdgeId edgeId) const {
+    Edge* edge=getEdgeById(edgeId);
+    std::vector<Edge*> edges;
 
+    std::vector<Edge*> adjacentEdges1;
+    if (edge->getStart()->getOwner()==edge->getOwner())
+       adjacentEdges1=std::vector<Edge*>(edge->getStart()->getIncidentEdges());
+
+    std::vector<Edge*> adjacentEdges2;
+    if (edge->getEnd()->getOwner()==edge->getOwner())
+        adjacentEdges2=std::vector<Edge*>(edge->getEnd()->getIncidentEdges());
+
+    adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
+    adjacentEdges1.erase(std::remove_if(adjacentEdges1.begin(), adjacentEdges1.end(), [edgeId](Edge* e){return e->getEdgeId()==edgeId;}), adjacentEdges1.end());
+
+    return adjacentEdges1;
 }
 
 std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
@@ -118,35 +132,29 @@ std::vector<Node *> Board::getAdjacentNodes(EdgeId edgeId) const {
 }
 
 std::vector<Tile *> Board::getTilesWithNumber(int num) {
-    std::vector<Tile *> tiles;
-
-    for (tile : m_tiles) {
-        if (tile->getNumber()==num) {
-            tiles.push_back(tile.get());
-        }
-    }
-    return tiles;
-
+    return m_tilesByNumber[num];
 }
 
 Tile * Board::getTileAt(TileCoords coords) {
     return m_tilesByCoord[coords];
 }
 
-Node * Board::getNodeAt(NodeCoords) {
+Node * Board::getNodeAt(NodeCoords nc) {
+    return m_nodesByCoord[nc];
 }
 
-Edge * Board::getEdgeAt(EdgeCoords) {
+Edge * Board::getEdgeAt(EdgeCoords ec) {
+    return m_edgesByCoord[ec];
 }
 
 Node * Board::getNodeById(NodeId nodeId) const {
-    return m_nodes[nodeId];
+    return m_nodes[nodeId].get();
 }
 
 Edge * Board::getEdgeById(EdgeId edgeId) const {
-    return m_edges[edgeId];
+    return m_edges[edgeId].get();
 }
 
 Tile * Board::getTileById(TileId tileId) const {
-    return m_tiles[tileId];
+    return m_tiles[tileId].get();
 }

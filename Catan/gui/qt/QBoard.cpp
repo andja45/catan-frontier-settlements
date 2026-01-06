@@ -8,8 +8,6 @@
 static constexpr double SQRT3 = 1.7320508075688772;
 
 QBoard::QBoard(QWidget *parent, Board* board) : QWidget(parent), m_board(board) {
-    if(m_board == nullptr)
-        m_board = new Board();
     setMinimumSize(300, 300);
     setAutoFillBackground(true);
     setMouseTracking(true);
@@ -19,8 +17,8 @@ QPointF QBoard::axialToPixelPointy(const TileCoords& a, double size) {
     // hexcoord -> pixel
     // x = size * sqrt(3) * (q + r/2)
     // y = size * 3/2 * r
-    const double x = size * SQRT3 * (static_cast<double>(a.first) + static_cast<double>(a.second) / 2.0);
-    const double y = size * 1.5 * static_cast<double>(a.second);
+    const double x = size * SQRT3 * (static_cast<double>(a.q()) + static_cast<double>(a.r()) / 2.0);
+    const double y = size * 1.5 * static_cast<double>(a.r());
     return {x, y};
 }
 

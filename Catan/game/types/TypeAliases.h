@@ -5,7 +5,7 @@
 #ifndef Catan_TYPEALIASES_HPP
 #define Catan_TYPEALIASES_HPP
 #include <map>
-
+#include <vector>
 
 enum class DevType;
 class Edge;

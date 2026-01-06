@@ -5,6 +5,7 @@
 #include "GameSession.h"
 
 #include <cassert>
+#include <move/Move.h>
 
 InitialPlacementStep GameSession::initialPlacementStep() const {
     return (m_initialPlacementsCount % 2 == 0)
@@ -22,7 +23,7 @@ GameSession::GameSession(int numPlayers,
     m_players.reserve(numPlayers);
 
     for (PlayerId id = 0; id < numPlayers; ++id) {
-        m_players.push_back(std::make_unique<Player>(id));
+      //  m_players.push_back(std::make_unique<Player>(id));
     }
 }
 
