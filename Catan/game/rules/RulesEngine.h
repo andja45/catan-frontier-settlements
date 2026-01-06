@@ -5,10 +5,10 @@
 #ifndef CATAN_RULESENGINE_H
 #define CATAN_RULESENGINE_H
 
+#include "Rule.h"
 #include <memory>
 #include <vector>
 
-class Rule;
 class GameSession;
 
 class RulesEngine {

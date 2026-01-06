@@ -34,11 +34,14 @@ class GameSession {
 private:
  std::unique_ptr<Board> m_board;
  std::vector<std::unique_ptr<Player>> m_players;
+
+ // rules
  RulesEngine m_rules;
+ int m_winningPints = 10; // TODO this will be read from gameConfig client-hosts sends
 
  // global info
  PlayerId m_longestRoadOwner = -1;
- PlayerId m_longestArmyOwner = -1;
+ PlayerId m_largestArmyOwner = -1;
  PlayerId m_winner = -1;
 
  int m_turnIndex = 0;
@@ -65,25 +68,27 @@ public:
 
  bool applyMove(const Move& move);
  int rollDice();
+ void endGame(); // TODO implement
 
  PlayerId localPlayer()   const { return m_localPlayerId; }
  PlayerId currentPlayer() const { return m_currentPlayerId; }
+ PlayerId largestArmyOwner() const { return m_largestArmyOwner; }
+ PlayerId longestRoadOwner() const { return m_longestRoadOwner; }
+ PlayerId winner() const { return m_winner; }
+ int winningPoints() const { return m_winningPints; }
  int numPlayers() const { return static_cast<int>(m_players.size()); }
  TurnPhase phase() const { return m_phase; }
 
- void setLongestRoadOwner(PlayerId playerId) { m_longestRoadOwner = playerId; }
- void setLargestArmyOwner(PlayerId playerId) { m_longestArmyOwner = playerId; }
+ void setLongestRoadOwner(PlayerId playerId);
+ void setLargestArmyOwner(PlayerId playerId);
  void setWinner(PlayerId playerId) { m_winner = playerId; }
-
- void updateLongestRoad();
 
  Board& board() { return *m_board; }
  const Board& board() const { return *m_board; }
 
+ const std::vector<std::unique_ptr<Player>>& players() const { return m_players; }
  const Player& player(PlayerId id) const { return *m_players.at(id); }
  Player& player(PlayerId id) { return *m_players.at(id); }
 };
-
-// TODO treba da se doda, tj vodi racuna o poenima, longestroad/vitez/devcards poeni isto!
 
 #endif //Catan_GAMESESSION_H

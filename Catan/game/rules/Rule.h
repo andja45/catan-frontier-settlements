@@ -5,6 +5,7 @@
 #ifndef CATAN_RULE_H
 #define CATAN_RULE_H
 
+#include "types/TypeAliases.h"
 class GameSession;
 
 class Rule {

@@ -56,6 +56,4 @@ void BuildRoadMove::apply(GameSession& session) const {
     Edge* edge= session.board().getEdgeById(m_edgeId);
     player.addRoad(edge); // adds to list of that players edges and decrements numofroads left
     board.placeRoad(m_playerId, m_edgeId);
-
-    session.updateLongestRoad(); // only then can longestroad be changed
 }
