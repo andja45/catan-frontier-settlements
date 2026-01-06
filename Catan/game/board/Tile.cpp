@@ -27,7 +27,6 @@ std::string Tile::toString() const{
     return typeToString(m_type) + " " + std::to_string(m_number) +
            " (" + std::to_string(std::get<0>(m_tileCoord)) + ", " + std::to_string(std::get<1>(m_tileCoord)) +  ")";
 }
-
 std::ostream& operator<<(std::ostream& os, const Tile& tile)
 {
     if (tile.m_type == ResourceType::Sea)

@@ -143,7 +143,7 @@ bool GameModel::canStealFrom(int thiefId, int victimId) const {
 void GameModel::placeRoad(int playerId, int edgeId){
     Edge* edge = m_board.getEdgeById(edgeId);
 
-    edge->occupy(playerId);
+    edge->setPlayer(playerId);
 }
 
 void GameModel::placeSettlement(int playerId, int nodeId){

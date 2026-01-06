@@ -28,6 +28,7 @@ private:
     inline static int m_numOfTiles=0;
 
 public:
+    Tile(AxialCoords coords,ResourceType type, int number): Tile(coords.q(),coords.r(),type,number) {}
     Tile(int q, int r, ResourceType type, int number) : m_type(type), m_number(number), m_adjacentNodes() {
         m_numOfTiles++;
         m_tileId=m_numOfTiles;
@@ -36,13 +37,14 @@ public:
 
     ResourceType getResourceType() const { return m_type; }
     int getNumber() const { return m_number; }
+
     bool isRobberOnTile() const { return m_robberOnTile; }
+    void setRobber(bool isRobber){m_robberOnTile=isRobber;}
 
     TileCoords getTileCoord() const { return m_tileCoord; }
     TileId getTileId() const { return m_tileId; }
 
     NeighbourNodes getAdjacentNodes() const { return m_adjacentNodes; }
-
     void addAdjacentNode(Node* adjacentNode) { m_adjacentNodes.push_back(adjacentNode); }
 
     static std::string typeToString(ResourceType type);

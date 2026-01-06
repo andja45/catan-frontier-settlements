@@ -14,16 +14,15 @@
 #include <board/Node.h>
 #include <types/TypeAliases.h>
 
-// helper struct to specify board layout and pass parametars to create tiles
+// helper struct to specify board layout and pass parameters to create tiles
 struct TileDef { int q, r; ResourceType res; int number; };
 
-//TODO CONSIDER TRADE AND HOUSES SAVED IN BOARD
+//TODO consider trade and houses saved here?
 class Board {
 private:
     void clearBoard();
     void connectBoardElements();
-
-    // TODO add ports, load ports
+    // TODO add ports, load ports, from file
 
     // board is owner of all its elements, raw pointers are used inside to connect elements for convinience and optimization
     std::vector<std::unique_ptr<Tile>> m_tiles;
@@ -31,7 +30,7 @@ private:
     std::vector<std::unique_ptr<Edge>> m_edges;
 
     std::unordered_map<NodeCoords,Node*> m_nodesByCoord;
-    std::unordered_map<EdgeCoords,Node*> m_edgesByCoord;
+    std::unordered_map<EdgeCoords,Edge*> m_edgesByCoord;
     std::unordered_map<TileCoords,Tile*> m_tilesByCoord;
     std::unordered_map<int, std::vector<Tile*>> m_tilesByNumber;
 public:
