@@ -8,8 +8,8 @@ add_library(catan_gui_qt
         ui/widget.ui
         QBoard.cpp
         QBoard.h
-        QMenu.cpp
-        QMenu.h
+        MainMenu.cpp
+        MainMenu.h
 
 
 )

@@ -4,9 +4,9 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-#include "QMenu.h"
+#include "MainMenu.h"
 
-QMenu::QMenu(QWidget *parent) : QWidget(parent)
+MainMenu::MainMenu(QWidget *parent) : QWidget(parent)
 {
     /*
     QMainWindow mainWindow;

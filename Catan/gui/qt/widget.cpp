@@ -6,7 +6,7 @@
 
 
 #include "QBoard.h"
-#include "QMenu"
+#include "MainMenu.h"
 #include <board/Board.h>
 
 Widget::Widget(QWidget *parent)
@@ -16,7 +16,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     auto *board = new QBoard(new Board(), this);
-    auto *menu = new QMenu(this);
+    auto *menu = new MainMenu(this);
 
     auto *layout = new QVBoxLayout(this);
     layout->addWidget(board);
