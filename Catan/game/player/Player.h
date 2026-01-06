@@ -16,47 +16,46 @@
 enum class DevType;
 class Player : public ResourceHolder {
 private:
-    PlayerId m_playerId      =-1;
+    PlayerId m_playerId=-1;
 
-    std::vector<Edge*> m_roads; // TODO remove in the future when session remembers last move(from that we will read lastsettlement so this isnt needed)
-    std::vector<Node*> m_houses;
+    std::vector<Edge*> m_roads; //
+    std::vector<Node*> m_houses; // TODO remove in the future? or keep for trades and longest road?
 
-    std::map<ResourceType,bool> m_has2for1Trade;
+    //std::map<ResourceType,bool> m_has2for1Trade;
 
     int m_knightsUsed=0;
     int m_victoryPointsUsed=0;
 
-    int m_totalPoints=0;
+    int m_totalPoints=0; //TODO calculated, kept in check by game? kept in check by setters?
 
     int m_numOfRoadsLeft=15;
     int m_numOfCitiesLeft=5;
     int m_numOfSettlementsLeft=5;
 
-    bool m_has3for1Trade = false;
-
 public:
-    explicit Player(PlayerId id) : ResourceHolder(), m_playerId(id) {} // pravim playere po id koji dobiju kad joinuju sobu
+    explicit Player(PlayerId id, std::string name) : ResourceHolder(name), m_playerId(id) {}
 
     PlayerId getPlayerId() const { return m_playerId; }
 
     std::vector<Edge*> getRoads() const { return m_roads; }
     std::vector<Node*> getHouses() const { return m_houses; }
-    void addVictoryPoints(int points) {m_victoryPointsUsed+=points; m_totalPoints+=points;}
+
+    void addPoints(int points) {m_totalPoints+=points;}
+    void removePoints(int points) {m_totalPoints-=points;}
 
     void addRoad(Edge* edge);
     void addSettlement(Node* node);
+    void addCity(Node* node);
 
-    bool has3for1Trade() const {return m_has3for1Trade;}
-    void give3for1Trade()  {m_has3for1Trade=true;}
-
-    bool has2for1Trade(ResourceType resourceType)  {return m_has2for1Trade[resourceType];}
-    void give2for1Trade(ResourceType resourceType)  {m_has2for1Trade[resourceType]=true;}
+    bool has3for1Trade() const;
+    bool has2for1Trade(ResourceType resourceType) const {return hasTrade(resourceType);}
 
     bool hasCityLeft() const {return m_numOfCitiesLeft>0;}
     bool hasSettlementLeft() const {return m_numOfSettlementsLeft>0;}
     bool hasRoadLeft() const {return m_numOfRoadsLeft>0;}
 
     int getTotalPoints() const {return m_totalPoints;}
+
     int getVictoryPointsUsed() const {return m_victoryPointsUsed;}
     int getKnightsUsed() const {return m_knightsUsed;}
     int getNumOfRoadsLeft() const {return m_numOfRoadsLeft;}
@@ -64,14 +63,10 @@ public:
     int getNumOfSettlementsLeft() const {return m_numOfSettlementsLeft;}
 
     bool hasTrade(ResourceType resourceType) const;
-    bool hasLongestRoad() const;
+    int longestRoadLength() const;
 
     ResourcePack takeRandomResources(int amount);
     ResourceType takeRandomResource();
-
-    bool canAfford(const ResourcePack & map) const; // TODO implement
-    void spendResources(const ResourcePack & map) const;  // TODO implement | refer to GameModel -> consumeResources
-    NodeId getSettlementAt(int i) const; // TODO implement | from list of player settlemets gets i-th if there isnt i-th settlement return -1
 };
 
 

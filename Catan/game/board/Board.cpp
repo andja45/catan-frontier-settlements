@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <fstream>
 #include <memory>
+#include <queue>
 #include <unordered_set>
 #include <vector>
 #include <board/Coords/AxialCoords.hpp>
@@ -81,4 +82,39 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
     }
 
 }
+
+std::vector<Edge *> Board::getAdjacentEdges(NodeId nodeId) const {
+    Node* node=getNodeById(nodeId);
+    return node->getIncidentEdges();
+}
+std::vector<Tile *> Board::getAdjacentTiles(NodeId nodeId) const {
+    return getNodeById(nodeId)->getIncidentTiles();
+}
+Node * Board::getNodeBetweenEdges(EdgeId edge1Id, EdgeId edge2Id) const {
+    Edge* edge1=getEdgeById(edge1Id);
+    Edge* edge2=getEdgeById(edge2Id);
+    return edge1->getStart()==edge2->getEnd()?edge1->getStart():edge1->getEnd();
+}
+
+std::vector<Edge *> Board::getIncidentContinuous(EdgeId edgeId) const {
+
+}
+
+std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
+    Edge* edge=getEdgeById(edgeId);
+    std::vector<Edge*> edges;
+
+    std::vector<Edge*> adjacentEdges1(edge->getStart()->getIncidentEdges());
+    std::vector<Edge*> adjacentEdges2(edge->getEnd()->getIncidentEdges());
+    adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
+
+
+    adjacentEdges1.erase(std::remove_if(adjacentEdges1.begin(), adjacentEdges1.end(), [edgeId](Edge* e){return e->getEdgeId()==edgeId;}), adjacentEdges1.end());
+
+    return adjacentEdges1;
+}
+std::vector<Node *> Board::getAdjacentNodes(EdgeId edgeId) const {
+    return getEdgeById(edgeId)->getNodes();
+}
+
 

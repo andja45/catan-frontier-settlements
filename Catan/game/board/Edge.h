@@ -25,7 +25,7 @@ public:
 
     Node* getStart() const { return m_start; }
     Node* getEnd() const { return m_end; }
-    std::array<Node*,2> getNodes() const { return {m_start,m_end}; }
+    std::vector<Node*> getNodes() const { return {m_start,m_end}; }
     void setNodes(Node* start, Node* end) { m_start=start; m_end=end; }
 
     bool isOccupied() const { return m_isOccupied; }

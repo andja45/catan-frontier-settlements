@@ -21,10 +21,10 @@ struct TileDef { int q, r; ResourceType res; int number; };
 class Board {
 private:
     void clearBoard();
-    void connectBoardElements();
     // TODO add ports, load ports, from file
 
     // board is owner of all its elements, raw pointers are used inside to connect elements for convinience and optimization
+    // make sure element id corresponds to index in these vectors during creation
     std::vector<std::unique_ptr<Tile>> m_tiles;
     std::vector<std::unique_ptr<Node>> m_nodes;
     std::vector<std::unique_ptr<Edge>> m_edges;
@@ -32,6 +32,7 @@ private:
     std::unordered_map<NodeCoords,Node*> m_nodesByCoord;
     std::unordered_map<EdgeCoords,Edge*> m_edgesByCoord;
     std::unordered_map<TileCoords,Tile*> m_tilesByCoord;
+
     std::unordered_map<int, std::vector<Tile*>> m_tilesByNumber;
 public:
     void initializeBoard(std::vector<TileDef> tileDefs);
@@ -48,6 +49,13 @@ public:
 
     const std::vector<std::unique_ptr<Tile>>& getTiles() const { return m_tiles; }
 
+    std::vector<Edge*> getAdjacentEdges(NodeId nodeId) const;
+    std::vector<Edge*> getIncidentEdges(EdgeId edgeId) const;
+    std::vector<Node*> getAdjacentNodes(EdgeId edgeId) const;
+    std::vector<Tile*> getAdjacentTiles(NodeId nodeId) const;
+    Node* getNodeBetweenEdges(EdgeId edge1Id, EdgeId edge2Id) const;
+    std::vector<Edge*> getIncidentContinuous(EdgeId edgeId) const;
+
     bool isEdgeFree(EdgeId edgeId) const; // TODO implement
     bool isNodeFree(NodeId nodeId) const;
     bool edgeTouchesPlayerHouse(PlayerId playerId, EdgeId edgeId) const; // TODO implement | refer to GameModel -> canPlaceRoad | one side of edge is either settlement or city owned by this player
@@ -61,6 +69,7 @@ public:
     void placeSettlement(PlayerId playerId, NodeId nodeId); // TODO implement | refer to GameModel -> placeSettlement
     bool isSettlementOwnedBy(PlayerId playerId, NodeId nodeId) const; // TODO implement | first false if not settlement then false if owner isnt playerid
     void placeCity(PlayerId playerId, NodeId nodeId); // TODO implement | node upgradToCity (player has pointers so it will be registered)
+
 };
 
 

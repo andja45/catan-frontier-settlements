@@ -37,6 +37,8 @@ public:
     void addResource(ResourceType resourceType, int amount) { removeResource(resourceType,-amount);}
     void addDevCard(DevType devType) { m_devCards[devType]++; m_numOfDevCards++;}
     void removeDevCard(DevType devType) { m_devCards[devType]--; m_numOfDevCards--;}
+    void removeResources(const ResourcePack& pack) { for (auto r:pack) removeResource(r.first,r.second);}
+    void addResources(const ResourcePack& pack) { for (auto r:pack) addResource(r.first,r.second);}
 
     bool hasLongestRoad() const {return m_hasLongestRoad;}
     bool hasLargestMilitary() const {return m_hasLargestMilitary;}

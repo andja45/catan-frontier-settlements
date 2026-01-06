@@ -17,7 +17,7 @@ private:
 	static const std::map<DevType,int> m_numberOfStandardDevCardsByType;
 public:
     Bank();
-	Bank(const ResourcePack &res, const DevPack &devCards);
+	Bank(const ResourcePack &resources, const DevPack &devCards);
 	void initializeBank(const ResourcePack &res, const DevPack &devCards);
 	DevType takeRandomDev();
 };
