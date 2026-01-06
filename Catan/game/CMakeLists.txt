@@ -52,6 +52,15 @@ add_library(catan_game
         move/BankTradeMove.h
         move/SetRobberMove.h
         move/BankTradeMove.cpp
+        rules/Rule.h
+        rules/LargestArmyRule.cpp
+        rules/LargestArmyRule.h
+        rules/LongestRoadRule.cpp
+        rules/LongestRoadRule.h
+        rules/VictoryRule.cpp
+        rules/VictoryRule.h
+        rules/RulesEngine.cpp
+        rules/RulesEngine.h
 )
 
 target_include_directories(catan_game

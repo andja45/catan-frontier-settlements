@@ -29,6 +29,7 @@ using ResourcePack = std::map<ResourceType, int>;
 using DevPack = std::map<DevType,int>;
 
 using PlayerId = int;
+constexpr PlayerId InvalidPlayer = -1;
 using NodeId = int;
 using EdgeId = int;
 using TileId = int;

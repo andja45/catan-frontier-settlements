@@ -14,6 +14,7 @@ InitialPlacementStep GameSession::initialPlacementStep() const {
 }
 
 GameSession::GameSession(int numPlayers,
+                         std::vector<std::string> playerNames,
                          PlayerId localPlayer,
                          uint32_t seed)
     : m_board(std::make_unique<Board>())
@@ -23,7 +24,7 @@ GameSession::GameSession(int numPlayers,
     m_players.reserve(numPlayers);
 
     for (PlayerId id = 0; id < numPlayers; ++id) {
-      //  m_players.push_back(std::make_unique<Player>(id));
+        m_players.push_back(std::make_unique<Player>(id, playerNames[id]));
     }
 }
 
@@ -32,6 +33,7 @@ bool GameSession::applyMove(const Move& move){
         return false;
 
     move.apply(*this);
+    m_rules.evaluate(*this); // after every move, cus someone can interrupt
     advancePhaseAfterMove(move); // only session can advance phases, move only reads them
     //notifyModelChanged(); //notify view
 
