@@ -4,10 +4,11 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
+#include "QMenu.h"
 
+QMenu::QMenu(QWidget *parent) : QWidget(parent)
+{
+    /*
     QMainWindow mainWindow;
     mainWindow.setWindowTitle("Catan – Main Menu");
     mainWindow.resize(400, 300);
@@ -32,5 +33,21 @@ int main(int argc, char *argv[])
     layout->addWidget(btnHistory);
 
     mainWindow.show();
-    return a.exec();
+*/
+
+    auto *layout = new QVBoxLayout(this);
+    layout->setAlignment(Qt::AlignCenter);
+    layout->setSpacing(15);
+
+    auto *btnHost    = new QPushButton("Host Game", this);
+    auto *btnJoin    = new QPushButton("Join Game", this);
+    auto *btnHistory = new QPushButton("Game History", this);
+
+    btnHost->setFixedSize(200, 40);
+    btnJoin->setFixedSize(200, 40);
+    btnHistory->setFixedSize(200, 40);
+
+    layout->addWidget(btnHost);
+    layout->addWidget(btnJoin);
+    layout->addWidget(btnHistory);
 }

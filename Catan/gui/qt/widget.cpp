@@ -15,22 +15,12 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-<<<<<<< Updated upstream
     auto *board = new QBoard(new Board(), this);
-=======
-    //auto *board = new QBoard(this);
     auto *menu = new QMenu(this);
->>>>>>> Stashed changes
 
     auto *layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0,0,0,0);
-    //layout->addWidget(board);
-
-
-
+    layout->addWidget(board);
     layout->addWidget(menu);
-
-    setLayout(layout);
 }
 
 Widget::~Widget()
