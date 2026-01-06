@@ -8,7 +8,7 @@
 #include <types/TypeAliases.h>
 
 char TileView::resourceToChar( const BoardTheme& theme) const {
-    switch (m_tile->getType()) {
+    switch (m_tile->getResourceType()) {
         case ResourceType::Wood: return theme.woodChar;
         case ResourceType::Brick: return theme.brickChar;
         case ResourceType::Ore: return theme.oreChar;

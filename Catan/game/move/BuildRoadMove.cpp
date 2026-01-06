@@ -21,12 +21,13 @@ bool BuildRoadMove::isValid(const GameSession& session) const {
     // connected check, if phase is correct
     bool connected = false;
     if (session.phase() == TurnPhase::Main) {
-        if (!player.canAfford(Costs::Road))
+        if (!player.hasResources(Costs::Road))
             return false;
 
         connected =
             board.edgeTouchesPlayerHouse(m_playerId, m_edgeId) ||
             board.edgeTouchesPlayerRoad(m_playerId, m_edgeId);
+
     }
     else if (session.phase() == TurnPhase::InitialPlacement &&
         session.initialPlacementStep() == InitialPlacementStep::PlaceRoad){ // or both phases in separate check at start and this just in else
@@ -49,7 +50,7 @@ void BuildRoadMove::apply(GameSession& session) const {
     Player& player = session.player(m_playerId);
 
     if (session.phase() == TurnPhase::Main) {
-        player.spendResources(Costs::Road);
+        player.removeResources(Costs::Road);
     }
 
     Edge* edge= session.board().getEdgeById(m_edgeId);

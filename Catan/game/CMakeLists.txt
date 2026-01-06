@@ -1,7 +1,6 @@
 add_library(catan_game
         board/Edge.h
         board/Tile.h
-        board/Edge.cpp
         board/Edge.h
         types/NodeType.h
         player/Player.cpp
@@ -31,6 +30,25 @@ add_library(catan_game
         board/Board.cpp
         types/Costs.h
         player/Bank.cpp
+        board/Coords/AxialCoords.cpp
+        board/Coords/AxialCoords.hpp
+        board/Coords/ElementCoords.hpp
+        types/Directions.h
+        board/Coords/EdgeCoords.cpp
+        board/Coords/EdgeCoords.hpp
+        board/Coords/NodeCoords.cpp
+        board/Coords/NodeCoords.hpp
+        board/BoardFactory/AbstractBoardCreator.hpp
+        board/BoardFactory/BoardCatalog.hpp
+        board/BoardSerializers/BoardLayoutToJson.cpp
+        board/BoardSerializers/BoardLayoutToJson.hpp
+        board/BoardSerializers/AbstractBoardSerializer.hpp
+        board/BoardFactory/RandomStandardSmallCreator.cpp
+        board/BoardFactory/RandomStandardSmallCreator.hpp
+        board/BoardFactory/RandomStandarsExtendedCreator.cpp
+        board/BoardFactory/RandomStandarsExtendedCreator.hpp
+        board/BoardFactory/LoadFromFileCreator.cpp
+        board/BoardFactory/LoadFromFileCreator.hpp
         move/BankTradeMove.h
         move/SetRobberMove.h
         move/BankTradeMove.cpp

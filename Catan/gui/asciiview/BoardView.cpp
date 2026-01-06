@@ -13,7 +13,7 @@
 void BoardView::computeSizes() {
     int minX,maxX,minY,maxY;
     for (auto c: m_board->getBoardCords()) {
-        HexCoords offsetCord=axialToOffset(c);
+        TileCoords offsetCord=axialToOffset(c);
 
         minX=std::min(minX,offsetCord.first);
         maxX=std::max(maxX,offsetCord.first);
@@ -53,7 +53,7 @@ void BoardView::init() {
     computeSizes();
 
     for (auto c: m_board->getBoardCords()) {
-        HexCoords offsetCord=axialToOffset(c);
+        TileCoords offsetCord=axialToOffset(c);
         ScreenCoords pos=offsetToScreen({offsetCord.first,offsetCord.second},m_center,m_gridSize);
 
         TileView tw=TileView(m_board->getTileAt(c),pos,m_gridSize);
@@ -65,7 +65,7 @@ void BoardView::init() {
     }
 }
 
-HexCoords BoardView::axialToOffset(HexCoords axial) {
+TileCoords BoardView::axialToOffset(TileCoords axial) {
     auto [q,r]=axial;
     int offsetX=q;
     int offsetY=r+(q-q%2)/2;
@@ -79,7 +79,7 @@ ScreenCoords BoardView::stepSize(ScreenCoords tileSize) {
     return {stepX,stepY};
 }
 
-ScreenCoords BoardView::offsetToScreen(HexCoords offset,ScreenCoords origin ,ScreenCoords tileSize) {
+ScreenCoords BoardView::offsetToScreen(TileCoords offset,ScreenCoords origin ,ScreenCoords tileSize) {
     auto [stepX,stepY]=stepSize(tileSize);
     int x=offset.first*stepX;
     int y=offset.second*stepY+stepY/2*(offset.first%2);

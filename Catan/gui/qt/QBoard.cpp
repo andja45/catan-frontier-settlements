@@ -15,7 +15,7 @@ QBoard::QBoard(QWidget *parent, Board* board) : QWidget(parent), m_board(board) 
     setMouseTracking(true);
 }
 
-QPointF QBoard::axialToPixelPointy(const HexCoords& a, double size) {
+QPointF QBoard::axialToPixelPointy(const TileCoords& a, double size) {
     // hexcoord -> pixel
     // x = size * sqrt(3) * (q + r/2)
     // y = size * 3/2 * r
@@ -114,7 +114,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
         //color hex
         QBrush brush(Qt::NoBrush);
 
-        switch (h->getType()) {
+        switch (h->getResourceType()) {
         case ResourceType::Wood:
             brush = QBrush(QColor(34, 139, 34));      // forest green
             break;
