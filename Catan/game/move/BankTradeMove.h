@@ -1,5 +1,5 @@
 //
-// Created by andja on 17.12.25..
+// Created by andja on 17.12.25.
 //
 
 #ifndef CATAN_BANKTRADEMOVE_H
