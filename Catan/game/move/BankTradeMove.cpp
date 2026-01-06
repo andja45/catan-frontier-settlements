@@ -6,8 +6,6 @@
 #include "gamemodel/GameSession.h"
 
 bool BankTradeMove::isValid(const GameSession& session) const {
-    // another githook
-    // test
 }
 
 void BankTradeMove::apply(GameSession& session) const {
