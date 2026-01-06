@@ -61,6 +61,8 @@ add_library(catan_game
         rules/VictoryRule.h
         rules/RulesEngine.cpp
         rules/RulesEngine.h
+        gamemodel/GameConfig.cpp
+        gamemodel/GameConfig.h
 )
 
 target_include_directories(catan_game
