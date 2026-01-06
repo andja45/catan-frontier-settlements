@@ -5,6 +5,7 @@
 #ifndef Catan_TYPEALIASES_HPP
 #define Catan_TYPEALIASES_HPP
 #include <map>
+#include <vector>
 
 
 enum class DevType;
@@ -29,6 +30,7 @@ using ResourcePack = std::map<ResourceType, int>;
 using DevPack = std::map<DevType,int>;
 
 using PlayerId = int;
+constexpr PlayerId InvalidPlayer = -1;
 using NodeId = int;
 using EdgeId = int;
 using TileId = int;

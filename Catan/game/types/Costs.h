@@ -5,6 +5,7 @@
 #ifndef CATAN_COSTS_H
 #define CATAN_COSTS_H
 
+#include "ResourceType.h"
 #include  "../types/TypeAliases.h"
 
 namespace Costs {
