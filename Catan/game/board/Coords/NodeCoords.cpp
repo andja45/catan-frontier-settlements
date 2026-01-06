@@ -5,42 +5,44 @@
 #include "NodeCoords.hpp"
 
 
-// helper functions to standardize coordinates of nodes and edges
-// multiple tiles share same vertex/edge so we standardize coordinates to canonical form by assigning it to a certain tile
-// about axial coordinate system: https://www.redblobgames.com/grids/hexagons/
-NodeCoords NodeCoords::standardize() const {
-    //0 1 2 stay the same
-    //3,4,5 go to next hex and change index to 0,1,2
+NodeCoords::NodeCoords(AxialCoords coords, NodeDirection direction) {
+    // multiple tiles share same vertex/edge so we standardize coordinates to canonical form by assigning it to a certain tile
+    // for nodes we choose that they belong to tile where they are on the top, top right and bottom right
 
-    NodeDirection new_dir=NodeDirection::End;
-    AxialCoords new_coords=this->getAxialCoords();
-    switch (direction()) {
-        case NodeDirection::Top:
-        case NodeDirection::RightTop:
-        case NodeDirection::RightBottom:
-            return *this;
-        case NodeDirection::Bottom: {
-            new_coords = this->getAxialCoords().getNeighborCoords(SideDirection::BottomLeft);
-            new_dir=NodeDirection::RightTop;
-            break;
-        }
-        case NodeDirection::LeftBottom: {
-            new_coords = this->getAxialCoords().getNeighborCoords(SideDirection::BottomLeft);
-            new_dir=NodeDirection::Top;
-            break;
-        }
-        case NodeDirection::LeftTop: {
-            new_coords = this->getAxialCoords().getNeighborCoords( SideDirection::Left);
-            new_dir=NodeDirection::RightTop;
-            break;
-        }
+    // hex with nodes it owns marked with 'x'
+    //    x
+    // /     \
+    // o     x
+    // |     |
+    // o     x
+    // \     /
+    //    o
+    // (this is best illustration i could do)
+
+    switch (direction) {
+    case NodeDirection::Top:
+    case NodeDirection::RightTop:
+    case NodeDirection::RightBottom:
+        break;
+    case NodeDirection::Bottom: {
+        coords = coords.getNeighborCoords(TileDirection::BottomLeft);
+        direction=NodeDirection::RightTop;
+        break;
+    }
+    case NodeDirection::LeftBottom: {
+        coords = coords.getNeighborCoords(SideDirection::BottomLeft);
+        direction=NodeDirection::Top;
+        break;
+    }
+    case NodeDirection::LeftTop: {
+        coords = coords.getNeighborCoords( SideDirection::Left);
+        direction=NodeDirection::RightTop;
+        break;
+    }
+    default: ;
     };
-    return NodeCoords(new_coords,new_dir);
-}
 
-
-NodeCoords NodeCoords::next() const {
-    int nodeCount=static_cast<int>(NodeDirection::End);
-    NodeDirection new_i=static_cast<NodeDirection>((static_cast<int>(direction())+1)%nodeCount);
-    return NodeCoords(getAxialCoords(),new_i);
+    m_q=coords.q();
+    m_r=coords.r();
+    m_i=static_cast<int>(direction);
 }

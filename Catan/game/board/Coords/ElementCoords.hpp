@@ -14,11 +14,18 @@ protected:
     int m_i;
 public:
     ElementCoords() = default;
-    ElementCoords(int q, int r, int i) : m_q(q), m_r(r), m_i(i) {}
-    AxialCoords getAxialCoords() const {return {m_q,m_r};}
-    int q() const { return m_q; }
-    int r() const { return m_r; }
-    int i() const { return m_i; }
+    size_t elementHash() const {
+        return std::hash<int>{}(m_i)^(std::hash<int>{}(m_q) ^ (std::hash<int>{}(m_r) << 1)<<1);
+    }
+ friend bool operator==(const ElementCoords &lhs, const ElementCoords &rhs) {
+        return lhs.m_q == rhs.m_q
+               && lhs.m_r == rhs.m_r
+               && lhs.m_i == rhs.m_i;
+    }
+
+    friend bool operator!=(const ElementCoords &lhs, const ElementCoords &rhs) {
+        return !(lhs == rhs);
+    }
 };
 
 #endif //CATAN_ELEMENTCOORDS_HPP
