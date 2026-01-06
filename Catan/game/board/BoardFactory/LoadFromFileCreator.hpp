@@ -9,7 +9,7 @@
 class LoadFromFileCreator : public AbstractBoardCreator {
 private:
     std::string m_filePath;
-    std::vector<TileDef> loadBoardFromFile();
+    std::vector<TileDef> loadBoardFromFile(); // loads from file based on extension
     static std::vector<TileDef> loadBoardFromTxt(std::istream& stream);
     static std::vector<TileDef> loadBoardFromJson(std::istream& stream);
 public:

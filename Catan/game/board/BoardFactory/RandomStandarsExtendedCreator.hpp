@@ -7,6 +7,7 @@
 #include <board/Board.h>
 #include <board/BoardFactory/AbstractBoardCreator.hpp>
 
+// generates extended catan map version for 6 players
 class RandomStandarsExtendedCreator : public AbstractBoardCreator{
 private:
     static std::vector<TileDef> generateRandomBoard();

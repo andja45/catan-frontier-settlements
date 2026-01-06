@@ -8,7 +8,13 @@
 
 class BoardLayoutToJson :public AbstractBoardSerializer{
 public:
+    explicit BoardLayoutToJson(const std::string &path)
+    : AbstractBoardSerializer(path) {
+    }
+
     void serialize(Board) override;
+
+    ~BoardLayoutToJson() override{}
 };
 
 #endif //CATAN_BOARDLAYOUTTOJSON_HPP

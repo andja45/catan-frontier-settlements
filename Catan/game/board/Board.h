@@ -17,6 +17,7 @@
 // helper struct to specify board layout and pass parametars to create tiles
 struct TileDef { int q, r; ResourceType res; int number; };
 
+//TODO CONSIDER TRADE AND HOUSES SAVED IN BOARD
 class Board {
 private:
     void clearBoard();

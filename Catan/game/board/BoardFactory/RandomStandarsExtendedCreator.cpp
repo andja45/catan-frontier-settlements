@@ -14,70 +14,9 @@
 
 struct TileDef;
 
-std::array<int,18> RandomStandardSmallCreator::m_standardNumberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
-const std::array<TileCoords,19> RandomStandardSmallCreator::m_standardCoordinates = {{
-    // Center
-    { 0,   0},
-
-    // Ring 1 (distance = 1)
-    { 1,   0},
-    { 1,  -1},
-    { 0,  -1},
-    {-1,   0},
-    {-1,   1},
-    { 0,   1},
-
-    // Ring 2 (distance = 2)
-    { 1,   1},
-    { 2,   0},
-    { 2,  -1},
-    { 2,  -2},
-    { 1,  -2},
-    { 0,  -2},
-    {-1,  -1},
-    {-2,   0},
-    {-2,   1},
-    {-2,   2},
-    {-1,   2},
-    { 0,   2}
-}
-};
-const std::array<TileCoords,6> RandomStandardSmallCreator::m_directionCoords = {{
-    { 0, -1 },  // top left
-    { 1, -1 },  // top right
-    { 1,  0 },  // right
-    { 0,  1 },  // bottom right
-    { -1, 1 },  // bottom left
-    { -1, 0 }   // left
-}};
-static const std::vector<TileDef> m_basicMap = {
-    { -1, -2, ResourceType::Wood,   11 },
-    {  0, -2, ResourceType::Wool,  12 },
-    {  1, -2, ResourceType::Brick,   9 },
-
-    { -2, -1, ResourceType::Wheat,   4 },
-    { -1, -1, ResourceType::Ore,     6 },
-    {  0, -1, ResourceType::Wood,    5 },
-    {  1, -1, ResourceType::Wool,  10 },
-
-    { -2,  0, ResourceType::Brick,   8 },
-    { -1,  0, ResourceType::Wheat,   3 },
-    {  0,  0, ResourceType::Desert,  0 },
-    {  1,  0, ResourceType::Wheat,  11 },
-    {  2,  0, ResourceType::Ore,     4 },
-
-    { -1,  1, ResourceType::Wool,   9 },
-    {  0,  1, ResourceType::Wood,   10 },
-    {  1,  1, ResourceType::Ore,     3 },
-    {  2,  1, ResourceType::Brick,   5 },
-
-    {  0,  2, ResourceType::Wool,   6 },
-    {  1,  2, ResourceType::Wheat,   8 },
-    {  2,  2, ResourceType::Wood,    2 }
-};
-
 // generates standard catan map with random resource distribution
 std::vector<TileDef> RandomStandarsExtendedCreator::generateRandomBoard(){
+    // list of axial coordinates of tiles, given in spiral order for number assignment purposes
     static const std::array<TileCoords,30> standardExtendedCoords = {
         {
         // ring 1
@@ -152,8 +91,9 @@ std::vector<TileDef> RandomStandarsExtendedCreator::generateRandomBoard(){
             5,
             0,
             0
-    };
+    }; // numbers in spiral order, order is fixed to insure balance
 
+    // populating and shuffling resources
     std::vector<TileDef> r;
     std::vector<ResourceType> hexList = {ResourceType::Desert,ResourceType::Desert};
     for(int i = 0; i < 4+2; i++) {
@@ -165,15 +105,14 @@ std::vector<TileDef> RandomStandarsExtendedCreator::generateRandomBoard(){
         hexList.push_back(ResourceType::Ore);
         hexList.push_back(ResourceType::Brick);
     }
-
     std::random_device rd;
     std::mt19937 g(rd());
     std::shuffle(hexList.begin(), hexList.end(), g);
 
-
+    // we take coord numbers and resoruces and merge them
     int j = 0;
     for(int i = 0; i < hexList.size(); i++){
-        if(hexList[i] == ResourceType::Desert) {
+        if(hexList[i] == ResourceType::Desert) {  // desert skips number
             r.push_back({standardExtendedCoords[i].q(),standardExtendedCoords[i].r(), hexList[i], 7});
         }
         else r.push_back({standardExtendedCoords[i].q(),standardExtendedCoords[i].r(), hexList[i], extendedNumbers[j++]});

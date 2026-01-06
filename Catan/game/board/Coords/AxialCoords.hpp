@@ -11,6 +11,10 @@
 
 class EdgeCoords;
 class NodeCoords;
+
+
+// axial coordinate system for tile indexing in hex grid
+// checkout https://www.redblobgames.com/grids/hexagons/ for more info
 class AxialCoords {
 private:
     int m_q;
@@ -22,13 +26,15 @@ public:
     int r() const { return m_r; }
 
     AxialCoords operator+(const AxialCoords &other) const;
-    static AxialCoords getNeighborCoords(TileDirection dir);
+    static AxialCoords getNeighborCoords(TileDirection dir); // get surrounding tile coords
 
+    // edge and node coords are mede of axial plus direction
     EdgeCoords getEdgeCoordsAt(EdgeDirection dir) const;
     NodeCoords getNodeCoordsAt(NodeDirection dir) const;
 
-    std::vector<EdgeCoords> getEdgeCoords();
-    std::vector<NodeCoords> getNodeCoords();
+    // get all edges and nodes around hex
+    std::vector<EdgeCoords> getEdgeCoords() const;
+    std::vector<NodeCoords> getNodeCoords() const;
 
     friend bool operator==(const AxialCoords &lhs, const AxialCoords &rhs) {
         return lhs.m_q == rhs.m_q
@@ -40,15 +46,13 @@ public:
 };
 
 
-namespace std {
-    template <>
-    struct hash<AxialCoords> {
-        std::size_t operator()(const AxialCoords& a) const noexcept {
-            std::size_t h1 = std::hash<int>{}(a.q());
-            std::size_t h2 = std::hash<int>{}(a.r());
-            return h1 ^ (h2 << 1);
-        }
-    };
-}
+template <>
+struct std::hash<AxialCoords> {
+    std::size_t operator()(const AxialCoords& a) const noexcept {
+        std::size_t h1 = std::hash<int>{}(a.q());
+        std::size_t h2 = std::hash<int>{}(a.r());
+        return h1 ^ (h2 << 1);
+    }
+};
 
 #endif //CATAN_AXIALCOORDS_HPP

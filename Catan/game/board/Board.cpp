@@ -5,14 +5,8 @@
 #include "Board.h"
 #include "Node.h"
 #include <algorithm>
-#include <array>
 #include <fstream>
-#include <iostream>
 #include <memory>
-#include <random>
-#include <sstream>
-#include <types/TypeAliases.h>
-#include <algorithm>
 #include <unordered_set>
 #include <vector>
 #include <board/Coords/AxialCoords.hpp>
@@ -33,7 +27,6 @@ void Board::clearBoard() {
 // initialize tiles edge nodes and connects them together
 void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PORTS
     clearBoard();
-
     for (const auto&[q, r, res, number] : tileMap) {
         auto t = std::make_unique<Tile>(q, r, res, number);
 
@@ -72,49 +65,4 @@ void Board::connectBoardElements(){
 
         }
     }
-}
-
-
-std::vector<Tile *> Board::getTilesWithNumber(int num) {
-}
-
-Tile * Board::getTileAt(TileCoords coords) {
-}
-
-Node * Board::getNodeAt(NodeCoords) {
-}
-
-Edge * Board::getEdgeAt(EdgeCoords) {
-}
-
-Node * Board::getNodeAt(TileCoords coords, NodeIndex index) {
-}
-
-Edge * Board::getEdgeAt(TileCoords coords, EdgeIndex index) {
-}
-
-Node * Board::getNodeById(NodeId nodeId) const {
-}
-
-Edge * Board::getEdgeById(EdgeId edgeId) const {
-}
-
-Tile * Board::getTileById(TileId tileId) const {
-}
-
-Node * Board::getNodeAtDir(TileCoords coords, PointDirection) {
-}
-
-Edge * Board::getEdgeAtDir(TileCoords coords, SideDirection) {
-}
-
-Tile * Board::getTileAtDir(TileCoords coords, SideDirection) {
-}
-
-std::vector<TileCoords> Board::getBoardCords() {
-    std::vector<TileCoords> coords;
-    for (auto&[coord, tile] : m_tilesByCoord) {
-        coords.push_back(coord);
-    }
-    return coords;
 }

@@ -15,7 +15,7 @@ void BoardLayoutToJson::serialize(Board board) {
         saveBoard.push_back({
             {"q", tile->getTileCoord().q()},
             {"r", tile->getTileCoord().r()},
-            {"type", tile->getType()},
+            {"type", tile->getResourceType()},
             {"number", tile->getNumber()}
         });
     }

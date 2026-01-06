@@ -112,7 +112,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
         //color hex
         QBrush brush(Qt::NoBrush);
 
-        switch (h->getType()) {
+        switch (h->getResourceType()) {
         case ResourceType::Wood:
             brush = QBrush(QColor(34, 139, 34));      // forest green
             break;

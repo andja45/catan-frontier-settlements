@@ -13,6 +13,7 @@ AxialCoords AxialCoords::operator+(const AxialCoords &other) const {
 }
 
 AxialCoords AxialCoords::getNeighborCoords(TileDirection dir) {
+    // steps to move in directions to get neighbour
     static const std::array<AxialCoords,6> directionCoords={{
         { 0, -1 },  // top left
         { 1, -1 },  // top right
@@ -33,15 +34,15 @@ NodeCoords AxialCoords::getNodeCoordsAt(NodeDirection dir) const {
     return NodeCoords(*this,dir);
 }
 
-std::vector<EdgeCoords> AxialCoords::getEdgeCoords() {
+std::vector<EdgeCoords> AxialCoords::getEdgeCoords() const {
     std::vector<EdgeCoords> coords;
-    for (int i = 0; i < static_cast<int>(EdgeDirection::End); i++) {
+    for (int i = 0; i < static_cast<int>(EdgeDirection::End); i++) { // iterate through all directions
         coords.push_back(getEdgeCoordsAt(static_cast<EdgeDirection>(i)));
     }
     return coords;
 }
 
-std::vector<NodeCoords> AxialCoords::getNodeCoords() {
+std::vector<NodeCoords> AxialCoords::getNodeCoords() const {
     std::vector<NodeCoords> coords;
     for (int i = 0; i < static_cast<int>(NodeDirection::End); i++) {
         coords.push_back(getNodeCoordsAt(static_cast<NodeDirection>(i)));

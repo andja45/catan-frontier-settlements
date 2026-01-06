@@ -6,6 +6,8 @@
 #define CATAN_ABSTRACTBOARDSERIALIZER_HPP
 #include <string>
 #include <board/Board.h>
+
+// abstraction for saving board
 class AbstractBoardSerializer {
 protected:
     std::string m_filePath;

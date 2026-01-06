@@ -6,6 +6,7 @@
 #define CATAN_ABSTRACTBOARDCREATOR_HPP
 #include <board/Board.h>
 
+// abstraction for different methods of board loading
 class AbstractBoardCreator {
 public:
     virtual std::unique_ptr<Board> getBoard()=0;
