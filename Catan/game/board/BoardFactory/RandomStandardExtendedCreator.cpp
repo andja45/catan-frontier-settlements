@@ -2,7 +2,7 @@
 // Created by matija on 1/5/26.
 //
 
-#include "RandomStandarsExtendedCreator.hpp"
+#include "RandomStandardExtendedCreator.hpp"
 
 
 //
@@ -15,83 +15,42 @@
 struct TileDef;
 
 // generates standard catan map with random resource distribution
-std::vector<TileDef> RandomStandarsExtendedCreator::generateRandomBoard(){
+std::vector<TileDef> RandomStandardExtendedCreator::generateRandomBoard(){
     // list of axial coordinates of tiles, given in spiral order for number assignment purposes
-    static const std::array<TileCoords,30> standardExtendedCoords = {
-        {
-        // ring 1
-        {-1,-3},
-        {0,-3},
-        {1,-3},
-        {1,-2},
-        {2,-1},
-        {2, 0},
-        {2, 1},
-        {1, 2},
-        {0, 3},
-        {-1, 3},
-        {-1, 2},
-        {-2, 1},
-        {-3, 0},
-        {-2,-1},
-        {-2,-2},
-        {-1,-2},
-        {0,-2},
-        {1,-2},
 
-        // ring 2
-        {-1,-1},
-        {0,-1},
-        {1,-1},
+    static const std::array<TileCoords,30> standardExtendedCoords = {{
+        // outer ring
+        {0, -3}, {1, -3}, {2, -3},
+        {2, -2},
+        {2, -1},
+        {2, 0},
+        {1, 1}, {0, 2},
+        {-1, 3}, {-2, 3}, {-3, 3},
+        {-3, 2},
+        {-3, 1},
+        {-3, 0},
+        {-2, -1}, {-1, -2},
+        // middle ring
+        {0, -2}, {1, -2},
+        {1, -1},
         {1, 0},
         {0, 1},
-        {-1, 1},
-        {-2, 0},
-        {-2,-1},
+        {-1, 2}, {-2, 2},
+        {-2, 1}, {-2, 0},
+        {-1,-1},
+        // center ring
+        {-1, 0}, {0, 0},
+        {0, -1}, {-1, 1}
 
-        {-1, 0},
-        {0, 0},
-        {0, 1},
-        {-1, 1}
-        }
-    };
+    }};
+
+
+    // numbers in spiral order, order is fixed to insure balance
     const static std::vector<int> extendedNumbers = {
-            // Ring 1
-            10,
-            8,
-            9,
-            6,
-            10,
-            5,
-            8,
-            4,
-            2,
-            2,
-            5,
-            6,
-            3,
-            11,
-            3,
-            4,
-            11,
-            12,
-
-           // Ring 2
-            3,
-            9,
-            11,
-            10,
-            8,
-            4,
-            9,
-            3,
-
-           // Ring 3
-            10,
-            5,
-            0,
-            0
-    }; // numbers in spiral order, order is fixed to insure balance
+            2, 5, 4, 6, 3, 9, 8, 11, 11, 10,
+            6, 3, 8, 4, 8, 10, 11, 12, 10, 5,
+            4, 9, 5, 9, 12, 3, 2, 6
+        };
 
     // populating and shuffling resources
     std::vector<TileDef> r;
@@ -120,7 +79,7 @@ std::vector<TileDef> RandomStandarsExtendedCreator::generateRandomBoard(){
     return r;
 }
 
-std::unique_ptr<Board> RandomStandarsExtendedCreator::getBoard() {
+std::unique_ptr<Board> RandomStandardExtendedCreator::getBoard() {
     auto board=std::make_unique<Board>();
     auto tiles = generateRandomBoard();
     board->initializeBoard(tiles);

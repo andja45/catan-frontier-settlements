@@ -45,8 +45,8 @@ add_library(catan_game
         board/BoardSerializers/AbstractBoardSerializer.hpp
         board/BoardFactory/RandomStandardSmallCreator.cpp
         board/BoardFactory/RandomStandardSmallCreator.hpp
-        board/BoardFactory/RandomStandarsExtendedCreator.cpp
-        board/BoardFactory/RandomStandarsExtendedCreator.hpp
+        board/BoardFactory/RandomStandardExtendedCreator.cpp
+        board/BoardFactory/RandomStandardExtendedCreator.hpp
         board/BoardFactory/LoadFromFileCreator.cpp
         board/BoardFactory/LoadFromFileCreator.hpp
         move/BankTradeMove.h

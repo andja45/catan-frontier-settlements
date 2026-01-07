@@ -62,7 +62,7 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
             m_edgesByCoord[ec]=rawEdge;
         }
 
-        // // connect elements
+        // connect elements
         // for (int i=0; i<numOfElements; i++) {
         //     NodeCoords nc=nodeCoords[i];
         //     NodeCoords nnc=nodeCoords[(i+1)%numOfElements];
