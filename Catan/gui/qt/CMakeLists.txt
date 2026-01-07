@@ -10,6 +10,7 @@ add_library(catan_gui_qt
         QBoard.h
         MainMenu.cpp
         MainMenu.h
+        resources.qrc
 
 
 )

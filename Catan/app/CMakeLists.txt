@@ -2,6 +2,7 @@
 
 add_executable(Catan
         main.cpp
+        ../gui/qt/resources.qrc
 )
 
 target_link_libraries(Catan

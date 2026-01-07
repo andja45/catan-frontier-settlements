@@ -3,6 +3,9 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QFile>
 
 #include "MainMenu.h"
 
@@ -34,6 +37,8 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent)
 
     mainWindow.show();
 */
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground);
 
     auto *layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignCenter);
@@ -50,4 +55,37 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent)
     layout->addWidget(btnHost);
     layout->addWidget(btnJoin);
     layout->addWidget(btnHistory);
+
+    update();
+}
+
+void MainMenu::paintEvent(QPaintEvent *event)
+{
+    /*QPainter painter(this);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.drawPixmap(rect(), QPixmap(":/images/catan2.png"));
+    qDebug() << "PAINT EVENT" << size();
+
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+    static QPixmap bg(":/images/catan2.png");
+    painter.drawPixmap(rect(), bg);
+    painter.fillRect(rect(), Qt::red);
+
+*/
+
+    QPainter painter(this);
+
+    QPixmap bg(":/images/catan2.png");
+    qDebug() << "isNull =" << bg.isNull();
+
+    painter.fillRect(rect(), Qt::red);
+    painter.drawPixmap(rect(), bg);
+
+    QFile f(":/images/catan2.png");
+    qDebug() << "exists:" << f.exists();
+
+
 }
