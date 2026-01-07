@@ -17,7 +17,6 @@ struct TileDef;
 // generates standard catan map with random resource distribution
 std::vector<TileDef> RandomStandardExtendedCreator::generateRandomBoard(){
     // list of axial coordinates of tiles, given in spiral order for number assignment purposes
-
     static const std::array<TileCoords,30> standardExtendedCoords = {{
         // outer ring
         {0, -3}, {1, -3}, {2, -3},
@@ -43,7 +42,6 @@ std::vector<TileDef> RandomStandardExtendedCreator::generateRandomBoard(){
         {0, -1}, {-1, 1}
 
     }};
-
 
     // numbers in spiral order, order is fixed to insure balance
     const static std::vector<int> extendedNumbers = {
@@ -83,5 +81,17 @@ std::unique_ptr<Board> RandomStandardExtendedCreator::getBoard() {
     auto board=std::make_unique<Board>();
     auto tiles = generateRandomBoard();
     board->initializeBoard(tiles);
+    board->addTrade(NodeCoords({0,-3},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({1,-3},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({2,-2},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({-2,-1},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({-3,-3},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({-3,0},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({2,0},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({1,1},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({-3,2},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({-3,3},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({-2,3},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({-1,3},PointDirection::Top),ResourceType::None);
     return std::move(board);
 }

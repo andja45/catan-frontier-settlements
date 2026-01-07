@@ -59,6 +59,8 @@ public:
     Node* getNodeBetweenEdges(EdgeId edge1Id, EdgeId edge2Id) const;
     std::vector<Edge*> getIncidentContinuous(EdgeId edgeId) const;
 
+    void addTrade(NodeCoords nodeCoords, TradeType tradeType);
+
     bool isEdgeFree(EdgeId edgeId) const; // TODO implement
     bool isNodeFree(NodeId nodeId) const;
     bool edgeTouchesPlayerHouse(PlayerId playerId, EdgeId edgeId) const; // TODO implement | refer to GameModel -> canPlaceRoad | one side of edge is either settlement or city owned by this player

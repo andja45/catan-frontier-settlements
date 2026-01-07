@@ -114,6 +114,11 @@ std::vector<Edge *> Board::getIncidentContinuous(EdgeId edgeId) const {
     return adjacentEdges1;
 }
 
+void Board::addTrade(NodeCoords nodeCoords, TradeType tradeType) {
+    Node* node=getNodeAt(nodeCoords);
+    node->setTrade(tradeType);
+}
+
 std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
     Edge* edge=getEdgeById(edgeId);
     std::vector<Edge*> edges;
@@ -158,3 +163,4 @@ Edge * Board::getEdgeById(EdgeId edgeId) const {
 Tile * Board::getTileById(TileId tileId) const {
     return m_tiles[tileId].get();
 }
+
