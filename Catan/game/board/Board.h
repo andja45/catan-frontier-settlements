@@ -80,6 +80,8 @@ public:
 
     bool isBuildingOwnedBy(PlayerId playerId, NodeId nodeId) const; // consider removing, use get node owner and check yourself
     bool isNodeSettlement(NodeId nodeId) const;
+
+    std::vector<AxialCoords> getBoardCords();
 };
 
 

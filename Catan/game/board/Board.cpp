@@ -316,3 +316,11 @@ bool Board::isNodeSettlement(NodeId nodeId) const {
     return getNodeById(nodeId)->isSettlement();
 }
 
+
+std::vector<AxialCoords> Board::getBoardCords() {
+    std::vector<AxialCoords> coords;
+    for (auto&[coord, tile] : m_tilesByCoord) {
+        coords.push_back(coord);
+    }
+    return coords;
+}
