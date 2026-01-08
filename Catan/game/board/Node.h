@@ -48,6 +48,7 @@ public:
     void setNodeBuildingType(const NodeType nodeType) { m_type = nodeType; }
     void setOwner(PlayerId ownerId) { m_ownerId = ownerId;}
     void setTrade(TradeType tradeResource) {m_tradeResource=tradeResource;}
+    void setId(NodeId nodeId){m_nodeId=nodeId;}
 
     void addAdjacentTile(Tile * tile){ m_incidentTiles.push_back(tile);}
     void addAdjacentEdge(Edge * edge){ m_incidentEdges.push_back(edge);}

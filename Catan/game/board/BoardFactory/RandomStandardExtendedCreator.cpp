@@ -2,7 +2,7 @@
 // Created by matija on 1/5/26.
 //
 
-#include "populatePorts.hpp"
+#include "RandomStandardExtendedCreator.hpp"
 
 
 //
@@ -15,7 +15,7 @@
 struct TileDef;
 
 // generates standard catan map with random resource distribution
-std::vector<TileDef> populatePorts::generateRandomBoard(){
+std::vector<TileDef> RandomStandardExtendedCreator::generateRandomBoard(){
     // list of axial coordinates of tiles, given in spiral order for number assignment purposes
     static const std::array<TileCoords,30> standardExtendedCoords = {{
         // outer ring
@@ -77,7 +77,7 @@ std::vector<TileDef> populatePorts::generateRandomBoard(){
     return r;
 }
 
-void populatePorts::generatePorts(Board * board) {
+void RandomStandardExtendedCreator::generatePorts(Board * board) {
 
     board->addTrade(NodeCoords({0,-3},PointDirection::Top),ResourceType::None);
     board->addTrade(NodeCoords({0,-3},PointDirection::LeftTop),ResourceType::None);
@@ -114,7 +114,7 @@ void populatePorts::generatePorts(Board * board) {
 
 }
 
-std::unique_ptr<Board> populatePorts::getBoard() {
+std::unique_ptr<Board> RandomStandardExtendedCreator::getBoard() {
     auto board=std::make_unique<Board>();
     auto tiles = generateRandomBoard();
     board->initializeBoard(tiles);return std::move(board);

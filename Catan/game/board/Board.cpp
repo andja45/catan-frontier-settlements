@@ -36,6 +36,8 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
 
         auto t = std::make_unique<Tile>(q, r, res, number);
         Tile* rawTile = t.get();
+        int id=m_tiles.size();
+        t->setId(id);
         m_tiles.push_back(std::move(t));
         m_tilesByCoord[ax]=rawTile;
 
@@ -51,6 +53,7 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
             int id=m_nodes.size();
             auto n = std::make_unique<Node>(id);
             Node* rawNode = n.get();
+            m_nodes.push_back(std::move(n));
             m_nodesByCoord[nc]=rawNode;
         }
 
@@ -59,25 +62,26 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
             int id=m_edges.size();
             auto e = std::make_unique<Edge>(id);
             Edge* rawEdge = e.get();
+            m_edges.push_back(std::move(e));
             m_edgesByCoord[ec]=rawEdge;
         }
 
         // connect elements
-        // for (int i=0; i<numOfElements; i++) {
-        //     NodeCoords nc=nodeCoords[i];
-        //     NodeCoords nnc=nodeCoords[(i+1)%numOfElements];
-        //     EdgeCoords ec=edgeCoords[i];
-        //
-        //     Edge* edge=getEdgeAt(ec);
-        //     Node* node=getNodeAt(nc);
-        //     Node* nextNode=getNodeAt(nnc);
-        //
-        //     edge->setNodes(node,nextNode);
-        //     node->addAdjacentEdge(edge);
-        //     nextNode->addAdjacentEdge(edge);
-        //
-        //     node->addAdjacentTile(rawTile);
-        // }
+        for (int i=0; i<numOfElements; i++) {
+            NodeCoords nc=nodeCoords[i];
+            NodeCoords nnc=nodeCoords[(i+1)%numOfElements];
+            EdgeCoords ec=edgeCoords[i];
+
+            Edge* edge=getEdgeAt(ec);
+            Node* node=getNodeAt(nc);
+            Node* nextNode=getNodeAt(nnc);
+
+            edge->setNodes(node,nextNode);
+            node->addAdjacentEdge(edge);
+            nextNode->addAdjacentEdge(edge);
+
+            node->addAdjacentTile(rawTile);
+        }
 
     }
 

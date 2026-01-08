@@ -8,6 +8,7 @@
 
 #include <types/ResourceType.h>
 #include <types/TypeAliases.h>
+#include <board/Coords/AxialCoords.hpp>
 
 enum class SideDirection;
 enum class PointDirection;
@@ -35,6 +36,7 @@ public:
         m_tileCoord={q,r};
     }
 
+    void setId(TileId id) {m_tileId=id;}
     ResourceType getResourceType() const { return m_type; }
     int getNumber() const { return m_number; }
 

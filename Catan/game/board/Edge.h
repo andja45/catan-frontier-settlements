@@ -27,6 +27,7 @@ public:
     Node* getEnd() const { return m_end; }
     std::vector<Node*> getNodes() const { return {m_start,m_end}; }
     void setNodes(Node* start, Node* end) { m_start=start; m_end=end; }
+    void setId(EdgeId id) {m_edgeId=id;}
 
     bool isOccupied() const { return m_isOccupied; }
     int getOwner() const { return m_playerId; }

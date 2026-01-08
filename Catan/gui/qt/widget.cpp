@@ -17,7 +17,7 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    AbstractBoardCreator *creator = new RandomStandardExtendedCreator();
+    AbstractBoardCreator *creator = new RandomStandardSmallCreator();
     board=(creator->getBoard());
     auto *qboard = new QBoard(this,board.get());
 
