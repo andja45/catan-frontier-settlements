@@ -323,7 +323,7 @@ std::vector<TileDef> Board::loadBoardFromTextFile(const std::string& loadFilePat
 std::vector<Tile *> Board::getTilesWithNumber(int num) {
     std::vector<Tile *> tiles;
 
-    for (tile : m_tiles) {
+    for (const auto &tile : m_tiles) {
         if (tile->getNumber()==num) {
             tiles.push_back(tile.get());
         }
@@ -345,24 +345,24 @@ Edge * Board::getEdgeAt(HexCoords coords, EdgeIndex index) {
 }
 
 Node * Board::getNodeById(NodeId nodeId) const {
-    for (auto node : m_nodes) {
-		if (node->getNodeIndex() == nodeId) return node;
+    for (const auto &node : m_nodes) {
+		if (node->getNodeIndex() == nodeId) return node.get();
 	}
 
 	return nullptr;
 }
 
 Edge * Board::getEdgeById(EdgeId edgeId) const {
-	for (auto edge : m_edges) {
-		if (edge->getEdgeId() == edgeId) return edge;
+	for (const auto &edge : m_edges) {
+		if (edge->getEdgeId() == edgeId) return edge.get();
 	}
 
 	return nullptr;
 }
 
 Tile * Board::getTileById(TileId tileId) const {
-    for (auto tile : m_tiles) {
-		if (tile->getTileId() == tileId) return tile;
+    for (const auto &tile : m_tiles) {
+		if (tile->getTileId() == tileId) return tile.get();
 	}
 
 	return nullptr;
@@ -377,7 +377,7 @@ Edge * Board::getEdgeAtDir(HexCoords coords, SideDirection direction) {
 }
 
 Tile * Board::getTileAtDir(HexCoords coords, SideDirection direction) {
-    HexCoords tileCoords = coords;
+    HexCoords tileCoords = coords;/*
     if (direction == SideDirection::Left) {
         coords += {-1, 0};
     }
@@ -396,7 +396,7 @@ Tile * Board::getTileAtDir(HexCoords coords, SideDirection direction) {
     if (direction == SideDirection::BottomLeft) {
         coords += {-1, 1};
     }
-
+*/
     return m_tilesByCoord[coords];
 }
 
@@ -408,15 +408,15 @@ std::vector<HexCoords> Board::getBoardCords() {
     return coords;
 }
 
- bool isEdgeFree(EdgeId edgeId) { // TODO implement
-	Edge* edge = this->getEdgeById(edgeId);
+ bool Board::isEdgeFree(EdgeId edgeId) const { // TODO implement
+    Edge* edge = this->Board::getEdgeById(edgeId);
 
 	if (edge->getOwner() == -1) {
 		return true;
 	}
 	return false;
 }
- bool isNodeFree(NodeId nodeId) {
+ bool Board::isNodeFree(NodeId nodeId) const {
 	Node * node = this->getNodeById(nodeId);
 
 	if(node->getOwner() == -1) {
@@ -424,7 +424,7 @@ std::vector<HexCoords> Board::getBoardCords() {
 	}
 	return false;
 }
- bool edgeTouchesPlayerHouse(PlayerId playerId, EdgeId edgeId) { // TODO implement | refer to GameModel -> canPlaceRoad | one side of edge is either settlement or city owned by this player
+ bool Board::edgeTouchesPlayerHouse(PlayerId playerId, EdgeId edgeId) const { // TODO implement | refer to GameModel -> canPlaceRoad | one side of edge is either settlement or city owned by this player
     Edge* edge = this->getEdgeById(edgeId);
 
 	for (Node* n : edge->getNodes()) {
@@ -437,20 +437,20 @@ std::vector<HexCoords> Board::getBoardCords() {
 	}
 	return false;
 }
- bool edgeTouchesPlayerSettlement(NodeId settlementId, EdgeId edgeId){ // TODO implement | one side of edge touches this settlement
+ bool Board::edgeTouchesPlayerSettlement(NodeId settlementId, EdgeId edgeId) const{ // TODO implement | one side of edge touches this settlement
 	Edge* edge = this->getEdgeById(settlementId);
 
 	for (Node* n : edge->getNodes()) {
         if (!n) {
 			 continue;
 		}
-        if (n->getOwner() == playerId && n->IsSettlement()) {
-            return true;
-		}
+        //if (n->getOwner() == playerId && n->IsSettlement()) {
+        //    return true;
+		//}
 	}
 	return false;
 }
- bool edgeTouchesPlayerRoad(PlayerId playerId, EdgeId edgeId) {
+ bool Board::edgeTouchesPlayerRoad(PlayerId playerId, EdgeId edgeId) const{
 	Edge* edge = this->getEdgeById(edgeId);
 
 	for (Edge* e : edge->adjacentEdges()) {
@@ -463,21 +463,21 @@ std::vector<HexCoords> Board::getBoardCords() {
     }
 	return false;
 }
- bool nodeTouchesAnySettlement(int nodeId) { // TODO implement | refer to GameModel -> canPlaceSettlement
+ bool Board::nodeTouchesAnySettlement(int nodeId) const { // TODO implement | refer to GameModel -> canPlaceSettlement
 	Node* node = this->getNodeById(nodeId);
 
-     for (Node* adj : node->getIncidentNodes()) {
+    /* for (Node* adj : node->getIncidentNodes()) {
         if (!adj) {
 			continue;
 		}
         if (adj->getOwner() != -1) {
             return true;
 		}
-    }
+    }*/
 
 	return false;
 }
-bool nodeTouchesPlayerRoad(int playerId, int nodeId) {
+bool Board::nodeTouchesPlayerRoad(int playerId, int nodeId) const{
     Node* node = this->getNodeById(nodeId);
 
 	for (Edge* e : node->getIncidentEdges()) {
@@ -488,24 +488,24 @@ bool nodeTouchesPlayerRoad(int playerId, int nodeId) {
 	return false;
 }
 
- void placeRoad(PlayerId playerId, EdgeId edgeId) { // TODO implement | refer to GameModel -> placeRoad
+ void Board::placeRoad(PlayerId playerId, EdgeId edgeId) const { // TODO implement | refer to GameModel -> placeRoad
 	Edge* edge = this->getEdgeById(edgeId);
 
     edge->setRoad(playerId);
 }
- void placeSettlement(PlayerId playerId, NodeId nodeId) { // TODO implement | refer to GameModel -> placeSettlement
+ void Board::placeSettlement(PlayerId playerId, NodeId nodeId) { // TODO implement | refer to GameModel -> placeSettlement
 	Node* node = this->getNodeById(nodeId);
 
     node->setOwner(playerId);
 }
- bool isSettlementOwnedBy(PlayerId playerId, NodeId nodeId) { // TODO implement | first false if not settlement then false if owner isnt playerid
+ bool Board::isSettlementOwnedBy(PlayerId playerId, NodeId nodeId) const { // TODO implement | first false if not settlement then false if owner isnt playerid
 	Node * node = this->getNodeById(nodeId);
 
 	if(node->isSettlement() == false && node->getOwner() != playerId) {
 		return false;
 	}
 }
-void placeCity(PlayerId playerId, NodeId nodeId){ // TODO implement | node upgradeToCity (player has pointers so it will be registered)
+void Board::placeCity(PlayerId playerId, NodeId nodeId){ // TODO implement | node upgradeToCity (player has pointers so it will be registered)
 	Node * node = this->getNodeById(nodeId);
 
 	if(node->getOwner() == playerId) {

@@ -87,13 +87,13 @@ bool GameModel::canPlaceSettlement(int playerId, int nodeId, bool isInitialPlace
     Node* node = m_board.getNodeById(nodeId);
     if (!node) return false;
     if (node->getOwner() != -1) return false;
-
+/*
     for (Node* adj : node->getIncidentNodes()) {
         if (!adj) continue;
         if (adj->getOwner() != -1)
             return false;
     }
-
+*/
     // mora biti povezan putem (osim initial placement faze)
     if (isInitialPlacement)
         return true;

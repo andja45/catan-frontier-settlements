@@ -47,7 +47,6 @@ public:
     PlayerId getOwner() const { return m_ownerId; }
     IncidentTiles getIncidentTiles() const { return m_incidentTiles; }
     IncidentEdges getIncidentEdges() const { return m_incidentEdges; }
-    std::array<Node*,3> getIncidentNodes();
 
     HexCoords getTileCoords() const {return m_tileCoords;}
     NodeIndex getNodeIndex() const {return m_nodeIndex;}
