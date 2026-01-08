@@ -32,11 +32,13 @@ public:
         m_tradeResource=portType;
     }
     // maybe place building that takes type and owner, and upgrade to city?
+    // is is is or manual check?
     bool isEmpty() const { return m_type==NodeType::None; }
     bool isCity() const { return m_type==NodeType::City; }
+    bool isSettlement() const { return m_type==NodeType::Settlement; }
     bool hasTrade() const { return m_hasTrade; }
 	bool is3for1Trade() const{return hasTrade() && getTradeResource() == TradeType::None;}
-    bool isTradeFor(ResourceType resourceType) const { return m_tradeResource==resourceType; }
+    bool isTradeFor(ResourceType resourceType) const { return m_tradeResource==resourceType; } // manual check via get trade resouce
     ResourceType getTradeResource() const { return m_tradeResource; }
 
     NodeType getNodeBuildingType() const { return m_type; }
@@ -50,6 +52,9 @@ public:
     void setTrade(TradeType tradeResource) {m_tradeResource=tradeResource; m_hasTrade=true;}
     void setId(NodeId nodeId){m_nodeId=nodeId;}
     NodeId getNodeId() const {return m_nodeId;}
+
+    void buildSettlement(PlayerId playerId) {m_ownerId=playerId; m_type=NodeType::Settlement;}
+    void buildCity() {m_type=NodeType::City;}
 
     void addAdjacentTile(Tile * tile){ m_incidentTiles.push_back(tile);}
     void addAdjacentEdge(Edge * edge){ m_incidentEdges.push_back(edge);}

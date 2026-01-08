@@ -7,7 +7,7 @@
 
 
 bool EndTurnMove::isValid(const GameSession& session) const {
-    if (session.currentPlayer() != m_playerId) // TODO game should be playable even without multiplayer, but in gui we will set buttons unclickable if currplayer != localplayer cus only he can make moves on his gui, other clients send him their moves
+    if (session.currentPlayer() != m_playerId)
         return false;
 
     if (session.phase() != TurnPhase::Main) // this is fine because activating robber will enter robberphase so you cant end move
@@ -17,5 +17,5 @@ bool EndTurnMove::isValid(const GameSession& session) const {
 }
 
 void EndTurnMove::apply(GameSession& session) const {
-    // GameSession changes phases and advances players
+    //TODO GameSession changes phases and advances players
 }

@@ -8,7 +8,7 @@
 #include "Move.h"
 
 
-class RollDiceMove final : public Move{
+class RollDiceMove final : public Move{ // TODO consider adding dice rolled number that is set on server side (or client for convenience if we dont care about cheating)
 private:
     PlayerId m_playerId;
 public:

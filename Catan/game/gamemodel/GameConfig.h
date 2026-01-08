@@ -15,13 +15,12 @@ struct PlayerConfig {
     std::string name;
 };
 
-class GameConfig {
+class GameConfig { // class used to pass game configuration from client-host to other clients for game setup and initialization
 public:
-    // we get this from client-host
     int numPlayers = 0;
     int winningVictoryPoints = 10;
-    uint32_t randomSeed = 0;
-
+    uint32_t randomSeed = 0; // for random sync
+    // board type?
     std::vector<PlayerConfig> players;
 public:
     GameConfig() = default;

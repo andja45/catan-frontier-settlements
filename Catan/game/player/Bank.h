@@ -19,7 +19,7 @@ public:
     Bank();
 	Bank(const ResourcePack &resources, const DevPack &devCards);
 	void initializeBank(const ResourcePack &res, const DevPack &devCards);
-	DevType takeRandomDev();
+	DevType takeRandomDev(); // for buying dev cards
 };
 
 

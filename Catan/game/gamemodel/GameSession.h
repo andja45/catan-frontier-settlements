@@ -14,13 +14,24 @@
 class Move;
 
 /*loopovi igranje igraca/bota i provere vict points road vitezi..*/
+// game session is like engine for our game that gets moves from all players from server and executes them to apply changes and keep game running
+
+
+// TODO add moves activateDevCard move gets dev card type, check if player has it and uses it (decrements counter, applies effect or enters new phase in separate move per dev card)
+// TODO add building bridges phase, and reuse initial phase counter (change name to phase counter), it receives build road move and ends after building two roads
+// TODO add monopoly and resource phase as well (because we are not accepting those moves unless we paid and activated dev card), add moves for monopoly and resource
+// alternative: merge robber move and steal card for knight and dice, merge activate and choose resource for monopoly and resource
+// for multi-step moves (monopoly and resources) is valid is false until both get chosen, only then do action buttons becomes clickable and move sent
+// keep bridge phase to reuse build road logic?
+
+// TODO add trade request and accept moves
 
 enum class TurnPhase {
- RollDice,
+ RollDice, // Start of turn, awaits dice roll
  Main, // regularan potez, build/trade/kupuje devcards, nakon rolldice
- Robber, // mozda nije faza?
- DiscardCards, //
- InitialPlacement,
+ Robber, // Phase choosing tile to move the robber and choosing player to steal a card // TODO consider breaking into robberChooseTile and choosePlayer for easier isValid highlighting purposes
+ DiscardCards, // Game enters in this phase when 7 is rolled and waits for all players to send their discard cards moves
+ InitialPlacement, // Special phase for initial placement turns (every player chooses one road and settlement) //TODO consider breaking into two phases and ditch enum
  End // mozda nije faza?
 }; // drzi to stanje sve dok ne dobije signal da je uradjeno nesto sto ga menja
    // tj to je stanje koje ceka, ne ono koje sledi
@@ -30,6 +41,8 @@ enum class InitialPlacementStep {
  PlaceRoad
 };
 
+// TODO game session should keep track of pending trade requests, add TradeRequest class with playerId owner, trade pack give and trade pack receive, and it stores players that accepted trade so owner can choose
+// TODO when game gets offer move it saves trade request, this gets displayed to other players so they can choose to accept, when others accept its saved in trade struct and when owner does and it matches then trade happens according to stored data
 class GameSession {
 private:
  std::unique_ptr<Board> m_board;
@@ -45,6 +58,8 @@ private:
  PlayerId m_winner = -1;
 
  int m_turnIndex = 0;
+ // it not only applies our rules but from other to so we keep track of which players turn is it and also which player are we
+ // game should be playable even without multiplayer, but in gui we will set buttons unclickable if currplayer != localplayer cus only he can make moves on his gui, other clients send him their moves and game session executes them
  PlayerId m_currentPlayerId = -1;
  PlayerId m_localPlayerId   = -1; // who am i?
 
@@ -72,9 +87,11 @@ public:
 
  PlayerId localPlayer()   const { return m_localPlayerId; }
  PlayerId currentPlayer() const { return m_currentPlayerId; }
+
  PlayerId largestArmyOwner() const { return m_largestArmyOwner; }
  PlayerId longestRoadOwner() const { return m_longestRoadOwner; }
  PlayerId winner() const { return m_winner; }
+
  int winningPoints() const { return m_winningPints; }
  int numPlayers() const { return static_cast<int>(m_players.size()); }
  TurnPhase phase() const { return m_phase; }

@@ -18,7 +18,7 @@ class Player : public ResourceHolder {
 private:
     PlayerId m_playerId=-1;
 
-    std::vector<Edge*> m_roads; //
+    std::vector<Edge*> m_roads;
     std::vector<Node*> m_houses; // TODO remove in the future? or keep for trades and longest road?
 
     //std::map<ResourceType,bool> m_has2for1Trade;
@@ -26,7 +26,7 @@ private:
     int m_knightsUsed=0;
     int m_victoryPointsUsed=0;
 
-    int m_totalPoints=0; //TODO calculated, kept in check by game? kept in check by setters?
+    int m_totalPoints=0; //kept in check by game as part of game logic and rules, do not calculate it here!
 
     int m_numOfRoadsLeft=15;
     int m_numOfCitiesLeft=5;
@@ -39,13 +39,14 @@ public:
 
     std::vector<Edge*> getRoads() const { return m_roads; }
     std::vector<Node*> getHouses() const { return m_houses; }
+    Node* getLastHouseBuilt() const {return m_houses.back();}
 
     void addPoints(int points) {m_totalPoints+=points;}
     void removePoints(int points) {m_totalPoints-=points;}
 
     void addRoad(Edge* edge);
     void addSettlement(Node* node);
-    void addCity(Node* node);
+    void addCity();
 
     bool has3for1Trade() const;
     bool has2for1Trade(ResourceType resourceType) const {return hasTrade(resourceType);}
@@ -53,6 +54,7 @@ public:
     bool hasCityLeft() const {return m_numOfCitiesLeft>0;}
     bool hasSettlementLeft() const {return m_numOfSettlementsLeft>0;}
     bool hasRoadLeft() const {return m_numOfRoadsLeft>0;}
+    bool hasHouses() const {return m_houses.size()>0;}
 
     int getTotalPoints() const {return m_totalPoints;}
 
@@ -63,9 +65,8 @@ public:
     int getNumOfSettlementsLeft() const {return m_numOfSettlementsLeft;}
 
     bool hasTrade(ResourceType resourceType) const;
-    int longestRoadLength() const;
 
-    ResourcePack takeRandomResources(int amount);
+    ResourcePack takeRandomResources(int amount); // for robber discard and steal card
     ResourceType takeRandomResource();
 };
 

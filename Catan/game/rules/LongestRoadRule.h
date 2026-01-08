@@ -8,6 +8,7 @@
 
 #include "Rule.h"
 
+// rule in charge of keeping track, giving points and calculating who has longest road
 class LongestRoadRule : public Rule {
 public:
     void evaluate(GameSession& session) override;

@@ -9,7 +9,7 @@ bool BuildSettlementMove::isValid(const GameSession& session) const {
     const Board& board = session.board();
     const Player& player = session.player(m_playerId);
 
-    if (session.currentPlayer() != m_playerId) // TODO game should be playable even without multiplayer, but in gui we will set buttons unclickable if currplayer != localplayer cus only he can make moves on his gui, other clients send him their moves
+    if (session.currentPlayer() != m_playerId)
         return false;
 
     if (!player.hasSettlementLeft())
@@ -34,7 +34,7 @@ bool BuildSettlementMove::isValid(const GameSession& session) const {
     }
     else if (session.phase() == TurnPhase::InitialPlacement &&
         session.initialPlacementStep() == InitialPlacementStep::PlaceRoad){ // or both phases in separate check at start and this just in else
-        return true; // has no rules other than settlement distance
+        return true; // in initial phase settlements can be placed anywhere, dont need to be connected to roads
         }
 
     if (!connected)

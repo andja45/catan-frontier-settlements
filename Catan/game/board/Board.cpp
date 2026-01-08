@@ -312,3 +312,7 @@ bool Board::isBuildingOwnedBy(PlayerId playerId, NodeId nodeId) const {
     return false;
 }
 
+bool Board::isNodeSettlement(NodeId nodeId) const {
+    return getNodeById(nodeId)->isSettlement();
+}
+

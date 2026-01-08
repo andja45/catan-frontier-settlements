@@ -7,10 +7,6 @@
 #include <random>
 
 
-int Player::longestRoadLength() const { //TODO make graph from adjacent edges, (connect them through nodes) and do bfs
-
-}
-
 
 void Player::addRoad(Edge *edge) {
 	m_roads.push_back(edge);
@@ -22,10 +18,11 @@ void Player::addSettlement(Node *node) {
 	m_numOfSettlementsLeft--;
 }
 
-void Player::addCity(Node *node) {
+void Player::addCity() {
 	m_numOfCitiesLeft--;
 }
 
+// if we decide to remove houses stored in player have trades cashed when build settlement is called
 bool Player::has3for1Trade() const {
 	for (const auto& node:m_houses) {
 		if (node->is3for1Trade())

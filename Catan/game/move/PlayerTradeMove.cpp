@@ -10,5 +10,5 @@ bool PlayerTradeMove::isValid(const GameSession& session) const {
 }
 
 void PlayerTradeMove::apply(GameSession& session) const {
-
+//fixme
 }

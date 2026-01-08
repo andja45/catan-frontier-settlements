@@ -11,6 +11,7 @@
 
 class GameSession;
 
+// class that holds all rules of the game and evaluates them when needed, this way we can make custom game logic and change rules to enable customization
 class RulesEngine {
 private:
     std::vector<std::unique_ptr<Rule>> m_rules; // rules engine owns list of rules

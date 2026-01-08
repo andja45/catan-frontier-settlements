@@ -10,5 +10,5 @@ bool SettingRobberMove::isValid(const GameSession& session) const{
 }
 
 void SettingRobberMove::apply(GameSession& session) const{
-
+    //TODO
 }
