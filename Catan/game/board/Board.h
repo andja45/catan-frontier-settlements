@@ -8,124 +8,78 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <unordered_map>
 #include <board/Edge.h>
 #include "Tile.h"
 #include <board/Node.h>
 #include <types/TypeAliases.h>
 
-#include "move/BuildCityMove.h"
-#include "move/BuildSettlementMove.h"
-
+// helper struct to specify board layout and pass parameters to create tiles
 struct TileDef { int q, r; ResourceType res; int number; };
 
-
-enum class PointDirection {
-    Top,
-    RightTop,
-    RightBottom,
-    Bottom,
-    LeftBottom,
-    LeftTop,
-    End
-};
-enum class SideDirection {
-    TopRight,
-    Right,
-    BottomRight,
-    BottomLeft,
-    Left,
-    TopLeft,
-    End
-};
-
-
-// Custom hash function for tuple
-struct TupleHash {
-    template <class T>
-    void hash_combine(std::size_t& seed, T const& v) const {
-        seed ^= std::hash<T>()(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    }
-
-    template <class Tuple>
-    size_t operator()(const Tuple& tuple) const {
-        size_t seed = 0;
-        std::apply([&](const auto&... args) {
-            (hash_combine(seed, args), ...);
-        }, tuple);
-        return seed;
-    }
-};
-
-
-
+//TODO consider trade and houses saved here?
 class Board {
 private:
-    static std::array<int,18> m_standardNumberOrder;
-    static const std::array<HexCoords,19> m_standardCoordinates;
-    static const std::vector<TileDef> m_basicMap;
-    static const std::array<HexCoords,6> m_directionCoords;
-
-    static HexCoords directionToCoord(SideDirection dir) {return m_directionCoords[directionToIndex(dir)];}
-    static int directionToIndex(SideDirection dir){return static_cast<int>(dir);}
-    static int directionToIndex(PointDirection dir){return static_cast<int>(dir);}
-
-    static void standardizeEdgeCoords(HexCoords& coords, int& index);
-
     void clearBoard();
+    // TODO add ports, load ports, from file
 
-    static void standardizeNodeCoords(HexCoords& coords, int& index);
-
-    void initializeBoard();
-
-    void saveBoard(const std::string &saveFilePath);
-
-    std::vector<TileDef> loadSavedBoard(const std::string &loadFilePath);
-
-    std::vector<TileDef> loadBoardFromTextFile(const std::string &loadFilePath);
-
-    std::vector<TileDef> generateRandomBoard();
-    void connectBoardElements();
-
-    std::map<HexCoords,Tile*> m_tilesByCoord;
-    std::map<int, std::vector<Tile*>> m_tilesByNumber;
-
+    // board is owner of all its elements, raw pointers are used inside to connect elements for convinience and optimization
+    // make sure element id corresponds to index in these vectors during creation
     std::vector<std::unique_ptr<Tile>> m_tiles;
     std::vector<std::unique_ptr<Node>> m_nodes;
     std::vector<std::unique_ptr<Edge>> m_edges;
 
+    std::unordered_map<NodeCoords,Node*> m_nodesByCoord;
+    std::unordered_map<EdgeCoords,Edge*> m_edgesByCoord;
+    std::unordered_map<TileCoords,Tile*> m_tilesByCoord;
+
+    std::unordered_map<int, std::vector<Tile*>> m_tilesByNumber;
 public:
-    Board() { initializeBoard(); }
+    Board() = default;
+    ~Board()=default;
+
+    void initializeBoard(std::vector<TileDef> tileDefs);
+    void addTrade(NodeCoords nodeCoords, TradeType tradeType);
 
     std::vector<Tile*> getTilesWithNumber(int num);
 
-    Tile* getTileAt(HexCoords coords);
-    Node* getNodeAt(HexCoords coords, int index);
-    Edge* getEdgeAt(HexCoords coords, int index);
+    Tile* getTileAt(TileCoords coords);
+    Node* getNodeAt(NodeCoords);
+    Edge* getEdgeAt(EdgeCoords);
+
     Node* getNodeById(NodeId nodeId) const;
     Edge* getEdgeById(EdgeId edgeId) const;
     Tile* getTileById(TileId tileId) const;
 
-    Node* getNodeAtDir(HexCoords coords, PointDirection);
-    Edge* getEdgeAtDir(HexCoords coords, SideDirection);
-    Tile* getTileAtDir(HexCoords coords, SideDirection);
-
-    std::vector<HexCoords> getBoardCords();
-
     const std::vector<std::unique_ptr<Tile>>& getTiles() const { return m_tiles; }
 
-    bool isEdgeFree(EdgeId edgeId) const; // TODO implement
+    std::vector<Edge*> getEdgesAdjacentToNode(NodeId nodeId) const;
+    std::vector<Node*> getNodesAdjacentToEdge(EdgeId edgeId) const;
+    std::vector<Tile*> getTilesAdjacentToNode(NodeId nodeId) const;
+    std::vector<Node*> getNodesAdjacentToNode(NodeId edgeId) const;
+    std::vector<Edge*> getIncidentEdges(EdgeId edgeId) const;
+    std::vector<Edge*> getIncidentContinuousEdges(EdgeId edgeId) const;  // gets edges connected to given edge by nodes owned by same player
+    Node* getNodeBetweenEdges(EdgeId edge1Id, EdgeId edge2Id) const;
+
+    bool isEdgeFree(EdgeId edgeId) const;
     bool isNodeFree(NodeId nodeId) const;
-    bool edgeTouchesPlayerHouse(PlayerId playerId, EdgeId edgeId) const; // TODO implement | refer to GameModel -> canPlaceRoad | one side of edge is either settlement or city owned by this player
-    bool edgeTouchesPlayerSettlement(NodeId settlementId, EdgeId edgeId) const; // TODO implement | one side of edge touches this settlement
-    bool edgeTouchesPlayerRoad(PlayerId playerId, EdgeId edgeId) const;
-    bool nodeTouchesAnySettlement(int nodeId) const; // TODO implement | refer to GameModel -> canPlaceSettlement
-    bool nodeTouchesPlayerRoad(int playerId, int nodeId) const;
 
+    PlayerId getEdgeOwner(EdgeId edgeId) const;
+    PlayerId getNodeOwner(NodeId nodeId) const;
 
-    void placeRoad(PlayerId playerId, EdgeId edgeId) const; // TODO implement | refer to GameModel -> placeRoad
-    void placeSettlement(PlayerId playerId, NodeId nodeId); // TODO implement | refer to GameModel -> placeSettlement
-    bool isSettlementOwnedBy(PlayerId playerId, NodeId nodeId) const; // TODO implement | first false if not settlement then false if owner isnt playerid
-    void placeCity(PlayerId playerId, NodeId nodeId); // TODO implement | node upgradToCity (player has pointers so it will be registered)
+    bool edgeTouchesPlayersBuilding(PlayerId playerId, EdgeId edgeId) const; // checks if edge is incident with node belonging to player with given player id
+    bool edgeTouchesPlayersRoad(PlayerId playerId, EdgeId edgeId) const; // similar to above but for edges
+    bool nodeTouchesPlayerRoad(PlayerId playerId, NodeId nodeId) const;
+
+    bool edgeTouchesNode(NodeId nodeId, EdgeId edgeId) const; // checks if edge is incident with given node
+    bool nodeTouchesAnyBuilding(NodeId nodeId) const;
+
+    void placeRoad(PlayerId playerId, EdgeId edgeId) const;
+    void placeSettlement(PlayerId playerId, NodeId nodeId);
+    void placeCity(PlayerId playerId, NodeId nodeId);
+
+    bool isBuildingOwnedBy(PlayerId playerId, NodeId nodeId) const; // consider removing, use get node owner and check yourself
+
 };
 
 

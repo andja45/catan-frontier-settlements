@@ -5,144 +5,16 @@
 #include "Board.h"
 #include "Node.h"
 #include <algorithm>
-#include <array>
 #include <fstream>
-#include <iostream>
 #include <memory>
-#include <random>
-#include <sstream>
-#include <algorithm>
-
-#include <json.hpp>
+#include <queue>
+#include <unordered_set>
+#include <vector>
+#include <board/Coords/AxialCoords.hpp>
+#include <board/Coords/NodeCoords.hpp>
+#include <board/Coords/EdgeCoords.hpp>
 
 struct TileDef;
-using json = nlohmann::json;
-
-std::array<int,18> Board::m_standardNumberOrder = {5, 2, 6, 3, 8, 10, 9, 12, 11, 4, 8, 10, 9, 4, 5, 6, 3, 11};
-const std::array<HexCoords,19> Board::m_standardCoordinates = {{
-        // Center
-        { 0,   0},
-
-        // Ring 1 (distance = 1)
-        { 1,   0},
-        { 1,  -1},
-        { 0,  -1},
-        {-1,   0},
-        {-1,   1},
-        { 0,   1},
-
-        // Ring 2 (distance = 2)
-        { 1,   1},
-        { 2,   0},
-        { 2,  -1},
-        { 2,  -2},
-        { 1,  -2},
-        { 0,  -2},
-        {-1,  -1},
-        {-2,   0},
-        {-2,   1},
-        {-2,   2},
-        {-1,   2},
-        { 0,   2}
-    }
-};
-const std::array<HexCoords,6> Board::m_directionCoords = {{
-    { 0, -1 },  // top left
-    { 1, -1 },  // top right
-    { 1,  0 },  // right
-    { 0,  1 },  // bottom right
-    { -1, 1 },  // bottom left
-    { -1, 0 }   // left
-}};
-static const std::vector<TileDef> m_basicMap = {
-    { -1, -2, ResourceType::Wood,   11 },
-    {  0, -2, ResourceType::Wool,  12 },
-    {  1, -2, ResourceType::Brick,   9 },
-
-    { -2, -1, ResourceType::Wheat,   4 },
-    { -1, -1, ResourceType::Ore,     6 },
-    {  0, -1, ResourceType::Wood,    5 },
-    {  1, -1, ResourceType::Wool,  10 },
-
-    { -2,  0, ResourceType::Brick,   8 },
-    { -1,  0, ResourceType::Wheat,   3 },
-    {  0,  0, ResourceType::Desert,  0 },
-    {  1,  0, ResourceType::Wheat,  11 },
-    {  2,  0, ResourceType::Ore,     4 },
-
-    { -1,  1, ResourceType::Wool,   9 },
-    {  0,  1, ResourceType::Wood,   10 },
-    {  1,  1, ResourceType::Ore,     3 },
-    {  2,  1, ResourceType::Brick,   5 },
-
-    {  0,  2, ResourceType::Wool,   6 },
-    {  1,  2, ResourceType::Wheat,   8 },
-    {  2,  2, ResourceType::Wood,    2 }
-};
-
-
-// multiple tiles share same vertex/edge so we standardize coordinates to canonical form by assigning it to a certain tile
-// about axial coordinate system: https://www.redblobgames.com/grids/hexagons/
-
-void Board::standardizeNodeCoords(HexCoords &coords, int &index) {
-        if (index <= 2) return; //0 1 2 same the same
-        //3,4,5 go to next hex and change index to 0,1,2
-
-        SideDirection dir=SideDirection::End;
-        switch (index) {
-            case 3: {
-                dir = SideDirection::BottomLeft;
-                index=1;
-                break;
-            }
-            case 4: {
-                dir= SideDirection::BottomLeft;
-                index=0;
-                break;
-            }
-            case 5: {
-                dir= SideDirection::Left;
-                index=1;
-                break;
-            }
-            default: {
-            }
-        }
-
-        HexCoords dq = directionToCoord(dir);
-        coords.first+=dq.first;
-        coords.second+=dq.second;
-    }
-void Board::standardizeEdgeCoords(HexCoords &coords, int &index) {
-    if (index <= 2) return; //0 1 2 same the same
-    //3,4,5 go to next hex and change index to 0,1,2
-
-    SideDirection dir=SideDirection::End;
-    switch (index) {
-        case 3: {
-            dir = SideDirection::BottomLeft;
-            index=0;
-            break;
-        }
-        case 4: {
-            dir= SideDirection::Left;
-            index=1;
-            break;
-        }
-        case 5: {
-            dir= SideDirection::TopLeft;
-            index=2;
-            break;
-        }
-        default: {
-        }
-    }
-
-    HexCoords dq = directionToCoord(dir);
-    coords.first+=dq.first;
-    coords.second+=dq.second;
-}
-
 
 
 void Board::clearBoard() {
@@ -152,330 +24,256 @@ void Board::clearBoard() {
     m_tilesByCoord.clear();
     m_tilesByNumber.clear();
 }
-void Board::initializeBoard() {
-    clearBoard();
 
-    std::reverse(m_standardNumberOrder.begin(), m_standardNumberOrder.end());
-    std::vector<TileDef> tileMap = generateRandomBoard();
+
+// initializes tiles edge nodes and connects them together
+void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PORTS, break into parts?
+    clearBoard();
 
     for (const auto&[q, r, res, number] : tileMap) {
-        auto t = std::make_unique<Tile>(q, r, res, number);
+        // make tile for each tiledef
+        AxialCoords ax(q,r);
 
-        Tile* raw = t.get();
+        auto t = std::make_unique<Tile>(q, r, res, number);
+        Tile* rawTile = t.get();
+        int id=m_tiles.size();
+        t->setId(id);
         m_tiles.push_back(std::move(t));
-        m_tilesByCoord[{q,r}]=raw;
+        m_tilesByCoord[ax]=rawTile;
 
         if (number >= 2 && number <= 12)
-            m_tilesByNumber[number].push_back(raw);
-    }
+            m_tilesByNumber[number].push_back(rawTile);
 
-    //connectBoardElements();
-}
+        // make nodes
+        auto nodeCoords = ax.getNodeCoords();
+        auto edgeCoords = ax.getEdgeCoords();
+        int numOfElements=nodeCoords.size();
 
-std::vector<TileDef> Board::generateRandomBoard(){
-    std::vector<TileDef> r;
-    std::vector<ResourceType> hexList = {ResourceType::Desert};
-    for(int i = 0; i < 4; i++) {
-        hexList.push_back(ResourceType::Wood);
-        hexList.push_back(ResourceType::Wheat);
-        hexList.push_back(ResourceType::Wool);
-    }
-    for(int i = 0; i < 3; i++) {
-        hexList.push_back(ResourceType::Ore);
-        hexList.push_back(ResourceType::Brick);
-    }
-
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(hexList.begin(), hexList.end(), g);
-
-    auto hexCoordinates = Board::m_standardCoordinates;
-    int j = 0;
-    for(int i = 0; i < hexList.size(); i++){
-        if(hexList[i] == ResourceType::Desert) r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], 7});
-        else r.push_back({hexCoordinates[i].first,hexCoordinates[i].second, hexList[i], m_standardNumberOrder[j++]});
-    }
-    return r;
-}
-
-void Board::connectBoardElements(){
-    for ( auto&[coord, uptr] : m_tilesByCoord) {
-        Tile* t = uptr;
-
-        for (int i = 0; i < static_cast<int>(PointDirection::End); ++i) {
-            PointDirection dir=static_cast<PointDirection>(i);
-            HexCoords _coord=coord;
-            Board::standardizeNodeCoords(_coord,i);
-            Node *raw = m_tilesByCoord[_coord]->getNodeAt(i);
-            if (raw==nullptr) {
-                auto n = std::make_unique<Node>(_coord.first, _coord.second, i);
-                m_nodes.push_back(std::move(n));
-                raw=n.get();
-            }
-            t->setAdjacentNode(raw,i);
-            raw->addAdjacentTile(t);
+        for (auto nc:nodeCoords) {
+            int id=m_nodes.size();
+            auto n = std::make_unique<Node>(id);
+            Node* rawNode = n.get();
+            m_nodes.push_back(std::move(n));
+            m_nodesByCoord[nc]=rawNode;
         }
 
-        for (int i = 0,j=0; i < static_cast<int>(PointDirection::End) && j< static_cast<int>(SideDirection::End); ++i,++j) {
-            int i_next=(i+1)%static_cast<int>(PointDirection::End);
-            SideDirection edgeDir=static_cast<SideDirection>(j);
+        // make edges
+        for (auto ec:edgeCoords) {
+            int id=m_edges.size();
+            auto e = std::make_unique<Edge>(id);
+            Edge* rawEdge = e.get();
+            m_edges.push_back(std::move(e));
+            m_edgesByCoord[ec]=rawEdge;
+        }
 
-            int _edgeIndex=j;
-            HexCoords _coord=coord;
-            Board::standardizeEdgeCoords(_coord,_edgeIndex);
-            Edge *raw = m_tilesByCoord[_coord]->getEdgeAt(_edgeIndex);
-            if (raw==nullptr) {
-                auto e = std::make_unique<Edge>(_coord.first, _coord.second, _edgeIndex, t->getNodeAt(i), t->getNodeAt(i_next));
-                m_edges.push_back(std::move(e));
-                raw=e.get();
-            }
-            t->setAdjacentEdge(raw,_edgeIndex);
-            t->getNodeAt(i)->addAdjacentEdge(raw);
-            t->getNodeAt(i_next)->addAdjacentEdge(raw);
+        // connect elements
+        for (int i=0; i<numOfElements; i++) {
+            NodeCoords nc=nodeCoords[i];
+            NodeCoords nnc=nodeCoords[(i+1)%numOfElements];
+            EdgeCoords ec=edgeCoords[i];
+
+            Edge* edge=getEdgeAt(ec);
+            Node* node=getNodeAt(nc);
+            Node* nextNode=getNodeAt(nnc);
+
+            edge->setNodes(node,nextNode);
+            node->addAdjacentEdge(edge);
+            nextNode->addAdjacentEdge(edge);
+
+            node->addAdjacentTile(rawTile);
         }
 
     }
-}
-void Board::saveBoard(const std::string& saveFilePath) {
-    json saveBoard = json::array();
 
-    for (auto [coords, t] : m_tilesByCoord) {
-        saveBoard.push_back({
-            {"q", coords.first},
-            {"r", coords.second},
-            {"type", t->getType()},
-            {"number", t->getNumber()}
-        });
-    }
-
-    json root;
-    root = saveBoard;
-
-    std::ofstream saveFile(saveFilePath);
-    if (!saveFile.is_open()) {
-        std::cerr << "Cannot open file for writing: " << saveFilePath << std::endl;
-        return;
-    }
-
-    saveFile << root.dump(4);
-    saveFile.close();
 }
 
-
-std::vector<TileDef> Board::loadSavedBoard(const std::string& loadFilePath) {
-
-    std::ifstream loadFile(loadFilePath);
-    if (!loadFile.is_open()) {
-        std::cerr << "Cannot open file for reading: " << loadFilePath << std::endl;
-        return {};
-    }
-
-    json root;
-    try {
-        loadFile >> root;
-    } catch (json::parse_error& e) {
-        std::cerr << "Error parsing JSON: " << e.what() << std::endl;
-        return {};
-    }
-
-    const json& savedBoard = root;
-    std::vector<TileDef> loadMap;
-
-    for (const auto& tile : savedBoard) {
-        loadMap.push_back({
-            tile.at("q").get<int>(),
-            tile.at("r").get<int>(),
-            fromString( tile.at("type").get<std::string>()),
-            tile.at("number").get<int>()
-        });
-    }
-
-    return loadMap;
+std::vector<Edge *> Board::getEdgesAdjacentToNode(NodeId nodeId) const {
+    Node* node=getNodeById(nodeId);
+    return node->getIncidentEdges();
+}
+std::vector<Tile *> Board::getTilesAdjacentToNode(NodeId nodeId) const {
+    return getNodeById(nodeId)->getIncidentTiles();
 }
 
-std::vector<TileDef> Board::loadBoardFromTextFile(const std::string& loadFilePath) {
-    clearBoard();
-    std::ifstream loadFile(loadFilePath);
-    if (!loadFile.is_open()) {
-        std::cerr << "Cannot open file: " << loadFilePath << std::endl;
-        return {};
+std::vector<Node *> Board::getNodesAdjacentToNode(NodeId nodeId) const {
+    Node* node=getNodeById(nodeId);
+    auto edges=getEdgesAdjacentToNode(nodeId);
+    std::vector<Node*> nodes;
+    for (Edge* e : edges) {
+        nodes.push_back(e->getStart());
+        nodes.push_back(e->getEnd());
     }
+    nodes.erase(std::remove(nodes.begin(), nodes.end(), node), nodes.end());
+    return nodes;
+}
 
-    std::vector<TileDef> loadMap;
-    int q, r, number;
-    std::string type;
+Node * Board::getNodeBetweenEdges(EdgeId edge1Id, EdgeId edge2Id) const {
+    Edge* edge1=getEdgeById(edge1Id);
+    Edge* edge2=getEdgeById(edge2Id);
+    return edge1->getStart()==edge2->getEnd()?edge1->getStart():edge1->getEnd();
+}
 
-    std::string line;
-    while (std::getline(loadFile, line)) {
-        if (line.empty()) continue;
-        std::istringstream iss(line);
-        if (!(iss >> q >> r >> type >> number)) {
-            std::cerr << "Error in line: " << line << std::endl;
-            continue;
-        }
+// remove in future, use get incidentEdges and filter by get node between?
+std::vector<Edge *> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
+    Edge* edge=getEdgeById(edgeId);
+    std::vector<Edge*> edges;
 
-        loadMap.push_back({q, r, fromString(type), number});
-    }
+    std::vector<Edge*> adjacentEdges1;
+    if (edge->getStart()->getOwner()==edge->getOwner())
+       adjacentEdges1=std::vector<Edge*>(edge->getStart()->getIncidentEdges());
 
-    return loadMap;
+    std::vector<Edge*> adjacentEdges2;
+    if (edge->getEnd()->getOwner()==edge->getOwner())
+        adjacentEdges2=std::vector<Edge*>(edge->getEnd()->getIncidentEdges());
+
+    adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
+    adjacentEdges1.erase(std::remove_if(adjacentEdges1.begin(), adjacentEdges1.end(), [edgeId](Edge* e){return e->getEdgeId()==edgeId;}), adjacentEdges1.end());
+
+    return adjacentEdges1;
+}
+
+std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
+    Edge* edge=getEdgeById(edgeId);
+    std::vector<Edge*> edges;
+
+    std::vector<Edge*> adjacentEdges1(edge->getStart()->getIncidentEdges());
+    std::vector<Edge*> adjacentEdges2(edge->getEnd()->getIncidentEdges());
+    adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
+
+    adjacentEdges1.erase(std::remove_if(adjacentEdges1.begin(), adjacentEdges1.end(), [edgeId](Edge* e){return e->getEdgeId()==edgeId;}), adjacentEdges1.end());
+
+    return adjacentEdges1;
+}
+
+void Board::addTrade(NodeCoords nodeCoords, TradeType tradeType) {
+    Node* node=getNodeAt(nodeCoords);
+    node->setTrade(tradeType);
+}
+
+std::vector<Node *> Board::getNodesAdjacentToEdge(EdgeId edgeId) const {
+    return getEdgeById(edgeId)->getNodes();
 }
 
 std::vector<Tile *> Board::getTilesWithNumber(int num) {
-    std::vector<Tile *> tiles;
-
-    for (const auto &tile : m_tiles) {
-        if (tile->getNumber()==num) {
-            tiles.push_back(tile.get());
-        }
-    }
-    return tiles;
-
+    return m_tilesByNumber[num];
 }
 
-Tile * Board::getTileAt(HexCoords coords) {
+Tile * Board::getTileAt(TileCoords coords) {
     return m_tilesByCoord[coords];
 }
 
-Node * Board::getNodeAt(HexCoords coords, NodeIndex index) {
-    return m_tilesByCoord[coords]->getNodeAt(index);
+Node * Board::getNodeAt(NodeCoords nc) {
+    return m_nodesByCoord[nc];
 }
 
-Edge * Board::getEdgeAt(HexCoords coords, EdgeIndex index) {
-    return m_tilesByCoord[coords]->getEdgeAt(index);
+Edge * Board::getEdgeAt(EdgeCoords ec) {
+    return m_edgesByCoord[ec];
 }
 
 Node * Board::getNodeById(NodeId nodeId) const {
-    for (const auto &node : m_nodes) {
-		if (node->getNodeIndex() == nodeId) return node.get();
-	}
-
-	return nullptr;
+    if (m_nodes[nodeId]->getNodeId()==nodeId) { // we will make sure ids correspond to indices during creation
+        return m_nodes[nodeId].get();
+    }
+    for (const auto &node : m_nodes) { // this is for safety if someone creates board incorrectly
+        if (node->getNodeId() == nodeId) return node.get();
+    }
+    return nullptr;
 }
 
 Edge * Board::getEdgeById(EdgeId edgeId) const {
-	for (const auto &edge : m_edges) {
-		if (edge->getEdgeId() == edgeId) return edge.get();
-	}
-
-	return nullptr;
+    if (m_edges[edgeId]->getEdgeId()==edgeId) {
+        return m_edges[edgeId].get();
+    }
+    for (const auto &edge : m_edges) {
+        if (edge->getEdgeId() == edgeId) return edge.get();
+    }
+    return m_edges[edgeId].get();
 }
 
 Tile * Board::getTileById(TileId tileId) const {
+    if (m_tiles[tileId]->getTileId()==tileId) {
+        return m_tiles[tileId].get();
+    }
     for (const auto &tile : m_tiles) {
-		if (tile->getTileId() == tileId) return tile.get();
-	}
-
-	return nullptr;
+        if (tile->getTileId() == tileId) return tile.get();
+    }
+    return nullptr;
 }
 
-Node * Board::getNodeAtDir(HexCoords coords, PointDirection direction) {
-    return m_tilesByCoord[coords]->getNodeAtDir(direction);
-}
 
-Edge * Board::getEdgeAtDir(HexCoords coords, SideDirection direction) {
-    return m_tilesByCoord[coords]->getEdgeAtDir(direction);
-}
-
-Tile * Board::getTileAtDir(HexCoords coords, SideDirection direction) {
-    HexCoords tileCoords = coords;/*
-    if (direction == SideDirection::Left) {
-        coords += {-1, 0};
-    }
-    if (direction == SideDirection::Right) {
-        coords += {1, 0};
-    }
-    if (direction == SideDirection::TopLeft) {
-        coords += {0, -1};
-    }
-    if (direction == SideDirection::BottomRight) {
-        coords += {0, 1};
-    }
-    if (direction == SideDirection::TopRight) {
-        coords += {1, -1};
-    }
-    if (direction == SideDirection::BottomLeft) {
-        coords += {-1, 1};
-    }
-*/
-    return m_tilesByCoord[coords];
-}
-
-std::vector<HexCoords> Board::getBoardCords() {
-    std::vector<HexCoords> coords;
-    for (auto&[coord, tile] : m_tilesByCoord) {
-        coords.push_back(coord);
-    }
-    return coords;
-}
-
- bool Board::isEdgeFree(EdgeId edgeId) const { // TODO implement
+bool Board::isEdgeFree(EdgeId edgeId) const {
     Edge* edge = this->Board::getEdgeById(edgeId);
-
-	if (edge->getOwner() == -1) {
-		return true;
-	}
-	return false;
+    return !edge->isOccupied();
 }
- bool Board::isNodeFree(NodeId nodeId) const {
-	Node * node = this->getNodeById(nodeId);
-
-	if(node->getOwner() == -1) {
-		return true;
-	}
-	return false;
+bool Board::isNodeFree(NodeId nodeId) const {
+    Node * node = this->getNodeById(nodeId);
+    return node->isEmpty();
 }
- bool Board::edgeTouchesPlayerHouse(PlayerId playerId, EdgeId edgeId) const { // TODO implement | refer to GameModel -> canPlaceRoad | one side of edge is either settlement or city owned by this player
+
+PlayerId Board::getEdgeOwner(EdgeId edgeId) const {
+    Edge* edge = this->getEdgeById(edgeId);
+    return edge->getOwner();
+}
+PlayerId Board::getNodeOwner(NodeId nodeId) const {
+    Node* node = this->getNodeById(nodeId);
+    return node->getOwner();
+}
+
+// TODO clean these functions
+// TODO make uniform interface for edges and nodes!!
+
+bool Board::edgeTouchesNode(NodeId nodeId, EdgeId edgeId) const{
+    Edge* edge = this->getEdgeById(nodeId);
+
+    for (Node* n : edge->getNodes()) {
+        if (!n) {
+		     continue;
+	    }
+        if (n->getNodeId() == nodeId) {
+            return true;
+	    }
+    }
+    return false;
+}
+bool Board::edgeTouchesPlayersBuilding(PlayerId playerId, EdgeId edgeId) const {
     Edge* edge = this->getEdgeById(edgeId);
 
-	for (Node* n : edge->getNodes()) {
+    for (Node* n : edge->getNodes()) {
         if (!n) {
-			 continue;
-		}
+		     continue;
+	    }
         if (n->getOwner() == playerId) {
             return true;
-		}
-	}
-	return false;
-}
- bool Board::edgeTouchesPlayerSettlement(NodeId settlementId, EdgeId edgeId) const{ // TODO implement | one side of edge touches this settlement
-	Edge* edge = this->getEdgeById(settlementId);
-
-	for (Node* n : edge->getNodes()) {
-        if (!n) {
-			 continue;
-		}
-        //if (n->getOwner() == playerId && n->IsSettlement()) {
-        //    return true;
-		//}
-	}
-	return false;
-}
- bool Board::edgeTouchesPlayerRoad(PlayerId playerId, EdgeId edgeId) const{
-	Edge* edge = this->getEdgeById(edgeId);
-
-	for (Edge* e : edge->adjacentEdges()) {
-        if (!e) {
-			continue;
-		}
-        if (e->getOwner() == playerId) {
-			return true;
-		}
+	    }
     }
-	return false;
+    return false;
 }
- bool Board::nodeTouchesAnySettlement(int nodeId) const { // TODO implement | refer to GameModel -> canPlaceSettlement
-	Node* node = this->getNodeById(nodeId);
+bool Board::edgeTouchesPlayersRoad(PlayerId playerId, EdgeId edgeId) const{
+    Edge* edge = this->getEdgeById(edgeId);
 
-    /* for (Node* adj : node->getIncidentNodes()) {
+    for (Edge* e : getEdgesAdjacentToNode(edgeId)) {
+        if (!e) {
+		    continue;
+	    }
+        if (e->getOwner() == playerId) {
+		    return true;
+	    }
+    }
+    return false;
+}
+bool Board::nodeTouchesAnyBuilding(int nodeId) const {
+    Node* node = this->getNodeById(nodeId);
+
+     for (Node* adj : getNodesAdjacentToNode(nodeId)) {
         if (!adj) {
-			continue;
-		}
-        if (adj->getOwner() != -1) {
+		    continue;
+	    }
+        if (!adj->isEmpty()) {
             return true;
-		}
-    }*/
+	    }
+    }
 
-	return false;
+    return false;
 }
 bool Board::nodeTouchesPlayerRoad(int playerId, int nodeId) const{
     Node* node = this->getNodeById(nodeId);
@@ -484,32 +282,33 @@ bool Board::nodeTouchesPlayerRoad(int playerId, int nodeId) const{
         if (e && e->getOwner() == playerId)
             return true;
     }
-
 	return false;
 }
 
- void Board::placeRoad(PlayerId playerId, EdgeId edgeId) const { // TODO implement | refer to GameModel -> placeRoad
-	Edge* edge = this->getEdgeById(edgeId);
+void Board::placeRoad(PlayerId playerId, EdgeId edgeId) const {
+    Edge* edge = this->getEdgeById(edgeId);
 
-    edge->setRoad(playerId);
+    edge->setOwner(playerId);
 }
- void Board::placeSettlement(PlayerId playerId, NodeId nodeId) { // TODO implement | refer to GameModel -> placeSettlement
-	Node* node = this->getNodeById(nodeId);
-
+void Board::placeSettlement(PlayerId playerId, NodeId nodeId) {
+    Node* node = this->getNodeById(nodeId);
     node->setOwner(playerId);
+    node->setNodeBuildingType(NodeType::Settlement);
 }
- bool Board::isSettlementOwnedBy(PlayerId playerId, NodeId nodeId) const { // TODO implement | first false if not settlement then false if owner isnt playerid
-	Node * node = this->getNodeById(nodeId);
-
-	if(node->isSettlement() == false && node->getOwner() != playerId) {
-		return false;
-	}
-}
-void Board::placeCity(PlayerId playerId, NodeId nodeId){ // TODO implement | node upgradeToCity (player has pointers so it will be registered)
+void Board::placeCity(PlayerId playerId, NodeId nodeId){
 	Node * node = this->getNodeById(nodeId);
 
 	if(node->getOwner() == playerId) {
-		node->upgradeToCity();
+		node->setNodeBuildingType(NodeType::City);
 	 }
+}
+
+bool Board::isBuildingOwnedBy(PlayerId playerId, NodeId nodeId) const {
+    Node * node = this->getNodeById(nodeId);
+
+    if(!node->isEmpty() && node->getOwner() == playerId) {
+	    return true;
+    }
+    return false;
 }
 

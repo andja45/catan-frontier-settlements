@@ -5,6 +5,7 @@
 #include "GameSession.h"
 
 #include <cassert>
+#include <move/Move.h>
 
 InitialPlacementStep GameSession::initialPlacementStep() const {
     return (m_initialPlacementsCount % 2 == 0)
@@ -13,6 +14,7 @@ InitialPlacementStep GameSession::initialPlacementStep() const {
 }
 
 GameSession::GameSession(int numPlayers,
+                         std::vector<std::string> playerNames,
                          PlayerId localPlayer,
                          uint32_t seed)
     : m_board(std::make_unique<Board>())
@@ -22,7 +24,7 @@ GameSession::GameSession(int numPlayers,
     m_players.reserve(numPlayers);
 
     for (PlayerId id = 0; id < numPlayers; ++id) {
-        m_players.push_back(std::make_unique<Player>(id));
+        m_players.push_back(std::make_unique<Player>(id, playerNames[id]));
     }
 }
 
@@ -31,6 +33,7 @@ bool GameSession::applyMove(const Move& move){
         return false;
 
     move.apply(*this);
+    m_rules.evaluate(*this); // after every move, cus someone can interrupt
     advancePhaseAfterMove(move); // only session can advance phases, move only reads them
     //notifyModelChanged(); //notify view
 
@@ -101,4 +104,20 @@ int GameSession::rollDice() {
     int dice1 = m_d6(m_rng);
     int dice2 = m_d6(m_rng);
     return dice1 + dice2;
+}
+
+void GameSession::setLongestRoadOwner(const PlayerId playerId) {
+    if (longestRoadOwner() != InvalidPlayer) // if it is it means we are setting it for the first time
+        player(longestRoadOwner()).removePoints(2); // if it isnt, then someone stole the title
+
+    m_longestRoadOwner = playerId;
+    player(m_longestRoadOwner).addPoints(2);
+}
+
+void GameSession::setLargestArmyOwner(const PlayerId playerId) {
+    if (largestArmyOwner() != InvalidPlayer)
+        player(largestArmyOwner()).removePoints(2);
+
+    m_largestArmyOwner = playerId;
+    player(m_largestArmyOwner).addPoints(2);
 }

@@ -43,9 +43,9 @@ private:
 
     void init();
 
-    static HexCoords axialToOffset(HexCoords axial);
+    static TileCoords axialToOffset(TileCoords axial);
     static ScreenCoords stepSize(ScreenCoords tileSize);
-    static ScreenCoords offsetToScreen(HexCoords offset, ScreenCoords origin, ScreenCoords tileSize);
+    static ScreenCoords offsetToScreen(TileCoords offset, ScreenCoords origin, ScreenCoords tileSize);
 
     void renderBoard();
 

@@ -10,7 +10,7 @@
 
 void NodeView::draw(Canvas& canvas , const BoardTheme &theme) const {
     char c=0;
-    switch (m_node->getNodeType()) {
+    switch (m_node->getNodeBuildingType()) {
     case NodeType::Settlement:
         c=theme.settlementChar;
         break;

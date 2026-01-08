@@ -5,11 +5,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-add_compile_options(-Wall -Wextra)
+#add_compile_options(-Wall -Wextra)
 
 set(CMAKE_CXX_CLANG_TIDY "")
-find_program(CLANG_TIDY_EXE NAMES clang-tidy)
+#find_program(CLANG_TIDY_EXE NAMES clang-tidy)
 if(CLANG_TIDY_EXE)
+
     set(CMAKE_CXX_CLANG_TIDY
             ${CLANG_TIDY_EXE}
     )

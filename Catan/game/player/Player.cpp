@@ -4,37 +4,65 @@
 
 #include "Player.h"
 
+#include <random>
 
-/*void Player::addSettlement(Node* node){
-	node->setOwner(m_playerId);
-	node->setNodeType(NodeType::Settlement);
-	addVictoryPoint();
-	if(node->hasTrade()){
-		if(node->is3for1Trade()) give3for1Trade();
-		else give2for1Trade(node->getTradeResource());
+
+int Player::longestRoadLength() const { //TODO make graph from adjacent edges, (connect them through nodes) and do bfs
+
+}
+
+
+void Player::addRoad(Edge *edge) {
+	m_roads.push_back(edge);
+	m_numOfRoadsLeft--;
+}
+
+void Player::addSettlement(Node *node) {
+	m_houses.push_back(node);
+	m_numOfSettlementsLeft--;
+}
+
+void Player::addCity(Node *node) {
+	m_numOfCitiesLeft--;
+}
+
+bool Player::has3for1Trade() const {
+	for (const auto& node:m_houses) {
+		if (node->is3for1Trade())
+			return true;
 	}
+	return false;
 }
-
-}
-void Player::addRoad(Edge* newroad){ // FIXME this should also decrement numOfRoadsLeft, same for other similar functions
-	newroad->setRoad(m_playerId); // FIXME board does that, this adds to list of that players edges and decrements numofroads left
-}*/
-
-
-
-
-
-
 
 bool Player::hasTrade(ResourceType resourceType) const {
-}
-
-bool Player::hasLongestRoad() const {
+	for (const auto& node:m_houses) {
+		if (node->isTradeFor(resourceType))
+			return true;
+	}
+	return false;
 }
 
 ResourcePack Player::takeRandomResources(int amount) {
+	ResourcePack pack;
+	for (int i = 0; i < amount; i++) {
+		ResourceCardType rs = takeRandomResource();
+		pack[rs]++;
+	}
+	return pack;
 }
 
 ResourceType Player::takeRandomResource() {
+	std::random_device rd;
+	std::mt19937 g(rd());
+	std::uniform_int_distribution<std::size_t> dist(0, m_resources.size() - 1);
+	auto it = std::next(m_resources.begin(), dist(g));
+
+	while (it->second == 0){
+		it=std::next(m_resources.begin(), dist(g));
+	}
+	removeResource(it->first,1);
+	return it->first;
 }
+
+
 

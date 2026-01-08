@@ -19,10 +19,10 @@ bool BuildCityMove::isValid(const GameSession& session) const {
     if (!player.hasCityLeft())
         return false;
 
-    if (!player.canAfford(Costs::Settlement))
+    if (!player.hasResources(Costs::Settlement))
         return false;
 
-    if (!board.isSettlementOwnedBy(m_playerId, m_nodeId)) // is settlement + playerid is owner
+    if (!board.isBuildingOwnedBy(m_playerId, m_nodeId)) // is settlement + playerid is owner
         return false;
 
     return true;
@@ -32,9 +32,9 @@ void BuildCityMove::apply(GameSession& session) const {
     Board& board = session.board();
     Player& player = session.player(m_playerId);
 
-    player.spendResources(Costs::City);
+    player.removeResources(Costs::City);
 
-    player.addVictoryPoints(1);
+    player.addPoints(1);
 
     board.placeCity(m_playerId, m_nodeId);
 }

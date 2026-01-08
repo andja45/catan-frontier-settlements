@@ -28,7 +28,7 @@ void RollDiceMove::apply(GameSession& session) const {
         if (tile->isRobberOnTile())
             continue;
 
-        ResourceType resource = tile->getType();
+        ResourceType resource = tile->getResourceType();
 
         for (const Node* node : tile->getAdjacentNodes()) {
             if (!node) continue;

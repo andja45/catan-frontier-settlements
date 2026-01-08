@@ -61,7 +61,7 @@ bool GameModel::canPlaceRoad(int playerId, int edgeId) const {
     if (!edge)
         return false;
 
-    if (edge->isRoad())
+    if (edge->isOccupied())
         return false;
 
     bool connected = false;
@@ -71,11 +71,11 @@ bool GameModel::canPlaceRoad(int playerId, int edgeId) const {
             connected = true;
     }
 
-    for (Edge* e : edge->adjacentEdges()) {
-        if (!e) continue;
-        if (e->getOwner() == playerId)
-            connected = true;
-    }
+    // for (Edge* e : edge->adjacentEdges()) {
+    //     if (!e) continue;
+    //     if (e->getOwner() == playerId)
+    //         connected = true;
+    // }
 
     return connected;
 }
@@ -87,13 +87,13 @@ bool GameModel::canPlaceSettlement(int playerId, int nodeId, bool isInitialPlace
     Node* node = m_board.getNodeById(nodeId);
     if (!node) return false;
     if (node->getOwner() != -1) return false;
-/*
-    for (Node* adj : node->getIncidentNodes()) {
-        if (!adj) continue;
-        if (adj->getOwner() != -1)
-            return false;
-    }
-*/
+
+    // for (Node* adj : node->getIncidentNodes()) {
+    //     if (!adj) continue;
+    //     if (adj->getOwner() != -1)
+    //         return false;
+    // }
+
     // mora biti povezan putem (osim initial placement faze)
     if (isInitialPlacement)
         return true;
@@ -115,7 +115,7 @@ bool GameModel::canPlaceCity(int playerId, int nodeId) const {
 
     // mora vec biti settlement tog igraca
     if (node->getOwner() != playerId) return false;
-    if (node->getNodeType() != NodeType::Settlement) return false;
+    if (node->getNodeBuildingType() != NodeType::Settlement) return false;
 
     return true;
 }
@@ -125,7 +125,7 @@ bool GameModel::canPlaceRobber(int tileId) const {
     if (!tile) return false;
 
     // ne sme bas na svaki tile, ima ogranicenja
-    ResourceType type = tile->getType();
+    ResourceType type = tile->getResourceType();
     if (type == ResourceType::Desert || type == ResourceType::Sea)
         return false;
 
@@ -143,7 +143,7 @@ bool GameModel::canStealFrom(int thiefId, int victimId) const {
 void GameModel::placeRoad(int playerId, int edgeId){
     Edge* edge = m_board.getEdgeById(edgeId);
 
-    edge->setRoad(playerId);
+    edge->setOwner(playerId);
 }
 
 void GameModel::placeSettlement(int playerId, int nodeId){
@@ -152,11 +152,11 @@ void GameModel::placeSettlement(int playerId, int nodeId){
     node->setOwner(playerId);
     m_players.at(playerId).addSettlement(node);
 }
-
-void GameModel::placeCity(int playerId, int nodeId){
-    Node* node = m_board.getNodeById(nodeId);
-    node->upgradeToCity();
-}
+//
+// void GameModel::placeCity(int playerId, int nodeId){
+//     Node* node = m_board.getNodeById(nodeId);
+//     node->upgradeToCity();
+// }
 
 void GameModel::placeRobber(int tileId) {
 
@@ -185,7 +185,7 @@ void GameModel::distributeResources(int dice) {
         if (tile->isRobberOnTile())
             continue;
 
-        ResourceType res = tile->getType();
+        ResourceType res = tile->getResourceType();
 
         for (Node* node : tile->getAdjacentNodes()) {
             if (!node) continue;
@@ -193,9 +193,9 @@ void GameModel::distributeResources(int dice) {
             int playerId = node->getOwner();
             if (playerId == -1) continue;
 
-            if (node->getNodeType() == NodeType::Settlement) {
+            if (node->getNodeBuildingType() == NodeType::Settlement) {
                 m_players.at(playerId).addResource(res, 1);
-            } else if (node->getNodeType() == NodeType::City) {
+            } else if (node->getNodeBuildingType() == NodeType::City) {
                 m_players.at(playerId).addResource(res, 2);
             }
         }

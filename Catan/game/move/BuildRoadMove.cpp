@@ -21,12 +21,13 @@ bool BuildRoadMove::isValid(const GameSession& session) const {
     // connected check, if phase is correct
     bool connected = false;
     if (session.phase() == TurnPhase::Main) {
-        if (!player.canAfford(Costs::Road))
+        if (!player.hasResources(Costs::Road))
             return false;
 
         connected =
-            board.edgeTouchesPlayerHouse(m_playerId, m_edgeId) ||
-            board.edgeTouchesPlayerRoad(m_playerId, m_edgeId);
+            board.edgeTouchesNode(m_playerId, m_edgeId) ||
+            board.edgeTouchesPlayersRoad(m_playerId, m_edgeId);
+
     }
     else if (session.phase() == TurnPhase::InitialPlacement &&
         session.initialPlacementStep() == InitialPlacementStep::PlaceRoad){ // or both phases in separate check at start and this just in else
@@ -35,7 +36,7 @@ bool BuildRoadMove::isValid(const GameSession& session) const {
             return false;
 
         Node* lastSettlement = houses.back(); // TODO or just function that remembers lastbuiltSettlement, if we do computeLongestRoad in board (update will be in session)
-        connected = board.edgeTouchesPlayerSettlement(lastSettlement->getOwner(), m_edgeId);
+        connected = board.edgeTouchesNode(lastSettlement->getOwner(), m_edgeId);
     }
 
     if (!connected)
@@ -49,12 +50,10 @@ void BuildRoadMove::apply(GameSession& session) const {
     Player& player = session.player(m_playerId);
 
     if (session.phase() == TurnPhase::Main) {
-        player.spendResources(Costs::Road);
+        player.removeResources(Costs::Road);
     }
 
     Edge* edge= session.board().getEdgeById(m_edgeId);
     player.addRoad(edge); // adds to list of that players edges and decrements numofroads left
     board.placeRoad(m_playerId, m_edgeId);
-
-    session.updateLongestRoad(); // only then can longestroad be changed
 }
