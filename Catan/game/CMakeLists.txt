@@ -21,8 +21,6 @@ add_library(catan_game
         move/RollDiceMove.h
         move/EndTurnMove.cpp
         move/EndTurnMove.h
-        gamemodel/GameModel.cpp
-        gamemodel/GameModel.h
         gamemodel/GameSession.cpp
         gamemodel/GameSession.h
         types/TypeAliases.h
