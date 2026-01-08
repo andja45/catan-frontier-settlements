@@ -345,15 +345,27 @@ Edge * Board::getEdgeAt(HexCoords coords, EdgeIndex index) {
 }
 
 Node * Board::getNodeById(NodeId nodeId) const {
-    return m_nodes[nodeId];
+    for (auto node : m_nodes) {
+		if (node->getNodeIndex() == nodeId) return node;
+	}
+
+	return nullptr;
 }
 
 Edge * Board::getEdgeById(EdgeId edgeId) const {
-    return m_edges[edgeId];
+	for (auto edge : m_edges) {
+		if (edge->getEdgeId() == edgeId) return edge;
+	}
+
+	return nullptr;
 }
 
 Tile * Board::getTileById(TileId tileId) const {
-    return m_tiles[tileId];
+    for (auto tile : m_tiles) {
+		if (tile->getTileId() == tileId) return tile;
+	}
+
+	return nullptr;
 }
 
 Node * Board::getNodeAtDir(HexCoords coords, PointDirection direction) {
@@ -395,3 +407,109 @@ std::vector<HexCoords> Board::getBoardCords() {
     }
     return coords;
 }
+
+ bool isEdgeFree(EdgeId edgeId) { // TODO implement
+	Edge* edge = this->getEdgeById(edgeId);
+
+	if (edge->getOwner() == -1) {
+		return true;
+	}
+	return false;
+}
+ bool isNodeFree(NodeId nodeId) {
+	Node * node = this->getNodeById(nodeId);
+
+	if(node->getOwner() == -1) {
+		return true;
+	}
+	return false;
+}
+ bool edgeTouchesPlayerHouse(PlayerId playerId, EdgeId edgeId) { // TODO implement | refer to GameModel -> canPlaceRoad | one side of edge is either settlement or city owned by this player
+    Edge* edge = this->getEdgeById(edgeId);
+
+	for (Node* n : edge->getNodes()) {
+        if (!n) {
+			 continue;
+		}
+        if (n->getOwner() == playerId) {
+            return true;
+		}
+	}
+	return false;
+}
+ bool edgeTouchesPlayerSettlement(NodeId settlementId, EdgeId edgeId){ // TODO implement | one side of edge touches this settlement
+	Edge* edge = this->getEdgeById(settlementId);
+
+	for (Node* n : edge->getNodes()) {
+        if (!n) {
+			 continue;
+		}
+        if (n->getOwner() == playerId && n->IsSettlement()) {
+            return true;
+		}
+	}
+	return false;
+}
+ bool edgeTouchesPlayerRoad(PlayerId playerId, EdgeId edgeId) {
+	Edge* edge = this->getEdgeById(edgeId);
+
+	for (Edge* e : edge->adjacentEdges()) {
+        if (!e) {
+			continue;
+		}
+        if (e->getOwner() == playerId) {
+			return true;
+		}
+    }
+	return false;
+}
+ bool nodeTouchesAnySettlement(int nodeId) { // TODO implement | refer to GameModel -> canPlaceSettlement
+	Node* node = this->getNodeById(nodeId);
+
+     for (Node* adj : node->getIncidentNodes()) {
+        if (!adj) {
+			continue;
+		}
+        if (adj->getOwner() != -1) {
+            return true;
+		}
+    }
+
+	return false;
+}
+bool nodeTouchesPlayerRoad(int playerId, int nodeId) {
+    Node* node = this->getNodeById(nodeId);
+
+	for (Edge* e : node->getIncidentEdges()) {
+        if (e && e->getOwner() == playerId)
+            return true;
+    }
+
+	return false;
+}
+
+ void placeRoad(PlayerId playerId, EdgeId edgeId) { // TODO implement | refer to GameModel -> placeRoad
+	Edge* edge = this->getEdgeById(edgeId);
+
+    edge->setRoad(playerId);
+}
+ void placeSettlement(PlayerId playerId, NodeId nodeId) { // TODO implement | refer to GameModel -> placeSettlement
+	Node* node = this->getNodeById(nodeId);
+
+    node->setOwner(playerId);
+}
+ bool isSettlementOwnedBy(PlayerId playerId, NodeId nodeId) { // TODO implement | first false if not settlement then false if owner isnt playerid
+	Node * node = this->getNodeById(nodeId);
+
+	if(node->isSettlement() == false && node->getOwner() != playerId) {
+		return false;
+	}
+}
+void placeCity(PlayerId playerId, NodeId nodeId){ // TODO implement | node upgradeToCity (player has pointers so it will be registered)
+	Node * node = this->getNodeById(nodeId);
+
+	if(node->getOwner() == playerId) {
+		node->upgradeToCity();
+	 }
+}
+

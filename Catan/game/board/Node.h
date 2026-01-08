@@ -66,7 +66,7 @@ public:
     friend bool operator!=(const Node &lhs, const Node &rhs) {
         return !(lhs == rhs);
     }
-
+	bool isSettlement() const { return getNodeType() == NodeType::Settlement; }
     bool isCity() const { return getNodeType() == NodeType::City; }
 };
 
