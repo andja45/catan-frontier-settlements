@@ -2,7 +2,7 @@
 // Created by matija on 1/5/26.
 //
 
-#include "RandomStandardExtendedCreator.hpp"
+#include "populatePorts.hpp"
 
 
 //
@@ -15,7 +15,7 @@
 struct TileDef;
 
 // generates standard catan map with random resource distribution
-std::vector<TileDef> RandomStandardExtendedCreator::generateRandomBoard(){
+std::vector<TileDef> populatePorts::generateRandomBoard(){
     // list of axial coordinates of tiles, given in spiral order for number assignment purposes
     static const std::array<TileCoords,30> standardExtendedCoords = {{
         // outer ring
@@ -77,21 +77,45 @@ std::vector<TileDef> RandomStandardExtendedCreator::generateRandomBoard(){
     return r;
 }
 
-std::unique_ptr<Board> RandomStandardExtendedCreator::getBoard() {
+void populatePorts::generatePorts(Board * board) {
+
+    board->addTrade(NodeCoords({0,-3},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({0,-3},PointDirection::LeftTop),ResourceType::None);
+
+    board->addTrade(NodeCoords({1,-3},PointDirection::Top),ResourceType::Wool);
+    board->addTrade(NodeCoords({1,-3},PointDirection::RightTop),ResourceType::Wool);
+
+    board->addTrade(NodeCoords({2,-2},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({2,-2},PointDirection::RightTop),ResourceType::None);
+
+    board->addTrade(NodeCoords({-2,-1},PointDirection::LeftTop),ResourceType::Ore);
+    board->addTrade(NodeCoords({-2,-1},PointDirection::LeftBottom),ResourceType::Ore);
+
+    board->addTrade(NodeCoords({-3,0},PointDirection::LeftBottom),ResourceType::None);
+    board->addTrade(NodeCoords({-3,0},PointDirection::Bottom),ResourceType::None);
+
+    board->addTrade(NodeCoords({2,0},PointDirection::RightTop),ResourceType::None);
+    board->addTrade(NodeCoords({2,0},PointDirection::RightBottom),ResourceType::None);
+
+    board->addTrade(NodeCoords({1,1},PointDirection::RightBottom),ResourceType::Brick);
+    board->addTrade(NodeCoords({1,1},PointDirection::Bottom),ResourceType::Brick);
+
+    board->addTrade(NodeCoords({-3,2},PointDirection::LeftTop),ResourceType::Wheat);
+    board->addTrade(NodeCoords({-3,2},PointDirection::LeftBottom),ResourceType::Wheat);
+
+    board->addTrade(NodeCoords({-3,3},PointDirection::LeftBottom),ResourceType::None);
+    board->addTrade(NodeCoords({-3,3},PointDirection::Bottom),ResourceType::None);
+
+    board->addTrade(NodeCoords({-2,3},PointDirection::RightBottom),ResourceType::Wood);
+    board->addTrade(NodeCoords({-2,3},PointDirection::Bottom),ResourceType::Wood);
+
+    board->addTrade(NodeCoords({-1,3},PointDirection::RightTop),ResourceType::Wool);
+    board->addTrade(NodeCoords({-1,3},PointDirection::RightBottom),ResourceType::Wool);
+
+}
+
+std::unique_ptr<Board> populatePorts::getBoard() {
     auto board=std::make_unique<Board>();
     auto tiles = generateRandomBoard();
-    board->initializeBoard(tiles);
-    board->addTrade(NodeCoords({0,-3},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({1,-3},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({2,-2},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({-2,-1},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({-3,-3},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({-3,0},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({2,0},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({1,1},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({-3,2},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({-3,3},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({-2,3},PointDirection::Top),ResourceType::None);
-    board->addTrade(NodeCoords({-1,3},PointDirection::Top),ResourceType::None);
-    return std::move(board);
+    board->initializeBoard(tiles);return std::move(board);
 }

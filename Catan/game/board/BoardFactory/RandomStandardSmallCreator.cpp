@@ -99,6 +99,37 @@ std::vector<TileDef> RandomStandardSmallCreator::generateRandomBoard(){
     return r;
 }
 
+void RandomStandardSmallCreator::populatePorts(Board * board) {
+    board->addTrade(NodeCoords({0,-2},PointDirection::LeftTop),ResourceType::None);
+    board->addTrade(NodeCoords({0,-2},PointDirection::Top),ResourceType::None);
+
+    board->addTrade(NodeCoords({1,-2},PointDirection::Top),ResourceType::Wood);
+    board->addTrade(NodeCoords({1,-2},PointDirection::RightTop),ResourceType::Wood);
+
+    board->addTrade(NodeCoords({2,-1},PointDirection::Top),ResourceType::None);
+    board->addTrade(NodeCoords({2,-1},PointDirection::RightTop),ResourceType::None);
+
+    board->addTrade(NodeCoords({-1,-1},PointDirection::LeftBottom),ResourceType::None);
+    board->addTrade(NodeCoords({-1,-1},PointDirection::LeftTop),ResourceType::None);
+
+    board->addTrade(NodeCoords({2,0},PointDirection::RightTop),ResourceType::Brick);
+    board->addTrade(NodeCoords({2,0},PointDirection::RightBottom),ResourceType::Brick);
+
+    board->addTrade(NodeCoords({-2,1},PointDirection::LeftTop),ResourceType::None);
+    board->addTrade(NodeCoords({-2,1},PointDirection::LeftBottom),ResourceType::None);
+
+    board->addTrade(NodeCoords({-2,2},PointDirection::LeftBottom),ResourceType::Wool);
+    board->addTrade(NodeCoords({-2,2},PointDirection::Bottom),ResourceType::Wool);
+
+    board->addTrade(NodeCoords({-1,2},PointDirection::Bottom),ResourceType::Wheat);
+    board->addTrade(NodeCoords({-1,2},PointDirection::RightBottom),ResourceType::Wheat);
+
+    board->addTrade(NodeCoords({1,1},PointDirection::Bottom),ResourceType::Ore);
+    board->addTrade(NodeCoords({1,1},PointDirection::RightBottom),ResourceType::Ore);
+
+    return;
+}
+
 std::unique_ptr<Board> RandomStandardSmallCreator::getBoard() {
     auto board=std::make_unique<Board>();
     auto tiles = generateRandomBoard();

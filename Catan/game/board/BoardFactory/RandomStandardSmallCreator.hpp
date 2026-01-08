@@ -18,7 +18,7 @@ private:
     static const std::vector<TileDef> m_basicMap;  // one default standard catan map with fixed numbering, tile position and tile types
     static const std::array<TileCoords,6> m_directionCoords; // Coordinate vectors for each direction, for adjacent tiles
     static std::vector<TileDef> generateRandomBoard();
-
+    static void populatePorts(Board*);
 public:
     std::unique_ptr<Board> getBoard() override;
 

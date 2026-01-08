@@ -11,6 +11,7 @@
 class RandomStandardExtendedCreator : public AbstractBoardCreator{
 private:
     static std::vector<TileDef> generateRandomBoard();
+    static void generatePorts(Board*);
 public:
     std::unique_ptr<Board> getBoard() override;
 
