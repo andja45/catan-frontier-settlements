@@ -34,6 +34,9 @@ add_library(catan_game
         move/BankTradeMove.h
         move/SetRobberMove.h
         move/BankTradeMove.cpp
+        gamemodel/GameData.h
+        gamemodel/GameData.cpp
+        types/ResourceType.h
 )
 
 target_include_directories(catan_game

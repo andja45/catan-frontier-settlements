@@ -285,7 +285,7 @@ std::vector<TileDef> Board::loadSavedBoard(const std::string& loadFilePath) {
         loadMap.push_back({
             tile.at("q").get<int>(),
             tile.at("r").get<int>(),
-            fromString( tile.at("type").get<std::string>()),
+            resourceFromString(tile.at("type").get<std::string>()),
             tile.at("number").get<int>()
         });
     }
@@ -314,7 +314,7 @@ std::vector<TileDef> Board::loadBoardFromTextFile(const std::string& loadFilePat
             continue;
         }
 
-        loadMap.push_back({q, r, fromString(type), number});
+        loadMap.push_back({q, r, resourceFromString(type), number});
     }
 
     return loadMap;
