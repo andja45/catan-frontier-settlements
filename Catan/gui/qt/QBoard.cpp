@@ -100,73 +100,80 @@ void QBoard::paintEvent(QPaintEvent *event) {
     p.setBrush(Qt::NoBrush);
 
     for (const auto& h : m_board->getTiles()) {
-        const QPointF center = axialToPixelPointy(h->getTileCoord(), size) + offset;
-        const auto pts = hexPolygonPointy(center, size);
-
-        QPolygonF poly;
-        poly.reserve(6);
-        for (const auto& pt : pts) poly << pt;
-
-        m_tilePoly[h.get()] = poly;   // cache for hit test
-
-        //color hex
-        QBrush brush(Qt::NoBrush);
-
-        switch (h->getResourceType()) {
-        case ResourceType::Wood:
-            brush = QBrush(QColor(34, 139, 34));      // forest green
-            break;
-        case ResourceType::Brick:
-            brush = QBrush(QColor(178, 74, 34));      // firebrick red
-            break;
-        case ResourceType::Ore:
-            brush = QBrush(QColor(160, 160, 160));    // dim gray
-            break;
-        case ResourceType::Wool:
-            brush = QBrush(QColor(144, 238, 144));    // light green
-            break;
-        case ResourceType::Wheat:
-            brush = QBrush(QColor(230, 205, 22));     // goldenrod
-            break;
-        case ResourceType::Desert:
-            brush = QBrush(QColor(200, 165, 112));     // sand
-            break;
-        case ResourceType::Sea:
-            brush = QBrush(QColor(80, 140, 200));     // steel blue
-            break;
-        case ResourceType::None:
-        default:
-            brush = QBrush(Qt::NoBrush);
-            break;
+        for (int i = 0; i < static_cast<int>(PointDirection::End); i++) {
+            //QPolygonF
         }
-
-        p.setBrush(brush);
-        p.drawPolygon(poly);
-
-        if (m_placingRobber && h.get() == m_hoveredTile) {
-            // overlay highlight
-            p.save();
-            p.setBrush(QBrush(QColor(255, 255, 255, 60))); // translucent
-            p.drawPolygon(poly);
-            p.restore();
-        }
-
-        //draw circle and number
-        if(h->getNumber() == 7) continue;
-        p.setBrush(QColor(240, 240, 210));
-        p.drawEllipse(center, size / 3, size / 3);
-
-        //this formula makes numbers scale with screen size, there's no particular logic, I tried it out
-        QFont font("Arial", size / 60 * (28 - 2.5 * std::abs(7 - h->getNumber()))); // 20 is the point size
-        p.setFont(font);
-        if(h->getNumber() == 6 || h->getNumber() == 8) {
-            p.setPen(QColor(255, 0, 0));
-            font.setWeight(QFont::Bold);
-        }
-        p.drawText(poly.boundingRect(), Qt::AlignCenter, QString::number(h->getNumber()));
-        p.setPen(pen);
+        paintTile(h.get(), size, offset, p, pen);
     }
 
+}
+
+void QBoard::paintTile(Tile* h, const double size, const QPointF offset, QPainter& p, QPen& pen){
+    const QPointF center = axialToPixelPointy(h->getTileCoord(), size) + offset;
+    const auto pts = hexPolygonPointy(center, size);
+
+    QPolygonF tilePoly;
+    tilePoly.reserve(6);
+    for (const auto& pt : pts) tilePoly << pt;
+
+    m_tilePoly[h] = tilePoly;   // cache for hit test
+
+    //color hex
+    QBrush brush(Qt::NoBrush);
+
+    switch (h->getResourceType()) {
+    case ResourceType::Wood:
+        brush = QBrush(QColor(34, 139, 34));      // forest green
+        break;
+    case ResourceType::Brick:
+        brush = QBrush(QColor(178, 74, 34));      // firebrick red
+        break;
+    case ResourceType::Ore:
+        brush = QBrush(QColor(160, 160, 160));    // dim gray
+        break;
+    case ResourceType::Wool:
+        brush = QBrush(QColor(144, 238, 144));    // light green
+        break;
+    case ResourceType::Wheat:
+        brush = QBrush(QColor(230, 205, 22));     // goldenrod
+        break;
+    case ResourceType::Desert:
+        brush = QBrush(QColor(200, 165, 112));     // sand
+        break;
+    case ResourceType::Sea:
+        brush = QBrush(QColor(80, 140, 200));     // steel blue
+        break;
+    case ResourceType::None:
+    default:
+        brush = QBrush(Qt::NoBrush);
+        break;
+    }
+
+    p.setBrush(brush);
+    p.drawPolygon(tilePoly);
+
+    if (m_placingRobber && h == m_hoveredTile) {
+        // overlay highlight
+        p.save();
+        p.setBrush(QBrush(QColor(255, 255, 255, 60))); // translucent
+        p.drawPolygon(tilePoly);
+        p.restore();
+    }
+
+    //draw circle and number
+    if(h->getNumber() == 7) return;
+    p.setBrush(QColor(240, 240, 210));
+    p.drawEllipse(center, size / 3, size / 3);
+
+    //this formula makes numbers scale with screen size, there's no particular logic, I tried it out
+    QFont font("Arial", size / 60 * (28 - 2.5 * std::abs(7 - h->getNumber()))); // 20 is the point size
+    p.setFont(font);
+    if(h->getNumber() == 6 || h->getNumber() == 8) {
+        p.setPen(QColor(255, 0, 0));
+        font.setWeight(QFont::Bold);
+    }
+    p.drawText(tilePoly.boundingRect(), Qt::AlignCenter, QString::number(h->getNumber()));
+    p.setPen(pen);
 }
 
 void QBoard::mouseMoveEvent(QMouseEvent* e) {

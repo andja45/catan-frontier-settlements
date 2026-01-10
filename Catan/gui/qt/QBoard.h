@@ -32,6 +32,7 @@ private:
 
     // Cache polygons from last paint for hit-testing
     QHash<Tile*, QPolygonF> m_tilePoly;
+    QHash<Node*, QPolygonF> m_nodePoly;
 
     bool m_placingRobber = true;
 
@@ -39,6 +40,7 @@ private:
     static QVector<QPointF> hexPolygonPointy(const QPointF& center, double size);
 
     QRectF boundsForLayout(double size) const;
+    void paintTile(Tile* h, const double size, const QPointF offset, QPainter& p, QPen& pen);
 };
 
 #endif // QBOARD_H
