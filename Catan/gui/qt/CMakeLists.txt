@@ -8,6 +8,9 @@ add_library(catan_gui_qt
         ui/widget.ui
         QBoard.cpp
         QBoard.h
+        QTile.h
+        QTile.cpp
+
 )
 
 target_include_directories(catan_gui_qt

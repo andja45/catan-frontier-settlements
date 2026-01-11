@@ -6,9 +6,12 @@
 #include <QPointF>
 #include <QHash>
 #include <QPolygonF>
+#include <vector>
 
 #include <board/Board.h>
 #include <types/TypeAliases.h>
+
+#include "QTile.h"
 
 class QBoard : public QWidget {
     Q_OBJECT
@@ -20,6 +23,7 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent* e) override;
+    void mousePressEvent(QMouseEvent* e) override;
     void leaveEvent(QEvent* e) override;
 
 private:
@@ -29,6 +33,9 @@ private:
 
     // Hover state (store coord or pointer)
     Tile* m_hoveredTile = nullptr;
+
+    std::vector<QTile> m_qtiles;
+    QTile* m_hovered = nullptr;
 
     // Cache polygons from last paint for hit-testing
     QHash<Tile*, QPolygonF> m_tilePoly;

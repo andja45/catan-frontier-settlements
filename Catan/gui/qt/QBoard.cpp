@@ -11,6 +11,11 @@ QBoard::QBoard(QWidget *parent, Board* board) : QWidget(parent), m_board(board) 
     setMinimumSize(300, 300);
     setAutoFillBackground(true);
     setMouseTracking(true);
+
+    m_qtiles.clear();
+    m_qtiles.reserve(m_board->getTiles().size());
+    for (const auto& up : m_board->getTiles())
+        m_qtiles.emplace_back(up.get());
 }
 
 QPointF QBoard::axialToPixelPointy(const TileCoords& a, double size) {
@@ -91,7 +96,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
     const QPointF offset(
         margin + (avail.width()  - b.width())  / 2.0 - b.left(),
         margin + (avail.height() - b.height()) / 2.0 - b.top()
-        );
+    );
 
     // Pen for outlines
     QPen pen(Qt::black);
@@ -99,13 +104,58 @@ void QBoard::paintEvent(QPaintEvent *event) {
     p.setPen(pen);
     p.setBrush(Qt::NoBrush);
 
+    /*
     for (const auto& h : m_board->getTiles()) {
         for (int i = 0; i < static_cast<int>(PointDirection::End); i++) {
             //QPolygonF
         }
         paintTile(h.get(), size, offset, p, pen);
     }
+*/
+    for (auto& qt : m_qtiles) {
+        Tile* h = qt.model();
 
+        const QPointF center = axialToPixelPointy(h->getTileCoord(), size) + offset;
+
+        const auto pts = hexPolygonPointy(center, size);
+        QPolygonF poly;
+        poly.reserve(6);
+        for (const auto& pt : pts) poly << pt;
+
+        qt.updateGeometry(center, poly, size);
+
+        // outline pen is owned by board, applied once
+        p.setPen(pen);
+        qt.paint(p, size, m_placingRobber);
+    }
+
+}
+
+void QBoard::mouseMoveEvent(QMouseEvent* e) {
+    if (!m_placingRobber) return;
+
+    const QPointF pos = e->position();
+
+    QTile* hit = nullptr;
+    for (auto& qt : m_qtiles) {
+        if (qt.contains(pos)) { hit = &qt; break; }
+    }
+
+    if (hit == m_hovered) return;
+
+    if (m_hovered) m_hovered->setHovered(false);
+    m_hovered = hit;
+    if (m_hovered) m_hovered->setHovered(true);
+
+    update();
+}
+
+void QBoard::mousePressEvent(QMouseEvent* e) {
+    if (!m_placingRobber || e->button() != Qt::LeftButton) return;
+    if (!m_hovered) return;
+
+    Tile* tile = m_hovered->model();
+    // call model: m_board->placeRobber(tile->getId()) etc.
 }
 
 void QBoard::paintTile(Tile* h, const double size, const QPointF offset, QPainter& p, QPen& pen){
@@ -176,6 +226,7 @@ void QBoard::paintTile(Tile* h, const double size, const QPointF offset, QPainte
     p.setPen(pen);
 }
 
+/*
 void QBoard::mouseMoveEvent(QMouseEvent* e) {
     if (!m_placingRobber) {
         QWidget::mouseMoveEvent(e);
@@ -198,6 +249,7 @@ void QBoard::mouseMoveEvent(QMouseEvent* e) {
         update(); // trigger repaint to update highlight
     }
 }
+*/
 
 void QBoard::leaveEvent(QEvent* e) {
     Q_UNUSED(e);
