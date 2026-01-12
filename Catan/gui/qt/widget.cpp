@@ -17,7 +17,7 @@ Widget::Widget(QWidget *parent)
     this->setAttribute(Qt::WA_StyledBackground, true);
 
     // Postavlja sliku da se rasteže preko celog prozora (border-image)
-    this->setStyleSheet("border-image: url(:/images/catan2.png);");
+    //this->setStyleSheet("border-image: url(:/images/catan2.png);");
 
 
     //auto *board = new QBoard(new Board(), this);
