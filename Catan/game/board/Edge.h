@@ -18,10 +18,13 @@ private:
 
     EdgeId m_edgeId=-1;
 
+    EdgeCoords m_edgeCoords;
+
 
 public:
-    Edge(EdgeId id) : m_edgeId(id) {}
-    Edge(EdgeId id, Node *start, Node *end) : m_start(start), m_end(end), m_edgeId(id) {}
+    Edge(EdgeId id,EdgeCoords ec) : m_edgeId(id), m_edgeCoords(ec) {}
+    Edge(EdgeId id,EdgeCoords ec, Node *start, Node *end) : m_start(start), m_end(end), m_edgeId(id), m_edgeCoords(ec) {}
+
 
     Node* getStart() const { return m_start; }
     Node* getEnd() const { return m_end; }
@@ -32,6 +35,7 @@ public:
     bool isOccupied() const { return m_isOccupied; }
     int getOwner() const { return m_playerId; }
     int getEdgeId() const { return m_edgeId; }
+    EdgeCoords getEdgeCoords() const { return m_edgeCoords; }
 
     void setOwner(int playerId) {m_playerId=playerId; m_isOccupied=true;}
 

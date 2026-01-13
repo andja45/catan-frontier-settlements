@@ -12,6 +12,7 @@ public:
     using ElementCoords::ElementCoords;
     NodeCoords(AxialCoords ax, NodeDirection dir);
     NodeCoords(int q, int r, int i) : NodeCoords({q,r},static_cast<NodeDirection>(i)) {}
+    NodeDirection direction() const { return static_cast<NodeDirection>(m_i); }
 };
 
 
