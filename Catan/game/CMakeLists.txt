@@ -50,6 +50,9 @@ add_library(catan_game
         move/BankTradeMove.h
         move/SetRobberMove.h
         move/BankTradeMove.cpp
+        gamemodel/GameData.h
+        gamemodel/GameData.cpp
+        types/ResourceType.h
         rules/Rule.h
         rules/LargestArmyRule.cpp
         rules/LargestArmyRule.h
