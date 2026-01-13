@@ -39,10 +39,7 @@ void GameHistory::loadGameHistoryToTable() {
 
             m_historyTable->insertRow(row);
 
-            if (game.isGameWon()){
-                colorRow(row, m_colorWin);}
-            else{
-                colorRow(row, m_colorLose);}
+
 
             std::string playersJoined;
             const auto &players = game.getPlayerNames();
@@ -56,7 +53,10 @@ void GameHistory::loadGameHistoryToTable() {
             }
 
             m_historyTable->setItem(row, m_nameToCol[ColumnNames::m_playerNames], new QTableWidgetItem(QString::fromStdString(playersJoined)));
-
+            if (game.isGameWon()){
+                colorRow(row, m_colorWin);}
+            else{
+                colorRow(row, m_colorLose);}
             row++;
         }
         catch (const std::exception &e) {

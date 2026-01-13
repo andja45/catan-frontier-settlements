@@ -1,4 +1,7 @@
 #include "GameData.h"
+GameData::GameData(int gameId, std::vector<std::string> playerNames) : m_gameId(gameId), m_playerNames(playerNames) {
+    inicializeGameData();
+}
 
 void GameData::inicializeGameData() {
     std::time_t now = std::time(NULL);

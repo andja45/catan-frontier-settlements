@@ -32,8 +32,8 @@ class GameHistory : public QWidget
     Q_OBJECT
 
 private:
-    const QColor m_colorLose = QColor(255, 180, 180);
-    const QColor m_colorWin= QColor(180, 255, 180);
+    const QColor m_colorLose = QColor(250, 184, 162);
+    const QColor m_colorWin= QColor(206, 250, 147);
     const char* m_historyPath = "../../../resources/history.json";
     std::map<ColumnNames, int> m_nameToCol = {
         {ColumnNames::m_playerNames, 1},

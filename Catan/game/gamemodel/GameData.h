@@ -25,17 +25,17 @@ class GameData
 
 public:
     GameData(){};
-    GameData(int gameId) : m_gameId(gameId){};
-
+    GameData(int gameId, std::vector<std::string> playerNames);
 
     void inicializeGameData();
-    void loadFromJson(const nlohmann::json &j);
+    void loadFromJson(const nlohmann::json &jsonData);
     nlohmann::json toJson();
 
+    void setGameWon() {m_isGameWon = true;}
     int getNumOfPlayers() const {return m_numOfPlayers;}
     void addDiceRoll(int diceResult) {m_diceRolls[diceResult]++;}
     void addResourceRoll(ResourceType resourceResult) {m_resourceRolls[resourceResult]++;}
-
+    void setWinningPlayer(std::string winningPlayer) {m_winningPlayer = winningPlayer;}
 
     std::map<std::string,int> getPointsByPlayer() const {return m_pointsByPlayer;}
     std::map<int,int> getDiceRolls() const {return m_diceRolls;}
@@ -46,7 +46,6 @@ public:
 
     std::vector<std::string> getPlayerNames() const {return m_playerNames;}
     int getId() const {return m_gameId;}
-    void setGameWon() {m_isGameWon = true;}
     bool isGameWon() const {return m_isGameWon;}
     std::string getDate() const;
 };
