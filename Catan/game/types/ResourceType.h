@@ -25,14 +25,8 @@ static const inline std::map<std::string,ResourceType> mapStringToRes = {
     {"Wheat",ResourceType::Wheat}
 
 };
-static ResourceType resourceFromString(const std::string& s) {
-    auto it = mapStringToRes.find(s);
-    if (it == mapStringToRes.end()) {
-        return ResourceType::None;
-    }
-
-    return it->second;
-    //return mapStringToRes.at(s);
+static ResourceType fromString(const std::string& s) {
+    return mapStringToRes.at(s);
     }
 
 static bool resourceFromString(const std::string& s, ResourceType &outType) {
