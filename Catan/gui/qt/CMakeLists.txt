@@ -11,8 +11,6 @@ add_library(catan_gui_qt
         MainMenu.cpp
         MainMenu.h
         resources.qrc
-
-
 )
 
 target_include_directories(catan_gui_qt

@@ -36,17 +36,10 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent)
 
 void MainMenu::paintEvent(QPaintEvent *event)
 {
-
     QPainter painter(this);
 
-    QPixmap bg(":/images/catan.png");
-    qDebug() << "isNull =" << bg.isNull();
+    QPixmap bg(":/images/catan42.jpeg");
 
     painter.fillRect(rect(), Qt::red);
     painter.drawPixmap(rect(), bg);
-
-    QFile f(":/images/catan.png");
-    qDebug() << "exists:" << f.exists();
-
-
 }
