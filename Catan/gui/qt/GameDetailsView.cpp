@@ -1,4 +1,4 @@
-#include "gamedetailsview.h"
+#include "GameDetailsView.h"
 
 QGroupBox* GameDetailsView::SetBasicInfo(const GameData &game){
     auto *infoBox = new QGroupBox("Game Info", this);
