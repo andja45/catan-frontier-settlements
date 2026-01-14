@@ -10,6 +10,7 @@ add_library(catan_gui_qt
         QBoard.h
         QTile.h
         QTile.cpp
+        QNode.h QNode.cpp
 
 )
 

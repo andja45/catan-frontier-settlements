@@ -14,11 +14,16 @@ QBoard::QBoard(QWidget *parent, Board* board) : QWidget(parent), m_board(board) 
 
     m_qtiles.clear();
     m_qtiles.reserve(m_board->getTiles().size());
-    for (const auto& up : m_board->getTiles())
-        m_qtiles.emplace_back(up.get());
+    for (const auto& tile : m_board->getTiles())
+        m_qtiles.emplace_back(tile.get());
+
+    m_qnodes.clear();
+    m_qnodes.reserve(m_board->getNodes().size());
+    for(const auto& node : m_board->getNodes())
+        m_qnodes.emplace_back(node.get());
 }
 
-QPointF QBoard::axialToPixelPointy(const TileCoords& a, double size) {
+QPointF QBoard::axialToPixelTile(const TileCoords& a, double size) {
     // hexcoord -> pixel
     // x = size * sqrt(3) * (q + r/2)
     // y = size * 3/2 * r
@@ -48,7 +53,7 @@ QRectF QBoard::boundsForLayout(double size) const {
     double minX = 0, minY = 0, maxX = 0, maxY = 0;
 
     for (const auto& h : m_board->getTiles()) {
-        const QPointF c = axialToPixelPointy(h->getTileCoord(), size);
+        const QPointF c = axialToPixelTile(h->getTileCoord(), size);
         const auto poly = hexPolygonPointy(c, size);
         for (const auto& p : poly) {
             if (first) {
@@ -105,9 +110,9 @@ void QBoard::paintEvent(QPaintEvent *event) {
     p.setBrush(Qt::NoBrush);
 
     for (auto& qt : m_qtiles) {
-        Tile* h = qt.model();
+        Tile* h = qt.tile();
 
-        const QPointF center = axialToPixelPointy(h->getTileCoord(), size) + offset;
+        const QPointF center = axialToPixelTile(h->getTileCoord(), size) + offset;
 
         const auto pts = hexPolygonPointy(center, size);
         QPolygonF poly;
@@ -121,6 +126,19 @@ void QBoard::paintEvent(QPaintEvent *event) {
         qt.paint(p, size, m_placingRobber);
     }
 
+    /*
+    for (auto& qn : m_qnodes) {
+        Node* n = qn.node();
+
+        const QPointF center = axialToPixelNode(n->getNodeCoord(), size) + offset;
+
+        qn.updateGeometry(center, size);
+
+        // outline pen is owned by board, applied once
+        p.setPen(pen);
+        qn.paint(p, size);
+    }
+*/
 }
 
 void QBoard::mouseMoveEvent(QMouseEvent* e) {
@@ -128,32 +146,39 @@ void QBoard::mouseMoveEvent(QMouseEvent* e) {
 
     const QPointF pos = e->position();
 
-    QTile* hit = nullptr;
+    QTile* hitTile = nullptr;
     for (auto& qt : m_qtiles) {
-        if (qt.contains(pos)) { hit = &qt; break; }
+        if (qt.contains(pos)) { hitTile = &qt; break; }
     }
 
-    if (hit == m_hovered) return;
+    QNode* hitNode = nullptr;
+    for (auto& qn : m_qnodes) {
+        if (qn.contains(pos)) { hitNode = &qn; break; }
+    }
 
-    if (m_hovered) m_hovered->setHovered(false);
-    m_hovered = hit;
-    if (m_hovered) m_hovered->setHovered(true);
+    if (hitTile == m_hoveredQTile && hitNode == m_hoveredQNode) return;
+
+    if (m_hoveredQTile) m_hoveredQTile->setHovered(false);
+    m_hoveredQTile = hitTile;
+    if (m_hoveredQTile) m_hoveredQTile->setHovered(true);
+
+    if (m_hoveredQNode) m_hoveredQNode->setHovered(false);
+    m_hoveredQNode = hitNode;
+    if (m_hoveredQNode) m_hoveredQNode->setHovered(true);
 
     update();
 }
 
 void QBoard::mousePressEvent(QMouseEvent* e) {
+    PlayerId player = 1;
+    if(m_hoveredQNode) m_hoveredQNode->node()->buildSettlement(player);
     if (!m_placingRobber || e->button() != Qt::LeftButton) return;
-    if (!m_hovered) return;
+    if (!m_hoveredQTile) return;
 
-    Tile* tile = m_hovered->model();
+    Tile* tile = m_hoveredQTile->tile();
     // call model: m_board->placeRobber(tile->getId()) etc.
 }
 
 void QBoard::leaveEvent(QEvent* e) {
     Q_UNUSED(e);
-    if (m_hoveredTile) {
-        m_hoveredTile = nullptr;
-        update();
-    }
 }
