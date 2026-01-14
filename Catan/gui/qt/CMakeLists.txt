@@ -11,6 +11,8 @@ add_library(catan_gui_qt
         QBoard.h
         gamehistory.h gamehistory.cpp
         gamedetailsview.h gamedetailsview.cpp
+        QRightSidebar.cpp
+        QRightSidebar.h
 )
 
 target_include_directories(catan_gui_qt
