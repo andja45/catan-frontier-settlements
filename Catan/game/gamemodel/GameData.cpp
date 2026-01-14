@@ -1,4 +1,6 @@
 #include "GameData.h"
+#include <time.h>
+
 GameData::GameData(int gameId, std::vector<std::string> playerNames) : m_gameId(gameId), m_playerNames(playerNames) {
     inicializeGameData();
 }
@@ -6,7 +8,7 @@ GameData::GameData(int gameId, std::vector<std::string> playerNames) : m_gameId(
 void GameData::inicializeGameData() {
     std::time_t now = std::time(NULL);
     std::tm tm{};
-    localtime_s(&tm, &now);
+    localtime_r(&now, &tm);
     std::ostringstream oss;
     oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
     m_datetime= oss.str();
