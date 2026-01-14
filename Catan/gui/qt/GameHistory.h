@@ -11,15 +11,11 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
-#include "GameDetailsView.h"
 #include "../../game/gamemodel/GameData.h"
-#include <fstream>
 #include <json.hpp>
 
 #include <QBrush>
 #include <QColor>
-
-#include<iostream>
 
 enum class ColumnNames{
     m_date,

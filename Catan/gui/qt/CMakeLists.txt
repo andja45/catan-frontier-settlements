@@ -9,8 +9,8 @@ add_library(catan_gui_qt
         ui/widget.ui
         QBoard.cpp
         QBoard.h
-        gamehistory.h gamehistory.cpp
-        gamedetailsview.h gamedetailsview.cpp
+        GameHistory.h GameHistory.cpp
+        GameDetailsView.h GameDetailsView.cpp
         QRightSideBar.cpp
         QRightSideBar.h
 )
