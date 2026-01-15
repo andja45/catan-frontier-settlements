@@ -16,6 +16,9 @@ add_library(catan_gui_qt
         GameDetailsView.h GameDetailsView.cpp
         QRightSideBar.cpp
         QRightSideBar.h
+        GameHistory.h GameHistory.cpp
+        GameDetailsView.h GameDetailsView.cpp
+        GameTheme.h GameTheme.cpp
 )
 
 target_include_directories(catan_gui_qt

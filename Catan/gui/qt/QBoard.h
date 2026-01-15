@@ -10,6 +10,7 @@
 
 #include <board/Board.h>
 #include <types/TypeAliases.h>
+#include "GameTheme.h"
 
 #include <QTile.h>
 #include <QNode.h>

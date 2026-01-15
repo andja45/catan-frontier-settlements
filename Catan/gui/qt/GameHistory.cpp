@@ -1,8 +1,5 @@
 #include "GameHistory.h"
-#include "GameDetailsView.h"
-#include <fstream>
-
-void GameHistory::colorRow(int row, const QColor &color){ //FIXME - ne radi
+void GameHistory::colorRow(int row, const QColor &color){
     for (int col = 0; col < m_historyTable->columnCount(); col++) {
         QTableWidgetItem *item = m_historyTable->item(row, col);
         if (item)
@@ -86,6 +83,7 @@ GameHistory::GameHistory(QWidget *parent)
         "Players"
     });
 
+    m_historyTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     loadGameHistoryToTable();
 
     auto *buttonsLayout = new QHBoxLayout();

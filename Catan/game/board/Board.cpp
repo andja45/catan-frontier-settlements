@@ -122,6 +122,7 @@ std::vector<Edge *> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
     if (edge->getStart()->getOwner()==edge->getOwner())
        adjacentEdges1=std::vector<Edge*>(edge->getStart()->getIncidentEdges());
 
+
     std::vector<Edge*> adjacentEdges2;
     if (edge->getEnd()->getOwner()==edge->getOwner())
         adjacentEdges2=std::vector<Edge*>(edge->getEnd()->getIncidentEdges());

@@ -133,6 +133,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
         qt.updateGeometry(center, poly, size);
 
         // outline pen is owned by board, applied once
+
         p.setPen(pen);
         qt.paint(p, size, m_placingRobber);
     }

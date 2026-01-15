@@ -8,7 +8,7 @@ GameData::GameData(int gameId, std::vector<std::string> playerNames) : m_gameId(
 void GameData::inicializeGameData() {
     std::time_t now = std::time(NULL);
     std::tm tm{};
-    localtime_r(&now, &tm);
+    localtime_s(&tm, &now);
     std::ostringstream oss;
     oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
     m_datetime= oss.str();
@@ -30,10 +30,13 @@ nlohmann::json GameData::toJson() {
 
     jsonData["gameId"]        = m_gameId;
     jsonData["numOfPlayers"]  = m_numOfPlayers;
+    jsonData["numOfTurns"]  = m_numOfTurns;
     jsonData["datetime"]      = m_datetime;
     jsonData["isGameWon"]     = m_isGameWon;
     jsonData["playerNames"]   = m_playerNames;
     jsonData["winningPlayer"] = m_winningPlayer;
+    jsonData["biggestArmyOwner"] = m_biggestArmyOwner;
+    jsonData["longestRoadOwner"] = m_longestRoadOwner;
     jsonData["pointsByPlayer"] = m_pointsByPlayer;
     jsonData["diceRolls"]      = m_diceRolls;
 
@@ -50,10 +53,13 @@ void GameData::loadFromJson(const nlohmann::json &jsonData)
 
     m_gameId       = jsonData.at("gameId").get<int>();
     m_numOfPlayers = jsonData.at("numOfPlayers").get<int>();
+    m_numOfTurns = jsonData.at("numOfTurns").get<int>();
     m_datetime     = jsonData.at("datetime").get<std::string>();
     m_isGameWon    = jsonData.at("isGameWon").get<bool>();
     m_playerNames  = jsonData.at("playerNames").get<std::vector<std::string>>();
     m_winningPlayer = jsonData.at("winningPlayer").get<std::string>();
+    m_biggestArmyOwner = jsonData.at("biggestArmyOwner").get<std::string>();
+    m_longestRoadOwner = jsonData.at("longestRoadOwner").get<std::string>();
     m_pointsByPlayer = jsonData.at("pointsByPlayer").get<std::map<std::string, int>>();
 
     m_diceRolls.clear();

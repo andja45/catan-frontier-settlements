@@ -28,7 +28,6 @@ static const inline std::map<std::string,ResourceType> mapStringToRes = {
 static ResourceType fromString(const std::string& s) {
     return mapStringToRes.at(s);
     }
-
 static bool resourceFromString(const std::string& s, ResourceType &outType) {
     auto it = mapStringToRes.find(s);
     if (it == mapStringToRes.end())
