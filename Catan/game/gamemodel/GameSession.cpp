@@ -115,7 +115,7 @@ void GameSession::setLongestRoadOwner(const PlayerId playerId) {
 }
 
 void GameSession::setLargestArmyOwner(const PlayerId playerId) {
-    if (largestArmyOwner() != InvalidPlayer)
+    if (largestArmyOwner() != InvalidPlayer) // TODO keep in sync with player has largest army
         player(largestArmyOwner()).removePoints(2);
 
     m_largestArmyOwner = playerId;

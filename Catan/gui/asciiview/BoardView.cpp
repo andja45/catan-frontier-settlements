@@ -4,6 +4,7 @@
 
 #include "BoardView.hpp"
 #include <iostream>
+#include <limits>
 
 #include <board/Board.h>
 #include <board/Tile.h>
@@ -11,78 +12,133 @@
 
 
 void BoardView::computeSizes() {
-    int minX,maxX,minY,maxY;
+    int minQ,maxQ,minR,maxR;
+    int minRow,maxRow,minCol,maxCol;
+
+    minR=minCol=minRow=minQ=std::numeric_limits<int>::max();
+    maxR=maxCol=maxRow=maxQ=std::numeric_limits<int>::min();
+
     for (auto c: m_board->getBoardCords()) {
-        TileCoords offsetCord=axialToOffset(c);
+        OffsetCoords offsetCord = axialToFlippedOffset(c);
 
-        minX=std::min(minX,offsetCord.q());
-        maxX=std::max(maxX,offsetCord.q());
-        minY=std::min(minY,offsetCord.r());
-        maxY=std::max(maxY,offsetCord.r());
+        minQ=std::min(minQ,offsetCord.q());
+        maxQ=std::max(maxQ,offsetCord.q());
+        minR=std::min(minR,offsetCord.r());
+        maxR=std::max(maxR,offsetCord.r());
+
+        ScreenCoords pos=offsetToScreen(offsetCord,m_tileSize);
+        for (auto n:TileView::getNodes(pos,m_tileSize)) {
+            minCol=std::min(minRow,n.first);
+            maxCol=std::max(maxRow,n.first);
+            minRow=std::min(minCol,n.second);
+            maxRow=std::max(maxCol,n.second);
+        }
     }
 
-    int rows=maxY-minY+1;
-    int cols=maxX-minX+1;
+    int rows=maxR-minR+1;
+    int cols=maxQ-minQ+1;
 
-    ScreenCoords origin={(m_gridSize.first-1)/2,(m_gridSize.second-1)/2};
-    ScreenCoords margin={m_gridSize.first,m_gridSize.second};
-    m_canvasSize=offsetToScreen({cols,rows},margin,m_gridSize);
-
-    m_cells=std::vector(m_canvasSize.first,std::vector<Cell>(m_canvasSize.second));
-    m_center=offsetToScreen({rows/2,cols/2},origin,m_gridSize);
+    m_canvasSize={maxCol-minCol+1,maxRow-minRow+1}; // width height
+    m_center={-minCol+m_margin.first,-minRow+m_margin.second};
 }
 
-void BoardView::processTileCords(Tile* tile, std::vector<ScreenCoords> &cords) {
-    for (int i = 0,j=0; i < static_cast<int>(PointDirection::End) && j< static_cast<int>(SideDirection::End); ++i,++j) {
-        int i_next=(i+1)%static_cast<int>(PointDirection::End);
-        PointDirection edgeDir=static_cast<PointDirection>(j);
-
-        // Node* n=tile->getNodeAt(i_next);
-        // Edge* e=tile->getEdgeAt(j);
-        // NodeView nw(n,cords[i]);
-        // EdgeView ew(e,cords[i],cords[i_next],edgeDir);
-        //
-        // m_edges.push_back(std::move(ew));
-        // m_nodes.push_back(std::move(nw));
-    }
+SideDirection BoardView::pointToSide(PointDirection dir) {
 }
 
+PointDirection BoardView::sideToPoint(SideDirection dir) {
+}
 
-void BoardView::init() {
+void BoardView::fitToScreen(ScreenCoords scr, bool stretch) {
+    m_margin={0,0};
+    m_tileSize={12,5};
+
+    auto [scrWidth,scrHeight]=scr;
+    auto [bWidth,bHeight]=m_canvasSize;
 
     computeSizes();
-
-    for (auto c: m_board->getBoardCords()) {
-        TileCoords offsetCord=axialToOffset(c);
-        ScreenCoords pos=offsetToScreen({offsetCord.q(),offsetCord.r()},m_center,m_gridSize);
-
-        TileView tw=TileView(m_board->getTileAt(c),pos,m_gridSize);
-        m_tiles.push_back(std::move(tw));
-
-        auto coords= tw.getNodes();
-        processTileCords(m_board->getTileAt(c),coords);
-
+    float rowScale=scrHeight/static_cast<float>(bHeight);
+    float colScale=scrWidth/static_cast<float>(bWidth);
+        
+    if (stretch) {
+        setTileSize({static_cast<int>(m_tileSize.first*colScale),static_cast<int>(m_tileSize.second*rowScale)});
+    }
+    else {
+        float fitScale=std::min(rowScale,colScale);
+        setTileSize({static_cast<int>(m_tileSize.first*fitScale),static_cast<int>(m_tileSize.second*fitScale)});
     }
 }
 
-TileCoords BoardView::axialToOffset(TileCoords axial) {
-    int offsetX=axial.q();
-    int offsetY=axial.r()+(axial.q()-axial.q()%2)/2;
-    return {offsetX,offsetY};
+void BoardView::processTileCords(TileCoords tileCoords, std::vector<std::pair<SideDirection,ScreenCoords>> &cords) {
+
+        for (auto [sideDir,scrCoord]: cords) {
+
+
+        }
+
+        int i_next=(i+1)%static_cast<int>(PointDirection::End);
+        NodeCoords nc={tileCoords,static_cast<NodeDirection>(i)};
+        EdgeCoords ec={tileCoords,static_cast<EdgeDirection>(j)};
+
+
+        Edge* edge=m_board->getEdgeAt(ec);
+        Node* node=m_board->getNodeAt(nc);
+        NodeView nw(node,cords[i]);
+        PointDirection dir=static_cast<PointDirection>((-j+startEdgeDir)%dirCount);
+        EdgeView ew(edge,cords[i],cords[i_next],dir); //.
+
+        m_edges.push_back(std::move(ew));
+        m_nodes.push_back(std::move(nw));
+
+    }
+
+}
+
+
+void BoardView::reorganize() {
+    m_tiles.clear();
+    m_edges.clear();
+    m_nodes.clear();
+    m_cells.clear();
+
+    computeSizes();
+    m_cells.resize(m_canvasSize.first,std::vector<Cell>(m_canvasSize.second,{' ',0}));
+
+
+    for (auto c: m_board->getBoardCords()) {
+        TileCoords offsetCord=axialToFlippedOffset(c);
+        ScreenCoords pos=offsetToScreen(offsetCord,m_tileSize,m_center);
+
+        TileView tw=TileView(m_board->getTileAt(c),pos,m_tileSize);
+        m_tiles.push_back(std::move(tw));
+
+        auto coords= TileView::getNodes(pos,m_tileSize);
+        processTileCords(m_board->getTileAt(c)->getTileCoord(),coords);
+    }
+}
+
+OffsetCoords BoardView::axialToFlippedOffset(TileCoords axial) {
+    int offsetR=axial.r();
+    int offsetQ=axial.q()+(axial.r()-axial.q()%2)/2;
+    return {offsetR,offsetQ};
 }
 
 ScreenCoords BoardView::stepSize(ScreenCoords tileSize) {
-    int stepX=tileSize.first/2+(tileSize.first-tileSize.second+1)/2-1;
-    int stepY=tileSize.second-1;
+    auto [tileWidth,tileHeight]=tileSize;
+    int slopeWidth=slopeWidthForHeight(tileHeight);
+    int middleWidth=tileWidth-slopeWidth*2;
+    int stepX=middleWidth/2+slopeWidth+middleWidth/2;
+    int stepY=tileHeight-1;
 
     return {stepX,stepY};
 }
 
-ScreenCoords BoardView::offsetToScreen(TileCoords offset,ScreenCoords origin ,ScreenCoords tileSize) {
+ScreenCoords BoardView::offsetToScreen(TileCoords offset,ScreenCoords tileSize,ScreenCoords origin) {
     auto [stepX,stepY]=stepSize(tileSize);
-    int x=offset.q()*stepX;
-    int y=offset.r()*stepY+stepY/2*(offset.q()%2);
-    return {origin.first+x,origin.second+y};
+    int col=offset.q()*stepX;
+    int row=offset.r()*stepY;
+    if (offset.q()%2)
+        row+=stepY/2;
+    return {origin.first+col,origin.second+row};
 }
 
 void BoardView::renderBoard() {
@@ -102,15 +158,47 @@ void BoardView::printCell(Cell c, std::ostream& os) {
 }
 
 void BoardView::blitBoard(std::ostream& os=std::cout) {
-    for (auto line:m_cells) {
-        for (auto cell:line) {
-            printCell(cell,os);
-        }
+    for (int x=0; x<m_canvasSize.first+m_margin.first*2+2; x++) {
+        os<<'-';
+    }
+    for (int y=0; y<m_margin.second; y++) {
         os<<std::endl;
+    }
+    for (int y=0; y<m_canvasSize.second; y++) {
+        os<<'|';
+        for (int x=0; x<m_margin.first; x++) {
+            os<<' ';
+        }
+        for (int x=0; x<m_canvasSize.first; x++) {
+            printCell(m_cells[x][y],os);
+        }
+        for (int x=0; x<m_margin.first; x++) {
+            os<<' ';
+        }
+        os<<'|';
+        os<<std::endl;
+    }
+    for (int y=0; y<m_margin.second; y++) {
+        os<<std::endl;
+    }
+    for (int x=0; x<m_canvasSize.first+m_margin.first*2+2; x++) {
+        os<<'-';
     }
 }
 
 void BoardView::drawBoard(std::ostream& os=std::cout) {
+    os<<"Board:"<<std::endl;
     renderBoard();
     blitBoard(os);
+}
+
+void BoardView::setTileSize(ScreenCoords size) {
+    int width=size.first/2*2; // always even number
+    int height=(size.second-1)/2*2+1; // always odd number
+    height=std::min(maxHeightForWidth(width),height);
+
+    width=std::max(width,minTileWidth);
+    height=std::max(height,minTileHeight);
+    m_tileSize={width,height};
+
 }

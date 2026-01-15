@@ -13,7 +13,6 @@ public:
     using ElementCoords::ElementCoords;
     EdgeCoords(AxialCoords ax, EdgeDirection dir);
     EdgeCoords(int q, int r, int i) : EdgeCoords({q,r},static_cast<EdgeDirection>(i)) {}
-
 };
 
 

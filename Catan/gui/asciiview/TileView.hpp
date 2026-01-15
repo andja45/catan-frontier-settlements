@@ -19,7 +19,7 @@ private:
 public:
     TileView(Tile* tile, ScreenCoords pos,  ScreenCoords size) : m_tile(tile), m_size(size), m_pos(pos) {}
     void draw(Canvas &canvas, const BoardTheme &theme) const;
-    std::vector<ScreenCoords> getNodes();
+    static std::vector<ScreenCoords> getNodes(ScreenCoords m_pos, ScreenCoords m_size);
 };
 
 #endif //CATAN_TILEVIEW_HPP

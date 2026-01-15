@@ -58,7 +58,7 @@ void TileView::draw(Canvas &canvas, const BoardTheme &theme) const {
     }
 }
 
-std::vector<ScreenCoords> TileView::getNodes() {
+std::vector<ScreenCoords> TileView::getNodes(ScreenCoords m_pos, ScreenCoords m_size) {
     std::vector<ScreenCoords> coords;
     int rows=m_size.second;
     int max_width=m_size.first;

@@ -21,7 +21,7 @@ char EdgeView::sideToChar(const BoardTheme &theme) const {
 void EdgeView::draw(Canvas &canvas, const BoardTheme &theme) const {
     int step_x=m_end.first-m_start.first;
     int step_y=m_end.second-m_start.second;
-    int len=std::max(std::abs(step_x-2), std::abs(step_y-2));
+    int len=std::max(std::abs(step_x)-1, std::abs(step_y)-1);
     step_x/=std::abs(step_x);
     step_y/=std::abs(step_y);
 
