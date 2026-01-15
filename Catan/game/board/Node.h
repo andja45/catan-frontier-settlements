@@ -23,13 +23,16 @@ private:
 
     NodeId m_nodeId=-1;
 
+    NodeCoords m_coords;
+
     bool m_hasTrade=false; //TODO consider separate class, stored in board? player?
     TradeType m_tradeResource=TradeType::None; // if has trade than this resolve which resource its for
 public:
-    Node(NodeId id,bool isPort=false, ResourceType portType=ResourceType::None) {
+    Node(NodeId id,NodeCoords nc,bool isPort=false, ResourceType portType=ResourceType::None) {
         m_nodeId=id;
         m_hasTrade=isPort;
         m_tradeResource=portType;
+        m_coords=nc;
     }
     // maybe place building that takes type and owner, and upgrade to city?
     // is is is or manual check?
@@ -58,6 +61,8 @@ public:
 
     void addAdjacentTile(Tile * tile){ m_incidentTiles.push_back(tile);}
     void addAdjacentEdge(Edge * edge){ m_incidentEdges.push_back(edge);}
+
+    NodeCoords getCoords() const {return m_coords;}
 
     friend bool operator==(const Node &lhs, const Node &rhs) {
         return lhs.m_nodeId == rhs.m_nodeId;

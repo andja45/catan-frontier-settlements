@@ -1,5 +1,6 @@
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Charts)
 
 
 add_library(catan_gui_qt
@@ -11,7 +12,10 @@ add_library(catan_gui_qt
         QTile.h
         QTile.cpp
         QNode.h QNode.cpp
-
+        GameHistory.h GameHistory.cpp
+        GameDetailsView.h GameDetailsView.cpp
+        QRightSideBar.cpp
+        QRightSideBar.h
 )
 
 target_include_directories(catan_gui_qt
@@ -23,6 +27,8 @@ target_link_libraries(catan_gui_qt
         PUBLIC
         catan_game
         Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Charts
+
 )
 
 set_target_properties(catan_gui_qt PROPERTIES

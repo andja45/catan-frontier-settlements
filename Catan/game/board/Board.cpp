@@ -51,7 +51,7 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
 
         for (auto nc:nodeCoords) {
             int id=m_nodes.size();
-            auto n = std::make_unique<Node>(id);
+            auto n = std::make_unique<Node>(id,nc);
             Node* rawNode = n.get();
             m_nodes.push_back(std::move(n));
             m_nodesByCoord[nc]=rawNode;
@@ -60,7 +60,7 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
         // make edges
         for (auto ec:edgeCoords) {
             int id=m_edges.size();
-            auto e = std::make_unique<Edge>(id);
+            auto e = std::make_unique<Edge>(id,ec);
             Edge* rawEdge = e.get();
             m_edges.push_back(std::move(e));
             m_edgesByCoord[ec]=rawEdge;
@@ -316,3 +316,11 @@ bool Board::isNodeSettlement(NodeId nodeId) const {
     return getNodeById(nodeId)->isSettlement();
 }
 
+
+std::vector<AxialCoords> Board::getBoardCords() {
+    std::vector<AxialCoords> coords;
+    for (auto&[coord, tile] : m_tilesByCoord) {
+        coords.push_back(coord);
+    }
+    return coords;
+}
