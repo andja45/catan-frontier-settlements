@@ -32,6 +32,17 @@ QPointF QBoard::axialToPixelTile(const TileCoords& a, double size) {
     return {x, y};
 }
 
+QPointF QBoard::axialToPixelNode(const NodeCoords& a, double size){
+    auto [tileX, tileY] = axialToPixelTile(a.axialCoords(), size);
+
+    int anglePer60 = static_cast<int>(a.direction());
+    double angle_radians = anglePer60 * M_PI / 3;
+    int offsetX = size * std::cos(angle_radians);
+    int offsetY = size * std::sin(angle_radians);
+
+    return QPointF(tileX + offsetX, tileY + offsetY);
+}
+
 QVector<QPointF> QBoard::hexPolygonPointy(const QPointF& center, double size) {
     // 6 corners, pointy-top => start at -90° so a corner points up.
     QVector<QPointF> pts;
@@ -126,11 +137,10 @@ void QBoard::paintEvent(QPaintEvent *event) {
         qt.paint(p, size, m_placingRobber);
     }
 
-    /*
     for (auto& qn : m_qnodes) {
         Node* n = qn.node();
 
-        const QPointF center = axialToPixelNode(n->getNodeCoord(), size) + offset;
+        const QPointF center = axialToPixelNode(n->getCoords(), size) + offset;
 
         qn.updateGeometry(center, size);
 
@@ -138,7 +148,6 @@ void QBoard::paintEvent(QPaintEvent *event) {
         p.setPen(pen);
         qn.paint(p, size);
     }
-*/
 }
 
 void QBoard::mouseMoveEvent(QMouseEvent* e) {

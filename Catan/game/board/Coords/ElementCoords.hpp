@@ -26,6 +26,7 @@ public:
     friend bool operator!=(const ElementCoords &lhs, const ElementCoords &rhs) {
         return !(lhs == rhs);
     }
+    AxialCoords axialCoords() const {return AxialCoords(m_q, m_r); }
 };
 
 #endif //CATAN_ELEMENTCOORDS_HPP
