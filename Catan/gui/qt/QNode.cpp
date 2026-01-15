@@ -1,8 +1,5 @@
-#include "QNode.h"
+#include <QNode.h>
 #include <cmath>
-
-// include your model node header
-#include <board/Node.h>  // adjust include path
 
 bool QNode::hoverAllowed() const {
     if (!m_node) return false;
@@ -40,8 +37,8 @@ bool QNode::handleClick(PlayerId player) {
 
 void QNode::drawSettlement(QPainter& p, double size) {
     // A small triangle ("house") centered on m_center
-    const double h = size / 3.6;  // height
-    const double w = size / 3.8;  // width
+    const double h = size / 2.2;  // height
+    const double w = size / 2.2;  // width
 
     QPolygonF tri;
     tri << QPointF(m_center.x(),         m_center.y() - h * 0.65)
@@ -57,8 +54,8 @@ void QNode::drawSettlement(QPainter& p, double size) {
 
 void QNode::drawCity(QPainter& p, double size) {
     // A small blocky "castle" (rectangle + roof bump)
-    const double w = size / 3.4;
-    const double h = size / 3.1;
+    const double w = size / 2;
+    const double h = size / 2;
 
     QRectF base(m_center.x() - w/2.0, m_center.y() - h/2.0, w, h);
 
