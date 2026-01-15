@@ -151,15 +151,17 @@ void QBoard::paintEvent(QPaintEvent *event) {
 }
 
 void QBoard::mouseMoveEvent(QMouseEvent* e) {
-    if (!m_placingRobber) return;
-
     const QPointF pos = e->position();
 
+    // --- Tile hover only if placing robber ---
     QTile* hitTile = nullptr;
-    for (auto& qt : m_qtiles) {
-        if (qt.contains(pos)) { hitTile = &qt; break; }
+    if (m_placingRobber) {
+        for (auto& qt : m_qtiles) {
+            if (qt.contains(pos)) { hitTile = &qt; break; }
+        }
     }
 
+    // --- Node hover always (or gate it behind a future "placing building" flag) ---
     QNode* hitNode = nullptr;
     for (auto& qn : m_qnodes) {
         if (qn.contains(pos)) { hitNode = &qn; break; }
@@ -179,13 +181,25 @@ void QBoard::mouseMoveEvent(QMouseEvent* e) {
 }
 
 void QBoard::mousePressEvent(QMouseEvent* e) {
-    PlayerId player = 1;
-    if(m_hoveredQNode) m_hoveredQNode->node()->buildSettlement(player);
-    if (!m_placingRobber || e->button() != Qt::LeftButton) return;
-    if (!m_hoveredQTile) return;
+    if (e->button() != Qt::LeftButton) return;
 
-    Tile* tile = m_hoveredQTile->tile();
-    // call model: m_board->placeRobber(tile->getId()) etc.
+    PlayerId player = 1; // TODO: wire to your current player
+
+    // If user clicked a node, build/upgrade there
+    if (m_hoveredQNode) {
+        if (m_hoveredQNode->handleClick(player)) {
+            update();
+            return;
+        }
+    }
+
+    // Robber placement (only if that mode is enabled)
+    if (m_placingRobber && m_hoveredQTile) {
+        Tile* tile = m_hoveredQTile->tile();
+        // m_board->placeRobber(tile->getId()) etc.
+        update();
+        return;
+    }
 }
 
 void QBoard::leaveEvent(QEvent* e) {
