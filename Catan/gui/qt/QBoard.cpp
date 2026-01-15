@@ -114,34 +114,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
         //color hex
         QBrush brush(Qt::NoBrush);
 
-        switch (h->getType()) {
-        case ResourceType::Wood:
-            brush = QBrush(QColor(34, 139, 34));      // forest green
-            break;
-        case ResourceType::Brick:
-            brush = QBrush(QColor(178, 74, 34));      // firebrick red
-            break;
-        case ResourceType::Ore:
-            brush = QBrush(QColor(160, 160, 160));    // dim gray
-            break;
-        case ResourceType::Wool:
-            brush = QBrush(QColor(144, 238, 144));    // light green
-            break;
-        case ResourceType::Wheat:
-            brush = QBrush(QColor(230, 205, 22));     // goldenrod
-            break;
-        case ResourceType::Desert:
-            brush = QBrush(QColor(200, 165, 112));     // sand
-            break;
-        case ResourceType::Sea:
-            brush = QBrush(QColor(80, 140, 200));     // steel blue
-            break;
-        case ResourceType::None:
-        default:
-            brush = QBrush(Qt::NoBrush);
-            break;
-        }
-
+        brush = QBrush(GameTheme::getColorByResource(h->getType()));
         p.setBrush(brush);
         p.drawPolygon(poly);
 

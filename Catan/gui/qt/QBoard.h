@@ -9,6 +9,7 @@
 
 #include <board/Board.h>
 #include <types/TypeAliases.h>
+#include "GameTheme.h"
 
 class QBoard : public QWidget {
     Q_OBJECT
