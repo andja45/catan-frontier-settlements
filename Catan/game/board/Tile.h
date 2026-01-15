@@ -1,10 +1,7 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <array>
-#include <vector>
 #include <string>
-#include <tuple>
 
 #include <types/ResourceType.h>
 #include <types/TypeAliases.h>

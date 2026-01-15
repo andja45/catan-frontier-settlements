@@ -6,9 +6,13 @@
 #include <QPointF>
 #include <QHash>
 #include <QPolygonF>
+#include <vector>
 
 #include <board/Board.h>
 #include <types/TypeAliases.h>
+
+#include <QTile.h>
+#include <QNode.h>
 
 class QBoard : public QWidget {
     Q_OBJECT
@@ -20,23 +24,26 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent* e) override;
+    void mousePressEvent(QMouseEvent* e) override;
     void leaveEvent(QEvent* e) override;
 
 private:
     Board* m_board;
-    //QVector<HexCoords> m_hexes;     // 19 land hexes
     double m_size = 40.0;       // hex radius (corner distance); will be auto-scaled
 
-    // Hover state (store coord or pointer)
     Tile* m_hoveredTile = nullptr;
-
-    // Cache polygons from last paint for hit-testing
-    QHash<Tile*, QPolygonF> m_tilePoly;
+    QTile* m_hoveredQTile = nullptr;
+    std::vector<QTile> m_qtiles;
 
     bool m_placingRobber = true;
 
-    static QPointF axialToPixelPointy(const TileCoords& a, double size);
+    QNode* m_hoveredQNode = nullptr;
+    std::vector<QNode> m_qnodes;
+
+    static QPointF axialToPixelTile(const TileCoords& a, double size);
     static QVector<QPointF> hexPolygonPointy(const QPointF& center, double size);
+
+    static QPointF axialToPixelNode(const NodeCoords& a, double size);
 
     QRectF boundsForLayout(double size) const;
 };

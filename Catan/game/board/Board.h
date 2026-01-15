@@ -52,6 +52,7 @@ public:
     Tile* getTileById(TileId tileId) const;
 
     const std::vector<std::unique_ptr<Tile>>& getTiles() const { return m_tiles; }
+    const std::vector<std::unique_ptr<Node>>& getNodes() const { return m_nodes; }
 
     std::vector<Edge*> getEdgesAdjacentToNode(NodeId nodeId) const;
     std::vector<Node*> getNodesAdjacentToEdge(EdgeId edgeId) const;

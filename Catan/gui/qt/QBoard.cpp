@@ -11,15 +11,36 @@ QBoard::QBoard(QWidget *parent, Board* board) : QWidget(parent), m_board(board) 
     setMinimumSize(300, 300);
     setAutoFillBackground(true);
     setMouseTracking(true);
+
+    m_qtiles.clear();
+    m_qtiles.reserve(m_board->getTiles().size());
+    for (const auto& tile : m_board->getTiles())
+        m_qtiles.emplace_back(tile.get());
+
+    m_qnodes.clear();
+    m_qnodes.reserve(m_board->getNodes().size());
+    for(const auto& node : m_board->getNodes())
+        m_qnodes.emplace_back(node.get());
 }
 
-QPointF QBoard::axialToPixelPointy(const TileCoords& a, double size) {
+QPointF QBoard::axialToPixelTile(const TileCoords& a, double size) {
     // hexcoord -> pixel
     // x = size * sqrt(3) * (q + r/2)
     // y = size * 3/2 * r
     const double x = size * SQRT3 * (static_cast<double>(a.q()) + static_cast<double>(a.r()) / 2.0);
     const double y = size * 1.5 * static_cast<double>(a.r());
     return {x, y};
+}
+
+QPointF QBoard::axialToPixelNode(const NodeCoords& a, double size){
+    auto [tileX, tileY] = axialToPixelTile(a.axialCoords(), size);
+
+    int anglePer60 = static_cast<int>(a.direction());
+    double angle_radians = M_PI / 2 - anglePer60 * M_PI / 3;
+    int offsetX = size * std::cos(angle_radians);
+    int offsetY = size * std::sin(angle_radians);
+
+    return QPointF(tileX + offsetX, tileY + offsetY);
 }
 
 QVector<QPointF> QBoard::hexPolygonPointy(const QPointF& center, double size) {
@@ -43,7 +64,7 @@ QRectF QBoard::boundsForLayout(double size) const {
     double minX = 0, minY = 0, maxX = 0, maxY = 0;
 
     for (const auto& h : m_board->getTiles()) {
-        const QPointF c = axialToPixelPointy(h->getTileCoord(), size);
+        const QPointF c = axialToPixelTile(h->getTileCoord(), size);
         const auto poly = hexPolygonPointy(c, size);
         for (const auto& p : poly) {
             if (first) {
@@ -91,7 +112,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
     const QPointF offset(
         margin + (avail.width()  - b.width())  / 2.0 - b.left(),
         margin + (avail.height() - b.height()) / 2.0 - b.top()
-        );
+    );
 
     // Pen for outlines
     QPen pen(Qt::black);
@@ -99,103 +120,88 @@ void QBoard::paintEvent(QPaintEvent *event) {
     p.setPen(pen);
     p.setBrush(Qt::NoBrush);
 
-    for (const auto& h : m_board->getTiles()) {
-        const QPointF center = axialToPixelPointy(h->getTileCoord(), size) + offset;
-        const auto pts = hexPolygonPointy(center, size);
+    for (auto& qt : m_qtiles) {
+        Tile* h = qt.tile();
 
+        const QPointF center = axialToPixelTile(h->getTileCoord(), size) + offset;
+
+        const auto pts = hexPolygonPointy(center, size);
         QPolygonF poly;
         poly.reserve(6);
         for (const auto& pt : pts) poly << pt;
 
-        m_tilePoly[h.get()] = poly;   // cache for hit test
+        qt.updateGeometry(center, poly, size);
 
-        //color hex
-        QBrush brush(Qt::NoBrush);
-
-        switch (h->getResourceType()) {
-        case ResourceType::Wood:
-            brush = QBrush(QColor(34, 139, 34));      // forest green
-            break;
-        case ResourceType::Brick:
-            brush = QBrush(QColor(178, 74, 34));      // firebrick red
-            break;
-        case ResourceType::Ore:
-            brush = QBrush(QColor(160, 160, 160));    // dim gray
-            break;
-        case ResourceType::Wool:
-            brush = QBrush(QColor(144, 238, 144));    // light green
-            break;
-        case ResourceType::Wheat:
-            brush = QBrush(QColor(230, 205, 22));     // goldenrod
-            break;
-        case ResourceType::Desert:
-            brush = QBrush(QColor(200, 165, 112));     // sand
-            break;
-        case ResourceType::Sea:
-            brush = QBrush(QColor(80, 140, 200));     // steel blue
-            break;
-        case ResourceType::None:
-        default:
-            brush = QBrush(Qt::NoBrush);
-            break;
-        }
-
-        p.setBrush(brush);
-        p.drawPolygon(poly);
-
-        if (m_placingRobber && h.get() == m_hoveredTile) {
-            // overlay highlight
-            p.save();
-            p.setBrush(QBrush(QColor(255, 255, 255, 60))); // translucent
-            p.drawPolygon(poly);
-            p.restore();
-        }
-
-        //draw circle and number
-        if(h->getNumber() == 7) continue;
-        p.setBrush(QColor(240, 240, 210));
-        p.drawEllipse(center, size / 3, size / 3);
-
-        //this formula makes numbers scale with screen size, there's no particular logic, I tried it out
-        QFont font("Arial", size / 60 * (28 - 2.5 * std::abs(7 - h->getNumber()))); // 20 is the point size
-        p.setFont(font);
-        if(h->getNumber() == 6 || h->getNumber() == 8) {
-            p.setPen(QColor(255, 0, 0));
-            font.setWeight(QFont::Bold);
-        }
-        p.drawText(poly.boundingRect(), Qt::AlignCenter, QString::number(h->getNumber()));
+        // outline pen is owned by board, applied once
         p.setPen(pen);
+        qt.paint(p, size, m_placingRobber);
     }
 
+    for (auto& qn : m_qnodes) {
+        Node* n = qn.node();
+
+        const QPointF center = axialToPixelNode(n->getCoords(), size) + offset;
+
+        qn.updateGeometry(center, size);
+
+        // outline pen is owned by board, applied once
+        p.setPen(pen);
+        qn.paint(p, size);
+    }
 }
 
 void QBoard::mouseMoveEvent(QMouseEvent* e) {
-    if (!m_placingRobber) {
-        QWidget::mouseMoveEvent(e);
-        return;
-    }
-
-    Tile* hit = nullptr;
     const QPointF pos = e->position();
 
-    // Find which polygon contains the mouse
-    for (auto it = m_tilePoly.constBegin(); it != m_tilePoly.constEnd(); ++it) {
-        if (it.value().containsPoint(pos, Qt::OddEvenFill)) {
-            hit = it.key();
-            break;
+    // --- Tile hover only if placing robber ---
+    QTile* hitTile = nullptr;
+    if (m_placingRobber) {
+        for (auto& qt : m_qtiles) {
+            if (qt.contains(pos)) { hitTile = &qt; break; }
         }
     }
 
-    if (hit != m_hoveredTile) {
-        m_hoveredTile = hit;
-        update(); // trigger repaint to update highlight
+    // --- Node hover always (or gate it behind a future "placing building" flag) ---
+    QNode* hitNode = nullptr;
+    for (auto& qn : m_qnodes) {
+        if (qn.contains(pos)) { hitNode = &qn; break; }
+    }
+
+    if (hitTile == m_hoveredQTile && hitNode == m_hoveredQNode) return;
+
+    if (m_hoveredQTile) m_hoveredQTile->setHovered(false);
+    m_hoveredQTile = hitTile;
+    if (m_hoveredQTile) m_hoveredQTile->setHovered(true);
+
+    if (m_hoveredQNode) m_hoveredQNode->setHovered(false);
+    m_hoveredQNode = hitNode;
+    if (m_hoveredQNode) m_hoveredQNode->setHovered(true);
+
+    update();
+}
+
+void QBoard::mousePressEvent(QMouseEvent* e) {
+    if (e->button() != Qt::LeftButton) return;
+
+    PlayerId player = 1; // TODO: wire to your current player
+
+    // If user clicked a node, build/upgrade there
+    if (m_hoveredQNode) {
+        if (m_hoveredQNode->handleClick(player)) {
+            update();
+            return;
+        }
+    }
+
+    // Robber placement (only if that mode is enabled)
+    if (m_placingRobber && m_hoveredQTile) {
+        Tile* tile = m_hoveredQTile->tile();
+        // m_board->placeRobber(tile->getId()) etc.
+        update();
+        return;
     }
 }
 
 void QBoard::leaveEvent(QEvent* e) {
     Q_UNUSED(e);
-    if (m_hoveredTile) {
-        m_hoveredTile = nullptr;
-        update();
-    }
 }
