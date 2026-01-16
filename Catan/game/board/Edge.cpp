@@ -16,6 +16,7 @@ TradeType Edge::getTradeType() {
     for (auto n:getNodes()) {
         return n->getTradeResource();
     }
+    return ResourceType::None;
 }
 
 EdgeDirection Edge::getDirection() {

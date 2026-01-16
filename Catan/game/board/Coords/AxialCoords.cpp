@@ -15,15 +15,15 @@ AxialCoords AxialCoords::operator+(const AxialCoords &other) const {
 AxialCoords AxialCoords::getNeighborCoords(TileDirection dir) {
     // steps to move in directions to get neighbour
     static const std::array<AxialCoords,6> directionCoords={{
-        { 0, -1 },  // top left
         { 1, -1 },  // top right
         { 1,  0 },  // right
         { 0,  1 },  // bottom right
         { -1, 1 },  // bottom left
-        { -1, 0 }   // left
+        { -1, 0 },  // left
+        { 0, -1 },  // top left
     }};
 
-    return directionCoords[static_cast<int>(dir)];
+    return *this+directionCoords[static_cast<int>(dir)];
 }
 
 EdgeCoords AxialCoords::getEdgeCoordsAt(EdgeDirection dir) const {

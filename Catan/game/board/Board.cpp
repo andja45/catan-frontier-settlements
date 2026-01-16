@@ -88,19 +88,12 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
 
             node->addAdjacentTile(rawTile);
         }
-
-    }
-
-    for (const auto& edge:m_edges) {
-        if (edge->getStart()==nullptr || edge->getEnd()==nullptr) {
-            throw std::runtime_error("Edge not properly initialized");
-        }
     }
 }
 
 std::vector<Edge *> Board::getEdgesAdjacentToNode(NodeId nodeId) const {
     Node* node=getNodeById(nodeId);
-    return node->getIncidentEdges();
+    return std::vector(node->getIncidentEdges().begin(),node->getIncidentEdges().begin());
 }
 std::vector<Tile *> Board::getTilesAdjacentToNode(NodeId nodeId) const {
     return getNodeById(nodeId)->getIncidentTiles();
@@ -131,12 +124,12 @@ std::vector<Edge *> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
 
     std::vector<Edge*> adjacentEdges1;
     if (edge->getStart()->getOwner()==edge->getOwner())
-       adjacentEdges1=std::vector<Edge*>(edge->getStart()->getIncidentEdges());
+       adjacentEdges1=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getStart()->getNodeId()));
 
 
     std::vector<Edge*> adjacentEdges2;
     if (edge->getEnd()->getOwner()==edge->getOwner())
-        adjacentEdges2=std::vector<Edge*>(edge->getEnd()->getIncidentEdges());
+        adjacentEdges2=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getEnd()->getNodeId()));
 
     adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
     adjacentEdges1.erase(std::remove_if(adjacentEdges1.begin(), adjacentEdges1.end(), [edgeId](Edge* e){return e->getEdgeId()==edgeId;}), adjacentEdges1.end());
@@ -148,8 +141,8 @@ std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
     Edge* edge=getEdgeById(edgeId);
     std::vector<Edge*> edges;
 
-    std::vector<Edge*> adjacentEdges1(edge->getStart()->getIncidentEdges());
-    std::vector<Edge*> adjacentEdges2(edge->getEnd()->getIncidentEdges());
+    std::vector<Edge*> adjacentEdges1(getEdgesAdjacentToNode(edge->getStart()->getNodeId()));
+    std::vector<Edge*> adjacentEdges2(getEdgesAdjacentToNode(edge->getEnd()->getNodeId()));
     adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
 
     adjacentEdges1.erase(std::remove_if(adjacentEdges1.begin(), adjacentEdges1.end(), [edgeId](Edge* e){return e->getEdgeId()==edgeId;}), adjacentEdges1.end());

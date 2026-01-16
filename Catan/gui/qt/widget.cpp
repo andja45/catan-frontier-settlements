@@ -9,6 +9,7 @@
 #include <board/Board.h>
 #include <board/BoardFactory/AbstractBoardCreator.hpp>
 #include <board/BoardFactory/RandomExtendedMapCreator.hpp>
+#include <board/BoardFactory/RandomStandardMapCreator.hpp>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -16,7 +17,7 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    AbstractBoardCreator *creator = new RandomExtendedMapCreator();
+    AbstractBoardCreator *creator = new RandomStandardMapCreator();
     board = (creator->getBoard());
     auto *qboard = new QBoard(this, board.get());
 

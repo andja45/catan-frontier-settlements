@@ -14,7 +14,7 @@ NodeCoords::NodeCoords(AxialCoords coords, NodeDirection direction) {
     // /     \
     // o     x
     // |     |
-    // o     x
+    // o     o
     // \     /
     //    o
     // (this is best illustration i could do)
@@ -22,7 +22,10 @@ NodeCoords::NodeCoords(AxialCoords coords, NodeDirection direction) {
     switch (direction) {
     case NodeDirection::Top:
     case NodeDirection::RightTop:
+        break;
     case NodeDirection::RightBottom:
+        coords = coords.getNeighborCoords(TileDirection::BottomRight);
+        direction=NodeDirection::Top;
         break;
     case NodeDirection::Bottom: {
         coords = coords.getNeighborCoords(TileDirection::BottomLeft);
