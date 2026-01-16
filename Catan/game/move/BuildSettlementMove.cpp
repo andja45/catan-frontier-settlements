@@ -33,7 +33,8 @@ bool BuildSettlementMove::isValid(const GameSession& session) const {
             board.nodeTouchesPlayerRoad(m_playerId, m_nodeId);
     }
     else if (session.phase() == TurnPhase::InitialPlacement &&
-        session.initialPlacementStep() == InitialPlacementStep::PlaceRoad){ // or both phases in separate check at start and this just in else
+        (session.lastMoveType() == MoveType::InvalidMoveType || // for first move of the game
+         session.lastMoveType() == MoveType::BuildRoad)) { // regular flow
         return true; // in initial phase settlements can be placed anywhere, dont need to be connected to roads
         }
 
@@ -56,4 +57,20 @@ void BuildSettlementMove::apply(GameSession& session) const {
     Node* node = session.board().getNodeById(m_nodeId);
     player.addSettlement(node); // adds to list of that players houses and decrements numofsettlements left
     board.placeSettlement(m_playerId, m_nodeId);
+}
+
+std::unordered_set<EdgeId> BuildSettlementMove::allValid(const GameSession &session) const {
+    std::unordered_set<NodeId> validNodes;
+
+    const Board& board = session.board();
+    for (NodeId nodeId : board.nodeIds()) {
+        BuildSettlementMove probe(*this);
+        probe.m_nodeId = nodeId;
+
+        if (probe.isValid(session)) {
+            validNodes.insert(nodeId);
+        }
+    }
+
+    return validNodes;
 }

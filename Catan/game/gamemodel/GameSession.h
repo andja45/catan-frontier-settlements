@@ -7,11 +7,14 @@
 
 #include <random>
 
+#include "phase/TurnPhase.h"
 #include "rules/RulesEngine.h"
 #include "board/Board.h"
+#include "move/Move.h"
 #include "player/Player.h"
 #include "types/TypeAliases.h"
 class Move;
+enum class MoveType;
 
 /*loopovi igranje igraca/bota i provere vict points road vitezi..*/
 // game session is like engine for our game that gets moves from all players from server and executes them to apply changes and keep game running
@@ -26,20 +29,7 @@ class Move;
 
 // TODO add trade request and accept moves
 
-enum class TurnPhase {
- RollDice, // Start of turn, awaits dice roll
- Main, // regularan potez, build/trade/kupuje devcards, nakon rolldice
- Robber, // Phase choosing tile to move the robber and choosing player to steal a card // TODO consider breaking into robberChooseTile and choosePlayer for easier isValid highlighting purposes
- DiscardCards, // Game enters in this phase when 7 is rolled and waits for all players to send their discard cards moves
- InitialPlacement, // Special phase for initial placement turns (every player chooses one road and settlement) //TODO consider breaking into two phases and ditch enum
- End // mozda nije faza?
-}; // drzi to stanje sve dok ne dobije signal da je uradjeno nesto sto ga menja
-   // tj to je stanje koje ceka, ne ono koje sledi
 
-enum class InitialPlacementStep {
- PlaceSettlement,
- PlaceRoad
-};
 
 // TODO game session should keep track of pending trade requests, add TradeRequest class with playerId owner, trade pack give and trade pack receive, and it stores players that accepted trade so owner can choose
 // TODO when game gets offer move it saves trade request, this gets displayed to other players so they can choose to accept, when others accept its saved in trade struct and when owner does and it matches then trade happens according to stored data
@@ -63,10 +53,11 @@ private:
  PlayerId m_currentPlayerId = -1;
  PlayerId m_localPlayerId   = -1; // who am i?
 
+ int m_moveFlowCount = 0;
+ MoveType m_lastMoveType = MoveType::InvalidMoveType;
+
  // phase logic
  TurnPhase m_phase = TurnPhase::InitialPlacement;
- int m_initialPlacementsCount = 0;
- bool m_initialPlacementsReverse = false;
  void advanceInitialPlacement();
  void advancePlayer();
  void setPhase(TurnPhase phase) { m_phase = phase; } // add if needed later, for now direct setting
@@ -77,11 +68,11 @@ private:
 public:
  GameSession(int numPlayers, std::vector<std::string> playerNames, PlayerId localPlayer, uint32_t seed);
 
- InitialPlacementStep initialPlacementStep() const;
- void advancePhaseAfterMove(const Move &move);
- void enterRobberPhase() { setPhase(TurnPhase::Robber); }
+ void advancePhaseAfterMove();
+ void enterDiscardCardsPhase() { setPhase(TurnPhase::DiscardCards); }
 
  bool applyMove(const Move& move);
+ MoveType lastMoveType() const { return m_lastMoveType; }
  int rollDice();
  void endGame(); // TODO implement
 

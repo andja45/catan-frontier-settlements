@@ -5,8 +5,9 @@
 #ifndef BUILDSETTLEMENTMOVE_H
 #define BUILDSETTLEMENTMOVE_H
 
-#include "Move.h"
+#include <unordered_set>
 
+#include "Move.h"
 
 class BuildSettlementMove final : public Move{
 private:
@@ -18,6 +19,9 @@ public:
     MoveType type() const override { return MoveType::BuildSettlement; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
+
+    bool providesAllValid() const override { return true; }
+    std::unordered_set<EdgeId> allValid(const GameSession& session) const;
 };
 
 

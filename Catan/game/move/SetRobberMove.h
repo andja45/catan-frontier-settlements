@@ -8,7 +8,7 @@
 #include "Move.h"
 
 
-class SetRobberMove : public Move {
+class SetRobberMove final : public Move {
 private:
     PlayerId m_playerId; // igrac koji je bacio 7
     TileId m_tileId; // tile koji blokira
@@ -19,6 +19,8 @@ public:
     MoveType type() const override { return MoveType::SetRobber; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
+
+    bool providesHighlights() const override { return true; }
 };
 
 

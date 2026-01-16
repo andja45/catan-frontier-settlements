@@ -41,3 +41,19 @@ void BuildCityMove::apply(GameSession& session) const {
 
     board.placeCity(m_playerId, m_nodeId);
 }
+
+std::unordered_set<EdgeId> BuildCityMove::allValid(const GameSession &session) const {
+    std::unordered_set<NodeId> validNodes;
+
+    const Board& board = session.board();
+    for (NodeId nodeId : board.nodeIds()) {
+        BuildCityMove probe(*this);
+        probe.m_nodeId = nodeId;
+
+        if (probe.isValid(session)) {
+            validNodes.insert(nodeId);
+        }
+    }
+
+    return validNodes;
+}

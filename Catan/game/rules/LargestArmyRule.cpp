@@ -10,7 +10,7 @@ void LargestArmyRule::evaluate(GameSession& session){
 
     PlayerId bestPlayer = session.largestArmyOwner();
     int bestKnights = 0;
-    if (bestPlayer != InvalidPlayer)
+    if (bestPlayer != types::InvalidPlayer)
         bestKnights = session.player(bestPlayer).getKnightsUsed();
 
     for (const auto& p : players) {
@@ -23,7 +23,7 @@ void LargestArmyRule::evaluate(GameSession& session){
             }
     }
 
-    if (bestPlayer == InvalidPlayer)
+    if (bestPlayer == types::InvalidPlayer)
         return;
 
     if (session.largestArmyOwner() != bestPlayer) {

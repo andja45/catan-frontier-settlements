@@ -26,7 +26,7 @@ public:
     int r() const { return m_r; }
 
     AxialCoords operator+(const AxialCoords &other) const;
-    static AxialCoords getNeighborCoords(TileDirection dir); // get surrounding tile coords
+    AxialCoords getNeighborCoords(TileDirection dir); // get surrounding tile coords
 
     // edge and node coords are made of axial plus direction
     EdgeCoords getEdgeCoordsAt(EdgeDirection dir) const;

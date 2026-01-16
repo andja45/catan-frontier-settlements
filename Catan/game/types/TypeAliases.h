@@ -5,6 +5,7 @@
 #ifndef Catan_TYPEALIASES_HPP
 #define Catan_TYPEALIASES_HPP
 #include <map>
+#include <unordered_set>
 #include <vector>
 #include <types/Directions.h>
 
@@ -13,6 +14,7 @@ class Edge;
 class Node;
 class Tile;
 class AxialCoords;
+class Move;
 enum class ResourceType;
 enum class SideDirection;
 enum class PointDirection;
@@ -23,19 +25,27 @@ using NeighbourTiles = std::vector<Tile*>; // TODO class with iterator, keep in 
 using NeighbourNodes = std::vector<Node*>;
 using NeighbourEdges = std::vector<Edge*>;
 
-using IncidentEdges = std::vector<Edge*>;
+using IncidentEdges = std::unordered_set<Edge*>;
 using IncidentTiles = std::vector<Tile*>;
 
 using ResourcePack = std::map<ResourceType, int>;
 using DevPack = std::map<DevType,int>;
 
 using PlayerId = int;
-constexpr PlayerId InvalidPlayer = -1;
 using NodeId = int;
 using EdgeId = int;
 using TileId = int;
 using EdgeIndex = int;
 using NodeIndex = int;
+using Tool = Move;
+
+namespace types {
+    constexpr PlayerId InvalidPlayer = -1;
+    constexpr NodeId InvalidNode = -1;
+    constexpr EdgeId InvalidEdge = -1;
+    constexpr TileId InvalidTile = -1;
+    constexpr Tool* InvalidTool = nullptr;
+}
 
 using EdgeDirection = SideDirection;
 using NodeDirection = PointDirection;

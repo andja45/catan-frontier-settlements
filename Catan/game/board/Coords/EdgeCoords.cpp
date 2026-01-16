@@ -21,7 +21,7 @@ EdgeCoords::EdgeCoords(AxialCoords coords, EdgeDirection direction) {
     case EdgeDirection::Left:
     case EdgeDirection::TopLeft: {
         int count = static_cast<int>(EdgeDirection::End);
-        EdgeDirection oppositeDir=static_cast<EdgeDirection>((static_cast<int>(direction)+count/2)%count);
+        EdgeDirection oppositeDir=(directions::oppositeSide(direction));
         coords = coords.getNeighborCoords(direction);
         direction=oppositeDir;
         break;

@@ -61,8 +61,12 @@ public:
     void buildSettlement(PlayerId playerId) {m_ownerId=playerId; m_type=NodeType::Settlement;}
     void buildCity() {m_type=NodeType::City;}
 
-    void addAdjacentTile(Tile * tile){ m_incidentTiles.push_back(tile);}
-    void addAdjacentEdge(Edge * edge){ m_incidentEdges.push_back(edge);}
+    void addAdjacentTile(Tile * tile) {
+        m_incidentTiles.push_back(tile);
+    }
+    void addAdjacentEdge(Edge * edge) {
+            m_incidentEdges.insert(edge); // consider array with static integer
+    }
 
     NodeCoords getCoords() const {return m_coords;}
 

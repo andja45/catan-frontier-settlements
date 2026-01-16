@@ -19,6 +19,10 @@ add_library(catan_gui_qt
         GameHistory.h GameHistory.cpp
         GameDetailsView.h GameDetailsView.cpp
         GameTheme.h GameTheme.cpp
+        host_join/GameJoinView.h host_join/GameJoinView.cpp
+        host_join/GameHostView.h host_join/GameHostView.cpp
+        host_join/PlayerListItem.h host_join/PlayerListItem.cpp
+        host_join/AddBotListItem.h host_join/AddBotListItem.cpp
         QEdge.h QEdge.cpp
 )
 

@@ -1,0 +1,41 @@
+Merge branch 'feature/game-history-addons' into develop
+
+# Conflicts:
+#	Catan/game/CMakeLists.txt
+#	Catan/game/board/Board.cpp
+#	Catan/game/gamemodel/GameData.cpp
+#	Catan/game/gamemodel/GameData.h
+#	Catan/game/types/ResourceType.h
+#	Catan/gui/qt/CMakeLists.txt
+#	Catan/gui/qt/QBoard.cpp
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please run
+#	git update-ref -d MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch develop
+# Your branch is up to date with 'origin/develop'.
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	modified:   Catan/app/main.cpp
+#	modified:   Catan/game/board/Board.cpp
+#	modified:   Catan/game/gamemodel/GameData.cpp
+#	modified:   Catan/game/gamemodel/GameData.h
+#	modified:   Catan/game/types/ResourceType.h
+#	modified:   Catan/gui/qt/CMakeLists.txt
+#	modified:   Catan/gui/qt/GameDetailsView.cpp
+#	modified:   Catan/gui/qt/GameDetailsView.h
+#	modified:   Catan/gui/qt/GameHistory.cpp
+#	modified:   Catan/gui/qt/GameHistory.h
+#	new file:   Catan/gui/qt/GameTheme.cpp
+#	new file:   Catan/gui/qt/GameTheme.h
+#	modified:   Catan/gui/qt/QBoard.cpp
+#	modified:   Catan/gui/qt/QBoard.h
+#
