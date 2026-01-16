@@ -5,6 +5,8 @@
 #ifndef BUILDROADMOVE_H
 #define BUILDROADMOVE_H
 
+#include <unordered_set>
+
 #include "Move.h"
 
 
@@ -18,6 +20,9 @@ public:
     MoveType type() const override { return MoveType::BuildRoad; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
+
+    bool providesAllValid() const override { return true; }
+    std::unordered_set<EdgeId> allValid(const GameSession& session) const;
 };
 
 

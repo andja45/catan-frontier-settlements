@@ -65,6 +65,8 @@ add_library(catan_game
         gamemodel/GameConfig.cpp
         gamemodel/GameConfig.h
         types/MapType.h
+        board/Edge.cpp
+        phase/TurnPhase.h
 )
 
 target_include_directories(catan_game

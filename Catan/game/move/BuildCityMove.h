@@ -5,10 +5,12 @@
 #ifndef BUILDCITYMOVE_H
 #define BUILDCITYMOVE_H
 
+#include <unordered_set>
+
 #include "Move.h"
 
 
-class BuildCityMove : public Move{
+class BuildCityMove final : public Move{
 private:
     PlayerId m_playerId;
     NodeId m_nodeId; // or HexCoords + nodeIndex
@@ -18,6 +20,9 @@ public:
     MoveType type() const override { return MoveType::BuildCity; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
+
+    bool providesAllValid() const override { return true; }
+    std::unordered_set<EdgeId> allValid(const GameSession &session) const;
 };
 
 

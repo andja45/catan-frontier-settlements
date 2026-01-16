@@ -8,7 +8,7 @@
 #include "Move.h"
 
 
-class BankTradeMove : public Move{
+class BankTradeMove final : public Move{
 private:
     PlayerId m_playerId;
     ResourceType m_give;

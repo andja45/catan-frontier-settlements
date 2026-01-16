@@ -51,6 +51,9 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
 
         for (auto nc:nodeCoords) {
             int id=m_nodes.size();
+            if (m_nodesByCoord.find(nc)!=m_nodesByCoord.end()) {
+                continue; // node already exists
+            }
             auto n = std::make_unique<Node>(id,nc);
             Node* rawNode = n.get();
             m_nodes.push_back(std::move(n));
@@ -60,6 +63,9 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
         // make edges
         for (auto ec:edgeCoords) {
             int id=m_edges.size();
+            if (m_edgesByCoord.find(ec)!=m_edgesByCoord.end()) {
+                continue; // edge already exists
+            }
             auto e = std::make_unique<Edge>(id,ec);
             Edge* rawEdge = e.get();
             m_edges.push_back(std::move(e));
@@ -85,6 +91,11 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
 
     }
 
+    for (const auto& edge:m_edges) {
+        if (edge->getStart()==nullptr || edge->getEnd()==nullptr) {
+            throw std::runtime_error("Edge not properly initialized");
+        }
+    }
 }
 
 std::vector<Edge *> Board::getEdgesAdjacentToNode(NodeId nodeId) const {
@@ -149,6 +160,13 @@ std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
 void Board::addTrade(NodeCoords nodeCoords, TradeType tradeType) {
     Node* node=getNodeAt(nodeCoords);
     node->setTrade(tradeType);
+    m_tradeCoords.push_back(nodeCoords);
+}
+
+void Board::addTrade(EdgeCoords edgeCoords, TradeType tradeType) {
+     for (auto n:getEdgeAt(edgeCoords)->getNodes()) {
+         addTrade(n->getCoords(),tradeType);
+     }
 }
 
 std::vector<Node *> Board::getNodesAdjacentToEdge(EdgeId edgeId) const {
