@@ -1,5 +1,6 @@
 #include <QEdge.h>
 #include <cmath>
+#include <GameTheme.h>
 
 bool QEdge::hoverAllowed() const {
     if (!m_edge) return false;
@@ -76,7 +77,13 @@ void QEdge::drawPort(QPainter& p, double size) {
         p.drawPolygon(quad);
     }
 
-    p.setBrush(Qt::yellow);
+    if(m_edge->getTradeType() == TradeType::None){
+        p.setBrush(Qt::white);
+    }
+
+    else{
+        p.setBrush(GameTheme::getColorByResource(m_edge->getTradeType()));
+    }
     p.setPen(QPen(Qt::black, 1.5));
 
     p.drawEllipse(r, size / 4, size / 4);

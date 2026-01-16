@@ -72,7 +72,7 @@ QRectF QBoard::boundsForLayout(double size) const {
             }
         }
     }
-    return QRectF(QPointF(minX, minY), QPointF(maxX, maxY));
+    return QRectF(QPointF(minX - size, minY - size), QPointF(maxX + size, maxY + size));
 }
 
 void QBoard::paintEvent(QPaintEvent *event) {
