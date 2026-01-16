@@ -7,8 +7,8 @@
 #include <board/BoardFactory/RandomExtendedMapCreator.hpp>
 #include <board/BoardFactory/RandomStandardMapCreator.hpp>
 
-#include "../gui/asciiview/BoardView.hpp"
-#include "../gui/asciiview/TileView.hpp"
+#include "../gui/asciiview/board/BoardView.hpp"
+#include "../gui/asciiview/board/TileView.hpp"
 
 int main(int argc, char *argv[])
 {

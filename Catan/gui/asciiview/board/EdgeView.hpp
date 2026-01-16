@@ -7,7 +7,7 @@
 
 enum class PointDirection;
 class Edge;
-#include "ViewTypes.hpp"
+#include "BoardTypes.hpp"
 
 class EdgeView {
 private:

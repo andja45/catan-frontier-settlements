@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <board/Board.h>
-#include "ViewTypes.hpp"
+#include "BoardTypes.hpp"
 #include "TileView.hpp"
 #include "EdgeView.hpp"
 #include "NodeView.hpp"
@@ -86,4 +86,4 @@ public:
 
 };
 
-#endif //CATAN_BOARDVIEW_HPP
+#endif //CATAN_BOARDVIEW_HPPHPPHPP

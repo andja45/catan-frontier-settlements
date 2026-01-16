@@ -4,9 +4,9 @@
 
 #include "TileView.hpp"
 
-#include <BoardView.hpp>
+#include <board/BoardView.hpp>
 #include <board/Tile.h>
-#include "ViewTypes.hpp"
+#include "BoardTypes.hpp"
 #include <types/TypeAliases.h>
 
 char TileView::resourceToChar( const BoardTheme& theme) const {
