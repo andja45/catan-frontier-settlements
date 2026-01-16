@@ -34,12 +34,17 @@ private:
     std::unordered_map<TileCoords,Tile*> m_tilesByCoord;
 
     std::unordered_map<int, std::vector<Tile*>> m_tilesByNumber;
+
+    std::vector<NodeCoords> m_tradeCoords;
 public:
     Board() = default;
     ~Board()=default;
 
     void initializeBoard(std::vector<TileDef> tileDefs);
     void addTrade(NodeCoords nodeCoords, TradeType tradeType);
+    void addTrade(EdgeCoords edgeCoords, TradeType tradeType);
+
+    std::vector<NodeCoords> getTradeCoords() const {return m_tradeCoords;}
 
     std::vector<Tile*> getTilesWithNumber(int num);
 

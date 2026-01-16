@@ -8,7 +8,15 @@ GameData::GameData(int gameId, std::vector<std::string> playerNames) : m_gameId(
 void GameData::inicializeGameData() {
     std::time_t now = std::time(NULL);
     std::tm tm{};
-    //localtime_s(&tm, &now);
+
+    #ifdef _WIN32
+        // Windows uses localtime_s
+        localtime_s(&tm, &now);
+    #else
+        // Linux/POSIX uses localtime_r
+        localtime_r(&now, &tm);
+    #endif
+
     std::ostringstream oss;
     oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
     m_datetime= oss.str();

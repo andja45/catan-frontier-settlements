@@ -6,6 +6,7 @@
 #define Catan_TYPEALIASES_HPP
 #include <map>
 #include <vector>
+#include <types/Directions.h>
 
 enum class DevType;
 class Edge;
@@ -49,8 +50,18 @@ using EdgeDirection = SideDirection;
 using NodeDirection = PointDirection;
 using TileDirection = SideDirection;
 
+using EdgeAsciiDirection = PointDirection;
+using NodeAsciiDirection = SideDirection;
+using TileAsciiDirection = PointDirection;
+
 using TileType = ResourceType;
 using TradeType = ResourceType;
 using ResourceCardType = ResourceType;
+
+namespace types {
+
+
+}
+
 
 #endif //Catan_TYPEALIASES_HPP

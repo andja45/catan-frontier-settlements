@@ -31,31 +31,57 @@ private:
     Canvas m_cells;
 
     ScreenCoords m_canvasSize;
-    ScreenCoords m_gridSize;
+    ScreenCoords m_tileSize;
     ScreenCoords m_center;
+    ScreenCoords m_margin;
 
     //std::map<int,std::pair<int,int>> m_computedTilePositions;
     //void drawTile(Tile* tile, std::pair<int,int> pos);
 
-    void computeSizes();
 
-    void processTileCords(Tile *tile, std::vector<ScreenCoords> &cords);
 
-    void init();
+    // because its inconvenient to draw hexes point side up in ascii we flip offset coords, we chose odd row indent offset coords
+    // note board will appear flipped
+    static int slopeWidthForHeight(int height){return height/2+1;} //edges including
+    static int maxHeightForWidth(int width) { // in order to reach top with slopes
+        int maxSlopeCount=(width-2)/2;
+        return maxSlopeCount*2-1;
+    }
+    static int minWidthForHeight(int height){return slopeWidthForHeight(height)*2 +2;} // +2 for tile number
 
-    static TileCoords axialToOffset(TileCoords axial);
-    static ScreenCoords stepSize(ScreenCoords tileSize);
-    static ScreenCoords offsetToScreen(TileCoords offset, ScreenCoords origin, ScreenCoords tileSize);
+    inline static constexpr int minTileWidth=8;
+    inline static constexpr int minTileHeight=5;
+
+    static OffsetCoords axialToFlippedOffset(TileCoords axial);
+    static ScreenCoords offsetToScreen(TileCoords offset, ScreenCoords tileSize,  ScreenCoords origin={0,0});
+
+    static ScreenCoords stepSize(ScreenCoords tileSize); // step to reach next hex
 
     void renderBoard();
 
-    void printCell(Cell c, std::ostream &os);
+    static void printCell(Cell c, std::ostream &os);
 
     virtual void blitBoard(std::ostream &os);
+
+    void computeSizes();
+    void BoardView::processTileCords(TileCoords tileCoords, std::vector<std::pair<SideDirection,ScreenCoords>> &cords);
+    static NodeDirection fromNodeAsciiDir(NodeAsciiDirection dir);
+    static EdgeDirection fromEdgeAsciiDir(EdgeAsciiDirection dir);
+
+
+
 public:
+    virtual ~BoardView() = default;
+
     void drawBoard(std::ostream &os);
-    BoardView(Board* board, BoardTheme theme):m_board(board),m_theme(theme){}
-    void setGridSize(ScreenCoords size){m_gridSize=size;}
+    BoardView(Board* board, BoardTheme theme, ScreenCoords gridSize, ScreenCoords margin={0,0}):m_board(board),m_theme(theme) {
+        setTileSize(gridSize);
+        reorganize();
+    }
+    void setTileSize(ScreenCoords size);
+    void setMargin(ScreenCoords margin) {m_margin=margin;}
+    void reorganize();
+    void fitToScreen(ScreenCoords scr, bool stretch);
 };
 
 #endif //CATAN_BOARDVIEW_HPP

@@ -17,7 +17,7 @@ public:
     size_t elementHash() const {
         return std::hash<int>{}(m_i)^(std::hash<int>{}(m_q) ^ (std::hash<int>{}(m_r) << 1)<<1);
     }
- friend bool operator==(const ElementCoords &lhs, const ElementCoords &rhs) {
+    friend bool operator==(const ElementCoords &lhs, const ElementCoords &rhs) {
         return lhs.m_q == rhs.m_q
                && lhs.m_r == rhs.m_r
                && lhs.m_i == rhs.m_i;
