@@ -42,12 +42,6 @@ private:
 
     // because its inconvenient to draw hexes point side up in ascii we flip offset coords, we chose odd row indent offset coords
     // note board will appear flipped
-    static int slopeWidthForHeight(int height){return height/2+1;} //edges including
-    static int maxHeightForWidth(int width) { // in order to reach top with slopes
-        int maxSlopeCount=(width-2)/2;
-        return maxSlopeCount*2-1;
-    }
-    static int minWidthForHeight(int height){return slopeWidthForHeight(height)*2 +2;} // +2 for tile number
 
     inline static constexpr int minTileWidth=8;
     inline static constexpr int minTileHeight=5;
@@ -64,9 +58,9 @@ private:
     virtual void blitBoard(std::ostream &os);
 
     void computeSizes();
-    void BoardView::processTileCords(TileCoords tileCoords, std::vector<std::pair<SideDirection,ScreenCoords>> &cords);
+    void processTileCords(TileCoords tileCoords, std::vector<std::pair<NodeAsciiDirection,ScreenCoords>> &cords);
     static NodeDirection fromNodeAsciiDir(NodeAsciiDirection dir);
-    static EdgeDirection fromEdgeAsciiDir(EdgeAsciiDirection dir);
+    static EdgeAsciiDirection toEdgeAsciiDir(EdgeDirection dir);
 
 
 
@@ -82,6 +76,14 @@ public:
     void setMargin(ScreenCoords margin) {m_margin=margin;}
     void reorganize();
     void fitToScreen(ScreenCoords scr, bool stretch);
+
+    static int slopeWidthForHeight(int height){return height/2+1;} //edges including
+    static int maxHeightForWidth(int width) { // in order to reach top with slopes
+        int maxSlopeCount=(width-2)/2;
+        return maxSlopeCount*2-1;
+    }
+    static int minWidthForHeight(int height){return slopeWidthForHeight(height)*2 +2;} // +2 for tile number
+
 };
 
 #endif //CATAN_BOARDVIEW_HPP

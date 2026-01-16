@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
     Widget w(nullptr,board.get());
     BoardView bw=BoardView(board.get(),BoardTheme(),{12,5},{3,3});
-    bw.drawBoard(std::cerr);
+    bw.drawBoard(std::cout);
     w.show();
     return a.exec();
 }

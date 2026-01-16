@@ -28,10 +28,10 @@ void BoardView::computeSizes() {
 
         ScreenCoords pos=offsetToScreen(offsetCord,m_tileSize);
         for (auto [_,n]:TileView::getNodes(pos,m_tileSize)) {
-            minCol=std::min(minRow,n.first);
-            maxCol=std::max(maxRow,n.first);
-            minRow=std::min(minCol,n.second);
-            maxRow=std::max(maxCol,n.second);
+            minCol=std::min(minCol,n.first);
+            maxCol=std::max(maxCol,n.first);
+            minRow=std::min(minRow,n.second);
+            maxRow=std::max(maxRow,n.second);
         }
     }
 
@@ -47,7 +47,7 @@ NodeDirection BoardView::fromNodeAsciiDir(NodeAsciiDirection dir) {
     return directions::flipOrientation(dir);
 }
 
-EdgeDirection BoardView::fromEdgeAsciiDir(EdgeAsciiDirection dir) {
+EdgeAsciiDirection BoardView::toEdgeAsciiDir(EdgeDirection dir) {
     return directions::flipOrientation(dir);
 }
 
@@ -72,30 +72,25 @@ void BoardView::fitToScreen(ScreenCoords scr, bool stretch) {
 }
 
 void BoardView::processTileCords(TileCoords tileCoords, std::vector<std::pair<NodeAsciiDirection,ScreenCoords>> &cords) {
-        // .
-        for (auto [nodeAsciiDir,scrCoord]: cords) {
-            NodeDirection dir=fromNodeAsciiDir(nodeAsciiDir);
-            NodeCoords nc={tileCoords,dir};
+    // .
+    for (int i=0; i<cords.size(); i++) {
+        auto [nodeAsciiDir,scrCoord] = cords[i];
+        auto [_,nextScrCoords] = cords[(i+1)%cords.size()];
+        NodeDirection dir=fromNodeAsciiDir(nodeAsciiDir);
+        NodeCoords nc={tileCoords,dir};
 
-        }
+        NodeView nv(m_board->getNodeAt(nc),scrCoord);
+        m_nodes.push_back(std::move(nv));
 
-        int i_next=(i+1)%static_cast<int>(PointDirection::End);
-        NodeCoords nc={tileCoords,static_cast<NodeDirection>(i)};
-        EdgeCoords ec={tileCoords,static_cast<EdgeDirection>(j)};
-
-
+        EdgeDirection sd=directions::nextSide(dir);
+        EdgeAsciiDirection ed=toEdgeAsciiDir(sd);
+        EdgeCoords ec={tileCoords,sd};
         Edge* edge=m_board->getEdgeAt(ec);
-        Node* node=m_board->getNodeAt(nc);
-        NodeView nw(node,cords[i]);
-        PointDirection dir=static_cast<PointDirection>((-j+startEdgeDir)%dirCount);
-        EdgeView ew(edge,cords[i],cords[i_next],dir); //.
-
+        EdgeView ew(edge,scrCoord,nextScrCoords,ed); //.
         m_edges.push_back(std::move(ew));
-        m_nodes.push_back(std::move(nw));
-
     }
-
 }
+
 
 
 void BoardView::reorganize() {
@@ -122,7 +117,7 @@ void BoardView::reorganize() {
 
 OffsetCoords BoardView::axialToFlippedOffset(TileCoords axial) {
     int offsetR=axial.r();
-    int offsetQ=axial.q()+(axial.r()-axial.q()%2)/2;
+    int offsetQ=axial.q()+(axial.r()-(axial.r()&1))/2;
     return {offsetR,offsetQ};
 }
 
@@ -165,6 +160,7 @@ void BoardView::blitBoard(std::ostream& os=std::cout) {
     for (int x=0; x<m_canvasSize.first+m_margin.first*2+2; x++) {
         os<<'-';
     }
+    os<<std::endl;
     for (int y=0; y<m_margin.second; y++) {
         os<<std::endl;
     }
