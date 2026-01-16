@@ -23,11 +23,15 @@ public:
     // draw hover + settlement/city
     void paint(QPainter& p, double size);
 
+    static QPointF rotate(const QPointF &v, double angleRad);
+    static std::pair<QPointF, QPointF> equilateralThirdVertices(const QPointF &A, const QPointF &B);
+
     bool handleClick(PlayerId player);
 
 private:
     bool hoverAllowed() const; // empty or road
     void drawRoad(QPainter& p, double size);
+    void drawPort(QPainter& p, double size);
     QColor playerColor() const; // placeholder
 
 private:

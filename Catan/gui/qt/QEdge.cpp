@@ -34,7 +34,6 @@ bool QEdge::handleClick(PlayerId player) {
 }
 
 void QEdge::drawRoad(QPainter& p, double size) {
-    // A small triangle ("house") centered on m_center
     const double w = 0.15; // width
     auto [x, y] = m_q - m_p;
     QPointF ort = w/2 * QPointF(-y, x); //orthogonal vector
@@ -48,6 +47,42 @@ void QEdge::drawRoad(QPainter& p, double size) {
     p.drawPolygon(quad);
     p.restore();
 }
+void QEdge::drawPort(QPainter& p, double size) {
+    auto [r, s] = equilateralThirdVertices(m_p, m_q);
+    const double w = 0.2; // width
+    const double l = 0.4; // length
+    auto color = QColor::fromRgb(200, 160, 10);
+    p.save();
+    p.setBrush(color);
+    p.setPen(QPen(color, 1.5));
+
+    {
+        auto [x, y] = r - m_p;
+        QPointF ort = w/2 * QPointF(-y, x); //orthogonal vector
+
+        QPolygonF quad;
+        quad << m_p + ort << m_p - ort << r - ort - l * (r - m_p) << r + ort - l * (r - m_p);
+
+        p.drawPolygon(quad);
+
+    }
+    {
+        auto [x, y] = r - m_q;
+        QPointF ort = w/2 * QPointF(-y, x); //orthogonal vector
+
+        QPolygonF quad;
+        quad << m_q + ort << m_q - ort << r - ort - l * (r - m_q) << r + ort - l * (r - m_q);
+
+        p.drawPolygon(quad);
+    }
+
+    p.setBrush(Qt::yellow);
+    p.setPen(QPen(Qt::black, 1.5));
+
+    p.drawEllipse(r, size / 4, size / 4);
+    p.restore();
+}
+
 
 void QEdge::paint(QPainter& p, double size) {
     if (!m_edge) return;
@@ -76,4 +111,30 @@ void QEdge::paint(QPainter& p, double size) {
     if (m_edge->isOccupied()) {
         drawRoad(p, size);
     }
+
+    // Draw port if present
+    if (m_edge->hasTrade()) {
+        drawPort(p, size);
+    }
+}
+
+QPointF QEdge::rotate(const QPointF& v, double angleRad) {
+    const double c = std::cos(angleRad);
+    const double s = std::sin(angleRad);
+    return QPointF(
+        v.x() * c - v.y() * s,
+        v.x() * s + v.y() * c
+    );
+}
+
+std::pair<QPointF, QPointF> QEdge::equilateralThirdVertices(const QPointF& A, const QPointF& B)
+{
+    const QPointF v = B - A;
+
+    constexpr double angle = M_PI / 3.0; // 60°
+
+    QPointF C1 = A + rotate(v,  angle);  // left side
+    QPointF C2 = A + rotate(v, -angle);  // right side
+
+    return {C1, C2};
 }
