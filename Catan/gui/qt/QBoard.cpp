@@ -126,6 +126,19 @@ void QBoard::paintEvent(QPaintEvent *event) {
         qt.paint(p, size, m_placingRobber);
     }
 
+    for (auto& qe : m_qedges) {
+        Edge* e = qe.edge();
+
+        const QPointF start = axialToPixelNode(e->getStart()->getCoords(), size) + offset;
+        const QPointF end = axialToPixelNode(e->getEnd()->getCoords(), size) + offset;
+
+        qe.updateGeometry(start, end, size);
+
+        // outline pen is owned by board, applied once
+        p.setPen(pen);
+        qe.paint(p, size);
+    }
+
     for (auto& qn : m_qnodes) {
         Node* n = qn.node();
 
@@ -137,23 +150,6 @@ void QBoard::paintEvent(QPaintEvent *event) {
         p.setPen(pen);
         qn.paint(p, size);
     }
-
-    /*
-    for (auto& qe : m_qedges) {
-        Edge* e = qe.edge();
-
-        if(e->getStart() == nullptr) std::cout << "start" << std::endl;
-        if(e->getEnd() == nullptr) std::cout << "end" << std::endl;
-        const QPointF start = axialToPixelNode(e->getStart()->getCoords(), size) + offset;
-        const QPointF end = axialToPixelNode(e->getEnd()->getCoords(), size) + offset;
-
-        qe.updateGeometry(start, end, size);
-
-        // outline pen is owned by board, applied once
-        p.setPen(pen);
-        qe.paint(p, size);
-    }
-*/
 }
 
 void QBoard::mouseMoveEvent(QMouseEvent* e) {
