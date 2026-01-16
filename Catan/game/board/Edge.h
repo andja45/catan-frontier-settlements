@@ -5,6 +5,8 @@
 #ifndef Catan_EDGE_H
 #define Catan_EDGE_H
 
+#include <stdexcept>
+
 #include "Node.h"
 #include "types/TypeAliases.h"
 #include <board/Coords/EdgeCoords.hpp>
@@ -29,7 +31,12 @@ public:
     Node* getStart() const { return m_start; }
     Node* getEnd() const { return m_end; }
     std::vector<Node*> getNodes() const { return {m_start,m_end}; }
-    void setNodes(Node* start, Node* end) { m_start=start; m_end=end; }
+    void setNodes(Node* start, Node* end) {
+        m_start=start;
+        m_end=end;
+        if (m_start==nullptr || m_end==nullptr)
+            throw std::invalid_argument("Edge must have both start and end node set");
+    }
     void setId(EdgeId id) {m_edgeId=id;}
 
     bool isOccupied() const { return m_isOccupied; }
