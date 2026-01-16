@@ -107,7 +107,7 @@ int GameSession::rollDice() {
 }
 
 void GameSession::setLongestRoadOwner(const PlayerId playerId) {
-    if (longestRoadOwner() != InvalidPlayer) // if it is it means we are setting it for the first time
+    if (longestRoadOwner() != types::InvalidPlayer) // if it is it means we are setting it for the first time
         player(longestRoadOwner()).removePoints(2); // if it isnt, then someone stole the title
 
     m_longestRoadOwner = playerId;
@@ -115,7 +115,7 @@ void GameSession::setLongestRoadOwner(const PlayerId playerId) {
 }
 
 void GameSession::setLargestArmyOwner(const PlayerId playerId) {
-    if (largestArmyOwner() != InvalidPlayer)
+    if (largestArmyOwner() != types::InvalidPlayer)
         player(largestArmyOwner()).removePoints(2);
 
     m_largestArmyOwner = playerId;

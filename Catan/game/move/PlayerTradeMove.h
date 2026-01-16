@@ -7,7 +7,7 @@
 
 #include "Move.h"
 
-class PlayerTradeMove : public Move{
+class PlayerTradeMove final : public Move{
 private:
     PlayerId m_fromPlayer;
     PlayerId m_toPlayer;

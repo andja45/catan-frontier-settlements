@@ -8,7 +8,7 @@
 #include "Move.h"
 
 
-class BuildCityMove : public Move{
+class BuildCityMove final : public Move{
 private:
     PlayerId m_playerId;
     NodeId m_nodeId; // or HexCoords + nodeIndex

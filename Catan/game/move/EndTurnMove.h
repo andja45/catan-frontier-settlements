@@ -8,7 +8,7 @@
 #include "Move.h"
 
 
-class EndTurnMove : public Move{
+class EndTurnMove final : public Move{
 private:
     PlayerId m_playerId;
 public:

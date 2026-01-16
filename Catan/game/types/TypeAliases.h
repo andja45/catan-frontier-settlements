@@ -13,6 +13,7 @@ class Edge;
 class Node;
 class Tile;
 class AxialCoords;
+class Move;
 enum class ResourceType;
 enum class SideDirection;
 enum class PointDirection;
@@ -30,12 +31,20 @@ using ResourcePack = std::map<ResourceType, int>;
 using DevPack = std::map<DevType,int>;
 
 using PlayerId = int;
-constexpr PlayerId InvalidPlayer = -1;
 using NodeId = int;
 using EdgeId = int;
 using TileId = int;
 using EdgeIndex = int;
 using NodeIndex = int;
+using Tool = Move;
+
+namespace types {
+    constexpr PlayerId InvalidPlayer = -1;
+    constexpr NodeId InvalidNode = -1;
+    constexpr EdgeId InvalidEdge = -1;
+    constexpr TileId InvalidTile = -1;
+    constexpr Tool* InvalidTool = nullptr;
+}
 
 using EdgeDirection = SideDirection;
 using NodeDirection = PointDirection;
