@@ -7,11 +7,6 @@
 #include <cassert>
 #include <move/Move.h>
 
-InitialPlacementStep GameSession::initialPlacementStep() const {
-    return (m_initialPlacementsCount % 2 == 0)
-        ? InitialPlacementStep::PlaceSettlement
-        : InitialPlacementStep::PlaceRoad;
-}
 
 GameSession::GameSession(int numPlayers,
                          std::vector<std::string> playerNames,
@@ -33,26 +28,30 @@ bool GameSession::applyMove(const Move& move){
         return false;
 
     move.apply(*this);
-    m_rules.evaluate(*this); // after every move, cus someone can interrupt
-    advancePhaseAfterMove(move); // only session can advance phases, move only reads them
+    m_lastMoveType = move.type(); // this is where we remember last move
+
+    m_rules.evaluate(*this); // after every move, cus someone can interrupt longest road for example
+    advancePhaseAfterMove(); // only session can advance phases, move only reads them
+
     //notifyModelChanged(); //notify view
+    // TODO ^
 
     return true;
 }
 
-void GameSession::advancePhaseAfterMove(const Move& move) {
+void GameSession::advancePhaseAfterMove() {
     if (m_phase == TurnPhase::InitialPlacement) {
         advanceInitialPlacement();
         return;
     }
 
-    switch (move.type()) {
+    switch (m_lastMoveType) {
         case MoveType::RollDice:
             setPhase(TurnPhase::Main);
             break;
 
         case MoveType::EndTurn:
-            advancePlayer();
+            advancePlayer(); // session does this, not move
             setPhase(TurnPhase::RollDice);
             break;
 
@@ -65,19 +64,19 @@ void GameSession::advanceInitialPlacement() {
     const int playerCount = numPlayers();
     if (playerCount == 0) return;
 
-    m_initialPlacementsCount += 1;
+    m_moveFlowCount += 1;
 
     const int totalPlacementMoves = playerCount * 4; // *2 for both directios *2 for settlemet/road
 
-    if (m_initialPlacementsCount >= totalPlacementMoves) {
-        m_initialPlacementsCount = 0;
+    if (m_moveFlowCount >= totalPlacementMoves) {
+        m_moveFlowCount = 0;
         m_turnIndex = 0;
         m_currentPlayerId = m_players[m_turnIndex]->getPlayerId(); // first player starts
         setPhase(TurnPhase::RollDice);
         return;
     }
 
-    const int placementTurn = m_initialPlacementsCount / 2; // each player gets settlement + road in one placing
+    const int placementTurn = m_moveFlowCount / 2; // each player gets settlement + road in one placing
 
     int playerIndex;
     if (placementTurn < playerCount) {
@@ -87,7 +86,7 @@ void GameSession::advanceInitialPlacement() {
         playerIndex = (playerCount - 1) - (placementTurn - playerCount);
     }
 
-    m_currentPlayerId = m_players[playerIndex]->getPlayerId();
+    m_currentPlayerId = m_players[playerIndex]->getPlayerId(); // if player needs to be changed, he changes
 }
 
 

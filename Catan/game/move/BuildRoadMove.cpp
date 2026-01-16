@@ -25,10 +25,9 @@ bool BuildRoadMove::isValid(const GameSession& session) const {
             return false;
 
         connected = board.edgeTouchesPlayersRoad(m_playerId, m_edgeId);
-
     }
     else if (session.phase() == TurnPhase::InitialPlacement &&
-        session.initialPlacementStep() == InitialPlacementStep::PlaceRoad){ // or both phases in separate check at start and this just in else
+        session.lastMoveType() == MoveType::BuildSettlement){ // or both phases in separate check at start and this just in else
         if (!player.hasHouses())
             return false;
 
@@ -53,4 +52,20 @@ void BuildRoadMove::apply(GameSession& session) const {
     Edge* edge= session.board().getEdgeById(m_edgeId);
     player.addRoad(edge); // adds to list of that players edges and decrements numofroads left
     board.placeRoad(m_playerId, m_edgeId);
+}
+
+std::unordered_set<EdgeId> BuildRoadMove::allValid(const GameSession &session) const {
+    std::unordered_set<EdgeId> validEdges;
+
+    const Board& board = session.board();
+    for (EdgeId edgeId : board.edgeIds()) {
+        BuildRoadMove probe(*this);
+        probe.m_edgeId = edgeId;
+
+        if (probe.isValid(session)) {
+            validEdges.insert(edgeId);
+        }
+    }
+
+    return validEdges;
 }

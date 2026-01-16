@@ -88,6 +88,9 @@ public:
     bool isNodeSettlement(NodeId nodeId) const;
 
     std::vector<AxialCoords> getBoardCords();
+
+    std::vector<EdgeId> edgeIds() const; // TODO add
+    std::vector<EdgeId> nodeIds() const;
 };
 
 

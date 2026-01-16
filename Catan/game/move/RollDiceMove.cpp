@@ -20,7 +20,7 @@ void RollDiceMove::apply(GameSession& session) const {
 
     const int diceRoll = session.rollDice();
     if (diceRoll == 7) {
-        session.enterDiscardCardsPhase(); // TODO resi problem odbacivanja karata
+        session.enterDiscardCardsPhase(); // we force a phase, this isnt a sequence move
         return;
     }
 

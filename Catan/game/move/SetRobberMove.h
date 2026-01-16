@@ -19,6 +19,8 @@ public:
     MoveType type() const override { return MoveType::SetRobber; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
+
+    bool providesHighlights() const override { return true; }
 };
 
 

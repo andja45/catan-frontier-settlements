@@ -10,9 +10,11 @@
 #include "phase/TurnPhase.h"
 #include "rules/RulesEngine.h"
 #include "board/Board.h"
+#include "move/Move.h"
 #include "player/Player.h"
 #include "types/TypeAliases.h"
 class Move;
+enum class MoveType;
 
 /*loopovi igranje igraca/bota i provere vict points road vitezi..*/
 // game session is like engine for our game that gets moves from all players from server and executes them to apply changes and keep game running
@@ -27,10 +29,7 @@ class Move;
 
 // TODO add trade request and accept moves
 
-enum class InitialPlacementStep { // TODO delete
- PlaceSettlement,
- PlaceRoad
-};
+
 
 // TODO game session should keep track of pending trade requests, add TradeRequest class with playerId owner, trade pack give and trade pack receive, and it stores players that accepted trade so owner can choose
 // TODO when game gets offer move it saves trade request, this gets displayed to other players so they can choose to accept, when others accept its saved in trade struct and when owner does and it matches then trade happens according to stored data
@@ -54,10 +53,11 @@ private:
  PlayerId m_currentPlayerId = -1;
  PlayerId m_localPlayerId   = -1; // who am i?
 
+ int m_moveFlowCount = 0;
+ MoveType m_lastMoveType = MoveType::InvalidMoveType;
+
  // phase logic
  TurnPhase m_phase = TurnPhase::InitialPlacement;
- int m_initialPlacementsCount = 0;
- bool m_initialPlacementsReverse = false;
  void advanceInitialPlacement();
  void advancePlayer();
  void setPhase(TurnPhase phase) { m_phase = phase; } // add if needed later, for now direct setting
@@ -68,11 +68,11 @@ private:
 public:
  GameSession(int numPlayers, std::vector<std::string> playerNames, PlayerId localPlayer, uint32_t seed);
 
- InitialPlacementStep initialPlacementStep() const;
- void advancePhaseAfterMove(const Move &move);
+ void advancePhaseAfterMove();
  void enterDiscardCardsPhase() { setPhase(TurnPhase::DiscardCards); }
 
  bool applyMove(const Move& move);
+ MoveType lastMoveType() const { return m_lastMoveType; }
  int rollDice();
  void endGame(); // TODO implement
 

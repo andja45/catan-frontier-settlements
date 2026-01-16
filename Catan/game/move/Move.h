@@ -21,7 +21,9 @@ enum class MoveType {
     PlayerTrade,
 
     BuyDevCard,
-    PlayDevCard
+    PlayDevCard,
+
+    InvalidMoveType
 };
 
 #include "../types/TypeAliases.h"
@@ -40,6 +42,8 @@ public:
     virtual MoveType type() const = 0;
     virtual bool isValid(const GameSession&) const = 0;
     virtual void apply(GameSession&) const = 0;
+
+    virtual bool providesAllValid() const { return false; }
 };
 
 
