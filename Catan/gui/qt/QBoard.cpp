@@ -4,6 +4,7 @@
 #include <QtMath>
 #include <QMouseEvent>
 #include <cmath>
+#include <GameTheme.h>
 
 #include <iostream>
 
@@ -50,21 +51,6 @@ QPointF QBoard::axialToPixelNode(const NodeCoords& a, double size){
     return QPointF(tileX + offsetX, tileY + offsetY);
 }
 
-QVector<QPointF> QBoard::hexPolygonPointy(const QPointF& center, double size) {
-    // 6 corners, pointy-top => start at -90° so a corner points up.
-    QVector<QPointF> pts;
-    pts.reserve(6);
-    for (int i = 0; i < 6; ++i) {
-        const double angleDeg = -90.0 + i * 60.0;
-        const double angleRad = qDegreesToRadians(angleDeg);
-        pts.push_back({
-            center.x() + size * std::cos(angleRad),
-            center.y() + size * std::sin(angleRad)
-        });
-    }
-    return pts;
-}
-
 QRectF QBoard::boundsForLayout(double size) const {
     // Compute bounding box in "layout space" for given size (before centering in widget)
     bool first = true;
@@ -72,7 +58,7 @@ QRectF QBoard::boundsForLayout(double size) const {
 
     for (const auto& h : m_board->getTiles()) {
         const QPointF c = axialToPixelTile(h->getTileCoord(), size);
-        const auto poly = hexPolygonPointy(c, size);
+        const auto poly = QTile::hexPolygonPoints(c, size);
         for (const auto& p : poly) {
             if (first) {
                 minX = maxX = p.x();
@@ -132,12 +118,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
 
         const QPointF center = axialToPixelTile(h->getTileCoord(), size) + offset;
 
-        const auto pts = hexPolygonPointy(center, size);
-        QPolygonF poly;
-        poly.reserve(6);
-        for (const auto& pt : pts) poly << pt;
-
-        qt.updateGeometry(center, poly, size);
+        qt.updateGeometry(center, size);
 
         // outline pen is owned by board, applied once
 
@@ -157,6 +138,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
         qn.paint(p, size);
     }
 
+    /*
     for (auto& qe : m_qedges) {
         Edge* e = qe.edge();
 
@@ -171,6 +153,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
         p.setPen(pen);
         qe.paint(p, size);
     }
+*/
 }
 
 void QBoard::mouseMoveEvent(QMouseEvent* e) {

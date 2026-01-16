@@ -10,7 +10,6 @@
 
 #include <board/Board.h>
 #include <types/TypeAliases.h>
-#include "GameTheme.h"
 
 #include <QTile.h>
 #include <QNode.h>
@@ -44,7 +43,6 @@ private:
     std::vector<QEdge> m_qedges;
 
     static QPointF axialToPixelTile(const TileCoords& a, double size);
-    static QVector<QPointF> hexPolygonPointy(const QPointF& center, double size);
 
     static QPointF axialToPixelNode(const NodeCoords& a, double size);
 
