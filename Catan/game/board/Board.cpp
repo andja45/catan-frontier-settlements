@@ -160,6 +160,13 @@ std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
 void Board::addTrade(NodeCoords nodeCoords, TradeType tradeType) {
     Node* node=getNodeAt(nodeCoords);
     node->setTrade(tradeType);
+    m_tradeCoords.push_back(nodeCoords);
+}
+
+void Board::addTrade(EdgeCoords edgeCoords, TradeType tradeType) {
+     for (auto n:getEdgeAt(edgeCoords)->getNodes()) {
+         addTrade(n->getCoords(),tradeType);
+     }
 }
 
 std::vector<Node *> Board::getNodesAdjacentToEdge(EdgeId edgeId) const {

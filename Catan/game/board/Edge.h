@@ -52,6 +52,11 @@ public:
     friend bool operator!=(const Edge &lhs, const Edge &rhs) {
         return !(lhs == rhs);
     }
+
+    bool hasTrade() const;
+    TradeType getTradeType();
+    EdgeDirection getDirection();
+
 };
 
 #endif //Catan_EDGE_H
