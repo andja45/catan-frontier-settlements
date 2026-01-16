@@ -48,7 +48,7 @@ void QEdge::drawRoad(QPainter& p, double size) {
     p.restore();
 }
 void QEdge::drawPort(QPainter& p, double size) {
-    auto [r, s] = equilateralThirdVertices(m_p, m_q);
+    auto [r, s] = equilateralThirdVertices(m_q, m_p);
     const double w = 0.2; // width
     const double l = 0.4; // length
     auto color = QColor::fromRgb(200, 160, 10);
