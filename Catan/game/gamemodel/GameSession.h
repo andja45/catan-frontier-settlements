@@ -7,6 +7,7 @@
 
 #include <random>
 
+#include "phase/TurnPhase.h"
 #include "rules/RulesEngine.h"
 #include "board/Board.h"
 #include "player/Player.h"
@@ -26,17 +27,7 @@ class Move;
 
 // TODO add trade request and accept moves
 
-enum class TurnPhase {
- RollDice, // Start of turn, awaits dice roll
- Main, // regularan potez, build/trade/kupuje devcards, nakon rolldice
- Robber, // Phase choosing tile to move the robber and choosing player to steal a card // TODO consider breaking into robberChooseTile and choosePlayer for easier isValid highlighting purposes
- DiscardCards, // Game enters in this phase when 7 is rolled and waits for all players to send their discard cards moves
- InitialPlacement, // Special phase for initial placement turns (every player chooses one road and settlement) //TODO consider breaking into two phases and ditch enum
- End // mozda nije faza?
-}; // drzi to stanje sve dok ne dobije signal da je uradjeno nesto sto ga menja
-   // tj to je stanje koje ceka, ne ono koje sledi
-
-enum class InitialPlacementStep {
+enum class InitialPlacementStep { // TODO delete
  PlaceSettlement,
  PlaceRoad
 };
@@ -79,7 +70,7 @@ public:
 
  InitialPlacementStep initialPlacementStep() const;
  void advancePhaseAfterMove(const Move &move);
- void enterRobberPhase() { setPhase(TurnPhase::Robber); }
+ void enterDiscardCardsPhase() { setPhase(TurnPhase::DiscardCards); }
 
  bool applyMove(const Move& move);
  int rollDice();

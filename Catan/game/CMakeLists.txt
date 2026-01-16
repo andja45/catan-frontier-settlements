@@ -64,6 +64,7 @@ add_library(catan_game
         rules/RulesEngine.h
         gamemodel/GameConfig.cpp
         gamemodel/GameConfig.h
+        phase/TurnPhase.h
 )
 
 target_include_directories(catan_game

@@ -20,7 +20,7 @@ void RollDiceMove::apply(GameSession& session) const {
 
     const int diceRoll = session.rollDice();
     if (diceRoll == 7) {
-        session.enterRobberPhase(); // TODO resi problem odbacivanja karata
+        session.enterDiscardCardsPhase(); // TODO resi problem odbacivanja karata
         return;
     }
 

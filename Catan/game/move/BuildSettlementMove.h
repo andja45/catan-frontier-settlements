@@ -7,7 +7,6 @@
 
 #include "Move.h"
 
-
 class BuildSettlementMove final : public Move{
 private:
     PlayerId m_playerId;
