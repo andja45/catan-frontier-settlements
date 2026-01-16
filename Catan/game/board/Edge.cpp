@@ -5,9 +5,7 @@
 #include "Edge.h"
 
 bool Edge::hasTrade() const {
-    for (auto n:getNodes()) {
-        if (n->isTrade()) return true;
-    }
+    if (getStart()->hasTrade()&&getEnd()->hasTrade()) return true;
     return false;
 }
 

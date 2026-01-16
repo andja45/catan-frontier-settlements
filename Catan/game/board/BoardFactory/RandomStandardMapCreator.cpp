@@ -134,5 +134,6 @@ std::unique_ptr<Board> RandomStandardMapCreator::getBoard() {
     auto board=std::make_unique<Board>();
     auto tiles = generateRandomBoard();
     board->initializeBoard(tiles);
+    populatePorts(board.get());
     return std::move(board);
 }

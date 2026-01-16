@@ -11,7 +11,7 @@
 class RandomExtendedMapCreator : public AbstractBoardCreator{
 private:
     static std::vector<TileDef> generateRandomBoard();
-    static void generatePorts(Board*);
+    static void populatePorts(Board*);
 public:
     std::unique_ptr<Board> getBoard() override;
 

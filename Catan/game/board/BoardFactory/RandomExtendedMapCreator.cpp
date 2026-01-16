@@ -77,7 +77,7 @@ std::vector<TileDef> RandomExtendedMapCreator::generateRandomBoard(){
     return r;
 }
 
-void RandomExtendedMapCreator::generatePorts(Board * board) {
+void RandomExtendedMapCreator::populatePorts(Board * board) {
 
     board->addTrade(NodeCoords({0,-3},PointDirection::Top),ResourceType::None);
     board->addTrade(NodeCoords({0,-3},PointDirection::LeftTop),ResourceType::None);
@@ -117,5 +117,8 @@ void RandomExtendedMapCreator::generatePorts(Board * board) {
 std::unique_ptr<Board> RandomExtendedMapCreator::getBoard() {
     auto board=std::make_unique<Board>();
     auto tiles = generateRandomBoard();
-    board->initializeBoard(tiles);return std::move(board);
+    board->initializeBoard(tiles);
+    populatePorts(board.get());
+    return std::move(board);
+
 }
