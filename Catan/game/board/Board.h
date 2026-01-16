@@ -53,6 +53,7 @@ public:
 
     const std::vector<std::unique_ptr<Tile>>& getTiles() const { return m_tiles; }
     const std::vector<std::unique_ptr<Node>>& getNodes() const { return m_nodes; }
+    const std::vector<std::unique_ptr<Edge>>& getEdges() const { return m_edges; }
 
     std::vector<Edge*> getEdgesAdjacentToNode(NodeId nodeId) const;
     std::vector<Node*> getNodesAdjacentToEdge(EdgeId edgeId) const;

@@ -37,7 +37,7 @@ void QEdge::drawRoad(QPainter& p, double size) {
     // A small triangle ("house") centered on m_center
     const double w = 0.15; // width
     auto [x, y] = m_q - m_p;
-    QPointF ort = w * QPointF(-y, x);
+    QPointF ort = w * QPointF(-y, x); //orthogonal vector
 
     QPolygonF quad;
     quad << m_p + ort << m_p - ort << m_q - ort << m_q + ort;
