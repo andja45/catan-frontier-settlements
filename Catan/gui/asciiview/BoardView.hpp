@@ -64,9 +64,11 @@ private:
     virtual void blitBoard(std::ostream &os);
 
     void computeSizes();
-    void processTileCords(TileCoords tileCoords, std::vector<ScreenCoords> &cords);
-    SideDirection pointToSide(PointDirection dir);
-    PointDirection sideToPoint(SideDirection dir);
+    void BoardView::processTileCords(TileCoords tileCoords, std::vector<std::pair<SideDirection,ScreenCoords>> &cords);
+    static NodeDirection fromNodeAsciiDir(NodeAsciiDirection dir);
+    static EdgeDirection fromEdgeAsciiDir(EdgeAsciiDirection dir);
+
+
 
 public:
     virtual ~BoardView() = default;

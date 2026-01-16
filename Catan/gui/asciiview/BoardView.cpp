@@ -27,7 +27,7 @@ void BoardView::computeSizes() {
         maxR=std::max(maxR,offsetCord.r());
 
         ScreenCoords pos=offsetToScreen(offsetCord,m_tileSize);
-        for (auto n:TileView::getNodes(pos,m_tileSize)) {
+        for (auto [_,n]:TileView::getNodes(pos,m_tileSize)) {
             minCol=std::min(minRow,n.first);
             maxCol=std::max(maxRow,n.first);
             minRow=std::min(minCol,n.second);
@@ -42,10 +42,13 @@ void BoardView::computeSizes() {
     m_center={-minCol+m_margin.first,-minRow+m_margin.second};
 }
 
-SideDirection BoardView::pointToSide(PointDirection dir) {
+
+NodeDirection BoardView::fromNodeAsciiDir(NodeAsciiDirection dir) {
+    return directions::flipOrientation(dir);
 }
 
-PointDirection BoardView::sideToPoint(SideDirection dir) {
+EdgeDirection BoardView::fromEdgeAsciiDir(EdgeAsciiDirection dir) {
+    return directions::flipOrientation(dir);
 }
 
 void BoardView::fitToScreen(ScreenCoords scr, bool stretch) {
@@ -58,7 +61,7 @@ void BoardView::fitToScreen(ScreenCoords scr, bool stretch) {
     computeSizes();
     float rowScale=scrHeight/static_cast<float>(bHeight);
     float colScale=scrWidth/static_cast<float>(bWidth);
-        
+
     if (stretch) {
         setTileSize({static_cast<int>(m_tileSize.first*colScale),static_cast<int>(m_tileSize.second*rowScale)});
     }
@@ -68,10 +71,11 @@ void BoardView::fitToScreen(ScreenCoords scr, bool stretch) {
     }
 }
 
-void BoardView::processTileCords(TileCoords tileCoords, std::vector<std::pair<SideDirection,ScreenCoords>> &cords) {
-
-        for (auto [sideDir,scrCoord]: cords) {
-
+void BoardView::processTileCords(TileCoords tileCoords, std::vector<std::pair<NodeAsciiDirection,ScreenCoords>> &cords) {
+        // .
+        for (auto [nodeAsciiDir,scrCoord]: cords) {
+            NodeDirection dir=fromNodeAsciiDir(nodeAsciiDir);
+            NodeCoords nc={tileCoords,dir};
 
         }
 

@@ -5,6 +5,8 @@
 #ifndef CATAN_TILEVIEW_HPP
 #define CATAN_TILEVIEW_HPP
 #include <vector>
+#include <types/TypeAliases.h>
+
 #include "ViewTypes.hpp"
 
 class Tile;
@@ -19,7 +21,7 @@ private:
 public:
     TileView(Tile* tile, ScreenCoords pos,  ScreenCoords size) : m_tile(tile), m_size(size), m_pos(pos) {}
     void draw(Canvas &canvas, const BoardTheme &theme) const;
-    static std::vector<ScreenCoords> getNodes(ScreenCoords m_pos, ScreenCoords m_size);
+    static std::vector<std::pair<NodeAsciiDirection, ScreenCoords>> getNodes(ScreenCoords m_pos, ScreenCoords m_size);
 };
 
 #endif //CATAN_TILEVIEW_HPP
