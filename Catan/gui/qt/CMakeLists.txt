@@ -23,6 +23,7 @@ add_library(catan_gui_qt
         host_join/GameHostView.h host_join/GameHostView.cpp
         host_join/PlayerListItem.h host_join/PlayerListItem.cpp
         host_join/AddBotListItem.h host_join/AddBotListItem.cpp
+        QEdge.h QEdge.cpp
 )
 
 target_include_directories(catan_gui_qt

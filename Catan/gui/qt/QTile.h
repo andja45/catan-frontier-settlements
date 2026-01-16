@@ -13,13 +13,15 @@ public:
 
     Tile* tile() const { return m_tile; }
 
-    void updateGeometry(const QPointF& center, const QPolygonF& poly, double size);
+    void updateGeometry(const QPointF& center, double size);
     bool contains(const QPointF& p) const;
 
     void setHovered(bool on) { m_hovered = on; }
     bool hovered() const { return m_hovered; }
 
     void paint(QPainter& p, double size, bool placingRobber);
+
+    static QVector<QPointF> hexPolygonPoints(const QPointF& center, double size);
 
 private:
     Tile*     m_tile = nullptr;
