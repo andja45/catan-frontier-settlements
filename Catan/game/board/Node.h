@@ -42,6 +42,8 @@ public:
     bool hasTrade() const { return m_hasTrade; }
 	bool is3for1Trade() const{return hasTrade() && getTradeResource() == TradeType::None;}
     bool isTradeFor(ResourceType resourceType) const { return m_tradeResource==resourceType; } // manual check via get trade resouce
+    bool isTrade() const {return hasTrade();}
+
     ResourceType getTradeResource() const { return m_tradeResource; }
 
     NodeType getNodeBuildingType() const { return m_type; }
