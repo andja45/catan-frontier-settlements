@@ -17,7 +17,8 @@ class QTableWidget;
 
 struct PlayerSummary {
     QString name;
-    int cards = 0;
+    int resources = 0;
+    int development = 0;
     int knights = 0;
 };
 
