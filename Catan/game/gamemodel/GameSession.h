@@ -6,6 +6,7 @@
 #define Catan_GAMESESSION_H
 
 #include <random>
+#include <unordered_set>
 
 #include "phase/TurnPhase.h"
 #include "rules/RulesEngine.h"
@@ -13,8 +14,13 @@
 #include "move/Move.h"
 #include "player/Player.h"
 #include "types/TypeAliases.h"
+#include "move/MoveType.h"
+#include "move/devcard/PlayDevCardMove.h"
+#include "player/Bank.h"
+#include "Trade.h"
 class Move;
-enum class MoveType;
+class StealCardMove;
+class PlayerTradeRequestMove;
 
 /*loopovi igranje igraca/bota i provere vict points road vitezi..*/
 // game session is like engine for our game that gets moves from all players from server and executes them to apply changes and keep game running
@@ -38,6 +44,9 @@ private:
  std::unique_ptr<Board> m_board;
  std::vector<std::unique_ptr<Player>> m_players;
 
+ // bank
+ Bank m_bank;
+
  // rules
  RulesEngine m_rules;
  int m_winningPints = 10; // TODO this will be read from gameConfig client-hosts sends
@@ -53,14 +62,30 @@ private:
  PlayerId m_currentPlayerId = -1;
  PlayerId m_localPlayerId   = -1; // who am i?
 
- int m_moveFlowCount = 0;
+ // move logic
+ int m_phaseMoveCount = 0;
  MoveType m_lastMoveType = MoveType::InvalidMoveType;
+ bool m_devCardPlayedThisTurn = false;
+ std::unordered_set<PlayerId> m_discardedPlayers;
+ bool canStealFromAnyone(PlayerId thiefId) const;
 
  // phase logic
  TurnPhase m_phase = TurnPhase::InitialPlacement;
  void advanceInitialPlacement();
  void advancePlayer();
  void setPhase(TurnPhase phase) { m_phase = phase; } // add if needed later, for now direct setting
+
+ // trades
+ std::unordered_map<TradeId, Trade> m_activeTrades;
+ TradeId m_nextTradeId = 1;
+
+ void addTrade(Trade trade);
+ void removeTrade(TradeId tradeId);
+ Trade* getTrade(TradeId tradeId);
+
+ friend class PlayerTradeRequestMove;
+ friend class PlayerTradeResponseMove;
+ friend class PlayerTradeAcceptMove;
 
  // dice
  std::mt19937 m_rng; // TODO dice can be with client-host
@@ -70,9 +95,13 @@ public:
 
  void advancePhaseAfterMove();
  void enterDiscardCardsPhase() { setPhase(TurnPhase::DiscardCards); }
+ void enterDevCardPhase(DevCardType type);
 
  bool applyMove(const Move& move);
+ void incrementPhaseMoveCount() { ++m_phaseMoveCount; }
  MoveType lastMoveType() const { return m_lastMoveType; }
+ void markDevCardPlayedThisTurn() { m_devCardPlayedThisTurn = true; }
+ bool hasPlayedDevCardThisTurn() const { return m_devCardPlayedThisTurn; }
  int rollDice();
  void endGame(); // TODO implement
 
@@ -91,12 +120,24 @@ public:
  void setLargestArmyOwner(PlayerId playerId);
  void setWinner(PlayerId playerId) { m_winner = playerId; }
 
+ Bank& bank() { return m_bank; }
+ const Bank& bank() const { return m_bank; }
+
  Board& board() { return *m_board; }
  const Board& board() const { return *m_board; }
 
  const std::vector<std::unique_ptr<Player>>& players() const { return m_players; }
+ std::vector<PlayerId> playerIds() const;
  const Player& player(PlayerId id) const { return *m_players.at(id); }
  Player& player(PlayerId id) { return *m_players.at(id); }
+
+ bool playerMustDiscard(PlayerId playerId) const; // TODO this is a rule maybe, but i think no, happens during one move
+ bool hasPlayerDiscarded(PlayerId playerId) const;
+ void markPlayerDiscarded(PlayerId playerId);
+ bool allRequiredPlayersDiscarded() const;
+
+ const Trade* getTrade(TradeId tradeId) const;
+ std::vector<const Trade*> activeTrades() const; // TODO not sure if both public and if both needed
 };
 
 #endif //Catan_GAMESESSION_H

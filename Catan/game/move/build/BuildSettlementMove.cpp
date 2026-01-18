@@ -59,17 +59,16 @@ void BuildSettlementMove::apply(GameSession& session) const {
     board.placeSettlement(m_playerId, m_nodeId);
 }
 
-std::unordered_set<EdgeId> BuildSettlementMove::allValid(const GameSession &session) const {
+std::unordered_set<NodeId> BuildSettlementMove::allValid(const GameSession &session) const {
     std::unordered_set<NodeId> validNodes;
 
     const Board& board = session.board();
     for (NodeId nodeId : board.nodeIds()) {
-        BuildSettlementMove probe(*this);
-        probe.m_nodeId = nodeId;
+        BuildSettlementMove testMove(*this);
+        testMove.m_nodeId = nodeId;
 
-        if (probe.isValid(session)) {
+        if (testMove.isValid(session))
             validNodes.insert(nodeId);
-        }
     }
 
     return validNodes;

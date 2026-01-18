@@ -7,15 +7,15 @@
 #include <random>
 
 #include "types/ResourceType.h"
-#include "types/DevType.h"
+#include "types/DevCardType.h"
 enum class ResourceType;
 
-const std::map<DevType,int> Bank::m_numberOfStandardDevCardsByType = {
-	{DevType::VictoryPoint, 5},
-	{DevType::Monopoly, 2},
-	{DevType::RoadBuilding, 2},
-	{DevType::Resources, 2},
-	{DevType::Knight, 14}
+const std::map<DevCardType,int> Bank::m_numberOfStandardDevCardsByType = {
+	{DevCardType::VictoryPoint, 5},
+	{DevCardType::Monopoly, 2},
+	{DevCardType::RoadBuilding, 2},
+	{DevCardType::YearOfPlenty, 2},
+	{DevCardType::Knight, 14}
 };
 
 Bank::Bank() {
@@ -43,10 +43,10 @@ void Bank::initializeBank(const ResourcePack &res, const DevPack &devCards) {
 	}
 
 	setLongestRoad(true);
-	setLargestMilitary(true);
+	setLargestArmy(true);
 }
 
-DevType Bank::takeRandomDev() {
+DevCardType Bank::takeRandomDev() {
 	std::random_device rd;
 	std::mt19937 g(rd());
 	std::uniform_int_distribution<std::size_t> dist(0, m_devCards.size() - 1);

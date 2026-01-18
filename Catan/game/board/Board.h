@@ -23,6 +23,8 @@ private:
     void clearBoard();
     // TODO add ports, load ports, from file
 
+    TileId m_robberTile = types::InvalidTile; // TODO maybe just in board? no need for every tile to know isrobbery maybe?
+
     // board is owner of all its elements, raw pointers are used inside to connect elements for convinience and optimization
     // make sure element id corresponds to index in these vectors during creation
     std::vector<std::unique_ptr<Tile>> m_tiles;
@@ -48,6 +50,8 @@ public:
 
     std::vector<Tile*> getTilesWithNumber(int num);
 
+    TileId robberTile() const {} // TODO implement, this returns id
+
     Tile* getTileAt(TileCoords coords);
     Node* getNodeAt(NodeCoords);
     Edge* getEdgeAt(EdgeCoords);
@@ -70,6 +74,7 @@ public:
 
     bool isEdgeFree(EdgeId edgeId) const;
     bool isNodeFree(NodeId nodeId) const;
+    bool isRobberOnTile(TileId tileId) const { return getTileById(tileId)->isRobberOnTile(); }
 
     PlayerId getEdgeOwner(EdgeId edgeId) const;
     PlayerId getNodeOwner(NodeId nodeId) const;
@@ -77,6 +82,7 @@ public:
     bool edgeTouchesPlayersBuilding(PlayerId playerId, EdgeId edgeId) const; // checks if edge is incident with node belonging to player with given player id
     bool edgeTouchesPlayersRoad(PlayerId playerId, EdgeId edgeId) const; // similar to above but for edges
     bool nodeTouchesPlayerRoad(PlayerId playerId, NodeId nodeId) const;
+    bool tileTouchesPlayerBuilding(PlayerId playerId, TileId tileId) const; // TODO implement, maybe already has similar function?
 
     bool edgeTouchesNode(NodeId nodeId, EdgeId edgeId) const; // checks if edge is incident with given node
     bool nodeTouchesAnyBuilding(NodeId nodeId) const;
@@ -84,6 +90,7 @@ public:
     void placeRoad(PlayerId playerId, EdgeId edgeId) const;
     void placeSettlement(PlayerId playerId, NodeId nodeId);
     void placeCity(PlayerId playerId, NodeId nodeId);
+    void placeRobber(TileId tileId) { getTileById(tileId)->setRobber(); }
 
     bool isBuildingOwnedBy(PlayerId playerId, NodeId nodeId) const; // consider removing, use get node owner and check yourself
     bool isNodeSettlement(NodeId nodeId) const;
@@ -91,7 +98,8 @@ public:
     std::vector<AxialCoords> getBoardCords();
 
     std::vector<EdgeId> edgeIds() const; // TODO add
-    std::vector<EdgeId> nodeIds() const;
+    std::vector<NodeId> nodeIds() const;
+    std::vector<TileId> tileIds() const;
 };
 
 

@@ -5,14 +5,14 @@
 #ifndef ENDTURNMOVE_H
 #define ENDTURNMOVE_H
 
-#include "Move.h"
+#include "../Move.h"
 
 
 class EndTurnMove final : public Move{
 private:
     PlayerId m_playerId;
 public:
-    explicit EndTurnMove(PlayerId playerId) : m_playerId(playerId) {}
+    explicit EndTurnMove(PlayerId playerId) : Move(playerId) {}
 
     MoveType type() const override { return MoveType::EndTurn; }
     bool isValid(const GameSession&) const override;

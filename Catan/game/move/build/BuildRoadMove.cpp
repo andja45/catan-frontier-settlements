@@ -28,28 +28,29 @@ bool BuildRoadMove::isValid(const GameSession& session) const {
     }
     else if (session.phase() == TurnPhase::InitialPlacement &&
         session.lastMoveType() == MoveType::BuildSettlement){ // or both phases in separate check at start and this just in else
-        if (!player.hasHouses())
+        if (!player.hasBuildings())
             return false;
 
-        Node* lastSettlement = player.getLastHouseBuilt(); // TODO or just function that remembers lastbuiltSettlement, if we do computeLongestRoad in board (update will be in session)
+        const Node* lastSettlement = player.getLastBuildingBuilt(); // TODO or just function that remembers lastbuiltSettlement, if we do computeLongestRoad in board (update will be in session)
         connected = board.edgeTouchesNode(lastSettlement->getNodeId(), m_edgeId);  // road need to touch last placed house
     }
+    else if (session.phase() == TurnPhase::RoadBuilding) {
+        // roads are free and follow same connectivity rule as in main phase
+        connected = board.edgeTouchesPlayersRoad(m_playerId, m_edgeId);
+    }
 
-    if (!connected)
-        return false;
-
-    return true;
+    return connected;
 }
 
 void BuildRoadMove::apply(GameSession& session) const {
     Board& board = session.board();
     Player& player = session.player(m_playerId);
 
-    if (session.phase() == TurnPhase::Main) {
+    if (session.phase() == TurnPhase::Main) { // in roadbuilding and initialplacement roads are free
         player.removeResources(Costs::Road);
     }
 
-    Edge* edge= session.board().getEdgeById(m_edgeId);
+    Edge* edge = session.board().getEdgeById(m_edgeId);
     player.addRoad(edge); // adds to list of that players edges and decrements numofroads left
     board.placeRoad(m_playerId, m_edgeId);
 }
@@ -59,10 +60,10 @@ std::unordered_set<EdgeId> BuildRoadMove::allValid(const GameSession &session) c
 
     const Board& board = session.board();
     for (EdgeId edgeId : board.edgeIds()) {
-        BuildRoadMove probe(*this);
-        probe.m_edgeId = edgeId;
+        BuildRoadMove testMove(*this);
+        testMove.m_edgeId = edgeId;
 
-        if (probe.isValid(session)) {
+        if (testMove.isValid(session)) {
             validEdges.insert(edgeId);
         }
     }

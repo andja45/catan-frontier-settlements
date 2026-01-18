@@ -33,12 +33,12 @@ public:
         m_tileCoord={q,r};
     }
 
-    void setId(TileId id) {m_tileId=id;}
+    void setId(TileId id) { m_tileId=id; }
     ResourceType getResourceType() const { return m_type; }
     int getNumber() const { return m_number; }
 
     bool isRobberOnTile() const { return m_robberOnTile; }
-    void setRobber(bool isRobber){m_robberOnTile=isRobber;}
+    void setRobber(){ m_robberOnTile = true;}
 
     TileCoords getTileCoord() const { return m_tileCoord; }
     TileId getTileId() const { return m_tileId; }
