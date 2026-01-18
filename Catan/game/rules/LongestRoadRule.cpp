@@ -3,8 +3,8 @@
 //
 
 #include "LongestRoadRule.h"
-#include "gamemodel/GameSession.h"
-
+#include <model/GameSession.h>
+#include <types/TypeAliases.h>
 #include "queue"
 
 void LongestRoadRule::createRoadGraph(GameSession& session, Player p) {
@@ -21,7 +21,7 @@ void LongestRoadRule::createRoadGraph(GameSession& session, Player p) {
 
         visited[road_index] = true;
 
-        std::vector<Edge *> neighbours = session.board().getIncidentContinuous(road_index);
+        std::vector<Edge *> neighbours = session.board().getIncidentContinuousEdges(road_index);
 
         for (auto neighbour : neighbours)
         {
@@ -124,7 +124,7 @@ void LongestRoadRule::evaluate(GameSession& session) {
         }
     }
 
-    if (bestPlayer == InvalidPlayer)
+    if (bestPlayer == types::InvalidPlayer)
         return;
 
     if (session.longestRoadOwner() != bestPlayer) {
