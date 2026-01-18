@@ -5,8 +5,8 @@ add_executable(Catan
         ../controller/renderstate/RenderState.h
         ../controller/renderstate/BoardRenderState.cpp
         ../controller/renderstate/BoardRenderState.h
-        ../controller/renderstate/ButtonsRenderState.cpp
-        ../controller/renderstate/ButtonsRenderState.h
+        ../controller/renderstate/ToolbarRenderState.cpp
+        ../controller/renderstate/ToolbarRenderState.h
 )
 
 target_link_libraries(Catan

@@ -22,7 +22,7 @@ enum class ToolbarButton {
     EndTurn
 };
 
-class ButtonsRenderState final : public RenderState {
+class ToolbarRenderState final : public RenderState {
 private:
     TurnPhase m_phase; // game always has a phase, even when initialized
     std::unordered_set<ToolbarButton> m_enabledButtons;

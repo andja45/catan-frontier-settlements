@@ -2,9 +2,9 @@
 // Created by andja on 16.1.26.
 //
 
-#include "ButtonsRenderState.h"
+#include "ToolbarRenderState.h"
 
-void ButtonsRenderState::updateFromPhase(TurnPhase phase) {
+void ToolbarRenderState::updateFromPhase(TurnPhase phase) {
     m_phase = phase;
     m_enabledButtons.clear();
 
@@ -44,7 +44,7 @@ void ButtonsRenderState::updateFromPhase(TurnPhase phase) {
     }
 }
 
-bool ButtonsRenderState::isEnabled(ToolbarButton button) const {
+bool ToolbarRenderState::isEnabled(ToolbarButton button) const {
     return m_enabledButtons.find(button) != m_enabledButtons.end();
 }
 
