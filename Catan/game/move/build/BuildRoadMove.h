@@ -7,15 +7,14 @@
 
 #include <unordered_set>
 
-#include "Move.h"
+#include "../Move.h"
 
 
 class BuildRoadMove final : public Move{ // final - no classes than extend this class
 private:
-    PlayerId m_playerId;
     EdgeId m_edgeId; // or HexCoords + edgeIndex
 public:
-    BuildRoadMove(PlayerId playerId, EdgeId edgeId) : m_playerId(playerId), m_edgeId(edgeId) {}
+    BuildRoadMove(PlayerId playerId, EdgeId edgeId) : Move(playerId), m_edgeId(edgeId) {}
 
     MoveType type() const override { return MoveType::BuildRoad; }
     bool isValid(const GameSession& session) const override;

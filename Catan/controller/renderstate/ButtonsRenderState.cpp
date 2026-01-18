@@ -1,5 +1,5 @@
 //
-// Created by andja on 16.1.26..
+// Created by andja on 16.1.26.
 //
 
 #include "ButtonsRenderState.h"

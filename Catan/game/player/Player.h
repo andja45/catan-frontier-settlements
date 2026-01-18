@@ -13,13 +13,15 @@
 #include "../board/Node.h"
 #include <player/ResourceHolder.h>
 
-enum class DevType;
+#include "move/trade/BankTradeMove.h"
+
+enum class DevCardType;
 class Player : public ResourceHolder {
 private:
     PlayerId m_playerId=-1;
 
     std::vector<Edge*> m_roads;
-    std::vector<Node*> m_houses; // TODO remove in the future? or keep for trades and longest road?
+    std::vector<Node*> m_buildings; // TODO remove in the future? or keep for trades and longest road?
 
     //std::map<ResourceType,bool> m_has2for1Trade;
 
@@ -38,8 +40,8 @@ public:
     PlayerId getPlayerId() const { return m_playerId; }
 
     std::vector<Edge*> getRoads() const { return m_roads; }
-    std::vector<Node*> getHouses() const { return m_houses; }
-    Node* getLastHouseBuilt() const {return m_houses.back();}
+    std::vector<Node*> getBuildings() const { return m_buildings; }
+    Node* getLastBuildingBuilt() const {return m_buildings.back();}
 
     void addPoints(int points) {m_totalPoints+=points;}
     void removePoints(int points) {m_totalPoints-=points;}
@@ -54,7 +56,7 @@ public:
     bool hasCityLeft() const {return m_numOfCitiesLeft>0;}
     bool hasSettlementLeft() const {return m_numOfSettlementsLeft>0;}
     bool hasRoadLeft() const {return m_numOfRoadsLeft>0;}
-    bool hasHouses() const {return m_houses.size()>0;}
+    bool hasBuildings() const {return m_buildings.size()>0;}
 
     int getTotalPoints() const {return m_totalPoints;}
 
@@ -68,6 +70,8 @@ public:
 
     ResourcePack takeRandomResources(int amount); // for robber discard and steal card
     ResourceType takeRandomResource();
+
+    int minBankTradeRatio(ResourceType resource) const;
 };
 
 

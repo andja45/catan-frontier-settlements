@@ -14,12 +14,12 @@ enum class ResourceType;
 class Bank: public ResourceHolder{
 private:
 	static constexpr int m_standardNumOfResources= 20;
-	static const std::map<DevType,int> m_numberOfStandardDevCardsByType;
+	static const std::map<DevCardType,int> m_numberOfStandardDevCardsByType;
 public:
     Bank();
 	Bank(const ResourcePack &resources, const DevPack &devCards);
 	void initializeBank(const ResourcePack &res, const DevPack &devCards);
-	DevType takeRandomDev(); // for buying dev cards
+	DevCardType takeRandomDev(); // for buying dev cards
 };
 
 

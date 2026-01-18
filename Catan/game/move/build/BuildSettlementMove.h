@@ -7,21 +7,20 @@
 
 #include <unordered_set>
 
-#include "Move.h"
+#include "../Move.h"
 
 class BuildSettlementMove final : public Move{
 private:
-    PlayerId m_playerId;
     NodeId m_nodeId; // or HexCoords + nodeIndex
 public:
-    BuildSettlementMove(const PlayerId playerId, const NodeId nodeId) : m_playerId(playerId), m_nodeId(nodeId) {}
+    BuildSettlementMove(const PlayerId playerId, const NodeId nodeId) : Move(playerId), m_nodeId(nodeId) {}
 
     MoveType type() const override { return MoveType::BuildSettlement; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
 
     bool providesAllValid() const override { return true; }
-    std::unordered_set<EdgeId> allValid(const GameSession& session) const;
+    std::unordered_set<NodeId> allValid(const GameSession& session) const;
 };
 
 

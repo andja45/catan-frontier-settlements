@@ -6,7 +6,8 @@
 
 #include <cassert>
 #include <move/Move.h>
-
+#include <move/robber/StealCardMove.h>
+#include <move/trade/PlayerTradeRequestMove.h>
 
 GameSession::GameSession(int numPlayers,
                          std::vector<std::string> playerNames,
@@ -33,26 +34,85 @@ bool GameSession::applyMove(const Move& move){
     m_rules.evaluate(*this); // after every move, cus someone can interrupt longest road for example
     advancePhaseAfterMove(); // only session can advance phases, move only reads them
 
-    //notifyModelChanged(); //notify view
+    // onModelChanged();
+    // onPhaseChanged(); // notify controller -> view
     // TODO ^
 
     return true;
 }
 
 void GameSession::advancePhaseAfterMove() {
-    if (m_phase == TurnPhase::InitialPlacement) {
-        advanceInitialPlacement();
-        return;
+    // phase driven transitions
+    switch (m_phase) {
+        case TurnPhase::InitialPlacement:
+            advanceInitialPlacement();
+            return;
+
+        case TurnPhase::RoadBuilding:
+            incrementPhaseMoveCount();
+            if (m_phaseMoveCount >= 2) {
+                setPhase(TurnPhase::Main);
+                m_phaseMoveCount = 0;
+            }
+            return;
+
+        case TurnPhase::DiscardCards:
+            if (allRequiredPlayersDiscarded()) {
+                setPhase(TurnPhase::SetRobber);
+                m_discardedPlayers.clear();
+            }
+            return;
+
+        default:
+            break;
     }
 
+    // move driven transitions
     switch (m_lastMoveType) {
         case MoveType::RollDice:
             setPhase(TurnPhase::Main);
             break;
 
+        case MoveType::SetRobber:
+            setPhase(TurnPhase::StealCard);
+            break;
+
+        case MoveType::StealCard:
+            if (canStealFromAnyone(m_currentPlayerId)) {
+                setPhase(TurnPhase::StealCard);
+            } else { // we established we can place on tile no one is at, in that case every player is greyed out
+                setPhase(TurnPhase::Main);
+            }
+            break;
+
         case MoveType::EndTurn:
             advancePlayer(); // session does this, not move
+            m_devCardPlayedThisTurn = false; // reseting for next turn
+            m_activeTrades.clear();
             setPhase(TurnPhase::RollDice);
+            break;
+
+        default:
+            break;
+        }
+}
+
+void GameSession::enterDevCardPhase(DevCardType type) {
+    switch (type) {
+        case DevCardType::Knight:
+            setPhase(TurnPhase::SetRobber);
+            break;
+
+        case DevCardType::RoadBuilding:
+            setPhase(TurnPhase::RoadBuilding);
+            break;
+
+        case DevCardType::YearOfPlenty:
+            setPhase(TurnPhase::YearOfPlenty);
+            break;
+
+        case DevCardType::Monopoly:
+            setPhase(TurnPhase::Monopoly);
             break;
 
         default:
@@ -64,19 +124,19 @@ void GameSession::advanceInitialPlacement() {
     const int playerCount = numPlayers();
     if (playerCount == 0) return;
 
-    m_moveFlowCount += 1;
+    m_phaseMoveCount += 1;
 
     const int totalPlacementMoves = playerCount * 4; // *2 for both directios *2 for settlemet/road
 
-    if (m_moveFlowCount >= totalPlacementMoves) {
-        m_moveFlowCount = 0;
+    if (m_phaseMoveCount >= totalPlacementMoves) {
+        m_phaseMoveCount = 0;
         m_turnIndex = 0;
         m_currentPlayerId = m_players[m_turnIndex]->getPlayerId(); // first player starts
         setPhase(TurnPhase::RollDice);
         return;
     }
 
-    const int placementTurn = m_moveFlowCount / 2; // each player gets settlement + road in one placing
+    const int placementTurn = m_phaseMoveCount / 2; // each player gets settlement + road in one placing
 
     int playerIndex;
     if (placementTurn < playerCount) {
@@ -95,6 +155,21 @@ void GameSession::advancePlayer() { // TODO maybe change later - add shuffling w
 
     m_turnIndex = (m_turnIndex + 1) % m_players.size();
     m_currentPlayerId = m_players[m_turnIndex]->getPlayerId();
+
+}
+
+void GameSession::addTrade(Trade trade) {
+    trade.setId(m_nextTradeId++);
+    m_activeTrades.emplace(trade.id(), std::move(trade));
+}
+
+void GameSession::removeTrade(TradeId tradeId) {
+    m_activeTrades.erase(tradeId);
+}
+
+Trade * GameSession::getTrade(TradeId tradeId) {
+    auto it = m_activeTrades.find(tradeId);
+    return (it != m_activeTrades.end()) ? &it->second : nullptr;
 }
 
 int GameSession::rollDice() {
@@ -106,17 +181,86 @@ int GameSession::rollDice() {
 }
 
 void GameSession::setLongestRoadOwner(const PlayerId playerId) {
-    if (longestRoadOwner() != types::InvalidPlayer) // if it is it means we are setting it for the first time
-        player(longestRoadOwner()).removePoints(2); // if it isnt, then someone stole the title
+    if (longestRoadOwner() != types::InvalidPlayer){
+        Player& previous = player(m_longestRoadOwner);
+        previous.removePoints(2);
+        previous.setLongestRoad(false);
+    }
 
     m_longestRoadOwner = playerId;
-    player(m_longestRoadOwner).addPoints(2);
-}
+
+    Player& current = player(m_longestRoadOwner);
+    current.addPoints(2);
+    current.setLongestRoad(true);
+} // TODO add length of longestroad in player
 
 void GameSession::setLargestArmyOwner(const PlayerId playerId) {
-    if (largestArmyOwner() != types::InvalidPlayer)
-        player(largestArmyOwner()).removePoints(2);
+    if (largestArmyOwner() != types::InvalidPlayer){
+        Player& previous = player(m_largestArmyOwner);
+        previous.removePoints(2);
+        previous.setLargestArmy(false);
+    }
 
     m_largestArmyOwner = playerId;
-    player(m_largestArmyOwner).addPoints(2);
+
+    Player& current = player(m_largestArmyOwner);
+    current.addPoints(2);
+    current.setLongestRoad(true);
+}
+
+std::vector<PlayerId> GameSession::playerIds() const {
+    std::vector<PlayerId> ids;
+    ids.reserve(m_players.size());
+    for (const auto& p : m_players) {
+        ids.push_back(p->getPlayerId());
+    }
+    return ids;
+}
+
+bool GameSession::playerMustDiscard(PlayerId playerId) const {
+    return player(playerId).getNumOfResourceCards() > 7;
+}
+
+bool GameSession::hasPlayerDiscarded(PlayerId playerId) const {
+    return m_discardedPlayers.find(playerId) != m_discardedPlayers.end();
+}
+
+void GameSession::markPlayerDiscarded(PlayerId playerId) {
+    m_discardedPlayers.insert(playerId);
+}
+
+bool GameSession::allRequiredPlayersDiscarded() const {
+    for (PlayerId playerId : playerIds()) {
+        if (playerMustDiscard(playerId) && !hasPlayerDiscarded(playerId)) // if someone has to discard and didnt
+            return false;
+    }
+    return true;
+}
+
+const Trade* GameSession::getTrade(TradeId tradeId) const {
+    auto it = m_activeTrades.find(tradeId);
+    return it != m_activeTrades.end() ? &it->second : nullptr;
+}
+
+std::vector<const Trade*> GameSession::activeTrades() const {
+    std::vector<const Trade*> result;
+    result.reserve(m_activeTrades.size());
+
+    for (const auto& [id, trade] : m_activeTrades) {
+        result.push_back(&trade);
+    }
+    return result;
+}
+
+bool GameSession::canStealFromAnyone(PlayerId thiefId) const {
+   for (PlayerId victimId : playerIds()) {
+        if (victimId == thiefId)
+            continue;
+
+        StealCardMove testMove(thiefId, victimId);
+        if (testMove.isValid(*this))
+            return true;
+    }
+
+    return false;
 }

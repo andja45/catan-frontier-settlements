@@ -5,27 +5,7 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-enum class MoveType {
-    RollDice,
-    EndTurn,
-
-    BuildRoad,
-    BuildSettlement,
-    BuildCity,
-
-    SetRobber,
-    StealCard, // in one move?
-    DiscardCards, // if more than 7 cards
-
-    BankTrade,
-    PlayerTrade,
-
-    BuyDevCard,
-    PlayDevCard,
-
-    InvalidMoveType
-};
-
+#include "MoveType.h"
 #include "../types/TypeAliases.h"
 #include "../types/Costs.h"
 #include "../types/ResourceType.h"
@@ -36,7 +16,10 @@ class GameSession;
 // its used both for storing data about player intentions, incrementally updating game model based on players actions, and validating is that move possible which we also use two enable or disable tools in user interface
 // this enables us to send as little information on network as possible and keep everybody's game in sync
 class Move {
+protected:
+    PlayerId m_playerId;
 public:
+    Move(PlayerId playerId) : m_playerId(playerId) {}
     virtual ~Move() = default;
 
     virtual MoveType type() const = 0;

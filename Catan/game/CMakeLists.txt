@@ -9,22 +9,20 @@ add_library(catan_game
         board/Board.h
         move/Move.cpp
         move/Move.h
-        move/BuildRoadMove.cpp
-        move/BuildRoadMove.h
-        move/BuildSettlementMove.cpp
-        move/BuildSettlementMove.h
-        move/BuildCityMove.cpp
-        move/BuildCityMove.h
-        move/PlayerTradeMove.cpp
-        move/PlayerTradeMove.h
-        move/RollDiceMove.cpp
-        move/RollDiceMove.h
-        move/EndTurnMove.cpp
-        move/EndTurnMove.h
+        move/build/BuildRoadMove.cpp
+        move/build/BuildRoadMove.h
+        move/build/BuildSettlementMove.cpp
+        move/build/BuildSettlementMove.h
+        move/build/BuildCityMove.cpp
+        move/build/BuildCityMove.h
+        move/turn/RollDiceMove.cpp
+        move/turn/RollDiceMove.h
+        move/turn/EndTurnMove.cpp
+        move/turn/EndTurnMove.h
         gamemodel/GameSession.cpp
         gamemodel/GameSession.h
         types/TypeAliases.h
-        types/DevType.h
+        types/DevCardType.h
         board/Board.cpp
         types/Costs.h
         player/Bank.cpp
@@ -47,9 +45,9 @@ add_library(catan_game
         board/BoardFactory/RandomExtendedMapCreator.hpp
         board/BoardFactory/LoadFromFileCreator.cpp
         board/BoardFactory/LoadFromFileCreator.hpp
-        move/BankTradeMove.h
-        move/SetRobberMove.h
-        move/BankTradeMove.cpp
+        move/trade/BankTradeMove.h
+        move/robber/SetRobberMove.h
+        move/trade/BankTradeMove.cpp
         gamemodel/GameData.h
         gamemodel/GameData.cpp
         types/ResourceType.h
@@ -66,6 +64,27 @@ add_library(catan_game
         gamemodel/GameConfig.h
         board/Edge.cpp
         phase/TurnPhase.h
+        move/robber/DiscardCardsMove.cpp
+        move/robber/DiscardCardsMove.h
+        move/robber/StealCardMove.cpp
+        move/robber/StealCardMove.h
+        move/devcard/BuyDevCardMove.cpp
+        move/devcard/BuyDevCardMove.h
+        move/devcard/YearOfPlentyMove.cpp
+        move/devcard/YearOfPlentyMove.h
+        move/devcard/MonopolyMove.cpp
+        move/devcard/MonopolyMove.h
+        move/devcard/PlayDevCardMove.cpp
+        move/devcard/PlayDevCardMove.h
+        move/MoveType.h
+        move/trade/PlayerTradeRequestMove.cpp
+        move/trade/PlayerTradeRequestMove.h
+        move/trade/PlayerTradeResponseMove.cpp
+        move/trade/PlayerTradeResponseMove.h
+        move/robber/SetRobberMove.cpp
+        gamemodel/Trade.h
+        move/trade/PlayerTradeAcceptMove.cpp
+        move/trade/PlayerTradeAcceptMove.h
 )
 
 target_include_directories(catan_game

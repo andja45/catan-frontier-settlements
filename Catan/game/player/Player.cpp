@@ -14,7 +14,7 @@ void Player::addRoad(Edge *edge) {
 }
 
 void Player::addSettlement(Node *node) {
-	m_houses.push_back(node);
+	m_buildings.push_back(node);
 	m_numOfSettlementsLeft--;
 }
 
@@ -24,7 +24,7 @@ void Player::addCity() {
 
 // if we decide to remove houses stored in player have trades cashed when build settlement is called
 bool Player::has3for1Trade() const {
-	for (const auto& node:m_houses) {
+	for (const auto& node:m_buildings) {
 		if (node->is3for1Trade())
 			return true;
 	}
@@ -32,7 +32,7 @@ bool Player::has3for1Trade() const {
 }
 
 bool Player::hasTrade(ResourceType resourceType) const {
-	for (const auto& node:m_houses) {
+	for (const auto& node:m_buildings) {
 		if (node->isTradeFor(resourceType))
 			return true;
 	}
@@ -59,6 +59,16 @@ ResourceType Player::takeRandomResource() {
 	}
 	removeResource(it->first,1);
 	return it->first;
+}
+
+int Player::minBankTradeRatio(ResourceType resource) const {
+	if (has2for1Trade(resource))
+		return 2;
+
+	if (has3for1Trade())
+		return 3;
+
+	return 4;
 }
 
 

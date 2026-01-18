@@ -8,7 +8,7 @@
 #include <vector>
 #include <types/Directions.h>
 
-enum class DevType;
+enum class DevCardType;
 class Edge;
 class Node;
 class Tile;
@@ -28,7 +28,7 @@ using IncidentEdges = std::vector<Edge*>;
 using IncidentTiles = std::vector<Tile*>;
 
 using ResourcePack = std::map<ResourceType, int>;
-using DevPack = std::map<DevType,int>;
+using DevPack = std::map<DevCardType,int>;
 
 using PlayerId = int;
 using NodeId = int;
@@ -36,6 +36,7 @@ using EdgeId = int;
 using TileId = int;
 using EdgeIndex = int;
 using NodeIndex = int;
+using TradeId = int;
 using Tool = Move;
 
 namespace types {

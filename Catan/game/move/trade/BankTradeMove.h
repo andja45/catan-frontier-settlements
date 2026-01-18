@@ -5,21 +5,22 @@
 #ifndef CATAN_BANKTRADEMOVE_H
 #define CATAN_BANKTRADEMOVE_H
 
-#include "Move.h"
-
+#include "../Move.h"
 
 class BankTradeMove final : public Move{
 private:
-    PlayerId m_playerId;
     ResourceType m_give;
     ResourceType m_receive;
 public:
-    explicit BankTradeMove(PlayerId playerId, ResourceType give, ResourceType receive) : m_playerId(playerId), m_give(give), m_receive(receive) {}
+    explicit BankTradeMove(PlayerId playerId, ResourceType give, ResourceType receive)
+        : Move(playerId), m_give(give), m_receive(receive) {}
 
     MoveType type() const override { return MoveType::BankTrade; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
+    // TODO gui takes care if >= mintrade then unclickable (mintrade is written under player rss and we get it from player)
 };
 
+// TODO its done so you can trade minratio for one bank rss
 
 #endif //CATAN_BANKTRADEMOVE_H
