@@ -3,7 +3,7 @@
 //
 
 #include "BankTradeMove.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 #include "player/Bank.h"
 
 bool BankTradeMove::isValid(const GameSession& session) const{

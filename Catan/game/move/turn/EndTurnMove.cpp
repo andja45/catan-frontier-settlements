@@ -3,7 +3,7 @@
 //
 
 #include "EndTurnMove.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 
 bool EndTurnMove::isValid(const GameSession& session) const {

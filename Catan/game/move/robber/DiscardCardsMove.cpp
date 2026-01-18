@@ -3,7 +3,7 @@
 //
 
 #include "DiscardCardsMove.h"
-#include  "gamemodel/GameSession.h"
+#include  "model/GameSession.h"
 
 bool DiscardCardsMove::isValid(const GameSession& session) const {
     const Player& player = session.player(m_playerId);

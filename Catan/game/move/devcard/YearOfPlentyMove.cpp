@@ -3,7 +3,7 @@
 //
 
 #include "YearOfPlentyMove.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 bool YearOfPlentyMove::isValid(const GameSession& session) const {
     const Bank& bank = session.bank();
