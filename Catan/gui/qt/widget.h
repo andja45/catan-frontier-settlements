@@ -16,12 +16,11 @@ class Widget : public QWidget
 
 public:
 
-    Widget(QWidget *parent = nullptr);
+    Widget(QWidget *parent = nullptr, Board* board = nullptr);
     ~Widget();
 
 private:
     Ui::Widget *ui;
-    std::unique_ptr<Board>board;
 
 };
 #endif // WIDGET_H

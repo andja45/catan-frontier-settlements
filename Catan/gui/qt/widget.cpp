@@ -11,15 +11,13 @@
 #include <board/BoardFactory/RandomExtendedMapCreator.hpp>
 #include <board/BoardFactory/RandomStandardMapCreator.hpp>
 
-Widget::Widget(QWidget *parent)
+Widget::Widget(QWidget *parent, Board* b)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
 
-    AbstractBoardCreator *creator = new RandomExtendedMapCreator();
-    board = (creator->getBoard());
-    auto *qboard = new QBoard(this, board.get());
+    auto *qboard = new QBoard(this,b);
 
     auto *sidebar = new QRightSideBar(this);
 

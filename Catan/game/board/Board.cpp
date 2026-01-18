@@ -29,7 +29,6 @@ void Board::clearBoard() {
 // initializes tiles edge nodes and connects them together
 void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PORTS, break into parts?
     clearBoard();
-
     for (const auto&[q, r, res, number] : tileMap) {
         // make tile for each tiledef
         AxialCoords ax(q,r);

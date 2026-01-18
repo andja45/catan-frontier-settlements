@@ -7,7 +7,9 @@
 #include <vector>
 #include <types/TypeAliases.h>
 
-#include "ViewTypes.hpp"
+#include <types/TypeAliases.h>
+
+#include "BoardTypes.hpp"
 
 class Tile;
 

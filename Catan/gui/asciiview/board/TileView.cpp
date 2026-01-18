@@ -3,8 +3,10 @@
 //
 
 #include "TileView.hpp"
+
+#include <board/BoardView.hpp>
 #include <board/Tile.h>
-#include "ViewTypes.hpp"
+#include "BoardTypes.hpp"
 #include <types/TypeAliases.h>
 
 char TileView::resourceToChar( const BoardTheme& theme) const {
@@ -58,24 +60,22 @@ void TileView::draw(Canvas &canvas, const BoardTheme &theme) const {
     }
 }
 
-std::vector<ScreenCoords> TileView::getNodes() {
-    std::vector<ScreenCoords> coords;
-    int rows=m_size.second;
-    int max_width=m_size.first;
+std::vector<std::pair<NodeAsciiDirection, ScreenCoords> > TileView::getNodes(ScreenCoords m_pos, ScreenCoords m_size) {
 
-    int x= m_pos.first-(max_width-1)/2;
-    int y=m_pos.second-rows/2;
+    auto [width,height]=m_size;
+    auto [x,y]=m_pos;
 
-    int spacing=rows/2;
+    int halfStepY=height/2;
+    int halfStepX=width/2;
+    int sideStepX=halfStepX-BoardView::slopeWidthForHeight(height)+1;
 
-    coords.emplace_back(x+spacing,y);
-    coords.emplace_back(x+max_width-1-spacing,y);
+    return {
+        {NodeAsciiDirection::Left,{x-halfStepX+1,y}},
+        {NodeAsciiDirection::BottomLeft,{x-sideStepX+1,y+halfStepY}},
+        {NodeAsciiDirection::BottomRight,{x+sideStepX,y+halfStepY}},
+        {NodeAsciiDirection::Right,{x+halfStepX,y}},
+        {NodeAsciiDirection::TopRight,{x+sideStepX,y-halfStepY}},
+        {NodeAsciiDirection::TopLeft,{x-sideStepX+1,y-halfStepY}},
+    };
 
-    coords.emplace_back(x,m_pos.second);
-    coords.emplace_back(x+max_width-1,m_pos.second);
-
-    coords.emplace_back(x+spacing,y+rows-1);
-    coords.emplace_back(x+max_width-1-spacing,y+rows-1);
-
-    return coords;
 }

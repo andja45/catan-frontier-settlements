@@ -24,6 +24,7 @@ class PlayerTradeRequestMove;
 
 /*loopovi igranje igraca/bota i provere vict points road vitezi..*/
 // game session is like engine for our game that gets moves from all players from server and executes them to apply changes and keep game running
+ // it not only applies our rules but from other to so we keep track of which players turn is it and also which player are we
 
 
 // TODO add moves activateDevCard move gets dev card type, check if player has it and uses it (decrements counter, applies effect or enters new phase in separate move per dev card)
@@ -57,7 +58,6 @@ private:
  PlayerId m_winner = -1;
 
  int m_turnIndex = 0;
- // it not only applies our rules but from other to so we keep track of which players turn is it and also which player are we
  // game should be playable even without multiplayer, but in gui we will set buttons unclickable if currplayer != localplayer cus only he can make moves on his gui, other clients send him their moves and game session executes them
  PlayerId m_currentPlayerId = -1;
  PlayerId m_localPlayerId   = -1; // who am i?
