@@ -9,6 +9,7 @@
 #include <board/Board.h>
 #include <board/BoardFactory/AbstractBoardCreator.hpp>
 #include <board/BoardFactory/RandomExtendedMapCreator.hpp>
+#include <board/BoardFactory/RandomStandardMapCreator.hpp>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)

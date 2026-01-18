@@ -5,6 +5,7 @@
 #ifndef Catan_TYPEALIASES_HPP
 #define Catan_TYPEALIASES_HPP
 #include <map>
+#include <unordered_set>
 #include <vector>
 #include <types/Directions.h>
 
@@ -24,7 +25,7 @@ using NeighbourTiles = std::vector<Tile*>; // TODO class with iterator, keep in 
 using NeighbourNodes = std::vector<Node*>;
 using NeighbourEdges = std::vector<Edge*>;
 
-using IncidentEdges = std::vector<Edge*>;
+using IncidentEdges = std::unordered_set<Edge*>;
 using IncidentTiles = std::vector<Tile*>;
 
 using ResourcePack = std::map<ResourceType, int>;

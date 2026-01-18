@@ -62,6 +62,7 @@ add_library(catan_game
         rules/RulesEngine.h
         gamemodel/GameConfig.cpp
         gamemodel/GameConfig.h
+        types/MapType.h
         board/Edge.cpp
         phase/TurnPhase.h
         move/robber/DiscardCardsMove.cpp

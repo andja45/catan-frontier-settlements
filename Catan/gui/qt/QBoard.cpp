@@ -4,6 +4,9 @@
 #include <QtMath>
 #include <QMouseEvent>
 #include <cmath>
+#include <GameTheme.h>
+
+#include <iostream>
 
 static constexpr double SQRT3 = 1.7320508075688772;
 
@@ -21,6 +24,11 @@ QBoard::QBoard(QWidget *parent, Board* board) : QWidget(parent), m_board(board) 
     m_qnodes.reserve(m_board->getNodes().size());
     for(const auto& node : m_board->getNodes())
         m_qnodes.emplace_back(node.get());
+
+    m_qedges.clear();
+    m_qedges.reserve(m_board->getEdges().size());
+    for(const auto& edge : m_board->getEdges())
+        m_qedges.emplace_back(edge.get());
 }
 
 QPointF QBoard::axialToPixelTile(const TileCoords& a, double size) {
@@ -36,26 +44,11 @@ QPointF QBoard::axialToPixelNode(const NodeCoords& a, double size){
     auto [tileX, tileY] = axialToPixelTile(a.axialCoords(), size);
 
     int anglePer60 = static_cast<int>(a.direction());
-    double angle_radians = M_PI / 2 - anglePer60 * M_PI / 3;
+    double angle_radians = -M_PI / 2 + anglePer60 * M_PI / 3;
     int offsetX = size * std::cos(angle_radians);
     int offsetY = size * std::sin(angle_radians);
 
     return QPointF(tileX + offsetX, tileY + offsetY);
-}
-
-QVector<QPointF> QBoard::hexPolygonPointy(const QPointF& center, double size) {
-    // 6 corners, pointy-top => start at -90° so a corner points up.
-    QVector<QPointF> pts;
-    pts.reserve(6);
-    for (int i = 0; i < 6; ++i) {
-        const double angleDeg = -90.0 + i * 60.0;
-        const double angleRad = qDegreesToRadians(angleDeg);
-        pts.push_back({
-            center.x() + size * std::cos(angleRad),
-            center.y() + size * std::sin(angleRad)
-        });
-    }
-    return pts;
 }
 
 QRectF QBoard::boundsForLayout(double size) const {
@@ -65,7 +58,7 @@ QRectF QBoard::boundsForLayout(double size) const {
 
     for (const auto& h : m_board->getTiles()) {
         const QPointF c = axialToPixelTile(h->getTileCoord(), size);
-        const auto poly = hexPolygonPointy(c, size);
+        const auto poly = QTile::hexPolygonPoints(c, size);
         for (const auto& p : poly) {
             if (first) {
                 minX = maxX = p.x();
@@ -79,7 +72,7 @@ QRectF QBoard::boundsForLayout(double size) const {
             }
         }
     }
-    return QRectF(QPointF(minX, minY), QPointF(maxX, maxY));
+    return QRectF(QPointF(minX - size, minY - size), QPointF(maxX + size, maxY + size));
 }
 
 void QBoard::paintEvent(QPaintEvent *event) {
@@ -125,17 +118,25 @@ void QBoard::paintEvent(QPaintEvent *event) {
 
         const QPointF center = axialToPixelTile(h->getTileCoord(), size) + offset;
 
-        const auto pts = hexPolygonPointy(center, size);
-        QPolygonF poly;
-        poly.reserve(6);
-        for (const auto& pt : pts) poly << pt;
-
-        qt.updateGeometry(center, poly, size);
+        qt.updateGeometry(center, size);
 
         // outline pen is owned by board, applied once
 
         p.setPen(pen);
         qt.paint(p, size, m_placingRobber);
+    }
+
+    for (auto& qe : m_qedges) {
+        Edge* e = qe.edge();
+
+        const QPointF start = axialToPixelNode(e->getStart()->getCoords(), size) + offset;
+        const QPointF end = axialToPixelNode(e->getEnd()->getCoords(), size) + offset;
+
+        qe.updateGeometry(start, end, size);
+
+        // outline pen is owned by board, applied once
+        p.setPen(pen);
+        qe.paint(p, size);
     }
 
     for (auto& qn : m_qnodes) {
@@ -162,10 +163,16 @@ void QBoard::mouseMoveEvent(QMouseEvent* e) {
         }
     }
 
-    // --- Node hover always (or gate it behind a future "placing building" flag) ---
+    // --- Node hover (planning to gate it behind a future "placing building" flag) ---
     QNode* hitNode = nullptr;
     for (auto& qn : m_qnodes) {
         if (qn.contains(pos)) { hitNode = &qn; break; }
+    }
+
+    // --- Edge hover (planning to gate it behind a future "placing road" flag) ---
+    QEdge* hitEdge = nullptr;
+    for (auto& qe : m_qedges) {
+        if (qe.contains(pos)) { hitEdge = &qe; break; }
     }
 
     if (hitTile == m_hoveredQTile && hitNode == m_hoveredQNode) return;
@@ -178,6 +185,10 @@ void QBoard::mouseMoveEvent(QMouseEvent* e) {
     m_hoveredQNode = hitNode;
     if (m_hoveredQNode) m_hoveredQNode->setHovered(true);
 
+    if (m_hoveredQEdge) m_hoveredQEdge->setHovered(false);
+    m_hoveredQEdge = hitEdge;
+    if (m_hoveredQEdge) m_hoveredQEdge->setHovered(true);
+
     update();
 }
 
@@ -185,6 +196,14 @@ void QBoard::mousePressEvent(QMouseEvent* e) {
     if (e->button() != Qt::LeftButton) return;
 
     PlayerId player = 1; // TODO: wire to your current player
+
+    // If user clicked an edge, build a road
+    if (m_hoveredQEdge) {
+        if (m_hoveredQEdge->handleClick(player)) {
+            update();
+            return;
+        }
+    }
 
     // If user clicked a node, build/upgrade there
     if (m_hoveredQNode) {

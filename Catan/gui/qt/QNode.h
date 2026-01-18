@@ -10,7 +10,7 @@
 
 class QNode {
 public:
-    explicit QNode(Node* model = nullptr) : m_node(model) {}
+    explicit QNode(Node* node = nullptr) : m_node(node) {}
 
     Node* node() const { return m_node; }
 

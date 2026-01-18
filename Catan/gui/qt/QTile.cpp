@@ -4,9 +4,13 @@
 #include <types/TypeAliases.h>
 #include <QTile.h>
 
-void QTile::updateGeometry(const QPointF& center, const QPolygonF& poly, double size) {
+void QTile::updateGeometry(const QPointF& center, double size) {
+    const auto pts = hexPolygonPoints(center, size);
+    m_poly.clear();
+    m_poly.reserve(6);
+    for (const auto& pt : pts) m_poly << pt;
+
     m_center = center;
-    m_poly = poly;
     const double r = size / 3.0;
     m_tokenRect = QRectF(center.x() - r, center.y() - r, 2*r, 2*r);
 }
@@ -26,6 +30,22 @@ static QBrush brushFor(ResourceType t) {
     case ResourceType::Sea:    return QBrush(QColor(80, 140, 200));
     default:                  return QBrush(Qt::NoBrush);
     }
+}
+
+
+QVector<QPointF> QTile::hexPolygonPoints(const QPointF& center, double size) {
+    // 6 corners, pointy-top => start at -90° so a corner points up.
+    QVector<QPointF> pts;
+    pts.reserve(6);
+    for (int i = 0; i < 6; ++i) {
+        const double angleDeg = -90.0 + i * 60.0;
+        const double angleRad = qDegreesToRadians(angleDeg);
+        pts.push_back({
+            center.x() + size * std::cos(angleRad),
+            center.y() + size * std::sin(angleRad)
+        });
+    }
+    return pts;
 }
 
 void QTile::paint(QPainter& p, double size, bool placingRobber) {

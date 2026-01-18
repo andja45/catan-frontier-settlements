@@ -10,10 +10,10 @@
 
 #include <board/Board.h>
 #include <types/TypeAliases.h>
-#include "GameTheme.h"
 
 #include <QTile.h>
 #include <QNode.h>
+#include <QEdge.h>
 
 class QBoard : public QWidget {
     Q_OBJECT
@@ -32,17 +32,17 @@ private:
     Board* m_board;
     double m_size = 40.0;       // hex radius (corner distance); will be auto-scaled
 
-    Tile* m_hoveredTile = nullptr;
     QTile* m_hoveredQTile = nullptr;
     std::vector<QTile> m_qtiles;
-
     bool m_placingRobber = true;
 
     QNode* m_hoveredQNode = nullptr;
     std::vector<QNode> m_qnodes;
 
+    QEdge* m_hoveredQEdge = nullptr;
+    std::vector<QEdge> m_qedges;
+
     static QPointF axialToPixelTile(const TileCoords& a, double size);
-    static QVector<QPointF> hexPolygonPointy(const QPointF& center, double size);
 
     static QPointF axialToPixelNode(const NodeCoords& a, double size);
 

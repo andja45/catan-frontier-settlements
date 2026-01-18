@@ -82,8 +82,8 @@ void QRightSideBar::buildUi() {
     auto* playersLayout = new QVBoxLayout(playersBox);
 
     m_playersTable = new QTableWidget(playersBox);
-    m_playersTable->setColumnCount(3);
-    m_playersTable->setHorizontalHeaderLabels({"Name", "Cards", "Knights"});
+    m_playersTable->setColumnCount(4);
+    m_playersTable->setHorizontalHeaderLabels({"Name", "Resources", "Devs", "Knights"});
     m_playersTable->verticalHeader()->setVisible(false);
     m_playersTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_playersTable->setSelectionMode(QAbstractItemView::NoSelection);
@@ -92,6 +92,7 @@ void QRightSideBar::buildUi() {
     m_playersTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     m_playersTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     m_playersTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    m_playersTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
 
     playersLayout->addWidget(m_playersTable);
     root->addWidget(playersBox, 2);
@@ -121,8 +122,9 @@ void QRightSideBar::setPlayers(const QVector<PlayerSummary>& players) {
         const auto& p = players[i];
 
         m_playersTable->setItem(i, 0, new QTableWidgetItem(p.name));
-        m_playersTable->setItem(i, 1, new QTableWidgetItem(QString::number(p.cards)));
+        m_playersTable->setItem(i, 1, new QTableWidgetItem(QString::number(p.resources)));
         m_playersTable->setItem(i, 2, new QTableWidgetItem(QString::number(p.knights)));
+        m_playersTable->setItem(i, 3, new QTableWidgetItem(QString::number(p.development)));
     }
 }
 
@@ -133,6 +135,7 @@ void QRightSideBar::updatePlayer(int row, const PlayerSummary& p) {
     if (!m_playersTable->item(row, 2)) m_playersTable->setItem(row, 2, new QTableWidgetItem());
 
     m_playersTable->item(row, 0)->setText(p.name);
-    m_playersTable->item(row, 1)->setText(QString::number(p.cards));
+    m_playersTable->item(row, 1)->setText(QString::number(p.resources));
     m_playersTable->item(row, 2)->setText(QString::number(p.knights));
+    m_playersTable->item(row, 2)->setText(QString::number(p.development));
 }
