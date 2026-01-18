@@ -3,14 +3,15 @@
 //
 
 #include "Player.h"
+#include "../board/Board.h"
 
 #include <random>
 
 
-int Player::longestRoadLength() const { //TODO make graph from adjacent edges, (connect them through nodes) and do bfs
-
+void Player::addRoadInGraph(EdgeId edgeId1, EdgeId edgeId2) {
+	road_graph[int(edgeId1)].push_back(int(edgeId2));
+	road_graph[int(edgeId2)].push_back(int(edgeId1));
 }
-
 
 void Player::addRoad(Edge *edge) {
 	m_roads.push_back(edge);
