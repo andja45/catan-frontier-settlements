@@ -6,9 +6,12 @@
 
 
 #include <board/Node.h>
+#include <drawing/AsciiCanvas.hpp>
+#include <drawing/AsciiTheme.hpp>
 #include <types/NodeType.h>
 
-void NodeView::draw(Canvas& canvas , const BoardTheme &theme) const {
+void NodeView::render(Canvas& canvas ) const {
+    const auto& theme=BoardTheme::getInstance();
     char c=0;
     switch (m_node->getNodeBuildingType()) {
     case NodeType::Settlement:
@@ -21,6 +24,6 @@ void NodeView::draw(Canvas& canvas , const BoardTheme &theme) const {
         c=theme.settlementChar;
         break;
     }
-    canvas[m_coord.first][m_coord.second]={c,1};
+    canvas.setCell(m_coord,{c,1});
 
 }

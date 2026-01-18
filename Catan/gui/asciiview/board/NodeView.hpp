@@ -5,20 +5,22 @@
 #ifndef CATAN_NODEVIEW_HPP
 #define CATAN_NODEVIEW_HPP
 #include <utility>
+#include <drawing/AsciiDrawable.hpp>
 
-#include "BoardTypes.hpp"
+#include "../drawing/AsciiTypes.hpp"
 struct BoardTheme;
 class Node;
 
-class NodeView {
+class NodeView : public AsciiDrawable {
 private:
     Node* m_node=nullptr;
-    std::pair<int,int> m_coord;
+    ScreenCoords m_coord;
 public:
-    NodeView(Node* n, const std::pair<int, int> &m_coord)
-    : m_coord(m_coord), m_node(n) {
+    NodeView(Node* n, const ScreenCoords &m_coord)
+    : AsciiDrawable(m_coord,{1,1}), m_node(n) {
     }
-    void draw(Canvas &canvas, const BoardTheme &theme) const;
+    void render(Canvas &canvas) const override;
+
 };
 
 #endif //CATAN_NODEVIEW_HPP

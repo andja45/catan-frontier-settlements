@@ -28,18 +28,18 @@ void BoardView::computeSizes() {
 
         ScreenCoords pos=offsetToScreen(offsetCord,m_tileSize);
         for (auto [_,n]:TileView::getNodes(pos,m_tileSize)) {
-            minCol=std::min(minCol,n.first);
-            maxCol=std::max(maxCol,n.first);
-            minRow=std::min(minRow,n.second);
-            maxRow=std::max(maxRow,n.second);
+            minCol=std::min(minCol,n.x);
+            maxCol=std::max(maxCol,n.x);
+            minRow=std::min(minRow,n.y);
+            maxRow=std::max(maxRow,n.y);
         }
     }
 
     int rows=maxR-minR+1;
     int cols=maxQ-minQ+1;
 
-    m_canvasSize={maxCol-minCol+1,maxRow-minRow+1}; // width height
-    m_center={-minCol+m_margin.first,-minRow+m_margin.second};
+    m_size={maxCol-minCol+1,maxRow-minRow+1}; // width height
+    m_center={-minCol+m_margin.width,-minRow+m_margin.height};
 }
 
 
@@ -56,18 +56,31 @@ void BoardView::fitToScreen(ScreenCoords scr, bool stretch) {
     m_tileSize={12,5};
 
     auto [scrWidth,scrHeight]=scr;
-    auto [bWidth,bHeight]=m_canvasSize;
+    auto [bWidth,bHeight]=m_size;
 
     computeSizes();
     float rowScale=scrHeight/static_cast<float>(bHeight);
     float colScale=scrWidth/static_cast<float>(bWidth);
 
     if (stretch) {
-        setTileSize({static_cast<int>(m_tileSize.first*colScale),static_cast<int>(m_tileSize.second*rowScale)});
+        setTileSize({static_cast<int>(m_tileSize.width*colScale),static_cast<int>(m_tileSize.height*rowScale)});
     }
     else {
         float fitScale=std::min(rowScale,colScale);
-        setTileSize({static_cast<int>(m_tileSize.first*fitScale),static_cast<int>(m_tileSize.second*fitScale)});
+        setTileSize({static_cast<int>(m_tileSize.width*fitScale),static_cast<int>(m_tileSize.height*fitScale)});
+    }
+}
+
+void BoardView::render(Canvas &canvas) const {
+    const auto& theme=BoardTheme::getInstance();
+    for (auto n:m_nodes) {
+        n.render(canvas);
+    }
+    for (auto e:m_edges) {
+        e.render(canvas);
+    }
+    for (auto t:m_tiles) {
+        t.render(canvas);
     }
 }
 
@@ -97,10 +110,8 @@ void BoardView::reorganize() {
     m_tiles.clear();
     m_edges.clear();
     m_nodes.clear();
-    m_cells.clear();
 
     computeSizes();
-    m_cells.resize(m_canvasSize.first,std::vector<Cell>(m_canvasSize.second,{' ',0}));
 
 
     for (auto c: m_board->getBoardCords()) {
@@ -121,7 +132,7 @@ OffsetCoords BoardView::axialToFlippedOffset(TileCoords axial) {
     return {offsetR,offsetQ};
 }
 
-ScreenCoords BoardView::stepSize(ScreenCoords tileSize) {
+ScreenCoords BoardView::stepSize(ScreenSize tileSize) {
     auto [tileWidth,tileHeight]=tileSize;
     int slopeWidth=slopeWidthForHeight(tileHeight);
     int middleWidth=tileWidth-slopeWidth*2;
@@ -131,70 +142,18 @@ ScreenCoords BoardView::stepSize(ScreenCoords tileSize) {
     return {stepX,stepY};
 }
 
-ScreenCoords BoardView::offsetToScreen(TileCoords offset,ScreenCoords tileSize,ScreenCoords origin) {
+ScreenCoords BoardView::offsetToScreen(TileCoords offset,ScreenSize tileSize,ScreenCoords origin) {
     auto [stepX,stepY]=stepSize(tileSize);
     int col=offset.q()*stepX;
     int row=offset.r()*stepY;
     if (offset.q()%2)
         row+=stepY/2;
-    return {origin.first+col,origin.second+row};
+    return {origin.x+col,origin.y+row};
 }
 
-void BoardView::renderBoard() {
-    for (auto n:m_nodes) {
-        n.draw(m_cells,m_theme);
-    }
-    for (auto e:m_edges) {
-        e.draw(m_cells,m_theme);
-    }
-    for (auto t:m_tiles) {
-        t.draw(m_cells,m_theme);
-    }
-}
-
-void BoardView::printCell(Cell c, std::ostream& os) {
-    os<<c.ch;
-}
-
-void BoardView::blitBoard(std::ostream& os=std::cout) {
-    for (int x=0; x<m_canvasSize.first+m_margin.first*2+2; x++) {
-        os<<'-';
-    }
-    os<<std::endl;
-    for (int y=0; y<m_margin.second; y++) {
-        os<<std::endl;
-    }
-    for (int y=0; y<m_canvasSize.second; y++) {
-        os<<'|';
-        for (int x=0; x<m_margin.first; x++) {
-            os<<' ';
-        }
-        for (int x=0; x<m_canvasSize.first; x++) {
-            printCell(m_cells[x][y],os);
-        }
-        for (int x=0; x<m_margin.first; x++) {
-            os<<' ';
-        }
-        os<<'|';
-        os<<std::endl;
-    }
-    for (int y=0; y<m_margin.second; y++) {
-        os<<std::endl;
-    }
-    for (int x=0; x<m_canvasSize.first+m_margin.first*2+2; x++) {
-        os<<'-';
-    }
-}
-
-void BoardView::drawBoard(std::ostream& os=std::cout) {
-    os<<"Board:"<<std::endl;
-    renderBoard();
-    blitBoard(os);
-}
-
-void BoardView::setTileSize(ScreenCoords size) {
-    int width=size.first/2*2; // always even number
-    int height=(size.second-1)/2*2+1; // always odd number
+void BoardView::setTileSize(ScreenSize size) {
+    int width=size.width /2*2; // always even number
+    int height=(size.height-1)/2*2+1; // always odd number
     height=std::min(maxHeightForWidth(width),height);
 
     width=std::max(width,minTileWidth);

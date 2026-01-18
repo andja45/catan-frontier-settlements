@@ -5,7 +5,7 @@
 #ifndef CATAN_PLAYERVIEW_HPP
 #define CATAN_PLAYERVIEW_HPP
 
-class PlayerView {
+class PlayerOverview {
 };
 
 #endif //CATAN_PLAYERVIEW_HPP
