@@ -10,9 +10,9 @@
 #include <queue>
 #include <unordered_set>
 #include <vector>
-#include <board/Coords/AxialCoords.hpp>
-#include <board/Coords/NodeCoords.hpp>
-#include <board/Coords/EdgeCoords.hpp>
+#include <board/coords/AxialCoords.hpp>
+#include <board/coords/NodeCoords.hpp>
+#include <board/coords/EdgeCoords.hpp>
 
 struct TileDef;
 

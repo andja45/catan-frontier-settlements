@@ -4,7 +4,7 @@
 
 #ifndef CATAN_LOADFROMFILECREATOR_HPP
 #define CATAN_LOADFROMFILECREATOR_HPP
-#include <board/BoardFactory/AbstractBoardCreator.hpp>
+#include <board/factory/AbstractBoardCreator.hpp>
 
 class LoadFromFileCreator : public AbstractBoardCreator {
 private:

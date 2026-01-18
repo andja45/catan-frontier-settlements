@@ -4,7 +4,7 @@
 
 #ifndef CATAN_BOARDLAYOUTTOJSON_HPP
 #define CATAN_BOARDLAYOUTTOJSON_HPP
-#include <board/BoardSerializers/AbstractBoardSerializer.hpp>
+#include <board/serialization/AbstractBoardSerializer.hpp>
 
 class BoardLayoutToJson :public AbstractBoardSerializer{
 public:

@@ -5,7 +5,7 @@
 #ifndef CATAN_RANDOMSTANDARSEXTENDEDCREATOR_HPP
 #define CATAN_RANDOMSTANDARSEXTENDEDCREATOR_HPP
 #include <board/Board.h>
-#include <board/BoardFactory/AbstractBoardCreator.hpp>
+#include <board/factory/AbstractBoardCreator.hpp>
 
 // generates extended catan map version for 6 players
 class RandomExtendedMapCreator : public AbstractBoardCreator{

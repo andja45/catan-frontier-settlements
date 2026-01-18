@@ -4,8 +4,8 @@
 
 #ifndef CATAN_EDGECOORDS_HPP
 #define CATAN_EDGECOORDS_HPP
-#include <board/Coords/AxialCoords.hpp>
-#include <board/Coords/ElementCoords.hpp>
+#include <board/coords/AxialCoords.hpp>
+#include <board/coords/ElementCoords.hpp>
 
 class EdgeCoords : public ElementCoords{
 private:

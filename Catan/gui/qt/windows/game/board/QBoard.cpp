@@ -4,7 +4,6 @@
 #include <QtMath>
 #include <QMouseEvent>
 #include <cmath>
-#include <GameTheme.h>
 
 #include <iostream>
 

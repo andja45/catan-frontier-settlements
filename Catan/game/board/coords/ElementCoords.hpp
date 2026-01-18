@@ -4,7 +4,7 @@
 
 #ifndef CATAN_ELEMENTCOORDS_HPP
 #define CATAN_ELEMENTCOORDS_HPP
-#include <board/Coords/AxialCoords.hpp>
+#include <board/coords/AxialCoords.hpp>
 
 // small shared base for edge and node coords
 class ElementCoords {

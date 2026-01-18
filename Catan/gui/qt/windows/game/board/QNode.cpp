@@ -1,4 +1,4 @@
-#include <QNode.h>
+#include "QNode.h"
 #include <cmath>
 
 bool QNode::hoverAllowed() const {

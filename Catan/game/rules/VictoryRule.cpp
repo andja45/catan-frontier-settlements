@@ -3,7 +3,7 @@
 //
 
 #include "VictoryRule.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 void VictoryRule::evaluate(GameSession& session) {
     for (const auto& p : session.players()) {

@@ -2,7 +2,7 @@
 // Created by marko on 1/14/2026.
 //
 
-#include <QRightSideBar.h>
+#include "QRightSideBar.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

@@ -1,15 +1,15 @@
 #include <QVBoxLayout>
 
-#include <widget.h>
+#include "widget.h"
 #include "./ui/ui_widget.h"
-#include <QRightSideBar.h>
+#include <windows/game/sidebar/QRightSideBar.h>
 
 
-#include "QBoard.h"
+#include "windows/game/board/QBoard.h"
 #include <board/Board.h>
-#include <board/BoardFactory/AbstractBoardCreator.hpp>
-#include <board/BoardFactory/RandomExtendedMapCreator.hpp>
-#include <board/BoardFactory/RandomStandardMapCreator.hpp>
+#include <board/factory/AbstractBoardCreator.hpp>
+#include <board/factory/RandomExtendedMapCreator.hpp>
+#include <board/factory/RandomStandardMapCreator.hpp>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)

@@ -2,7 +2,7 @@
 #include <cmath>
 
 #include <types/TypeAliases.h>
-#include <QTile.h>
+#include "QTile.h"
 
 void QTile::updateGeometry(const QPointF& center, double size) {
     const auto pts = hexPolygonPoints(center, size);

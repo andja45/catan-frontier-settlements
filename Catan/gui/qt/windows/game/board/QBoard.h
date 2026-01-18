@@ -11,9 +11,9 @@
 #include <board/Board.h>
 #include <types/TypeAliases.h>
 
-#include <QTile.h>
-#include <QNode.h>
-#include <QEdge.h>
+#include "QTile.h"
+#include "QNode.h"
+#include "QEdge.h"
 
 class QBoard : public QWidget {
     Q_OBJECT

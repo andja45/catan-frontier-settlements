@@ -3,7 +3,7 @@
 //
 
 #include "SetRobberMove.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 bool SetRobberMove::isValid(const GameSession& session) const {
     const Board& board = session.board();

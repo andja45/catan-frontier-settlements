@@ -3,8 +3,8 @@
 //
 
 #include "PlayerTradeResponseMove.h"
-#include "gamemodel/GameSession.h"
-#include "gamemodel/Trade.h"
+#include "model/GameSession.h"
+#include "model/Trade.h"
 
 bool PlayerTradeResponseMove::isValid(const GameSession& session) const {
     const Player& player = session.player(m_playerId);

@@ -3,7 +3,7 @@
 //
 
 #include "MonopolyMove.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 bool MonopolyMove::isValid(const GameSession& session) const {
     if (session.currentPlayer() != m_playerId)

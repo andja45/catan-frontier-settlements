@@ -3,7 +3,7 @@
 //
 
 #include "RollDiceMove.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 bool RollDiceMove::isValid(const GameSession& session) const {
     if (session.currentPlayer() != m_playerId)

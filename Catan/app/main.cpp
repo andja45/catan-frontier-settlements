@@ -1,9 +1,9 @@
-#include <widget.h>
+#include <../gui/qt/windows/game/widget.h>
 
 #include <QApplication>
 #include <QMainWindow>
-#include <board/BoardFactory/AbstractBoardCreator.hpp>
-#include <board/BoardFactory/RandomStandardMapCreator.hpp>
+#include <board/factory/AbstractBoardCreator.hpp>
+#include <board/factory/RandomStandardMapCreator.hpp>
 
 
 int main(int argc, char *argv[])

@@ -1,6 +1,6 @@
-#include <QEdge.h>
+#include "QEdge.h"
 #include <cmath>
-#include <GameTheme.h>
+#include <common/GameTheme.h>
 
 bool QEdge::hoverAllowed() const {
     if (!m_edge) return false;

@@ -2,7 +2,7 @@
 #define GAMETHEME_H
 
 #include <QColor>
-#include "../../game/types/ResourceType.h"
+#include "../../../game/types/ResourceType.h"
 
 
 class GameTheme

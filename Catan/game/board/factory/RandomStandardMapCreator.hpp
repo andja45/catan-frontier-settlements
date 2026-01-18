@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <random>
 #include <board/Board.h>
-#include <board/BoardFactory/AbstractBoardCreator.hpp>
+#include <board/factory/AbstractBoardCreator.hpp>
 
 class RandomStandardMapCreator : public AbstractBoardCreator{
 private:

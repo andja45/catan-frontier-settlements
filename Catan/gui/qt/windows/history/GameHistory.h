@@ -12,7 +12,6 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include "GameDetailsView.h"
-#include "../../game/gamemodel/GameData.h"
 #include <fstream>
 #include <json.hpp>
 

@@ -3,7 +3,7 @@
 //
 
 #include "LargestArmyRule.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 void LargestArmyRule::evaluate(GameSession& session){
     const auto& players = session.players();

@@ -4,8 +4,8 @@
 
 #ifndef CATAN_NODECOORDS_HPP
 #define CATAN_NODECOORDS_HPP
-#include <board/Coords/AxialCoords.hpp>
-#include <board/Coords/ElementCoords.hpp>
+#include <board/coords/AxialCoords.hpp>
+#include <board/coords/ElementCoords.hpp>
 
 class NodeCoords:public ElementCoords {
 public:

@@ -18,10 +18,10 @@
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QValueAxis>
 #include <QStackedBarSeries>
-#include<../../game/gamemodel/GameData.h>
 #include<QDialog>
 #include<QPen>
-#include "GameTheme.h"
+#include <common/GameTheme.h>
+#include "model/GameData.h"
 
 class GameDetailsView : public QDialog
 {

@@ -6,9 +6,9 @@
 #define CATAN_BOARDCATALOG_HPP
 #include <string>
 #include <unordered_map>
-#include <board/BoardFactory/AbstractBoardCreator.hpp>
-#include <board/BoardFactory/RandomExtendedMapCreator.hpp>
-#include <board/BoardFactory/RandomStandardMapCreator.hpp>
+#include <board/factory/AbstractBoardCreator.hpp>
+#include <board/factory/RandomExtendedMapCreator.hpp>
+#include <board/factory/RandomStandardMapCreator.hpp>
 
 // TODO not used
 // intended for usage as simple factory method with dynamic registration of board creators
