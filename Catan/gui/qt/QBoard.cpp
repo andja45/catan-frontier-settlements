@@ -45,8 +45,8 @@ QPointF QBoard::axialToPixelNode(const NodeCoords& a, double size){
 
     int anglePer60 = static_cast<int>(a.direction());
     double angle_radians = -M_PI / 2 + anglePer60 * M_PI / 3;
-    int offsetX = size * std::cos(angle_radians);
-    int offsetY = size * std::sin(angle_radians);
+    double offsetX = size * std::cos(angle_radians);
+    double offsetY = size * std::sin(angle_radians);
 
     return QPointF(tileX + offsetX, tileY + offsetY);
 }

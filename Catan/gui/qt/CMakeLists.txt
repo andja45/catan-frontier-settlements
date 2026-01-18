@@ -14,8 +14,8 @@ add_library(catan_gui_qt
         QNode.h QNode.cpp
         GameHistory.h GameHistory.cpp
         GameDetailsView.h GameDetailsView.cpp
-        QRightSideBar.cpp
-        QRightSideBar.h
+
+
         GameHistory.h GameHistory.cpp
         GameDetailsView.h GameDetailsView.cpp
         GameTheme.h GameTheme.cpp
@@ -24,6 +24,9 @@ add_library(catan_gui_qt
         host_join/PlayerListItem.h host_join/PlayerListItem.cpp
         host_join/AddBotListItem.h host_join/AddBotListItem.cpp
         QEdge.h QEdge.cpp
+        FloatingPanel.h FloatingPanel.cpp
+        RightOverlay.h RightOverlay.cpp
+
 )
 
 target_include_directories(catan_gui_qt

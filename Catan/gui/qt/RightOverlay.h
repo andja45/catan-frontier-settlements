@@ -1,14 +1,11 @@
-//
-// Created by marko on 1/14/2026.
-//
-
-#ifndef QRIGHTSIDEBAR_H
-#define QRIGHTSIDEBAR_H
+#ifndef RIGHTOVERLAY_H
+#define RIGHTOVERLAY_H
 
 #include <QWidget>
 #include <QVector>
 #include <QString>
 
+class FloatingPanel;
 class QListWidget;
 class QLineEdit;
 class QPushButton;
@@ -30,43 +27,47 @@ struct BankSummary {
     int ore  = 19;
 };
 
-class QRightSideBar : public QWidget {
+class RightOverlay : public QWidget {
     Q_OBJECT
 public:
-    explicit QRightSideBar(QWidget* parent = nullptr);
+    explicit RightOverlay(QWidget* parent=nullptr);
 
-    // --- chat ---
     void addChatMessage(const QString& author, const QString& message);
-
-    // --- bank ---
     void setBankSummary(const BankSummary& b);
-
-    // --- players ---
     void setPlayers(const QVector<PlayerSummary>& players);
-    void updatePlayer(int row, const PlayerSummary& p); // convenience
+    void updatePlayer(int row, const PlayerSummary& p);
 
-    signals:
-        void chatSendRequested(const QString& text);
+signals:
+    void chatSendRequested(const QString& text);
+
+protected:
+    void resizeEvent(QResizeEvent*) override { relayout(); }
+    void paintEvent(QPaintEvent*) override;
 
 private:
-    void buildUi();
+    void relayout();
+    void buildChatAndBankUi(FloatingPanel* panel);
 
-    // Chat
+private:
+    int m_margin = 12;
+    int m_rightWidth = 360;
+
+    FloatingPanel* m_topPanel = nullptr;   // chat + bank
+    QWidget* m_playersStack = nullptr;     // islands
+
+    // --- chat ---
     QListWidget* m_chatList = nullptr;
     QLineEdit*   m_chatInput = nullptr;
     QPushButton* m_sendBtn = nullptr;
 
-    // Bank labels
+    // --- bank ---
     QLabel* m_woodLbl  = nullptr;
     QLabel* m_brickLbl = nullptr;
     QLabel* m_woolLbl  = nullptr;
     QLabel* m_wheatLbl = nullptr;
     QLabel* m_oreLbl   = nullptr;
 
-    // Player table
+    // --- optional players table (if you want it inside top panel) ---
     QTableWidget* m_playersTable = nullptr;
 };
-
-
-
-#endif //QRIGHTSIDEBAR_H
+#endif // RIGHTOVERLAY_H

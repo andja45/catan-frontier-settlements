@@ -1,15 +1,9 @@
-#include <QVBoxLayout>
-
+#include <QHBoxLayout>
 #include <widget.h>
 #include "./ui/ui_widget.h"
-#include <QRightSideBar.h>
 
-
-#include "QBoard.h"
-#include <board/Board.h>
-#include <board/BoardFactory/AbstractBoardCreator.hpp>
-#include <board/BoardFactory/RandomExtendedMapCreator.hpp>
-#include <board/BoardFactory/RandomStandardMapCreator.hpp>
+#include <QBoard.h>
+#include <RightOverlay.h>
 
 Widget::Widget(QWidget *parent, Board* b)
     : QWidget(parent)
@@ -17,36 +11,28 @@ Widget::Widget(QWidget *parent, Board* b)
 {
     ui->setupUi(this);
 
-    auto *qboard = new QBoard(this,b);
-
-    auto *sidebar = new QRightSideBar(this);
-
-    // Demo data
-    sidebar->setBankSummary(BankSummary{19,19,19,19,19});
-    sidebar->setPlayers({
-        {"TupacShakur", 7, 0},
-        {"Cavite", 5, 0},
-        {"IdrisElba", 8, 0},
-        {"AvocadoMan", 10, 0}
-    });
-    sidebar->addChatMessage("System", "Welcome!");
-    sidebar->addChatMessage("AvocadoMan", "Hello.");
-
-    // When user hits Send, append message (you can later forward to networking/model)
-    connect(sidebar, &QRightSideBar::chatSendRequested, this, [sidebar](const QString& text){
-        sidebar->addChatMessage("Me", text);
-    });
-
     auto *layout = new QHBoxLayout(this);
     layout->setContentsMargins(0,0,0,0);
     layout->setSpacing(0);
 
-    layout->addWidget(qboard, 1);     // stretch: board grows
-    layout->addWidget(sidebar, 0);    // fixed-ish width
+    auto* qboard  = new QBoard(this, b);
+    auto* overlay = new RightOverlay(this);
 
+    qboard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // Make overlay a fixed-ish width right sidebar
+    overlay->setMinimumWidth(400);
+    overlay->setMaximumWidth(600);
+    overlay->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+
+    layout->addWidget(qboard, 1);   // stretch
+    layout->addWidget(overlay, 0);  // fixed width
     setLayout(layout);
-}
 
+    connect(overlay, &RightOverlay::chatSendRequested, this, [overlay](const QString& text){
+        overlay->addChatMessage("Me", text);
+    });
+}
 
 Widget::~Widget()
 {
