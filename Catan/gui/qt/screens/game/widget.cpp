@@ -2,10 +2,10 @@
 
 #include "widget.h"
 #include "./ui/ui_widget.h"
-#include <windows/game/sidebar/QRightSideBar.h>
+#include <screens/game/sidebar/QRightSideBar.h>
 
 
-#include "windows/game/board/QBoard.h"
+#include "screens/game/board/QBoard.h"
 #include <board/Board.h>
 #include <board/factory/AbstractBoardCreator.hpp>
 #include <board/factory/RandomExtendedMapCreator.hpp>

@@ -1,4 +1,4 @@
-#include <../gui/qt/windows/game/widget.h>
+#include <../gui/qt/screens/game/widget.h>
 
 #include <QApplication>
 #include <QMainWindow>

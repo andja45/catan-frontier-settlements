@@ -4,26 +4,26 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Charts)
 
 
 add_library(catan_gui_qt
-        windows/game/widget.cpp
-        windows/game/widget.h
-        windows/game/widget.ui
-        windows/game/board/QBoard.cpp
-        windows/game/board/QBoard.h
-        windows/game/board/QTile.h
-        windows/game/board/QTile.cpp
-        windows/game/board/QNode.h windows/game/board/QNode.cpp
-        windows/history/GameHistory.h windows/history/GameHistory.cpp
-        windows/history/GameDetailsView.h windows/history/GameDetailsView.cpp
-        windows/game/sidebar/QRightSideBar.cpp
-        windows/game/sidebar/QRightSideBar.h
-        windows/history/GameHistory.h windows/history/GameHistory.cpp
-        windows/history/GameDetailsView.h windows/history/GameDetailsView.cpp
+        screens/game/widget.cpp
+        screens/game/widget.h
+        screens/game/widget.ui
+        screens/game/board/QBoard.cpp
+        screens/game/board/QBoard.h
+        screens/game/board/QTile.h
+        screens/game/board/QTile.cpp
+        screens/game/board/QNode.h screens/game/board/QNode.cpp
+        screens/history/GameHistory.h screens/history/GameHistory.cpp
+        screens/history/GameDetailsView.h screens/history/GameDetailsView.cpp
+        screens/game/sidebar/QRightSideBar.cpp
+        screens/game/sidebar/QRightSideBar.h
+        screens/history/GameHistory.h screens/history/GameHistory.cpp
+        screens/history/GameDetailsView.h screens/history/GameDetailsView.cpp
         common/GameTheme.h common/GameTheme.cpp
-        windows/host_join/GameJoinView.h windows/host_join/GameJoinView.cpp
-        windows/host_join/GameHostView.h windows/host_join/GameHostView.cpp
-        windows/host_join/PlayerListItem.h windows/host_join/PlayerListItem.cpp
-        windows/host_join/AddBotListItem.h windows/host_join/AddBotListItem.cpp
-        windows/game/board/QEdge.h windows/game/board/QEdge.cpp
+        screens/lobby/GameJoinView.h screens/lobby/GameJoinView.cpp
+        screens/lobby/GameHostView.h screens/lobby/GameHostView.cpp
+        screens/lobby/PlayerListItem.h screens/lobby/PlayerListItem.cpp
+        screens/lobby/AddBotListItem.h screens/lobby/AddBotListItem.cpp
+        screens/game/board/QEdge.h screens/game/board/QEdge.cpp
 )
 
 target_include_directories(catan_gui_qt
