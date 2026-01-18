@@ -21,7 +21,7 @@ Widget::Widget(QWidget *parent, Board* b)
     qboard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // Make overlay a fixed-ish width right sidebar
-    overlay->setMinimumWidth(400);
+    overlay->setMinimumWidth(380);
     overlay->setMaximumWidth(600);
     overlay->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 

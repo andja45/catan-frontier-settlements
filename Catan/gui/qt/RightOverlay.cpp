@@ -15,10 +15,15 @@
 #include <QPainter>
 
 RightOverlay::RightOverlay(QWidget* parent) : QWidget(parent) {
-    // -------- Top floating panel: Chat + Bank --------
-    m_topPanel = new FloatingPanel(this);
-    m_topPanel->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-    buildChatAndBankUi(m_topPanel);
+    // -------- Chat panel --------
+    m_chat = new FloatingPanel(this);
+    m_chat->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    buildChatUi(m_chat);
+
+    // -------- Bank panel --------
+    m_bank = new FloatingPanel(this);
+    m_bank->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    buildBankUi(m_bank);
 
     // -------- Player islands (floating) --------
     m_playersStack = new QWidget(this);
@@ -28,7 +33,6 @@ RightOverlay::RightOverlay(QWidget* parent) : QWidget(parent) {
     stackL->setContentsMargins(0,0,0,0);
     stackL->setSpacing(10);
 
-    // Example islands (keep as-is for now)
     for (int i = 0; i < 4; ++i) {
         auto* p = new FloatingPanel(m_playersStack);
         p->setFixedHeight(80);
@@ -48,65 +52,64 @@ RightOverlay::RightOverlay(QWidget* parent) : QWidget(parent) {
     relayout();
 }
 
-void RightOverlay::buildChatAndBankUi(FloatingPanel* panel) {
+void RightOverlay::buildChatUi(FloatingPanel* panel) {
     auto* root = new QVBoxLayout(panel);
     root->setContentsMargins(10,10,10,10);
     root->setSpacing(10);
 
-    // -------- Chat --------
-    {
-        auto* chatBox = new QGroupBox("Chat", panel);
-        auto* chatLayout = new QVBoxLayout(chatBox);
+    auto* chatBox = new QGroupBox("Chat", panel);
+    auto* chatLayout = new QVBoxLayout(chatBox);
 
-        m_chatList = new QListWidget(chatBox);
-        m_chatList->setWordWrap(true);
-        m_chatList->setSelectionMode(QAbstractItemView::NoSelection);
+    m_chatList = new QListWidget(chatBox);
+    m_chatList->setWordWrap(true);
+    m_chatList->setSelectionMode(QAbstractItemView::NoSelection);
 
-        auto* inputRow = new QHBoxLayout();
-        m_chatInput = new QLineEdit(chatBox);
-        m_chatInput->setPlaceholderText("Send a message...");
-        m_sendBtn = new QPushButton("Send", chatBox);
-        m_sendBtn->setDefault(true);
+    auto* inputRow = new QHBoxLayout();
+    m_chatInput = new QLineEdit(chatBox);
+    m_chatInput->setPlaceholderText("Send a message...");
+    m_sendBtn = new QPushButton("Send", chatBox);
+    m_sendBtn->setDefault(true);
 
-        inputRow->addWidget(m_chatInput, 1);
-        inputRow->addWidget(m_sendBtn);
+    inputRow->addWidget(m_chatInput, 1);
+    inputRow->addWidget(m_sendBtn);
 
-        chatLayout->addWidget(m_chatList, 1);
-        chatLayout->addLayout(inputRow);
+    chatLayout->addWidget(m_chatList, 1);
+    chatLayout->addLayout(inputRow);
 
-        root->addWidget(chatBox, 3);
+    root->addWidget(chatBox, 1);
 
-        auto sendNow = [this]() {
-            const QString text = m_chatInput->text().trimmed();
-            if (text.isEmpty()) return;
-            emit chatSendRequested(text);
-            m_chatInput->clear();
-        };
-        QObject::connect(m_sendBtn, &QPushButton::clicked, panel, sendNow);
-        QObject::connect(m_chatInput, &QLineEdit::returnPressed, panel, sendNow);
+    auto sendNow = [this]() {
+        const QString text = m_chatInput->text().trimmed();
+        if (text.isEmpty()) return;
+        emit chatSendRequested(text);
+        m_chatInput->clear();
+    };
+    QObject::connect(m_sendBtn, &QPushButton::clicked, panel, sendNow);
+    QObject::connect(m_chatInput, &QLineEdit::returnPressed, panel, sendNow);
+}
 
-    }
+void RightOverlay::buildBankUi(FloatingPanel* panel) {
+    auto* root = new QVBoxLayout(panel);
+    root->setContentsMargins(10,10,10,10);
+    root->setSpacing(10);
 
-    // -------- Bank --------
-    {
-        auto* bankBox = new QGroupBox("Bank", panel);
-        auto* bankLayout = new QHBoxLayout(bankBox);
+    auto* bankBox = new QGroupBox("Bank", panel);
+    auto* bankLayout = new QHBoxLayout(bankBox);
 
-        m_woodLbl  = new QLabel("Wood: 0", bankBox);
-        m_brickLbl = new QLabel("Brick: 0", bankBox);
-        m_woolLbl  = new QLabel("Wool: 0", bankBox);
-        m_wheatLbl = new QLabel("Wheat: 0", bankBox);
-        m_oreLbl   = new QLabel("Ore: 0", bankBox);
+    m_woodLbl  = new QLabel("Wood: 0", bankBox);
+    m_brickLbl = new QLabel("Brick: 0", bankBox);
+    m_woolLbl  = new QLabel("Wool: 0", bankBox);
+    m_wheatLbl = new QLabel("Wheat: 0", bankBox);
+    m_oreLbl   = new QLabel("Ore: 0", bankBox);
 
-        bankLayout->addWidget(m_woodLbl);
-        bankLayout->addWidget(m_brickLbl);
-        bankLayout->addWidget(m_woolLbl);
-        bankLayout->addWidget(m_wheatLbl);
-        bankLayout->addWidget(m_oreLbl);
-        bankLayout->addStretch(1);
+    bankLayout->addWidget(m_woodLbl);
+    bankLayout->addWidget(m_brickLbl);
+    bankLayout->addWidget(m_woolLbl);
+    bankLayout->addWidget(m_wheatLbl);
+    bankLayout->addWidget(m_oreLbl);
+    bankLayout->addStretch(1);
 
-        root->addWidget(bankBox, 0);
-    }
+    root->addWidget(bankBox, 1);
 }
 
 void RightOverlay::addChatMessage(const QString& author, const QString& message) {
@@ -160,10 +163,16 @@ void RightOverlay::relayout() {
     const int x = W - m_rightWidth - m_margin;
     const int y = m_margin;
 
-    const int topH = int(H * 0.45);
-    m_topPanel->setGeometry(x, y, m_rightWidth, topH);
+    const int topAreaH = int(H * 0.45);
 
-    const int playersY = y + topH + m_margin;
+    // choose a fixed-ish bank height, clamp so it looks OK on small windows
+    const int bankH = std::clamp(90, 70, topAreaH / 3); // needs <algorithm>
+    const int chatH = topAreaH - bankH - m_margin;
+
+    m_chat->setGeometry(x, y, m_rightWidth, chatH);
+    m_bank->setGeometry(x, y + chatH + m_margin, m_rightWidth, bankH);
+
+    const int playersY = y + topAreaH + m_margin;
     m_playersStack->setGeometry(x, playersY, m_rightWidth, H - playersY - m_margin);
 }
 
