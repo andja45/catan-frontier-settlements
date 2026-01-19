@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QVector>
 #include <QString>
+#include <player/Player.h>
+#include <player/Bank.h>
 
 class FloatingPanel;
 class QListWidget;
@@ -11,14 +13,6 @@ class QLineEdit;
 class QPushButton;
 class QLabel;
 class QTableWidget;
-
-struct PlayerSummary {
-    QString name;
-    int resources = 0;
-    int development = 0;
-    int roads = 0;
-    int knights = 0;
-};
 
 struct BankSummary {
     int wood = 19;
@@ -31,12 +25,9 @@ struct BankSummary {
 class RightOverlay : public QWidget {
     Q_OBJECT
 public:
-    explicit RightOverlay(QWidget* parent=nullptr);
+    explicit RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* parent=nullptr);
 
     void addChatMessage(const QString& author, const QString& message);
-    void setBankSummary(const BankSummary& b);
-    void setPlayers(const QVector<PlayerSummary>& players);
-    void updatePlayer(int row, const PlayerSummary& p);
 
 signals:
     void chatSendRequested(const QString& text);
@@ -56,7 +47,7 @@ private:
     int m_rightWidth = 360;
 
     FloatingPanel* m_chat;
-    FloatingPanel* m_bank;
+    FloatingPanel* m_bankIsland;
     FloatingPanel* m_you;
     QWidget* m_playersStack = nullptr;     // islands
 
@@ -71,8 +62,10 @@ private:
     QLabel* m_woolLbl  = nullptr;
     QLabel* m_wheatLbl = nullptr;
     QLabel* m_oreLbl   = nullptr;
+    Bank* m_bank;
 
-    // --- optional players table (if you want it inside top panel) ---
+    // --- players ---
     QTableWidget* m_playersTable = nullptr;
+    QVector<Player*> m_players;
 };
 #endif // RIGHTOVERLAY_H

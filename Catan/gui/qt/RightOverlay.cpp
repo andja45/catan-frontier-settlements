@@ -15,17 +15,18 @@
 #include <QHeaderView>
 #include <QDateTime>
 #include <QPainter>
+#include <iostream>
 
-RightOverlay::RightOverlay(QWidget* parent) : QWidget(parent) {
+RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* parent) : m_bank(bank), QWidget(parent) {
     // -------- Chat panel --------
     m_chat = new FloatingPanel(this);
     m_chat->setAttribute(Qt::WA_TransparentForMouseEvents, false);
     buildChatUi(m_chat);
 
     // -------- Bank panel --------
-    m_bank = new FloatingPanel(this);
-    m_bank->setAttribute(Qt::WA_TransparentForMouseEvents, false);
-    buildBankUi(m_bank);
+    m_bankIsland = new FloatingPanel(this);
+    m_bankIsland->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    buildBankUi(m_bankIsland);
 
     // -------- Player islands (floating) --------
     m_playersStack = new QWidget(this);
@@ -35,23 +36,25 @@ RightOverlay::RightOverlay(QWidget* parent) : QWidget(parent) {
     stackL->setContentsMargins(0,0,0,0);
     stackL->setSpacing(10);
 
-    stackL->addWidget(m_bank);
+    stackL->addWidget(m_bankIsland);
 
-    for (int i = 0; i < 4; ++i) {
+    for(auto player : players) m_players.push_back(player);
+
+    for (int i = 0; i < m_players.size(); ++i) {
         auto* p = new FloatingPanel(m_playersStack);
         p->setFixedHeight(80);
 
         auto* pl = new QHBoxLayout(p);
         pl->setContentsMargins(10,10,10,10);
-        pl->addWidget(new QLabel(QString("Player %1").arg(i+1), p));
+        pl->addWidget(new QLabel(QString::fromStdString(m_players[i]->getName())));
         pl->addStretch();
 
         auto resources = new QCard(p);
-        resources->setSpec({CardKind::Resource, CardFace::FaceDown});
+        resources->setSpec({CardKind::Resource, CardFace::FaceDown, ResourceType::None,  DevType::Unknown, m_players[i]->getNumOfResourceCards()});
         pl->addWidget(resources);
 
         auto devs = new QCard(p);
-        devs->setSpec({CardKind::Development, CardFace::FaceDown});
+        devs->setSpec({CardKind::Development, CardFace::FaceDown, ResourceType::None,  DevType::Unknown, m_players[i]->getNumOfDevCards()});
         pl->addWidget(devs);
 
         pl->addWidget(new QLabel("Knights: 0", p));
@@ -121,11 +124,11 @@ void RightOverlay::buildBankUi(FloatingPanel* panel) {
     auto* row = new QCardRow(bankBox);
     row->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, 19});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, 19});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, 19});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, 19});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, 19});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, m_bank->getResources()[ResourceType::Wood]});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, m_bank->getResources()[ResourceType::Brick]});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, m_bank->getResources()[ResourceType::Wool]});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, m_bank->getResources()[ResourceType::Wheat]});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, m_bank->getResources()[ResourceType::Ore]});
 
     bankLayout->addWidget(row);
 
@@ -147,11 +150,13 @@ void RightOverlay::buildYouUi(FloatingPanel* panel) {
     auto* row = new QCardRow(youBox);
     row->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, 1});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, 0});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, 2});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, 1});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, 3});
+    auto playerYou = m_players[m_players.size() - 1];
+
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, playerYou->getResources()[ResourceType::Wood]});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, playerYou->getResources()[ResourceType::Brick]});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, playerYou->getResources()[ResourceType::Wool]});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, playerYou->getResources()[ResourceType::Wheat]});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, playerYou->getResources()[ResourceType::Ore]});
 
     youLayout->addWidget(row);
 
@@ -163,41 +168,6 @@ void RightOverlay::addChatMessage(const QString& author, const QString& message)
     const QString time = QDateTime::currentDateTime().toString("HH:mm");
     m_chatList->addItem(QString("[%1] %2: %3").arg(time, author, message));
     m_chatList->scrollToBottom();
-}
-
-void RightOverlay::setBankSummary(const BankSummary& b) {
-    if (!m_woodLbl) return;
-    m_woodLbl->setText(QString("Wood: %1").arg(b.wood));
-    m_brickLbl->setText(QString("Brick: %1").arg(b.brick));
-    m_woolLbl->setText(QString("Wool: %1").arg(b.wool));
-    m_wheatLbl->setText(QString("Wheat: %1").arg(b.wheat));
-    m_oreLbl->setText(QString("Ore: %1").arg(b.ore));
-}
-
-void RightOverlay::setPlayers(const QVector<PlayerSummary>& players) {
-    if (!m_playersTable) return; // only if you add the table to the top panel
-    m_playersTable->setRowCount(players.size());
-    for (int i = 0; i < players.size(); ++i) {
-        const auto& p = players[i];
-        m_playersTable->setItem(i, 0, new QTableWidgetItem(p.name));
-        m_playersTable->setItem(i, 3, new QTableWidgetItem(QString::number(p.knights)));
-        m_playersTable->setItem(i, 3, new QTableWidgetItem(QString::number(p.roads)));
-    }
-}
-
-void RightOverlay::updatePlayer(int row, const PlayerSummary& p) {
-    if (!m_playersTable) return;
-    if (row < 0 || row >= m_playersTable->rowCount()) return;
-
-    auto ensure = [&](int c) {
-        if (!m_playersTable->item(row, c))
-            m_playersTable->setItem(row, c, new QTableWidgetItem());
-    };
-    ensure(0); ensure(1); ensure(2); ensure(3);
-
-    m_playersTable->item(row, 0)->setText(p.name);
-    m_playersTable->item(row, 3)->setText(QString::number(p.knights));
-    m_playersTable->item(row, 3)->setText(QString::number(p.roads));
 }
 
 void RightOverlay::relayout() {

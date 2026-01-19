@@ -71,6 +71,7 @@ void QCard::paintEvent(QPaintEvent*) {
         f.setBold(true);
         f.setPointSize(10);
         p.setFont(f);
+    }
 
     // Count badge
     if (m_spec.countBadge >= 0) {
@@ -89,5 +90,4 @@ void QCard::paintEvent(QPaintEvent*) {
         p.setFont(bf);
         p.drawText(b, Qt::AlignCenter, QString::number(badge));
     }
-}
 }

@@ -16,7 +16,15 @@ Widget::Widget(QWidget *parent, Board* b)
     layout->setSpacing(0);
 
     auto* qboard  = new QBoard(this, b);
-    auto* overlay = new RightOverlay(this);
+
+    std::vector<Player*> players;
+    players.push_back(new Player(1, "Lazar"));
+    players.push_back(new Player(1, "Jovana"));
+    players.push_back(new Player(1, "Matija + Andjela"));
+    players.push_back(new Player(1, "Marko"));
+
+    Bank* bank = new Bank();
+    auto* overlay = new RightOverlay(players, bank, this);
 
     qboard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -24,6 +32,7 @@ Widget::Widget(QWidget *parent, Board* b)
     overlay->setMinimumWidth(380);
     overlay->setMaximumWidth(600);
     overlay->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+
 
     layout->addWidget(qboard, 1);   // stretch
     layout->addWidget(overlay, 0);  // fixed width
