@@ -43,12 +43,17 @@ RightOverlay::RightOverlay(QWidget* parent) : QWidget(parent) {
         pl->setContentsMargins(10,10,10,10);
         pl->addWidget(new QLabel(QString("Player %1").arg(i+1), p));
         pl->addStretch();
-        auto c = new QCard(p);
-        //c->setSpec()
-        pl->addWidget(c);
-        pl->addWidget(new QLabel("Cards: 0", p));
-        pl->addWidget(new QLabel("Devs: 0", p));
+
+        auto resources = new QCard(p);
+        resources->setSpec({CardKind::Resource, CardFace::FaceDown});
+        pl->addWidget(resources);
+
+        auto devs = new QCard(p);
+        devs->setSpec({CardKind::Development, CardFace::FaceDown});
+        pl->addWidget(devs);
+
         pl->addWidget(new QLabel("Knights: 0", p));
+        pl->addWidget(new QLabel("Roads: 0", p));
 
         stackL->addWidget(p);
     }
@@ -100,12 +105,21 @@ void RightOverlay::buildBankUi(FloatingPanel* panel) {
 
     auto* bankBox = new QGroupBox("Bank", panel);
 
+    // Layout INSIDE the group box so content respects the border/title
+    auto* bankLayout = new QVBoxLayout(bankBox);
+    bankLayout->setContentsMargins(10, 18, 10, 10); // top margin leaves room for title
+    bankLayout->setSpacing(0);
+
     auto* row = new QCardRow(bankBox);
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood, DevType::Unknown, 19});
+    row->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, 19});
     row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, 19});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool, DevType::Unknown, 19});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, 19});
     row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, 19});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore, DevType::Unknown, 19});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, 19});
+
+    bankLayout->addWidget(row);
 
     root->addWidget(bankBox, 1);
 }
@@ -132,9 +146,8 @@ void RightOverlay::setPlayers(const QVector<PlayerSummary>& players) {
     for (int i = 0; i < players.size(); ++i) {
         const auto& p = players[i];
         m_playersTable->setItem(i, 0, new QTableWidgetItem(p.name));
-        m_playersTable->setItem(i, 1, new QTableWidgetItem(QString::number(p.resources)));
-        m_playersTable->setItem(i, 2, new QTableWidgetItem(QString::number(p.development)));
         m_playersTable->setItem(i, 3, new QTableWidgetItem(QString::number(p.knights)));
+        m_playersTable->setItem(i, 3, new QTableWidgetItem(QString::number(p.roads)));
     }
 }
 
@@ -149,9 +162,8 @@ void RightOverlay::updatePlayer(int row, const PlayerSummary& p) {
     ensure(0); ensure(1); ensure(2); ensure(3);
 
     m_playersTable->item(row, 0)->setText(p.name);
-    m_playersTable->item(row, 1)->setText(QString::number(p.resources));
-    m_playersTable->item(row, 2)->setText(QString::number(p.development));
     m_playersTable->item(row, 3)->setText(QString::number(p.knights));
+    m_playersTable->item(row, 3)->setText(QString::number(p.roads));
 }
 
 void RightOverlay::relayout() {
@@ -163,8 +175,8 @@ void RightOverlay::relayout() {
 
     const int topAreaH = int(H * 0.45);
 
-    // choose a fixed-ish bank height, clamp so it looks OK on small windows
-    const int bankH = std::clamp(90, 70, topAreaH / 3); // needs <algorithm>
+    // Bank gets ~30% of the top area, but never too small / too big
+    const int bankH = std::clamp(int(topAreaH * 0.40), 120, 180);
     const int chatH = topAreaH - bankH - m_margin;
 
     m_chat->setGeometry(x, y, m_rightWidth, chatH);

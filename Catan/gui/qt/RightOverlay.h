@@ -16,6 +16,7 @@ struct PlayerSummary {
     QString name;
     int resources = 0;
     int development = 0;
+    int roads = 0;
     int knights = 0;
 };
 

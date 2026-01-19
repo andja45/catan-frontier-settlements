@@ -31,17 +31,14 @@ void QCard::paintEvent(QPaintEvent*) {
 
     // Background (face-down vs face-up)
     QColor base = QColor(245,245,245);
-    if (m_spec.face == CardFace::FaceDown) base = QColor(80,120,160); // placeholder “back”
 
     // Resource/dev tint if face-up
-    if (m_spec.face == CardFace::FaceUp) {
-        if (m_spec.kind == CardKind::Resource) {
-            if(m_spec.resource == ResourceType::None)
-                base = QColor(153, 50, 204);
-            else base = GameTheme::getColorByResource(m_spec.resource);
-        } else {
-            base = QColor(120, 90, 160); // dev card tint for now
-        }
+    if (m_spec.kind == CardKind::Resource) {
+        if(m_spec.face == CardFace::FaceDown || m_spec.resource == ResourceType::None)
+            base = QColor(60, 70, 180);
+        else base = GameTheme::getColorByResource(m_spec.resource);
+    } else {
+        base = QColor(120, 90, 160); // dev card tint for now
     }
 
     // Card body
@@ -75,32 +72,12 @@ void QCard::paintEvent(QPaintEvent*) {
         f.setPointSize(10);
         p.setFont(f);
 
-        QString label;
-        if (m_spec.kind == CardKind::Resource) {
-            switch (m_spec.resource) {
-            case ResourceType::Wood:  label = "W"; break;
-            case ResourceType::Brick: label = "B"; break;
-            case ResourceType::Wool:  label = "Wo"; break;
-            case ResourceType::Wheat: label = "Wh"; break;
-            case ResourceType::Ore:   label = "O"; break;
-            default: label = "?"; break;
-            }
-        } else {
-            label = "Dev";
-        }
-
-        p.drawText(r, Qt::AlignCenter, label);
-        p.restore();
-    } else {
-        // face-down hint
-        p.setPen(QColor(255,255,255,200));
-        p.drawText(r, Qt::AlignCenter, "?");
-    }
-
     // Count badge
-    if (m_spec.countBadge > 0) {
+    if (m_spec.countBadge >= 0) {
         const int badge = m_spec.countBadge;
-        QRectF b(r.right() - 18, r.top() + 4, 14, 14);
+        qreal number_radius = 25;
+        QRectF b((r.right() + r.left()) / 2 - number_radius / 2, (r.top() + r.bottom()) / 2 - number_radius / 2,
+                 number_radius, number_radius);
         p.setBrush(QColor(255,255,255,220));
         p.setPen(QColor(0,0,0,120));
         p.drawEllipse(b);
@@ -112,4 +89,5 @@ void QCard::paintEvent(QPaintEvent*) {
         p.setFont(bf);
         p.drawText(b, Qt::AlignCenter, QString::number(badge));
     }
+}
 }

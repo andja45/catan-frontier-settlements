@@ -12,13 +12,13 @@ enum class DevType { Knight, VP, RoadBuilding, YearOfPlenty, Monopoly, Unknown }
 
 struct CardSpec {
     CardKind kind = CardKind::Resource;
-    CardFace face = CardFace::FaceUp;
+    CardFace face = CardFace::FaceDown;
 
     // exactly one of these is meaningful depending on kind/face
     ResourceType resource = ResourceType::None;
     DevType dev = DevType::Unknown;
 
-    int countBadge = 0;           // 0 -> no badge, >0 -> show small number
+    int countBadge = -1;           // 0 -> no badge, >0 -> show small number
     bool emphasized = false;      // e.g., selectable highlight
 };
 
