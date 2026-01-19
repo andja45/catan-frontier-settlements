@@ -61,8 +61,12 @@ message Move {
 // BASIC MOVES
 // ==========================================
 
-message RollDiceMove {}
-message EndTurnMove {}
+message RollDiceMove {
+  uint32 player_id = 1;
+}
+message EndTurnMove {
+  uint32 player_id = 1;
+}
 
 // ==========================================
 // BUILDING MOVES
@@ -77,7 +81,7 @@ message BuildCityMove { uint32 node_id = 1; }
 // ==========================================
 
 message DiscardCardsMove {
-  map<uint32, uint32> discarded = 1;
+  map<int32, int32> discarded = 1;
 }
 message SetRobberMove { uint32 tile_id = 1; }
 
@@ -89,27 +93,27 @@ message StealCardMove { uint32 victim_player_id = 1; }
 
 message BuyDevCardMove {}
 
-message PlayDevCardMove { string card_type = 1; }
+message PlayDevCardMove { DevCardType card_type = 1; }
 
 message YearOfPlentyMove {
-  string resource_1 = 1;
-  string resource_2 = 2;
+  ResourceType resource_1 = 1;
+  ResourceType resource_2 = 2;
 }
 
-message MonopolyMove { string resource_type = 1; }
+message MonopolyMove { ResourceType resource_type = 1; }
 
 // ==========================================
 // TRADES MOVES
 // ==========================================
 
 message BankTradeMove {
-  string give_resource = 1;
-  string get_resource = 2;
+  ResourceType give_resource = 1;
+  ResourceType get_resource = 2;
 }
 
 message PlayerTradeRequestMove {
-  string give_resource = 1;
-  string get_resource = 2;
+  map<int32, int32> give_resource = 1;
+  map<int32, int32> get_resource = 2;
 }
 
 message PlayerTradeResponseMove {
