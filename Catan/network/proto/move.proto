@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package catan;
+
+import "common.proto";
+
+message Move {
+
+  enum MoveType {
+    RollDice = 0;
+    EndTurn = 1;
+    BuildRoad = 2;
+    BuildSettlement = 3;
+    BuildCity = 4;
+    DiscardCards = 5;
+    SetRobber = 6;
+    StealCard = 7;
+    BuyDevCard = 8;
+    PlayDevCard = 9;
+    YearOfPlenty = 10;
+    Monopoly = 11;
+    BankTrade = 12;
+    PlayerTradeRequest = 13;
+    PlayerTradeResponse = 14;
+    PlayerTradeAccept = 15;
+    InvalidMoveType = 16;
+  }
+
+  MoveType type = 1;
+
+  oneof payload {
+    // TURN
+    RollDiceMove roll_dice = 10;
+    EndTurnMove end_turn = 11;
+
+    // BUILD
+    BuildRoadMove build_road = 20;
+    BuildSettlementMove build_settlement = 21;
+    BuildCityMove build_city = 22;
+
+    // ROBBER/KNIGHT
+    SetRobberMove set_robber = 30;
+    StealCardMove steal_card = 31;
+    DiscardCardsMove discard_cards = 32;
+
+    // DEVCARDS
+    BuyDevCardMove buy_dev_card = 40;
+    PlayDevCardMove play_dev_card = 41;
+    YearOfPlentyMove year_of_plenty = 42;
+    MonopolyMove monopoly = 43;
+
+    // TRADES
+    BankTradeMove bank_trade = 50;
+    PlayerTradeRequestMove trade_request = 51;
+    PlayerTradeResponseMove trade_response = 52;
+    PlayerTradeAcceptMove trade_accept = 53;
+  }
+}
+
+// ==========================================
+// BASIC MOVES
+// ==========================================
+
+message RollDiceMove {}
+message EndTurnMove {}
+
+// ==========================================
+// BUILDING MOVES
+// ==========================================
+
+message BuildRoadMove { uint32 edge_id = 1; }
+message BuildSettlementMove { uint32 node_id = 1; }
+message BuildCityMove { uint32 node_id = 1; }
+
+// ==========================================
+// ROBBER/KNIGHT MOVES
+// ==========================================
+
+message DiscardCardsMove {
+  map<uint32, uint32> discarded = 1;
+}
+message SetRobberMove { uint32 tile_id = 1; }
+
+message StealCardMove { uint32 victim_player_id = 1; }
+
+// ==========================================
+// DEVCARDS MOVES
+// ==========================================
+
+message BuyDevCardMove {}
+
+message PlayDevCardMove { string card_type = 1; }
+
+message YearOfPlentyMove {
+  string resource_1 = 1;
+  string resource_2 = 2;
+}
+
+message MonopolyMove { string resource_type = 1; }
+
+// ==========================================
+// TRADES MOVES
+// ==========================================
+
+message BankTradeMove {
+  string give_resource = 1;
+  string get_resource = 2;
+}
+
+message PlayerTradeRequestMove {
+  string give_resource = 1;
+  string get_resource = 2;
+}
+
+message PlayerTradeResponseMove {
+  uint32 trade_request_id = 1;
+}
+
+message PlayerTradeAcceptMove {
+  uint32 player_id = 1;
+  uint32 trade_id = 2;
+}
