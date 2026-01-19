@@ -49,6 +49,7 @@ private:
     void relayout();
     void buildChatUi(FloatingPanel* panel);
     void buildBankUi(FloatingPanel* panel);
+    void buildYouUi(FloatingPanel* panel);
 
 private:
     int m_margin = 12;
@@ -56,6 +57,7 @@ private:
 
     FloatingPanel* m_chat;
     FloatingPanel* m_bank;
+    FloatingPanel* m_you;
     QWidget* m_playersStack = nullptr;     // islands
 
     // --- chat ---

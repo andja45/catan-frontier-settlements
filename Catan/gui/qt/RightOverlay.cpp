@@ -35,6 +35,8 @@ RightOverlay::RightOverlay(QWidget* parent) : QWidget(parent) {
     stackL->setContentsMargins(0,0,0,0);
     stackL->setSpacing(10);
 
+    stackL->addWidget(m_bank);
+
     for (int i = 0; i < 4; ++i) {
         auto* p = new FloatingPanel(m_playersStack);
         p->setFixedHeight(80);
@@ -57,6 +59,12 @@ RightOverlay::RightOverlay(QWidget* parent) : QWidget(parent) {
 
         stackL->addWidget(p);
     }
+
+    m_you = new FloatingPanel(this);
+    m_you->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    buildYouUi(m_you);
+
+    stackL->addWidget(m_you);
     stackL->addStretch(1);
 
     relayout();
@@ -107,7 +115,7 @@ void RightOverlay::buildBankUi(FloatingPanel* panel) {
 
     // Layout INSIDE the group box so content respects the border/title
     auto* bankLayout = new QVBoxLayout(bankBox);
-    bankLayout->setContentsMargins(10, 18, 10, 10); // top margin leaves room for title
+    bankLayout->setContentsMargins(3, 5, 3, 3); // top margin leaves room for title
     bankLayout->setSpacing(0);
 
     auto* row = new QCardRow(bankBox);
@@ -122,6 +130,32 @@ void RightOverlay::buildBankUi(FloatingPanel* panel) {
     bankLayout->addWidget(row);
 
     root->addWidget(bankBox, 1);
+}
+
+void RightOverlay::buildYouUi(FloatingPanel* panel) {
+    auto* root = new QVBoxLayout(panel);
+    root->setContentsMargins(10,10,10,10);
+    root->setSpacing(10);
+
+    auto* youBox = new QGroupBox("You", panel);
+
+    // Layout INSIDE the group box so content respects the border/title
+    auto* youLayout = new QVBoxLayout(youBox);
+    youLayout->setContentsMargins(3, 5, 3, 3); // top margin leaves room for title
+    youLayout->setSpacing(0);
+
+    auto* row = new QCardRow(youBox);
+    row->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, 1});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, 0});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, 2});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, 1});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, 3});
+
+    youLayout->addWidget(row);
+
+    root->addWidget(youBox, 1);
 }
 
 void RightOverlay::addChatMessage(const QString& author, const QString& message) {
@@ -173,16 +207,12 @@ void RightOverlay::relayout() {
     const int x = W - m_rightWidth - m_margin;
     const int y = m_margin;
 
-    const int topAreaH = int(H * 0.45);
-
-    // Bank gets ~30% of the top area, but never too small / too big
-    const int bankH = std::clamp(int(topAreaH * 0.40), 120, 180);
-    const int chatH = topAreaH - bankH - m_margin;
+    // 30% of height for chat
+    const int chatH = int(H * 0.3);
 
     m_chat->setGeometry(x, y, m_rightWidth, chatH);
-    m_bank->setGeometry(x, y + chatH + m_margin, m_rightWidth, bankH);
 
-    const int playersY = y + topAreaH + m_margin;
+    const int playersY = y + chatH + m_margin;
     m_playersStack->setGeometry(x, playersY, m_rightWidth, H - playersY - m_margin);
 }
 
