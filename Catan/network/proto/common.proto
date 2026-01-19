@@ -1,0 +1,8 @@
+enum ResourceType {
+  RESOURCE_UNKNOWN = 0;
+  WOOD = 1;
+  BRICK = 2;
+  SHEEP = 3;
+  WHEAT = 4;
+  ORE = 5;
+}
