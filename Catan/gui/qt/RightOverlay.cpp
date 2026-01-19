@@ -1,6 +1,8 @@
 #include "RightOverlay.h"
 #include "FloatingPanel.h"
 #include <GameTheme.h>
+#include <QCard.h>
+#include <QCardRow.h>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -41,6 +43,9 @@ RightOverlay::RightOverlay(QWidget* parent) : QWidget(parent) {
         pl->setContentsMargins(10,10,10,10);
         pl->addWidget(new QLabel(QString("Player %1").arg(i+1), p));
         pl->addStretch();
+        auto c = new QCard(p);
+        //c->setSpec()
+        pl->addWidget(c);
         pl->addWidget(new QLabel("Cards: 0", p));
         pl->addWidget(new QLabel("Devs: 0", p));
         pl->addWidget(new QLabel("Knights: 0", p));
@@ -94,20 +99,13 @@ void RightOverlay::buildBankUi(FloatingPanel* panel) {
     root->setSpacing(10);
 
     auto* bankBox = new QGroupBox("Bank", panel);
-    auto* bankLayout = new QHBoxLayout(bankBox);
 
-    m_woodLbl  = new QLabel("Wood: 0", bankBox);
-    m_brickLbl = new QLabel("Brick: 0", bankBox);
-    m_woolLbl  = new QLabel("Wool: 0", bankBox);
-    m_wheatLbl = new QLabel("Wheat: 0", bankBox);
-    m_oreLbl   = new QLabel("Ore: 0", bankBox);
-
-    bankLayout->addWidget(m_woodLbl);
-    bankLayout->addWidget(m_brickLbl);
-    bankLayout->addWidget(m_woolLbl);
-    bankLayout->addWidget(m_wheatLbl);
-    bankLayout->addWidget(m_oreLbl);
-    bankLayout->addStretch(1);
+    auto* row = new QCardRow(bankBox);
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood, DevType::Unknown, 19});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, 19});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool, DevType::Unknown, 19});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, 19});
+    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore, DevType::Unknown, 19});
 
     root->addWidget(bankBox, 1);
 }

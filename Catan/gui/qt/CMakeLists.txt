@@ -26,6 +26,9 @@ add_library(catan_gui_qt
         QEdge.h QEdge.cpp
         FloatingPanel.h FloatingPanel.cpp
         RightOverlay.h RightOverlay.cpp
+        CardSpec.h
+        QCard.h QCard.cpp
+        QCardRow.h QCardRow.cpp
 
 )
 
