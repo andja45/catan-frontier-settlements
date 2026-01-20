@@ -17,6 +17,9 @@ public:
     MoveType type() const override { return MoveType::PlayDevCard; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
+
+    DevCardType getCardType() const {return m_card;};
+
     // TODO add allvalid - this will be done in gui, unclickable if <= 0
 };
 

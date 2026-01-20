@@ -18,6 +18,9 @@ public:
     MoveType type() const override { return MoveType::YearOfPlenty; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
+
+    ResourceType getFirst() const {return m_first;}
+    ResourceType getSecond() const {return m_second;}
 };
 
 

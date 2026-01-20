@@ -18,5 +18,8 @@ public:
     MoveType type() const override { return MoveType::PlayerTradeRequest; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
+
+    ResourcePack getGive() const {return m_give;}
+    ResourcePack getReceive() const {return m_receive;}
 };
 #endif //CATAN_PLAYERTRADEREQUEST_H

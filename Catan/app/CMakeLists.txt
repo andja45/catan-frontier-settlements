@@ -7,6 +7,10 @@ add_executable(Catan
         ../controller/renderstate/BoardRenderState.h
         ../controller/renderstate/ToolbarRenderState.cpp
         ../controller/renderstate/ToolbarRenderState.h
+        ../network/MoveProtoFactory.cpp
+        ../network/MoveProtoFactory.h
+        ../network/MoveProtoSerializer.h
+        ../network/MoveProtoSerializer.cpp
 )
 
 target_link_libraries(Catan
