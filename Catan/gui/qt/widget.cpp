@@ -11,27 +11,39 @@ Widget::Widget(QWidget *parent, Board* b)
 {
     ui->setupUi(this);
 
-    auto *layout = new QHBoxLayout(this);
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(0);
+    auto* rootLayout = new QHBoxLayout;
+    rootLayout->setContentsMargins(0, 0, 0, 0);
+    rootLayout->setSpacing(0);
 
     auto* qboard  = new QBoard(this, b);
     auto* overlay = new RightOverlay(this);
+    auto* toolbar = new BoardToolbar(this);
+
+
+    toolbar->setMinimumHeight(60);
+    toolbar->setAttribute(Qt::WA_StyledBackground, true);
+    toolbar->setStyleSheet("background: transparent;");
+   toolbar->setAutoFillBackground(false);
+    toolbar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     qboard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    // Make overlay a fixed-ish width right sidebar
     overlay->setMinimumWidth(380);
     overlay->setMaximumWidth(600);
     overlay->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
-    layout->addWidget(qboard, 1);   // stretch
-    layout->addWidget(overlay, 0);  // fixed width
-    setLayout(layout);
+    auto* leftBox = new QVBoxLayout;  // ⚠️ NO parent here
+    leftBox->setContentsMargins(0, 0, 0, 0);
+    leftBox->setSpacing(0);
 
-    connect(overlay, &RightOverlay::chatSendRequested, this, [overlay](const QString& text){
-        overlay->addChatMessage("Me", text);
-    });
+    leftBox->addWidget(qboard, 1);
+    leftBox->addWidget(toolbar, 0);
+
+    rootLayout->addLayout(leftBox, 1);
+    rootLayout->addWidget(overlay, 0);
+
+    this->setLayout(rootLayout);
+
 }
 
 Widget::~Widget()

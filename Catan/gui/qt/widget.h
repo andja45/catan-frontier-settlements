@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include "BoardToolbar.h"
 
 class Board;
 QT_BEGIN_NAMESPACE

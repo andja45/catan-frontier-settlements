@@ -29,6 +29,7 @@ add_library(catan_gui_qt
         CardSpec.h
         QCard.h QCard.cpp
         QCardRow.h QCardRow.cpp
+        BoardToolbar.h BoardToolbar.cpp
 
 )
 
