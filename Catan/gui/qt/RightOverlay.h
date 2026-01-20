@@ -4,6 +4,9 @@
 #include <QWidget>
 #include <QVector>
 #include <QString>
+#include <QTimer>
+#include <QCard.h>
+
 #include <player/Player.h>
 #include <player/Bank.h>
 
@@ -14,12 +17,11 @@ class QPushButton;
 class QLabel;
 class QTableWidget;
 
-struct BankSummary {
-    int wood = 19;
-    int brick = 19;
-    int wool = 19;
-    int wheat = 19;
-    int ore  = 19;
+struct PlayerUiRow {
+    QCard* resources = nullptr;   // face-down resource card with count badge
+    QCard* devs      = nullptr;   // face-down dev card with count badge
+    QLabel* knights  = nullptr;   // for now, still text
+    QLabel* roads    = nullptr;
 };
 
 class RightOverlay : public QWidget {
@@ -28,6 +30,7 @@ public:
     explicit RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* parent=nullptr);
 
     void addChatMessage(const QString& author, const QString& message);
+    void refreshAll();
 
 signals:
     void chatSendRequested(const QString& text);
@@ -67,5 +70,17 @@ private:
     // --- players ---
     QTableWidget* m_playersTable = nullptr;
     QVector<Player*> m_players;
+
+    // timer polling
+    QTimer* m_refreshTimer = nullptr;
+
+    // bank cards in fixed order
+    std::array<QCard*, 5> m_bankCards {nullptr, nullptr, nullptr, nullptr, nullptr};
+
+    // "you" cards in fixed order
+    std::array<QCard*, 5> m_youCards {nullptr, nullptr, nullptr, nullptr, nullptr};
+
+    // player rows
+    std::vector<PlayerUiRow> m_playerRows;
 };
 #endif // RIGHTOVERLAY_H

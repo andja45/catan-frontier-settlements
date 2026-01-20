@@ -1,7 +1,6 @@
 #include "RightOverlay.h"
 #include "FloatingPanel.h"
 #include <GameTheme.h>
-#include <QCard.h>
 #include <QCardRow.h>
 
 #include <QVBoxLayout>
@@ -15,7 +14,6 @@
 #include <QHeaderView>
 #include <QDateTime>
 #include <QPainter>
-#include <iostream>
 
 RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* parent) : m_bank(bank), QWidget(parent) {
     // -------- Chat panel --------
@@ -46,19 +44,28 @@ RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* p
 
         auto* pl = new QHBoxLayout(p);
         pl->setContentsMargins(10,10,10,10);
+
         pl->addWidget(new QLabel(QString::fromStdString(m_players[i]->getName())));
         pl->addStretch();
 
-        auto resources = new QCard(p);
-        resources->setSpec({CardKind::Resource, CardFace::FaceDown, ResourceType::None,  DevType::Unknown, m_players[i]->getNumOfResourceCards()});
-        pl->addWidget(resources);
+        PlayerUiRow uiRow;
 
-        auto devs = new QCard(p);
-        devs->setSpec({CardKind::Development, CardFace::FaceDown, ResourceType::None,  DevType::Unknown, m_players[i]->getNumOfDevCards()});
-        pl->addWidget(devs);
+        uiRow.resources = new QCard(p);
+        uiRow.resources->setSpec({CardKind::Resource, CardFace::FaceDown, ResourceType::None, DevType::Unknown,
+                                  m_players[i]->getNumOfResourceCards()});
+        pl->addWidget(uiRow.resources);
 
-        pl->addWidget(new QLabel("Knights: 0", p));
-        pl->addWidget(new QLabel("Roads: 0", p));
+        uiRow.devs = new QCard(p);
+        uiRow.devs->setSpec({CardKind::Development, CardFace::FaceDown, ResourceType::None, DevType::Unknown,
+                             m_players[i]->getNumOfDevCards()});
+        pl->addWidget(uiRow.devs);
+
+        uiRow.knights = new QLabel("Knights: 0", p);
+        uiRow.roads   = new QLabel("Roads: 0", p);
+        pl->addWidget(uiRow.knights);
+        pl->addWidget(uiRow.roads);
+
+        m_playerRows.push_back(uiRow);
 
         stackL->addWidget(p);
     }
@@ -71,6 +78,10 @@ RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* p
     stackL->addStretch(1);
 
     relayout();
+
+    auto* t = new QTimer(this);
+    connect(t, &QTimer::timeout, this, &RightOverlay::refreshAll);
+    t->start(200);
 }
 
 void RightOverlay::buildChatUi(FloatingPanel* panel) {
@@ -124,11 +135,11 @@ void RightOverlay::buildBankUi(FloatingPanel* panel) {
     auto* row = new QCardRow(bankBox);
     row->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, m_bank->getResources()[ResourceType::Wood]});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, m_bank->getResources()[ResourceType::Brick]});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, m_bank->getResources()[ResourceType::Wool]});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, m_bank->getResources()[ResourceType::Wheat]});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, m_bank->getResources()[ResourceType::Ore]});
+    m_bankCards[0] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, m_bank->getResources()[ResourceType::Wood]});
+    m_bankCards[1] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, m_bank->getResources()[ResourceType::Brick]});
+    m_bankCards[2] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, m_bank->getResources()[ResourceType::Wool]});
+    m_bankCards[3] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, m_bank->getResources()[ResourceType::Wheat]});
+    m_bankCards[4] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, m_bank->getResources()[ResourceType::Ore]});
 
     bankLayout->addWidget(row);
 
@@ -152,11 +163,12 @@ void RightOverlay::buildYouUi(FloatingPanel* panel) {
 
     auto playerYou = m_players[m_players.size() - 1];
 
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, playerYou->getResources()[ResourceType::Wood]});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, playerYou->getResources()[ResourceType::Brick]});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, playerYou->getResources()[ResourceType::Wool]});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, playerYou->getResources()[ResourceType::Wheat]});
-    row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, playerYou->getResources()[ResourceType::Ore]});
+    m_youCards[0] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, playerYou->getResources()[ResourceType::Wood]});
+    m_youCards[1] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, playerYou->getResources()[ResourceType::Brick]});
+    m_youCards[2] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, playerYou->getResources()[ResourceType::Wool]});
+    m_youCards[3] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, playerYou->getResources()[ResourceType::Wheat]});
+    m_youCards[4] = row->addCard({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, playerYou->getResources()[ResourceType::Ore]});
+
 
     youLayout->addWidget(row);
 
@@ -189,4 +201,53 @@ void RightOverlay::relayout() {
 void RightOverlay::paintEvent(QPaintEvent*) {
     QPainter p(this);
     p.fillRect(rect(), GameTheme::getColorByResource(ResourceType::Sea)); // sea
+}
+
+void RightOverlay::refreshAll() {
+    if (!m_bank) return;
+
+    // --- refresh bank cards ---
+    if (m_bankCards[0]) m_bankCards[0]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, m_bank->getResources()[ResourceType::Wood]});
+    if (m_bankCards[1]) m_bankCards[1]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, m_bank->getResources()[ResourceType::Brick]});
+    if (m_bankCards[2]) m_bankCards[2]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, m_bank->getResources()[ResourceType::Wool]});
+    if (m_bankCards[3]) m_bankCards[3]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, m_bank->getResources()[ResourceType::Wheat]});
+    if (m_bankCards[4]) m_bankCards[4]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, m_bank->getResources()[ResourceType::Ore]});
+
+    // --- refresh per-player hidden counts (resource/dev hand sizes) ---
+    const int n = std::min<int>(m_players.size(), m_playerRows.size());
+    for (int i = 0; i < n; ++i) {
+        Player* pl = m_players[i];
+        if (!pl) continue;
+
+        if (m_playerRows[i].resources) {
+            m_playerRows[i].resources->setSpec({
+                CardKind::Resource, CardFace::FaceDown,
+                ResourceType::None, DevType::Unknown,
+                pl->getNumOfResourceCards()
+            });
+        }
+
+        if (m_playerRows[i].devs) {
+            m_playerRows[i].devs->setSpec({
+                CardKind::Development, CardFace::FaceDown,
+                ResourceType::None, DevType::Unknown,
+                pl->getNumOfDevCards()
+            });
+        }
+
+        m_playerRows[i].knights->setText(QString("Knights: %1").arg(pl->getKnightsUsed()));
+        m_playerRows[i].roads->setText(QString("Roads: %1").arg(pl->getRoads().size()));
+    }
+
+    // --- refresh "you" panel (currently: last player) ---
+    if (!m_players.empty()) {
+        Player* you = m_players.back();
+        if (you) {
+            if (m_youCards[0]) m_youCards[0]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Wood,  DevType::Unknown, you->getResources()[ResourceType::Wood]});
+            if (m_youCards[1]) m_youCards[1]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Brick, DevType::Unknown, you->getResources()[ResourceType::Brick]});
+            if (m_youCards[2]) m_youCards[2]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Wool,  DevType::Unknown, you->getResources()[ResourceType::Wool]});
+            if (m_youCards[3]) m_youCards[3]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Wheat, DevType::Unknown, you->getResources()[ResourceType::Wheat]});
+            if (m_youCards[4]) m_youCards[4]->setSpec({CardKind::Resource, CardFace::FaceUp, ResourceType::Ore,   DevType::Unknown, you->getResources()[ResourceType::Ore]});
+        }
+    }
 }
