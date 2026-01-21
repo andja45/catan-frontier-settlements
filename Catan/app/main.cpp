@@ -1,14 +1,11 @@
 #include <iostream>
-#include <widget.h>
 
 #include <QApplication>
 #include <QMainWindow>
-#include <board/BoardFactory/AbstractBoardCreator.hpp>
-#include <board/BoardFactory/RandomExtendedMapCreator.hpp>
-#include <board/BoardFactory/RandomStandardMapCreator.hpp>
-
-#include "../gui/asciiview/board/BoardView.hpp"
-#include "../gui/asciiview/board/TileView.hpp"
+#include <board/BoardView.hpp>
+#include <board/factory/AbstractBoardCreator.hpp>
+#include <board/factory/RandomExtendedMapCreator.hpp>
+#include <screens/game/widget.h>
 
 int main(int argc, char *argv[])
 {

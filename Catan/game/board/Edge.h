@@ -9,7 +9,7 @@
 
 #include "Node.h"
 #include "types/TypeAliases.h"
-#include <board/Coords/EdgeCoords.hpp>
+#include <board/coords/EdgeCoords.hpp>
 class Edge {
 private:
     Node* m_start =nullptr;

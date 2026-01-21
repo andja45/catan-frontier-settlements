@@ -19,37 +19,37 @@ add_library(catan_game
         move/turn/RollDiceMove.h
         move/turn/EndTurnMove.cpp
         move/turn/EndTurnMove.h
-        gamemodel/GameSession.cpp
-        gamemodel/GameSession.h
+        model/GameSession.cpp
+        model/GameSession.h
         types/TypeAliases.h
         types/DevCardType.h
         board/Board.cpp
         types/Costs.h
         player/Bank.cpp
-        board/Coords/AxialCoords.cpp
-        board/Coords/AxialCoords.hpp
-        board/Coords/ElementCoords.hpp
+        board/coords/AxialCoords.cpp
+        board/coords/AxialCoords.hpp
+        board/coords/ElementCoords.hpp
         types/Directions.h
-        board/Coords/EdgeCoords.cpp
-        board/Coords/EdgeCoords.hpp
-        board/Coords/NodeCoords.cpp
-        board/Coords/NodeCoords.hpp
-        board/BoardFactory/AbstractBoardCreator.hpp
-        board/BoardFactory/BoardCatalog.hpp
-        board/BoardSerializers/BoardLayoutToJson.cpp
-        board/BoardSerializers/BoardLayoutToJson.hpp
-        board/BoardSerializers/AbstractBoardSerializer.hpp
-        board/BoardFactory/RandomStandardMapCreator.cpp
-        board/BoardFactory/RandomStandardMapCreator.hpp
-        board/BoardFactory/RandomExtendedMapCreator.cpp
-        board/BoardFactory/RandomExtendedMapCreator.hpp
-        board/BoardFactory/LoadFromFileCreator.cpp
-        board/BoardFactory/LoadFromFileCreator.hpp
+        board/coords/EdgeCoords.cpp
+        board/coords/EdgeCoords.hpp
+        board/coords/NodeCoords.cpp
+        board/coords/NodeCoords.hpp
+        board/factory/AbstractBoardCreator.hpp
+        board/factory/BoardCatalog.hpp
+        board/serialization/BoardLayoutToJson.cpp
+        board/serialization/BoardLayoutToJson.hpp
+        board/serialization/AbstractBoardSerializer.hpp
+        board/factory/RandomStandardMapCreator.cpp
+        board/factory/RandomStandardMapCreator.hpp
+        board/factory/RandomExtendedMapCreator.cpp
+        board/factory/RandomExtendedMapCreator.hpp
+        board/factory/LoadFromFileCreator.cpp
+        board/factory/LoadFromFileCreator.hpp
         move/trade/BankTradeMove.h
         move/robber/SetRobberMove.h
         move/trade/BankTradeMove.cpp
-        gamemodel/GameData.h
-        gamemodel/GameData.cpp
+        model/GameData.h
+        model/GameData.cpp
         types/ResourceType.h
         rules/Rule.h
         rules/LargestArmyRule.cpp
@@ -60,8 +60,8 @@ add_library(catan_game
         rules/VictoryRule.h
         rules/RulesEngine.cpp
         rules/RulesEngine.h
-        gamemodel/GameConfig.cpp
-        gamemodel/GameConfig.h
+        model/GameConfig.cpp
+        model/GameConfig.h
         types/MapType.h
         board/Edge.cpp
         phase/TurnPhase.h
@@ -83,9 +83,10 @@ add_library(catan_game
         move/trade/PlayerTradeResponseMove.cpp
         move/trade/PlayerTradeResponseMove.h
         move/robber/SetRobberMove.cpp
-        gamemodel/Trade.h
+        model/Trade.h
         move/trade/PlayerTradeAcceptMove.cpp
         move/trade/PlayerTradeAcceptMove.h
+        move/build/BuildSettlementMove.cpp
 )
 
 target_include_directories(catan_game

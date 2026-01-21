@@ -3,4 +3,4 @@
 //
 
 #include "Move.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
