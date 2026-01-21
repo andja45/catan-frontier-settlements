@@ -1,8 +1,10 @@
 #include "QNode.h"
 #include <cmath>
+#include <QPolygonF>
+#include <QPainter>
 
 bool QNode::hoverAllowed() const {
-    if (!m_node) return false;
+    if (!m_node && highlighted) return false;
     return m_node->isEmpty() || m_node->isSettlement();
 }
 

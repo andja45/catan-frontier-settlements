@@ -3,7 +3,7 @@
 #include <common/GameTheme.h>
 
 bool QEdge::hoverAllowed() const {
-    if (!m_edge) return false;
+    if (!m_edge & highlighted) return false;
     return !m_edge->isOccupied();
 }
 

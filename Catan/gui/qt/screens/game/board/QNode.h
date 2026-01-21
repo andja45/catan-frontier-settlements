@@ -1,15 +1,15 @@
 #ifndef QNODE_H
 #define QNODE_H
 
-#include <QPolygonF>
 #include <QPointF>
-#include <QPainter>
 #include <QPainterPath>
 
 #include <board/Node.h>
 
 class QNode {
 public:
+    bool highlighted = true;
+
     explicit QNode(Node* node = nullptr) : m_node(node) {}
 
     Node* node() const { return m_node; }

@@ -1,7 +1,6 @@
 #include "QBoard.h"
 
 #include <QPainter>
-#include <QtMath>
 #include <QMouseEvent>
 #include <cmath>
 
@@ -44,8 +43,8 @@ QPointF QBoard::axialToPixelNode(const NodeCoords& a, double size){
 
     int anglePer60 = static_cast<int>(a.direction());
     double angle_radians = -M_PI / 2 + anglePer60 * M_PI / 3;
-    int offsetX = size * std::cos(angle_radians);
-    int offsetY = size * std::sin(angle_radians);
+    double offsetX = size * std::cos(angle_radians);
+    double offsetY = size * std::sin(angle_radians);
 
     return QPointF(tileX + offsetX, tileY + offsetY);
 }
@@ -223,4 +222,16 @@ void QBoard::mousePressEvent(QMouseEvent* e) {
 
 void QBoard::leaveEvent(QEvent* e) {
     Q_UNUSED(e);
+}
+
+void QBoard::setHighlightedEdges (const std::set<Edge*>& highlightedEdges) {
+    for(auto qedge : m_qedges) {
+        qedge.highlighted = highlightedEdges.find(qedge.edge()) != highlightedEdges.end();
+    }
+}
+
+void QBoard::setHighlightedNodes (const std::set<Node*>& highlightedNodes) {
+    for(auto qnode : m_qnodes) {
+        qnode.highlighted = highlightedNodes.find(qnode.node()) != highlightedNodes.end();
+    }
 }

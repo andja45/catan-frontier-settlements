@@ -14,8 +14,8 @@ add_library(catan_gui_qt
         screens/game/board/QNode.h screens/game/board/QNode.cpp
         screens/history/GameHistory.h screens/history/GameHistory.cpp
         screens/history/GameDetailsView.h screens/history/GameDetailsView.cpp
-        screens/game/sidebar/QRightSideBar.cpp
-        screens/game/sidebar/QRightSideBar.h
+        screens/game/sidebar/RightOverlay.cpp
+        screens/game/sidebar/RightOverlay.h
         screens/history/GameHistory.h screens/history/GameHistory.cpp
         screens/history/GameDetailsView.h screens/history/GameDetailsView.cpp
         common/GameTheme.h common/GameTheme.cpp
@@ -24,6 +24,10 @@ add_library(catan_gui_qt
         screens/lobby/PlayerListItem.h screens/lobby/PlayerListItem.cpp
         screens/lobby/AddBotListItem.h screens/lobby/AddBotListItem.cpp
         screens/game/board/QEdge.h screens/game/board/QEdge.cpp
+        components/cards/QCard.h components/cards/QCard.cpp
+        components/cards/QCardRow.h components/cards/QCardRow.cpp
+        components/cards/CardSpec.h
+        components/panels/FloatingPanel.h components/panels/FloatingPanel.cpp
 )
 
 target_include_directories(catan_gui_qt
