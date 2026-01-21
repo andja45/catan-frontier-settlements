@@ -1,7 +1,6 @@
 #include "QBoard.h"
 
 #include <QPainter>
-#include <QtMath>
 #include <QMouseEvent>
 #include <cmath>
 #include <GameTheme.h>
@@ -224,4 +223,16 @@ void QBoard::mousePressEvent(QMouseEvent* e) {
 
 void QBoard::leaveEvent(QEvent* e) {
     Q_UNUSED(e);
+}
+
+void QBoard::setHighlightedEdges (const std::set<Edge*>& highlightedEdges) {
+    for(auto qedge : m_qedges) {
+        qedge.highlighted = highlightedEdges.find(qedge.edge()) != highlightedEdges.end();
+    }
+}
+
+void QBoard::setHighlightedNodes (const std::set<Node*>& highlightedNodes) {
+    for(auto qnode : m_qnodes) {
+        qnode.highlighted = highlightedNodes.find(qnode.node()) != highlightedNodes.end();
+    }
 }

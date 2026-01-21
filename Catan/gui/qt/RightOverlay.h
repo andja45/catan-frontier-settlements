@@ -2,7 +2,6 @@
 #define RIGHTOVERLAY_H
 
 #include <QWidget>
-#include <QVector>
 #include <QString>
 #include <QTimer>
 #include <QCard.h>

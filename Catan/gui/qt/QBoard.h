@@ -4,9 +4,8 @@
 #include <QWidget>
 #include <QVector>
 #include <QPointF>
-#include <QHash>
-#include <QPolygonF>
 #include <vector>
+#include <set>
 
 #include <board/Board.h>
 #include <types/TypeAliases.h>
@@ -21,6 +20,8 @@ public:
     explicit QBoard(QWidget* parent = nullptr, Board* board = nullptr);
     Board* getBoard() { return m_board; }
     void setPlacingRobber(bool on) { m_placingRobber = on; update(); }
+    void setHighlightedEdges (const std::set<Edge*>& highlightedEdges);
+    void setHighlightedNodes (const std::set<Node*>& highlightedNodes);
 
 protected:
     void paintEvent(QPaintEvent *event) override;

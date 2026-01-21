@@ -10,6 +10,8 @@
 
 class QEdge {
 public:
+    bool highlighted = true;
+
     explicit QEdge(Edge* edge = nullptr) : m_edge(edge) {}
 
     Edge* edge() const { return m_edge; }
