@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QString>
 #include <QTimer>
-#include <QCard.h>
+#include <components/cards/QCard.h>
 
 #include <player/Player.h>
 #include <player/Bank.h>

@@ -1,7 +1,7 @@
 #ifndef QCARDROW_H
 #define QCARDROW_H
 
-#include <QCard.h>
+#include <components/cards/QCard.h>
 #include <QHBoxLayout>
 
 class QCardRow : public QWidget {

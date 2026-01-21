@@ -1,5 +1,5 @@
-#include <QCard.h>
-#include <GameTheme.h>
+#include <components/cards/QCard.h>
+#include <common/GameTheme.h>
 #include <QPainter>
 #include <QMouseEvent>
 

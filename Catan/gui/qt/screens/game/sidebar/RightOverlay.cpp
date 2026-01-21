@@ -1,7 +1,7 @@
 #include "RightOverlay.h"
-#include "FloatingPanel.h"
-#include <GameTheme.h>
-#include <QCardRow.h>
+#include <components/panels/FloatingPanel.h>
+#include <common/GameTheme.h>
+#include <components/cards/QCardRow.h>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>

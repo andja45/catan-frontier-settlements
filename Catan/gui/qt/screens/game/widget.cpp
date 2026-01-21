@@ -8,7 +8,7 @@
 
 #include <player/Bank.h>
 #include <player/Player.h>
-#include <sidebar/RightOverlay.h>
+#include <screens/game/sidebar/RightOverlay.h>
 
 Widget::Widget(QWidget *parent, Board* b)
     : QWidget(parent)
