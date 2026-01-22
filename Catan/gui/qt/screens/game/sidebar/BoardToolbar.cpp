@@ -103,7 +103,7 @@ FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActio
         panel->installEventFilter(this);
     }
     auto* layout = new QHBoxLayout(panel);
-    layout->setContentsMargins(8, 6, 8, 6);
+    layout->setContentsMargins(8, 27, 8, 27);
     layout->setSpacing(0);
 
     button->setParent(panel);
