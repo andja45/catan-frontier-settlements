@@ -28,6 +28,9 @@ add_library(catan_gui_qt
         components/cards/QCardRow.h components/cards/QCardRow.cpp
         components/cards/CardSpec.h
         components/panels/FloatingPanel.h components/panels/FloatingPanel.cpp
+        screens/game/sidebar/BoardToolbar.h screens/game/sidebar/BoardToolbar.cpp
+        components/panels/CostPopup.h components/panels/CostPopup.cpp
+        components/cards/CountBadge.h components/cards/CountBadge.cpp
 )
 
 target_include_directories(catan_gui_qt

@@ -2,6 +2,7 @@
 #define CARDWIDGET_H
 
 #include <QWidget>
+#include"CountBadge.h"
 #include "CardSpec.h"
 
 class QCard : public QWidget {
@@ -30,6 +31,7 @@ private:
     CardSpec m_spec{};
     bool m_hover = false;
     bool m_selected = false;
+    CountBadge* m_countBadge = NULL;
 };
 
 #endif // CARDWIDGET_H

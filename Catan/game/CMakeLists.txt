@@ -86,6 +86,8 @@ add_library(catan_game
         model/Trade.h
         move/trade/PlayerTradeAcceptMove.cpp
         move/trade/PlayerTradeAcceptMove.h
+        types/ToolbarActionType.h
+        model/MoveCosts.h model/MoveCosts.cpp
         move/build/BuildSettlementMove.cpp
 )
 

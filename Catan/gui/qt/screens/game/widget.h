@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QKeyEvent>
 
 class Board;
 QT_BEGIN_NAMESPACE
@@ -18,6 +19,8 @@ public:
 
     Widget(QWidget *parent = nullptr, Board* board = nullptr);
     ~Widget();
+protected:
+    void keyPressEvent(QKeyEvent* event) override;
 
 private:
     Ui::Widget *ui;
