@@ -8,7 +8,7 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     buttonsLayout->sizeHint();
     buttonsLayout->setContentsMargins(10,10,10,10);
     buttonsLayout->setSpacing(10);
-
+    m_costPopup = new CostPopup();
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setMinimumHeight(60);/*
@@ -23,39 +23,39 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("Build Settle.", ToolbarActionType::BuildSettlement)
-            )
+            , ToolbarActionType::BuildSettlement)
         );
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("Build City", ToolbarActionType::BuildCity)
-            )
+            , ToolbarActionType::BuildCity)
         );
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("Build Road", ToolbarActionType::BuildRoad)
-            )
+            ,ToolbarActionType::BuildRoad)
         );
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("Buy Dev", ToolbarActionType::BuyDevCard)
-            )
+            , ToolbarActionType::BuyDevCard)
         );
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("Play Dev", ToolbarActionType::PlayDevCard)
-            )
+            , ToolbarActionType::PlayDevCard)
         );
     buttonsLayout->addStretch(1);
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("Roll Dice", ToolbarActionType::RollDice)
-            )
+            , ToolbarActionType::RollDice)
         );
 
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("End Turn", ToolbarActionType::EndTurn)
-            )
+            , ToolbarActionType::EndTurn)
         );
 
 /*
@@ -82,6 +82,7 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     addButton("Roll Dice", ToolbarActionType::BankTrade,buttonsLayout);
     addButton("End Turn", ToolbarActionType::BankTrade,buttonsLayout);*/
 }
+
 void BoardToolbar::addButton(const QString& text, ToolbarActionType action, QHBoxLayout* layout)
 {
     auto* button = new QPushButton(text, this);
@@ -92,24 +93,37 @@ void BoardToolbar::addButton(const QString& text, ToolbarActionType action, QHBo
     });
     layout->addWidget(button);
 }
-FloatingPanel* BoardToolbar::createPanelWithButton(
-    QWidget* button
-    ) {
+FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActionType action) {
     auto* panel = new FloatingPanel(this);
-
+    if(not MoveCosts::costFor(action).empty()){
+        panel->setProperty("action", QVariant::fromValue(action));
+        panel->setAttribute(Qt::WA_Hover);
+        panel->installEventFilter(this);
+    }
     auto* layout = new QHBoxLayout(panel);
     layout->setContentsMargins(8, 6, 8, 6);
     layout->setSpacing(0);
 
     button->setParent(panel);
+    //button->installEventFilter(this);
     layout->addWidget(button);
+    if (action == ToolbarActionType::BuildSettlement) {
+        m_countSettlements = new CountBadge(5, panel);
+        layout->addWidget(m_countSettlements);
+    }
+    else if (action == ToolbarActionType::BuildCity) {
+        m_countCities = new CountBadge(4, panel);
+        layout->addWidget(m_countCities);
+    }
+    else if (action == ToolbarActionType::BuildRoad) {
+        m_countRoads = new CountBadge(15, panel);
+        layout->addWidget(m_countRoads);
+    }
 
     return panel;
 }
-QPushButton* BoardToolbar::createActionButton(
-    const QString& text,
-    ToolbarActionType action
-    ) {
+
+QPushButton* BoardToolbar::createActionButton(const QString& text,ToolbarActionType action) {
     auto* btn = new QPushButton(text);
     btn->setMinimumHeight(32);
     btn->setStyleSheet(R"(
@@ -131,7 +145,7 @@ QPushButton* BoardToolbar::createActionButton(
     QPushButton:disabled {
         color: #999;
     }
-)");
+    )");
 
     connect(btn, &QPushButton::clicked, this, [this, action] {
         emit actionTriggered(action);
@@ -139,57 +153,37 @@ QPushButton* BoardToolbar::createActionButton(
 
     return btn;
 }
-
-QToolButton* BoardToolbar::createMenuButton(const QString& text,const QMap<QString, ToolbarActionType>& actions)
+bool BoardToolbar::eventFilter(QObject* obj, QEvent* event)
 {
-    auto* button = new QToolButton(this);
-    button->setText(text);
-    button->setMinimumHeight(36);
-    button->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    qDebug() << "event" << event->type() << "on" << obj;
+    auto* panel = qobject_cast<QWidget*>(obj);
+    if (!panel)
+        return QWidget::eventFilter(obj, event);
 
-    auto* menu = new QMenu(button);
-    menu->setStyleSheet(R"(
-    QMenu {
-        background-color: white;
-        border: 1px solid #cfcfcf;
-        border-radius: 8px;
-        padding: 6px;
+    if (!panel->property("action").isValid())
+        return QWidget::eventFilter(obj, event);
+
+    const auto action =
+        panel->property("action").value<ToolbarActionType>();
+
+    if (event->type() == QEvent::HoverEnter) {
+        m_costPopup->adjustSize();
+        m_costPopup->setAction(action);
+        m_costPopup->refresh();
+
+
+        const QPoint globalPos = panel->mapToGlobal(
+            QPoint(panel->width() / 2 - m_costPopup->width() / 2,
+                   -m_costPopup->height() - 8));
+
+        m_costPopup->move(globalPos);
+        m_costPopup->show();
+    }
+    else if (event->type() == QEvent::HoverLeave) {
+        m_costPopup->hide();
     }
 
-    QMenu::item {
-        padding: 10px 28px;
-        margin: 2px;
-        color: #222;
-        border-radius: 6px;
-    }
-
-    QMenu::item:selected {
-        background-color: #e6f0ff;
-        color: #1a4fff;
-    }
-
-    QMenu::item:disabled {
-        color: #9a9a9a;
-        background-color: transparent;
-    }
-)");
-
-
-    for (auto it = actions.begin(); it != actions.end(); ++it) {
-        QAction* act = menu->addAction(it.key());
-        connect(act, &QAction::triggered, this,
-                [this, action = it.value()] {
-                    emit actionTriggered(action);
-                });
-    }
-
-    connect(button, &QToolButton::clicked, this, [button, menu]() {
-        QPoint pos = button->mapToGlobal(QPoint(0, 0));
-        pos.setY(pos.y() - menu->sizeHint().height());
-        menu->exec(pos);
-    });
-
-    return button;
+    return QWidget::eventFilter(obj, event);
 }
 void BoardToolbar::paintEvent(QPaintEvent*) {
     QPainter p(this);

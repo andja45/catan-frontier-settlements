@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QKeyEvent>
 #include "BoardToolbar.h"
 
 class Board;
@@ -19,6 +20,8 @@ public:
 
     Widget(QWidget *parent = nullptr, Board* board = nullptr);
     ~Widget();
+protected:
+    void keyPressEvent(QKeyEvent* event) override;
 
 private:
     Ui::Widget *ui;

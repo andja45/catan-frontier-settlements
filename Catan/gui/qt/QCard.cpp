@@ -73,7 +73,7 @@ void QCard::paintEvent(QPaintEvent*) {
         p.setFont(f);
 
     // Count badge
-    if (m_spec.countBadge >= 0) {
+        if (m_spec.countBadge >= 0) {
         const int badge = m_spec.countBadge;
         qreal number_radius = 25;
         QRectF b((r.right() + r.left()) / 2 - number_radius / 2, (r.top() + r.bottom()) / 2 - number_radius / 2,
@@ -88,6 +88,16 @@ void QCard::paintEvent(QPaintEvent*) {
         bf.setBold(true);
         p.setFont(bf);
         p.drawText(b, Qt::AlignCenter, QString::number(badge));
+        }
+        /*removed because of awful performances
+        if (m_spec.countBadge >= 0) {
+            m_countBadge = new CountBadge(m_spec.countBadge, this);
+            m_countBadge->raise();   // VERY important
+            m_countBadge->show();
+        }
+        */
+
+
     }
 }
-}
+

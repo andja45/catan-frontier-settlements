@@ -15,6 +15,18 @@ public:
                 border-radius: 10px;
             }
         )");
+        setMouseTracking(true);
+    }
+    explicit FloatingPanel(Qt::WindowType type, QWidget* parent=nullptr) : QFrame(parent, type) {
+        setFrameStyle(QFrame::NoFrame);
+        setAttribute(Qt::WA_StyledBackground, true);
+        setStyleSheet(R"(
+            QFrame {
+                background: rgba(245,245,245,230);
+                border-radius: 10px;
+            }
+        )");
+        setMouseTracking(true);
     }
 };
 

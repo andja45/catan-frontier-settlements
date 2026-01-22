@@ -30,6 +30,8 @@ add_library(catan_gui_qt
         QCard.h QCard.cpp
         QCardRow.h QCardRow.cpp
         BoardToolbar.h BoardToolbar.cpp
+        CostPopup.h CostPopup.cpp
+        CountBadge.h CountBadge.cpp
 
 )
 

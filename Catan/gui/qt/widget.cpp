@@ -20,6 +20,7 @@ Widget::Widget(QWidget *parent, Board* b)
     auto* toolbar = new BoardToolbar(this);
 
 
+
     toolbar->setMinimumHeight(60);
     toolbar->setAttribute(Qt::WA_StyledBackground, true);
     toolbar->setStyleSheet("background: transparent;");
@@ -45,7 +46,25 @@ Widget::Widget(QWidget *parent, Board* b)
     this->setLayout(rootLayout);
 
 }
+void Widget::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_F11) {
+        if (isFullScreen()) {
+            showNormal();
+        } else {
+            showFullScreen();
+        }
+        event->accept();
+        return;
+    }
+    if (event->key() == Qt::Key_Escape && isFullScreen()) {
+        showNormal();
+        event->accept();
+        return;
+    }
 
+    QWidget::keyPressEvent(event);
+}
 Widget::~Widget()
 {
     delete ui;
