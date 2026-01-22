@@ -3,20 +3,50 @@
 //
 
 #include <drawing/AsciiWindow.hpp>
+#include <drawing/AsciiDrawable.hpp>
+#include <drawing/AsciiComposite.hpp>
 
 AsciiWindow::AsciiWindow(AsciiDrawable *drawable) : AsciiWindow(drawable->getSize()) {
-    setRootDrawable(drawable);
+    setRootWidget(drawable);
+    padToLeft();
+    resizeToFit();
 }
 
 AsciiWindow::AsciiWindow(ScreenSize size) {
-    m_canvas.setSize(size);
-    m_rootDrawable=nullptr;
+    m_rootContainer=new AsciiComposite(size);
+    m_rootContainer->setOffset({0,0});
+    setSize(size);
+
 }
 
-void AsciiWindow::setRootDrawable(const AsciiDrawable *drawable) {
-    m_rootDrawable=drawable;
+void AsciiWindow::setRootWidget(AsciiDrawable *drawable) {
+    m_rootContainer->clearChildren();
+    m_rootContainer->appendChild(drawable);
 }
 
-void AsciiWindow::blit(std::ostream &os) const {
+void AsciiWindow::setRootWidgetCenter(AsciiDrawable *drawable) {
+    m_rootContainer->clearChildren();
+    m_rootContainer->addChildCenter(drawable);
+}
+
+void AsciiWindow::setMargin(ScreenSize margin) {
+    m_rootContainer->setMargin(margin);
+    setSize(getSize()+margin+margin);
+}
+
+void AsciiWindow::resizeToFit() {
+    m_rootContainer->fitPositive();
+    m_canvas.setSize(m_rootContainer->getSize());
+}
+
+void AsciiWindow::padToLeft() {
+    m_rootContainer->padNegative();
+    resizeToFit();
+}
+
+void AsciiWindow::blit(std::ostream &os) {
+    m_rootContainer->draw(m_canvas);
+    if (m_border)
+        m_rootContainer->drawBorder(m_canvas);
     m_canvas.blit(os);
 }

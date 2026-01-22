@@ -15,15 +15,29 @@ private:
     ScreenSize m_size{0,0};
     Cell m_backgroundCell{' ',0};
 
+    ScreenCoords m_currentPos={0,0};
+    ScreenSize m_currentSize={0,0};
+
+    bool m_strict=false;
+
     static void printCell(Cell c, std::ostream &os,ScreenCoords scr={0,0});
-    void resize();
+    bool withinScopeBounds(ScreenCoords pos) const;
+    bool withinRelativeScopeBounds(ScreenCoords pos) const;
+    bool withinCanvasBounds(ScreenCoords pos)const;
+    void allocate();
 public:
-    void setSize(ScreenSize &size);
+    void setStrict(bool strict) {m_strict=strict;} // strict doesnt allow drawing outside set scope
+
+    void setSize(const ScreenSize &size);
     ScreenSize getSize() const {return m_size;}
+
     void blit(std::ostream &os=std::cout) const;
+    void blitScoped(std::ostream &os=std::cout) const; // blit only scoped part
+
     void clear();
     AsciiCanvas();
     AsciiCanvas(ScreenSize size, Cell backgroundCell={' ',0});
+
     void setBackgroundCell(Cell c) {m_backgroundCell=c;}
     Cell getBackgroundCell() const {return m_backgroundCell;}
 
@@ -35,7 +49,17 @@ public:
     void setCells(ScreenCoords offset, ScreenSize size,Cell cell);
     void setCells(Cell cell);
 
-    Cell getCell(ScreenCoords pos) const {return m_cells[pos.x][pos.y];}
+    Cell getCell(ScreenCoords pos) const {
+        if (!withinCanvasBounds(pos)) return {'\0',0};
+        return m_cells[pos.x][pos.y];
+    }
+
+    void seek(ScreenCoords pos){m_currentPos=pos;}
+    void seekAppend(ScreenSize size){m_currentPos=m_currentPos+size;}
+    ScreenCoords getSeekPos() const {return m_currentPos;}
+    ScreenSize getScopeSize() const {return m_currentSize;}
+    void setScopeSize(ScreenSize size){m_currentSize=size;}
+    void resetSeek();
 };
 
 #endif //CATAN_ASCIIWINDOW_HPP

@@ -24,6 +24,6 @@ void NodeView::render(Canvas& canvas ) const {
         c=theme.settlementChar;
         break;
     }
-    canvas.setCell(m_coord,{c,1});
+    canvas.setCell({0,0},{c,1});
 
 }

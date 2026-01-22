@@ -31,6 +31,6 @@ void EdgeView::render(Canvas &canvas) const {
         step_y/=std::abs(step_y);
 
     for (int i=1; i<=len; i++) {
-        canvas.setCell({m_start.x+i*step_x,m_start.y+i*step_y},{sideToChar(theme),1});
+        canvas.setCell({i*step_x,i*step_y},{sideToChar(theme),1});
     }
 }

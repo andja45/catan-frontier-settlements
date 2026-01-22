@@ -23,7 +23,7 @@ private:
 
     char resourceToChar(const BoardTheme &theme)const;
 public:
-    TileView(Tile* tile, ScreenCoords pos,  ScreenSize size) : AsciiDrawable({pos.x-size.width/2,pos.y-size.height/2},size), m_tile(tile), m_size(size), m_pos(pos) {}
+    TileView(Tile* tile, ScreenCoords pos,  ScreenSize size) : AsciiDrawable({pos.x,pos.y},size), m_tile(tile), m_size(size), m_pos(pos) {}
     void render(Canvas &canvas) const;
     static std::vector<std::pair<NodeAsciiDirection, ScreenCoords>> getNodes(ScreenCoords pos, ScreenSize size);
 };

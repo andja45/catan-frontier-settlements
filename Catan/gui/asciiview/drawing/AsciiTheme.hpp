@@ -30,6 +30,9 @@ struct BoardTheme {
     uint8_t playerColor[5]{};
     uint8_t outlineColor=1;
 
+    char borderTop='-';
+    char borderSides='|';
+
     // Delete copy constructor and assignment to prevent multiple instances
     BoardTheme(const BoardTheme&) = delete;
     BoardTheme& operator=(const BoardTheme&) = delete;

@@ -7,6 +7,7 @@
 
 #include <drawing/AsciiDrawable.hpp>
 #include <drawing/AsciiCanvas.hpp>
+#include <drawing/AsciiComposite.hpp>
 #include <drawing/AsciiTypes.hpp>
 
 
@@ -14,13 +15,26 @@
 class AsciiWindow {
 private:
     AsciiCanvas m_canvas;
-    const AsciiDrawable* m_rootDrawable;
+    AsciiComposite* m_rootContainer;
+    bool m_border=false;
 public:
     AsciiWindow(AsciiDrawable* drawable);
     AsciiWindow(ScreenSize size);
 
-    void setRootDrawable(const AsciiDrawable* drawable);
-    void blit(std::ostream &os) const;
+    void setRootWidget(AsciiDrawable *drawable);
+    void setRootWidgetCenter(AsciiDrawable *drawable);
+
+    ScreenSize getSize() const {return m_canvas.getSize();}
+    void setSize(ScreenSize size) {m_canvas.setSize(size); m_rootContainer->setSize(size);}
+
+    void setMargin(ScreenSize margin);
+    void setBorder(bool border) {m_border=border;}
+
+    void resizeToFit();
+    void padToLeft();
+    //void padToCenter();
+
+    void blit(std::ostream &os);
 };
 
 #endif //CATAN_ASCIIWINDOW_HPP

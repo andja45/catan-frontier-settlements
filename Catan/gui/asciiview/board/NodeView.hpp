@@ -14,9 +14,8 @@ class Node;
 class NodeView : public AsciiDrawable {
 private:
     Node* m_node=nullptr;
-    ScreenCoords m_coord;
 public:
-    NodeView(Node* n, const ScreenCoords &m_coord)
+    NodeView(Node* n, ScreenCoords m_coord)
     : AsciiDrawable(m_coord,{1,1}), m_node(n) {
     }
     void render(Canvas &canvas) const override;

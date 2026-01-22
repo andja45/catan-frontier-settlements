@@ -15,6 +15,9 @@ class AsciiDrawable {
 protected:
     ScreenCoords m_offset;
     ScreenSize m_size;
+    ScreenSize m_margin={0,0};
+    void prepareCanvas(Canvas &canvas) const; // set canvas offset to element offset to prepare for drawing, when called again undo's this
+    virtual void render(Canvas &canvas) const = 0;
 public:
     virtual ~AsciiDrawable() = default;
 
@@ -22,21 +25,24 @@ public:
     AsciiDrawable(ScreenCoords offset, ScreenSize size) : m_offset(offset), m_size(size){}
     ScreenCoords getOffset() const {return m_offset;}
     ScreenSize getSize() const {return m_size;}
-    void resize(ScreenCoords origin, ScreenSize size); // TODO clear and repaint?
-    void recompose(Canvas &canvas, ScreenCoords origin, ScreenSize size);
-    void clearArea(Canvas &canvas) const;
-    void clearArea(Canvas &canvas,Cell clearColor) const;
+    void resize(ScreenCoords origin, ScreenSize size);
+    void recompose(Canvas &canvas, ScreenCoords origin, ScreenSize size); // clears area than resizes
+    void clearArea(Canvas &canvas) ;
+    void clearArea(Canvas &canvas,Cell clearColor);
 
     void clearShape(Canvas &canvas) const;
-    virtual void render(Canvas &canvas) const = 0;
+    void draw(Canvas &canvas) const; // prepares canvas then renders
+    void drawBorder(Canvas &canvas) const;
 
-    void printOut(std::ostream &os) const;
-    AsciiWindow toWindow() const;
+
+    void printOut(std::ostream &os);
+
+    AsciiWindow toWindow();
 
     void setOffset(ScreenCoords offset) {m_offset=offset;}
+    void addOffset(ScreenSize size) {m_offset=m_offset+size;}
     void setSize(ScreenSize size) {m_size=size;}
 
-    ScreenSize getOuterSize() const {return {m_size.width+m_offset.x,m_size.height+m_offset.y};} // virtual for composite?
 };
 
 #endif //CATAN_ASCIIDRAWABLE_HPP

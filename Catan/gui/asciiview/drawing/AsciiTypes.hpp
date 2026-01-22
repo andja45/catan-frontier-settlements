@@ -14,6 +14,16 @@ class AsciiCanvas;
 struct Size {
     int width=0;
     int height=0;
+    Size operator+(const Size& size) const {
+        return Size{width + size.width, height + size.height};
+    }
+    friend bool operator==(const Size &lhs, const Size &rhs) {
+        return lhs.width == rhs.width
+               && lhs.height == rhs.height;
+    }
+    friend bool operator!=(const Size &lhs, const Size &rhs) {
+        return !(lhs == rhs);
+    }
 };
 struct Coords {
     int x=0;
@@ -24,6 +34,13 @@ struct Coords {
     Coords operator+(const Coords& other) const {
         return Coords{x + other.x, y + other.y};
     }
+    Coords operator-() const {
+        return Coords{-x, -y};
+    }
+    constexpr explicit operator Size() const {
+        return {x, y};
+    }
+
 };
 struct Cell { char ch; std::uint8_t color; };
 

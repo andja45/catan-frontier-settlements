@@ -15,7 +15,7 @@
 #include "EdgeView.hpp"
 #include "NodeView.hpp"
 class Tile;
-class BoardView : public AsciiDrawable{ // change to composite
+class BoardView : public AsciiDrawable{ // TODO change to composite
 private:
     std::vector<TileView> m_tiles;
     std::vector<EdgeView> m_edges;
@@ -35,7 +35,6 @@ private:
     inline static constexpr int minTileWidth=8;
     inline static constexpr int minTileHeight=5;
 
-
     // because its inconvenient to draw hexes point side up in ascii we flip offset coords, we chose odd row indent offset coords
     // note board will appear flipped
     static OffsetCoords axialToFlippedOffset(TileCoords axial);
@@ -43,8 +42,6 @@ private:
 
     static ScreenCoords stepSize(ScreenSize tileSize); // step to reach next hex
 
-    void renderBoard();
-    void blitBoard(std::ostream &os);
 
     void computeSizes();
     void processTileCords(TileCoords tileCoords, std::vector<std::pair<NodeAsciiDirection,ScreenCoords>> &cords);
@@ -56,7 +53,7 @@ private:
 public:
     virtual ~BoardView() = default;
 
-    BoardView(Board* board, ScreenSize gridSize, ScreenCoords margin={0,0}):m_board(board) {
+    BoardView(Board* board, ScreenSize gridSize):m_board(board) {
         setTileSize(gridSize);
         reorganize();
     }

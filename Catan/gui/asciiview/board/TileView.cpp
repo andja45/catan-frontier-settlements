@@ -34,8 +34,8 @@ void TileView::render(Canvas &canvas) const {
     //int cols=min_width-margin*2;
     int spacing=rows/2;
 
-    int x= m_pos.x-(max_width-1)/2;
-    int y=m_pos.y-rows/2;
+    int x= -(max_width-1)/2;
+    int y=-rows/2;
 
     for (int r=0; r<rows; r++) {
         int c;
@@ -51,15 +51,15 @@ void TileView::render(Canvas &canvas) const {
     }
 
     for (int i = -1; i <= 2; ++i) {
-        canvas.setCell({m_pos.x+i,m_pos.y},{' ',1});
+        canvas.setCell({i,0},{' ',1});
     }
     if (!m_tile->isRobberOnTile()) {
-        canvas.setCell({m_pos.x,m_pos.y},{(char)('0'+m_tile->getNumber()/10),1});
-        canvas.setCell({m_pos.x,m_pos.y},{(char)('0'+m_tile->getNumber()%10),1});
+        canvas.setCell({0,0},{(char)('0'+m_tile->getNumber()/10),1});
+        canvas.setCell({1,0},{(char)('0'+m_tile->getNumber()%10),1});
     }
     else {
-        canvas.setCell({m_pos.x,m_pos.y},{theme.robberChar,1});
-        canvas.setCell({m_pos.x+1,m_pos.y},{theme.robberChar,1});
+        canvas.setCell({0,0},{theme.robberChar,1});
+        canvas.setCell({1,0},{theme.robberChar,1});
 
     }
 }

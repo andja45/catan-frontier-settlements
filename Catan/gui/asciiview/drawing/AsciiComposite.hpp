@@ -8,23 +8,39 @@
 
 class AsciiComposite : public AsciiDrawable {
 protected:
-    ScreenCoords m_appendOffset;
-    int m_bottomJump =0;
+    ScreenCoords m_appendOffset={0,0}; // for appending children in lines, in typing machine fashion
+    int m_bottomJump =0; // not all appended children are same height so we remember current max to jump to new line
     std::vector<AsciiDrawable*> m_children;
-    void addArea(ScreenCoords pos, ScreenSize size);
+    ScreenSize m_margin={0,0}; // margin is added to child offset when rendering and calculating size
+
+    void resizeArea(ScreenCoords pos, ScreenSize size); // resizes to encompass rect
+    ScreenCoords getMinChild() const;
 public:
     void addChildFixed(AsciiDrawable* child);
     void appendChild(AsciiDrawable* child);
     void appendChildAutoBreak(AsciiDrawable* child);
 
+    void addChildCenter(AsciiDrawable* child);
+
     void appendCarriageReturn();
     void appendSpacerBelow(int height);
     void appendSpacerRight(int width);
 
-    void fitToChildren();
+    void fitPositive();
+    void padNegative();
+    void padToZero();
+
+    // center?
+
+    void setMargin(ScreenSize margin){m_margin=margin;}
+    ScreenSize getMargin() const {return m_margin;}
+    void addMargin(ScreenSize margin){m_margin=m_margin+margin;}
 
     AsciiComposite();
     AsciiComposite(ScreenSize size);
+
+    void reset();
+    void clearChildren();
 
     void render(Canvas &canvas) const override;
 

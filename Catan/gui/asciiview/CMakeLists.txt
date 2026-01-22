@@ -14,8 +14,6 @@ add_library(catan_ascii_view
         drawing/AsciiCanvas.hpp
         player/PlayersOverview.cpp
         player/PlayersOverview.hpp
-        player/PlayersView.cpp
-        player/PlayersView.hpp
         player/MyCardsOverview.cpp
         player/MyCardsOverview.hpp
         player/BankOverview.cpp

@@ -74,13 +74,13 @@ void BoardView::fitToScreen(ScreenCoords scr, bool stretch) {
 void BoardView::render(Canvas &canvas) const {
     const auto& theme=BoardTheme::getInstance();
     for (auto n:m_nodes) {
-        n.render(canvas);
+        n.draw(canvas);
     }
     for (auto e:m_edges) {
-        e.render(canvas);
+        e.draw(canvas);
     }
     for (auto t:m_tiles) {
-        t.render(canvas);
+        t.draw(canvas);
     }
 }
 

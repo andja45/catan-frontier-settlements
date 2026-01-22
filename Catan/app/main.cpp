@@ -19,8 +19,10 @@ int main(int argc, char *argv[])
     auto board=(creator->getBoard());
 
     Widget w(nullptr,board.get());
-    BoardView bw=BoardView(board.get(),{12,5},{3,3});
+    BoardView bw=BoardView(board.get(),{12,5});
     auto wnd=bw.toWindow();
+    wnd.setBorder(true);
+    wnd.setMargin({2,2});
     wnd.blit(std::cout);
     w.show();
     return a.exec();
