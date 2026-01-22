@@ -1,2 +1,2 @@
 add_subdirectory(qt)
-add_subdirectory(asciiview)
+add_subdirectory(ascii)

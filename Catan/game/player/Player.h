@@ -23,6 +23,8 @@ private:
     std::vector<Edge*> m_roads;
     std::vector<Node*> m_buildings; // TODO remove in the future? or keep for trades and longest road?
 
+    std::vector<std::vector<int>> road_graph;
+
     //std::map<ResourceType,bool> m_has2for1Trade;
 
     int m_knightsUsed=0;
@@ -49,6 +51,8 @@ public:
     void addRoad(Edge* edge);
     void addSettlement(Node* node);
     void addCity();
+
+    void addRoadInGraph(EdgeId edgeId1, EdgeId edgeId2);
 
     bool has3for1Trade() const;
     bool has2for1Trade(ResourceType resourceType) const {return hasTrade(resourceType);}

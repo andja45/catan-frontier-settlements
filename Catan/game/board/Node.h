@@ -4,7 +4,7 @@
 #include <types/NodeType.h>
 #include <types/ResourceType.h>
 #include <types/TypeAliases.h>
-#include <board/Coords/NodeCoords.hpp>
+#include <board/coords/NodeCoords.hpp>
 
 class Edge;
 class Tile;

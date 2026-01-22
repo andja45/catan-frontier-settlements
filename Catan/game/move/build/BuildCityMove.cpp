@@ -3,7 +3,7 @@
 //
 
 #include "BuildCityMove.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 
 bool BuildCityMove::isValid(const GameSession& session) const {

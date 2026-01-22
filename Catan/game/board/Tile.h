@@ -5,7 +5,7 @@
 
 #include <types/ResourceType.h>
 #include <types/TypeAliases.h>
-#include <board/Coords/AxialCoords.hpp>
+#include <board/coords/AxialCoords.hpp>
 
 enum class SideDirection;
 enum class PointDirection;

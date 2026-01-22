@@ -3,7 +3,7 @@
 //
 
 #include "PlayDevCardMove.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 bool PlayDevCardMove::isValid(const GameSession& session) const {
     const Player& player = session.player(m_playerId);

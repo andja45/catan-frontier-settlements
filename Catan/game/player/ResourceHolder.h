@@ -47,12 +47,16 @@ public:
     int getNumOfDevCards(DevCardType d) const {return m_devCards.at(d);}
     int getNumOfResourceCards() const {return m_numOfDevCards;};
     int getNumOfResourceCards(ResourceType r) const {return m_resources.at(r);}
+    std::map<ResourceType, int> getResources() { return m_resources; }
+    std::map<DevCardType, int> getDevCards() {return m_devCards; }
 
     void setLongestRoad(bool longestRoad) {m_hasLongestRoad=longestRoad;}
     void setLargestArmy(bool largestMilitary) {m_hasLargestMilitary=largestMilitary;}
 
     bool hasDevCard(DevCardType dev_card) const; // TODO implement
     bool hasDevCards() const; // TODO implement, remove if makes no sense for both bank and player to have these two
+
+    std::string getName() { return m_name; }
 };
 
 

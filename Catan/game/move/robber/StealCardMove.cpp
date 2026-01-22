@@ -3,7 +3,7 @@
 //
 
 #include "StealCardMove.h"
-#include "gamemodel/GameSession.h"
+#include "model/GameSession.h"
 
 bool StealCardMove::isValid(const GameSession& session) const {
     const Board& board = session.board();
