@@ -6,11 +6,8 @@
 #include <types/DevCardType.h>
 
 enum class CardKind { Resource, Development };
-enum class CardFace { FaceUp, FaceDown };
-
 struct CardSpec {
     CardKind kind = CardKind::Resource;
-    CardFace face = CardFace::FaceDown;
 
     // exactly one of these is meaningful depending on kind/face
     ResourceType resource = ResourceType::None;

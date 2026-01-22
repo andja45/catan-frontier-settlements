@@ -34,7 +34,7 @@ void QCard::paintEvent(QPaintEvent*) {
 
     // Resource/dev tint if face-up
     if (m_spec.kind == CardKind::Resource) {
-        if(m_spec.face == CardFace::FaceDown || m_spec.resource == ResourceType::None)
+        if(m_spec.resource == ResourceType::None)
             base = QColor(60, 70, 180);
         else base = GameTheme::getColorByResource(m_spec.resource);
     } else {
@@ -61,16 +61,6 @@ void QCard::paintEvent(QPaintEvent*) {
         p.setPen(glow);
         p.drawRoundedRect(r.adjusted(1,1,-1,-1), radius, radius);
         p.restore();
-    }
-
-    // Simple icon/text for now (replace with SVG later)
-    if (m_spec.face == CardFace::FaceUp) {
-        p.save();
-        p.setPen(QColor(0,0,0,200));
-        QFont f = p.font();
-        f.setBold(true);
-        f.setPointSize(10);
-        p.setFont(f);
     }
 
     // Count badge
