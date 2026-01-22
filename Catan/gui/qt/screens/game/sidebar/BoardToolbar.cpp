@@ -1,5 +1,7 @@
 #include "BoardToolbar.h"
 
+#include <model/MoveCosts.h>
+
 BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     setAttribute(Qt::WA_StyledBackground, true);
     setStyleSheet("background: transparent;");

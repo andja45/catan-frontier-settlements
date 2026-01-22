@@ -58,6 +58,9 @@ Widget::Widget(QWidget *parent, Board* b)
 
     this->setLayout(rootLayout);
 
+    connect(overlay, &RightOverlay::chatSendRequested, this, [overlay](const QString& text){
+      overlay->addChatMessage("Me", text);
+    });
 }
 void Widget::keyPressEvent(QKeyEvent* event)
 {

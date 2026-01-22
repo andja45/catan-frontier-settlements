@@ -3,7 +3,7 @@
 
 #include<QWidget>
 #include<QHBoxLayout>
-#include "FloatingPanel.h"
+#include "components/panels/FloatingPanel.h"
 #include<QPushButton>
 #include<QButtonGroup>
 #include <QMap>
@@ -11,11 +11,11 @@
 #include <QToolButton>
 #include<QPainter>
 #include <QKeyEvent>
-#include"GameTheme.h"
-#include"CountBadge.h"
-#include"../../game/types/ToolbarActionType.h"
+#include "common/GameTheme.h"
+#include "components/cards/CountBadge.h"
+#include "../../game/types/ToolbarActionType.h"
 #include"../../game/types/ResourceType.h"
-#include"CostPopup.h"
+#include "components/panels/CostPopup.h"
 class BoardToolbar : public QWidget
 {Q_OBJECT
 private:
