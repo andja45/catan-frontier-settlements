@@ -33,6 +33,7 @@ add_library(catan_gui_qt
         components/cards/CountBadge.h components/cards/CountBadge.cpp
         components/panels/RobPlayerPopup.h components/panels/RobPlayerPopup.cpp
         components/panels/PlayerDot.h components/panels/PlayerDot.cpp
+        components/panels/DevCardPopup.h components/panels/DevCardPopup.cpp
 )
 
 target_include_directories(catan_gui_qt

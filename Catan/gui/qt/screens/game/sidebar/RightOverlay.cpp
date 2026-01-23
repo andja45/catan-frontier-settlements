@@ -2,6 +2,7 @@
 #include <components/panels/FloatingPanel.h>
 #include <common/GameTheme.h>
 #include <components/cards/QCardRow.h>
+#include <components/panels/DevCardPopup.h>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -94,6 +95,20 @@ RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* p
     connect(robShortcut, &QShortcut::activated, this, [this]() {
         m_robPopup->setCandidates(m_players);
         m_robPopup->openAtGlobal(QCursor::pos());
+    });
+
+    auto* devPopup = new DevCardPopup(this);
+    connect(devPopup, &DevCardPopup::devCardChosen, this, [&](DevCardType dt){
+        // m_game->playDevCard(dt);
+    });
+
+    QVector<DevCardType> hand = {DevCardType::Knight, DevCardType::RoadBuilding, DevCardType::YearOfPlenty};
+
+    // TEMP testing shortcut: press D to open dev popup
+    auto* devShortcut = new QShortcut(QKeySequence(Qt::Key_D), this);
+    connect(devShortcut, &QShortcut::activated, this, [this, devPopup, hand]() {
+        devPopup->setCards(hand);
+        devPopup->openAtGlobal(QCursor::pos());
     });
 
 }
