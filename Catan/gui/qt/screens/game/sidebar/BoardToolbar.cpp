@@ -12,6 +12,7 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     buttonsLayout->setSpacing(10);
     m_costPopup = new CostPopup();
 
+
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setMinimumHeight(60);/*
     for(ToolbarActionType action : ToolbarActionTypes){
@@ -46,6 +47,17 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
         createPanelWithButton(
             createActionButton("Play Dev", ToolbarActionType::PlayDevCard)
             , ToolbarActionType::PlayDevCard)
+        );
+
+    buttonsLayout->addWidget(
+        createPanelWithButton(
+            createTradeButton("Trade Players", ToolbarActionType::PlayerTrade)
+            , ToolbarActionType::PlayerTrade)
+        );
+    buttonsLayout->addWidget(
+        createPanelWithButton(
+            createTradeButton("Trade Bank", ToolbarActionType::BankTrade)
+            , ToolbarActionType::BankTrade)
         );
     buttonsLayout->addStretch(1);
     buttonsLayout->addWidget(
@@ -85,15 +97,26 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     addButton("End Turn", ToolbarActionType::BankTrade,buttonsLayout);*/
 }
 
-void BoardToolbar::addButton(const QString& text, ToolbarActionType action, QHBoxLayout* layout)
+void BoardToolbar::showTradePopup()
 {
-    auto* button = new QPushButton(text, this);
-    button->setMinimumHeight(36);
+    if (!m_tradePopup) {
+        m_tradePopup = new TradePopup(this);
 
-    connect(button, &QPushButton::clicked, this, [this, action]() {
-        emit actionTriggered(action);
-    });
-    layout->addWidget(button);
+        connect(m_tradePopup, &TradePopup::tradeSubmitted,
+                this, &BoardToolbar::playerTradeRequested);
+    }
+
+    QWidget* button = sender()->isWidgetType()
+                          ? qobject_cast<QWidget*>(sender())
+                          : nullptr;
+    if (!button) return;
+
+    const QPoint globalPos = button->mapToGlobal(
+        QPoint(button->width()/2 - m_tradePopup->width()/2,
+               -m_tradePopup->height() - 8));
+
+    m_tradePopup->move(globalPos);
+    m_tradePopup->show();
 }
 FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActionType action) {
     auto* panel = new FloatingPanel(this);
@@ -124,7 +147,35 @@ FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActio
 
     return panel;
 }
+QPushButton* BoardToolbar::createTradeButton(const QString& text,ToolbarActionType action) {
+    auto* btn = new QPushButton(text);
+    btn->setMinimumHeight(32);
+    btn->setStyleSheet(R"(
+    QPushButton {
+        background: transparent;
+        border: none;
+        padding: 6px 14px;
+        font-weight: 500;
+    }
 
+    QPushButton:hover {
+        background: rgba(0, 0, 0, 18);
+    }
+
+    QPushButton:pressed {
+        background: rgba(0, 0, 0, 35);
+    }
+
+    QPushButton:disabled {
+        color: #999;
+    }
+    )");
+
+    connect(btn, &QPushButton::clicked,
+            this, &BoardToolbar::showTradePopup);
+
+    return btn;
+}
 QPushButton* BoardToolbar::createActionButton(const QString& text,ToolbarActionType action) {
     auto* btn = new QPushButton(text);
     btn->setMinimumHeight(32);

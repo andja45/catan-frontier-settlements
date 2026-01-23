@@ -16,9 +16,15 @@ void QCard::setSelected(bool on) { m_selected = on; update(); }
 
 void QCard::enterEvent(QEnterEvent*) { m_hover = true; emit hovered(true); update(); }
 void QCard::leaveEvent(QEvent*) { m_hover = false; emit hovered(false); update(); }
-
+void QCard::incrementCount() { m_spec.countBadge++; update(); }
+void QCard::decrementCount() { if(m_spec.countBadge>0){m_spec.countBadge--; update();} }
 void QCard::mousePressEvent(QMouseEvent* e) {
-    emit clicked(e->button());
+    if (e->button() == Qt::LeftButton) {
+        emit leftClicked();
+    }
+    else if (e->button() == Qt::RightButton) {
+        emit rightClicked();
+    }
     QWidget::mousePressEvent(e);
 }
 
