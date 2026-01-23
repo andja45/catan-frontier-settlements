@@ -127,7 +127,7 @@ QGroupBox* GameDetailsView::SetPlayersTable(const GameData &game){
 
     const auto &points = game.getPointsByPlayer();
     const std::string &winner = game.getWinningPlayer();
-    const std::string &biggestArmyOwner = game.getBiggestArmyOwner();
+    const std::string &biggestArmyOwner = game.getLargestArmyOwner();
     const std::string &longestRoadOwner = game.getLongestRoadOwner();
 
     int row = 0;

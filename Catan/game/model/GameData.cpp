@@ -2,10 +2,22 @@
 #include <time.h>
 
 GameData::GameData(int gameId, std::vector<std::string> playerNames) : m_gameId(gameId), m_playerNames(playerNames) {
-    inicializeGameData();
+    initialize();
 }
 
-void GameData::inicializeGameData() {
+void GameData::initialize() {
+    m_numOfTurns = 0;
+    m_isGameWon = false;
+
+    m_winningPlayer.clear();
+    m_largestArmyOwner.clear();
+    m_longestRoadOwner.clear();
+
+    m_pointsByPlayer.clear();
+    for (const auto& name : m_playerNames) {
+        m_pointsByPlayer[name] = 0;
+    }
+
     std::time_t now = std::time(NULL);
     std::tm tm{};
 
@@ -33,17 +45,16 @@ std::string GameData::getDate() const {
     return m_datetime;
 }
 
-nlohmann::json GameData::toJson() {
+nlohmann::json GameData::toJson() const {
     nlohmann::json jsonData;
 
     jsonData["gameId"]        = m_gameId;
-    jsonData["numOfPlayers"]  = m_numOfPlayers;
     jsonData["numOfTurns"]  = m_numOfTurns;
     jsonData["datetime"]      = m_datetime;
     jsonData["isGameWon"]     = m_isGameWon;
     jsonData["playerNames"]   = m_playerNames;
     jsonData["winningPlayer"] = m_winningPlayer;
-    jsonData["biggestArmyOwner"] = m_biggestArmyOwner;
+    jsonData["largestArmyOwner"] = m_largestArmyOwner;
     jsonData["longestRoadOwner"] = m_longestRoadOwner;
     jsonData["pointsByPlayer"] = m_pointsByPlayer;
     jsonData["diceRolls"]      = m_diceRolls;
@@ -56,17 +67,15 @@ nlohmann::json GameData::toJson() {
 
     return jsonData;
 }
-void GameData::loadFromJson(const nlohmann::json &jsonData)
-{
 
+void GameData::loadFromJson(const nlohmann::json &jsonData) {
     m_gameId       = jsonData.at("gameId").get<int>();
-    m_numOfPlayers = jsonData.at("numOfPlayers").get<int>();
     m_numOfTurns = jsonData.at("numOfTurns").get<int>();
     m_datetime     = jsonData.at("datetime").get<std::string>();
     m_isGameWon    = jsonData.at("isGameWon").get<bool>();
     m_playerNames  = jsonData.at("playerNames").get<std::vector<std::string>>();
     m_winningPlayer = jsonData.at("winningPlayer").get<std::string>();
-    m_biggestArmyOwner = jsonData.at("biggestArmyOwner").get<std::string>();
+    m_largestArmyOwner = jsonData.at("largestArmyOwner").get<std::string>();
     m_longestRoadOwner = jsonData.at("longestRoadOwner").get<std::string>();
     m_pointsByPlayer = jsonData.at("pointsByPlayer").get<std::map<std::string, int>>();
 
