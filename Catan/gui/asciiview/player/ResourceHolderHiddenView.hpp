@@ -1,0 +1,11 @@
+//
+// Created by matija on 1/23/26.
+//
+
+#ifndef CATAN_RESOURCEHOLDERHIDDENVIEW_HPP
+#define CATAN_RESOURCEHOLDERHIDDENVIEW_HPP
+
+class ResourceHolderHiddenView {
+};
+
+#endif //CATAN_RESOURCEHOLDERHIDDENVIEW_HPP

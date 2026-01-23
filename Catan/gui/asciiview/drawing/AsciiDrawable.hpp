@@ -15,7 +15,6 @@ class AsciiDrawable {
 protected:
     ScreenCoords m_offset;
     ScreenSize m_size;
-    ScreenSize m_margin={0,0};
     void prepareCanvas(Canvas &canvas) const; // set canvas offset to element offset to prepare for drawing, when called again undo's this
     virtual void render(Canvas &canvas) const = 0;
 public:

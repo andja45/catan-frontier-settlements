@@ -8,16 +8,8 @@ add_library(catan_ascii_view
         board/NodeView.cpp
         board/NodeView.hpp
         drawing/AsciiTypes.hpp
-        player/PlayerOverview.cpp
-        player/PlayerOverview.hpp
         drawing/AsciiCanvas.cpp
         drawing/AsciiCanvas.hpp
-        player/PlayersOverview.cpp
-        player/PlayersOverview.hpp
-        player/MyCardsOverview.cpp
-        player/MyCardsOverview.hpp
-        player/BankOverview.cpp
-        player/BankOverview.hpp
         drawing/AsciiDrawable.cpp
         drawing/AsciiDrawable.hpp
         drawing/AsciiComposite.cpp
@@ -25,6 +17,18 @@ add_library(catan_ascii_view
         drawing/AsciiWindow.cpp
         drawing/AsciiWindow.hpp
         drawing/AsciiTheme.hpp
+        drawing/AsciiTextDrawable.cpp
+        drawing/AsciiTextDrawable.hpp
+        player/ResourceHolderView.cpp
+        player/ResourceHolderView.hpp
+        player/ResourceHolderHiddenView.cpp
+        player/ResourceHolderHiddenView.hpp
+        player/PlayerSideBar.cpp
+        player/PlayerSideBar.hpp
+        toolbar/ButtonsToolbar.cpp
+        toolbar/ButtonsToolbar.hpp
+        AsciiGameWindow.cpp
+        AsciiGameWindow.hpp
 )
 
 target_include_directories(catan_ascii_view
