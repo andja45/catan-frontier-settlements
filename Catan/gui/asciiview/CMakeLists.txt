@@ -29,6 +29,7 @@ add_library(catan_ascii_view
         toolbar/ButtonsToolbar.hpp
         AsciiGameWindow.cpp
         AsciiGameWindow.hpp
+        toolbar/MoveCatalogue.hpp
 )
 
 target_include_directories(catan_ascii_view

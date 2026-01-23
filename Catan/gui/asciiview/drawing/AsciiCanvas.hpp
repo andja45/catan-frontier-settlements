@@ -47,6 +47,7 @@ public:
     void setCells(const AsciiDrawable &drawable);
     void setCells(ScreenCoords offset, const CellSpan& cells);
     void setCells(ScreenCoords offset, ScreenSize size,Cell cell);
+    void setCells(ScreenCoords offset, std::string text);
     void setCells(Cell cell);
 
     Cell getCell(ScreenCoords pos) const {

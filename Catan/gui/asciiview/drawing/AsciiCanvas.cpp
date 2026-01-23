@@ -98,6 +98,12 @@ void AsciiCanvas::setCells(ScreenCoords offset, Size size, Cell cell) {
     setCells(offset,cellSpan);
 }
 
+void AsciiCanvas::setCells(ScreenCoords offset, std::string text) {
+    for (int i=0; i<text.size(); i++) {
+        setCell(offset,{i,0},{text[i],1});
+    }
+}
+
 void AsciiCanvas::setCells(Cell cell) {
     setCells({0,0},m_size,cell);
 }
