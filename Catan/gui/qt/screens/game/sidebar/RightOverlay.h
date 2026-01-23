@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QString>
 #include <QTimer>
+
 #include <components/cards/QCard.h>
+#include <components/panels/RobPlayerPopup.h>
 
 #include <player/Player.h>
 #include <player/Bank.h>
@@ -81,5 +83,8 @@ private:
 
     // player rows
     std::vector<PlayerUiRow> m_playerRows;
+
+    // for robber popup
+    RobPlayerPopup* m_robPopup = nullptr;
 };
 #endif // RIGHTOVERLAY_H

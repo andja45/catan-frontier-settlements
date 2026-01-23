@@ -10,7 +10,7 @@ public:
         setFrameStyle(QFrame::NoFrame);
         setAttribute(Qt::WA_StyledBackground, true);
         setStyleSheet(R"(
-            QFrame {
+            FloatingPanel {
                 background: rgba(245,245,245,230);
                 border-radius: 10px;
             }
@@ -21,7 +21,7 @@ public:
         setFrameStyle(QFrame::NoFrame);
         setAttribute(Qt::WA_StyledBackground, true);
         setStyleSheet(R"(
-            QFrame {
+            FloatingPanel {
                 background: rgba(245,245,245,230);
                 border-radius: 10px;
             }

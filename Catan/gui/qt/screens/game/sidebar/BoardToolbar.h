@@ -11,11 +11,10 @@
 #include <QToolButton>
 #include<QPainter>
 #include <QKeyEvent>
-#include "common/GameTheme.h"
-#include "components/cards/CountBadge.h"
-#include "../../game/types/ToolbarActionType.h"
-#include"../../game/types/ResourceType.h"
+
 #include "components/panels/CostPopup.h"
+#include "../../game/types/ToolbarActionType.h"
+
 class BoardToolbar : public QWidget
 {Q_OBJECT
 private:
@@ -24,6 +23,7 @@ private:
     QLabel* m_countSettlements;
     QLabel* m_countRoads;
     QLabel* m_countCities;
+
     /*
     CountBadge* m_countSettlements;
     CountBadge* m_countRoads;

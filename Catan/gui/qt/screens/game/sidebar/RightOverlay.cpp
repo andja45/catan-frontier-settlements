@@ -14,6 +14,7 @@
 #include <QHeaderView>
 #include <QDateTime>
 #include <QPainter>
+#include <QShortcut>
 
 RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* parent) : m_bank(bank), QWidget(parent) {
     // -------- Chat panel --------
@@ -82,6 +83,19 @@ RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* p
     auto* t = new QTimer(this);
     connect(t, &QTimer::timeout, this, &RightOverlay::refreshAll);
     t->start(200);
+
+    m_robPopup = new RobPlayerPopup(this);
+    connect(m_robPopup, &RobPlayerPopup::playerChosen, this, [this](PlayerId id){
+        // m_game->robPlayer(id);
+    });
+
+    // TEMP testing shortcut: press R to open robber popup
+    auto* robShortcut = new QShortcut(QKeySequence(Qt::Key_R), this);
+    connect(robShortcut, &QShortcut::activated, this, [this]() {
+        m_robPopup->setCandidates(m_players);
+        m_robPopup->openAtGlobal(QCursor::pos());
+    });
+
 }
 
 void RightOverlay::buildChatUi(FloatingPanel* panel) {

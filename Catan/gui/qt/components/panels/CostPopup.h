@@ -10,8 +10,10 @@ class CostPopup : public FloatingPanel {
 public:
     CostPopup( QWidget* parent = nullptr);
     void setAction(ToolbarActionType action){m_action=action;}
-    void refresh();
 
+    void refresh();
+protected:
+    void paintEvent(QPaintEvent*) override;
 private:
     ToolbarActionType m_action;
     QCardRow* m_row;

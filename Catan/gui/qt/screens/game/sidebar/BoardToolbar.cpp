@@ -1,5 +1,8 @@
 #include "BoardToolbar.h"
 
+#include "common/GameTheme.h"
+#include "components/cards/CountBadge.h"
+#include"../../game/types/ResourceType.h"
 #include <model/MoveCosts.h>
 
 BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
