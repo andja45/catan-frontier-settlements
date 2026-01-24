@@ -16,6 +16,8 @@ public:
     void setSelected(bool on);
     bool isSelected() const { return m_selected; }
 
+    void clearHover() { m_hover = false; update(); }
+
 signals:
     void clicked(Qt::MouseButton button);
     void hovered(bool on);

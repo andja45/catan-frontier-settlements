@@ -283,9 +283,11 @@ void RightOverlay::setUpPopups(){
         if (action != ToolbarActionType::PlayDevCard) return;
         m_playerYou->addDevCard(DevCardType::Knight);
         m_playerYou->addDevCard(DevCardType::Monopoly);
-        m_playerYou->addDevCard(DevCardType::Knight);
+        m_playerYou->addDevCard(DevCardType::RoadBuilding);
         m_playerYou->addDevCard(DevCardType::YearOfPlenty);
-        auto devs = m_playerYou->getDevCardList();
+        m_playerYou->addDevCard(DevCardType::Knight);
+        m_playerYou->addDevCard(DevCardType::VictoryPoint);
+        auto devs = m_playerYou->getDevCardActivationList();
         QVector<DevCardType> qdevs(devs.begin(), devs.end());
         devPopup->setCards(qdevs);
         devPopup->openAtGlobal(QCursor::pos());

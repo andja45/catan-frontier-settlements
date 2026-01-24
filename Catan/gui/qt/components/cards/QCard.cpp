@@ -3,6 +3,17 @@
 #include <QPainter>
 #include <QMouseEvent>
 
+static QString devLabel(DevCardType t) {
+    switch (t) {
+    case DevCardType::Knight:         return "K";
+    case DevCardType::Monopoly:       return "MON";
+    case DevCardType::RoadBuilding:   return "RB";
+    case DevCardType::YearOfPlenty:   return "YOP";
+    case DevCardType::VictoryPoint:   return "VP";
+    default:                          return "?";
+    }
+}
+
 QCard::QCard(QWidget* parent) : QWidget(parent) {
     setMouseTracking(true);
     setCursor(Qt::PointingHandCursor);
@@ -63,6 +74,29 @@ void QCard::paintEvent(QPaintEvent*) {
         p.restore();
     }
 
+    if (m_spec.kind == CardKind::Development) {
+        const QString label = devLabel(m_spec.dev);
+
+        // Choose readable color
+        QColor textColor = QColor(255,255,255,230);
+
+        // Font: compact, bold
+        QFont f = p.font();
+        f.setBold(true);
+        f.setPointSize(9);   // tuned for 44x60 card
+        p.setFont(f);
+
+        // Optional subtle shadow for contrast
+        QPointF center = r.center();
+        QRectF textRect = r.adjusted(0, 6, 0, -6); // slightly up
+
+        p.setPen(QColor(0,0,0,120));
+        p.drawText(textRect.translated(1,1), Qt::AlignCenter, label);
+
+        p.setPen(textColor);
+        p.drawText(textRect, Qt::AlignCenter, label);
+    }
+
     // Count badge
         if (m_spec.countBadge >= 0) {
         const int badge = m_spec.countBadge;
@@ -88,3 +122,4 @@ void QCard::paintEvent(QPaintEvent*) {
         }
         */
 }
+

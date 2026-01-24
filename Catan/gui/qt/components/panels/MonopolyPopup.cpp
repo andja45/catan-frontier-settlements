@@ -111,8 +111,17 @@ void MonopolyPopup::openAtGlobal(const QPoint& globalPos) {
 }
 
 void MonopolyPopup::closePopup() {
+    // reset transient visuals so next time starts clean
+    for (auto* c : m_cardWidgets) {
+        if (!c) continue;
+        c->setSelected(false);
+        c->clearHover();
+    }
+    m_selected = -1;
+
     hide();
 }
+
 
 void MonopolyPopup::paintEvent(QPaintEvent*) {
     QPainter p(this);

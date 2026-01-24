@@ -2,6 +2,8 @@
 // Created by matija on 12/13/25.
 //
 
+#include <array>
+
 #ifndef Catan_DEVTYPE_HPP
 #define Catan_DEVTYPE_HPP
 enum class DevCardType {
