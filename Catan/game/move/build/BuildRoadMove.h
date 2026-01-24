@@ -22,6 +22,8 @@ public:
 
     bool providesAllValid() const override { return true; }
     std::unordered_set<EdgeId> allValid(const GameSession& session) const;
+
+    EdgeId getEdgeId() const { return m_edgeId; }
 };
 
 

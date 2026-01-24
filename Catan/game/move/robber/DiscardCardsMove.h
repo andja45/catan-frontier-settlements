@@ -17,6 +17,7 @@ public:
     MoveType type() const override { return MoveType::DiscardCards; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
+    const ResourcePack& getDiscarded() const { return m_discarded; }
     // TODO in gui unclickable if <= 0
 };
 

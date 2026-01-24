@@ -2,11 +2,6 @@
 
 add_executable(Catan
         main.cpp
-        ../controller/renderstate/RenderState.h
-        ../controller/renderstate/BoardRenderState.cpp
-        ../controller/renderstate/BoardRenderState.h
-        ../controller/renderstate/ToolbarRenderState.cpp
-        ../controller/renderstate/ToolbarRenderState.h
 )
 
 target_link_libraries(Catan

@@ -16,6 +16,9 @@ public:
     MoveType type() const override { return MoveType::PlayerTradeResponse; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
+
+    TradeId getTradeRequestId() const {return m_tradeRequestId;}
+
     // TODO mark yes as gray if !isvalid in gui (dont need allvalid)
 };
 

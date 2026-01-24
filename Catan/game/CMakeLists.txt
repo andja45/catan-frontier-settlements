@@ -1,4 +1,4 @@
-add_library(catan_game
+    add_library(catan_game
         board/Edge.h
         board/Tile.h
         board/Edge.h

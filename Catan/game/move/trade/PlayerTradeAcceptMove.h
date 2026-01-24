@@ -22,6 +22,8 @@ public:
 
     bool providesAllValid() const override { return true; }
     std::unordered_set<PlayerId> allValid(const GameSession &session) const; // players that he can chose from
+    PlayerId getAcceptedPlayerId() const {return m_acceptedPlayerId;}
+    TradeId getTradeId() const {return m_tradeId;}
 };
 
 

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package catan;
+
+enum ResourceType {
+  RESOURCE_UNKNOWN = 0;
+  WOOD = 1;
+  BRICK = 2;
+  SHEEP = 3;
+  WHEAT = 4;
+  ORE = 5;
+}
+
+enum  DevCardType {
+    None = 0;
+    Monopoly = 1;
+    Knight = 2;
+    RoadBuilding = 3;
+    YearOfPlenty = 4;
+    VictoryPoint = 5;
+    };

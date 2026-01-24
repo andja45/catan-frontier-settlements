@@ -18,6 +18,10 @@ public:
     MoveType type() const override { return MoveType::BankTrade; }
     bool isValid(const GameSession&) const override;
     void apply(GameSession&) const override;
+
+    ResourceType getGive() const {return m_give;}
+    ResourceType getReceive() const {return m_receive;}
+
     // TODO gui takes care if >= mintrade then unclickable (mintrade is written under player rss and we get it from player)
 };
 
