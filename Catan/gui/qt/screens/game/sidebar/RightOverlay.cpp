@@ -176,6 +176,7 @@ void RightOverlay::buildYouUi(FloatingPanel* panel) {
     m_youCards[2] = row->addCard({CardKind::Resource, ResourceType::Wool,  DevCardType::None, m_playerYou->getResources()[ResourceType::Wool]});
     m_youCards[3] = row->addCard({CardKind::Resource, ResourceType::Wheat, DevCardType::None, m_playerYou->getResources()[ResourceType::Wheat]});
     m_youCards[4] = row->addCard({CardKind::Resource, ResourceType::Ore,   DevCardType::None, m_playerYou->getResources()[ResourceType::Ore]});
+    m_youCards[5] = row->addCard({CardKind::Development, ResourceType::None,   DevCardType::VictoryPoint, m_playerYou->getDevCards()[DevCardType::VictoryPoint]});
 
 
     youLayout->addWidget(row);
@@ -257,6 +258,7 @@ void RightOverlay::refreshAll() {
             if (m_youCards[2]) m_youCards[2]->setSpec({CardKind::Resource, ResourceType::Wool,  DevCardType::None, you->getResources()[ResourceType::Wool]});
             if (m_youCards[3]) m_youCards[3]->setSpec({CardKind::Resource, ResourceType::Wheat, DevCardType::None, you->getResources()[ResourceType::Wheat]});
             if (m_youCards[4]) m_youCards[4]->setSpec({CardKind::Resource, ResourceType::Ore,   DevCardType::None, you->getResources()[ResourceType::Ore]});
+            if (m_youCards[5]) m_youCards[5]->setSpec({CardKind::Development, ResourceType::None,   DevCardType::VictoryPoint, m_playerYou->getDevCards()[DevCardType::VictoryPoint]});
         }
     }
 }

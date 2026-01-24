@@ -81,7 +81,7 @@ private:
     std::array<QCard*, 6> m_bankCards {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
     // "you" cards in fixed order
-    std::array<QCard*, 5> m_youCards {nullptr, nullptr, nullptr, nullptr, nullptr};
+    std::array<QCard*, 6> m_youCards {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
     // player rows
     std::vector<PlayerUiRow> m_playerRows;
