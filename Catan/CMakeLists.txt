@@ -23,7 +23,6 @@ add_subdirectory(libs)
 add_subdirectory(game)
 add_subdirectory(gui)
 add_subdirectory(app)
-add_subdirectory(network)
 
 #set_target_properties(catan_gui_qt PROPERTIES
 #        CXX_CLANG_TIDY ""
