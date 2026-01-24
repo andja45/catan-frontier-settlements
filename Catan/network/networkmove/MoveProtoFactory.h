@@ -8,13 +8,13 @@
 #include <memory>
 #include "move/Move.h"
 
-namespace catan {
+namespace net {
     class Move;
 }
 
 class MoveProtoFactory {
 public:
-    static std::unique_ptr<Move> fromProto(const catan::Move& proto);
+    static std::unique_ptr<Move> fromProto(const net::Move& proto);
 };
 
 
