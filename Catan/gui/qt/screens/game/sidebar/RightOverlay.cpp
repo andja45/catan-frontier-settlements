@@ -3,6 +3,8 @@
 #include <common/GameTheme.h>
 #include <components/cards/QCardRow.h>
 #include <components/panels/DevCardPopup.h>
+#include <components/panels/RobPlayerPopup.h>
+#include <components/panels/MonopolyPopup.h>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -17,7 +19,8 @@
 #include <QPainter>
 #include <QShortcut>
 
-RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* parent) : m_bank(bank), QWidget(parent) {
+RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, BoardToolbar* toolbar, QWidget* parent)
+    : m_bank(bank), m_toolbar(toolbar), QWidget(parent) {
     // -------- Chat panel --------
     m_chat = new FloatingPanel(this);
     m_chat->setAttribute(Qt::WA_TransparentForMouseEvents, false);
@@ -82,39 +85,11 @@ RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* p
 
     relayout();
 
+    setUpPopups();
+
     auto* t = new QTimer(this);
     connect(t, &QTimer::timeout, this, &RightOverlay::refreshAll);
-    t->start(200);
-
-    m_robPopup = new RobPlayerPopup(this);
-    connect(m_robPopup, &RobPlayerPopup::playerChosen, this, [this](PlayerId id){
-        // m_game->robPlayer(id);
-    });
-
-    // TEMP testing shortcut: press R to open robber popup
-    auto* robShortcut = new QShortcut(QKeySequence(Qt::Key_R), this);
-    connect(robShortcut, &QShortcut::activated, this, [this]() {
-        m_robPopup->setCandidates(m_players);
-        m_robPopup->openAtGlobal(QCursor::pos());
-    });
-
-    auto* devPopup = new DevCardPopup(this);
-    connect(devPopup, &DevCardPopup::devCardChosen, this, [&](DevCardType dt){
-        // m_game->playDevCard(dt);
-    });
-
-    // TEMP testing shortcut: press D to open dev popup
-    auto* devShortcut = new QShortcut(QKeySequence(Qt::Key_D), this);
-    connect(devShortcut, &QShortcut::activated, this, [this, devPopup]() {
-        m_playerYou->addDevCard(DevCardType::Knight);
-        m_playerYou->addDevCard(DevCardType::Monopoly);
-        m_playerYou->addDevCard(DevCardType::Knight);
-        m_playerYou->addDevCard(DevCardType::YearOfPlenty);
-        auto devs = m_playerYou->getDevCardList();
-        QVector<DevCardType> qdevs(devs.begin(), devs.end());
-        devPopup->setCards(qdevs);
-        devPopup->openAtGlobal(QCursor::pos());
-    });
+    t->start(1000);
 
 }
 
@@ -174,6 +149,7 @@ void RightOverlay::buildBankUi(FloatingPanel* panel) {
     m_bankCards[2] = row->addCard({CardKind::Resource, ResourceType::Wool,  DevCardType::None, m_bank->getResources()[ResourceType::Wool]});
     m_bankCards[3] = row->addCard({CardKind::Resource, ResourceType::Wheat, DevCardType::None, m_bank->getResources()[ResourceType::Wheat]});
     m_bankCards[4] = row->addCard({CardKind::Resource, ResourceType::Ore,   DevCardType::None, m_bank->getResources()[ResourceType::Ore]});
+    m_bankCards[5] = row->addCard({CardKind::Development, ResourceType::None,   DevCardType::None, m_bank->getNumOfDevCards()});
 
     bankLayout->addWidget(row);
 
@@ -244,6 +220,7 @@ void RightOverlay::refreshAll() {
     if (m_bankCards[2]) m_bankCards[2]->setSpec({CardKind::Resource, ResourceType::Wool,  DevCardType::None, m_bank->getResources()[ResourceType::Wool]});
     if (m_bankCards[3]) m_bankCards[3]->setSpec({CardKind::Resource, ResourceType::Wheat, DevCardType::None, m_bank->getResources()[ResourceType::Wheat]});
     if (m_bankCards[4]) m_bankCards[4]->setSpec({CardKind::Resource, ResourceType::Ore,   DevCardType::None, m_bank->getResources()[ResourceType::Ore]});
+    if (m_bankCards[5]) m_bankCards[5]->setSpec({CardKind::Development, ResourceType::None,   DevCardType::None, m_bank->getNumOfDevCards()});
 
     // --- refresh per-player hidden counts (resource/dev hand sizes) ---
     const int n = std::min<int>(m_players.size(), m_playerRows.size());
@@ -282,4 +259,51 @@ void RightOverlay::refreshAll() {
             if (m_youCards[4]) m_youCards[4]->setSpec({CardKind::Resource, ResourceType::Ore,   DevCardType::None, you->getResources()[ResourceType::Ore]});
         }
     }
+}
+
+void RightOverlay::setUpPopups(){
+    auto* robPopup = new RobPlayerPopup(this);
+    connect(robPopup, &RobPlayerPopup::playerChosen, this, [this](PlayerId id){
+        // m_game->robPlayer(id);
+    });
+
+    // TEMP testing shortcut: press R to open robber popup
+    auto* robShortcut = new QShortcut(QKeySequence(Qt::Key_R), this);
+    connect(robShortcut, &QShortcut::activated, this, [this, robPopup]() {
+        robPopup->setCandidates(m_players);
+        robPopup->openAtGlobal(QCursor::pos());
+    });
+
+    auto* devPopup = new DevCardPopup(this);
+    connect(devPopup, &DevCardPopup::devCardChosen, this, [&](DevCardType type){
+        // m_game->playDevCard(dt);
+    });
+
+    connect(m_toolbar, &BoardToolbar::actionTriggered, this, [this, devPopup](ToolbarActionType action) {
+        if (action != ToolbarActionType::PlayDevCard) return;
+        m_playerYou->addDevCard(DevCardType::Knight);
+        m_playerYou->addDevCard(DevCardType::Monopoly);
+        m_playerYou->addDevCard(DevCardType::Knight);
+        m_playerYou->addDevCard(DevCardType::YearOfPlenty);
+        auto devs = m_playerYou->getDevCardList();
+        QVector<DevCardType> qdevs(devs.begin(), devs.end());
+        devPopup->setCards(qdevs);
+        devPopup->openAtGlobal(QCursor::pos());
+    });
+
+    auto monopolyPopup = new MonopolyPopup(this); // 'this' must be long-lived (e.g., main widget)               // optional
+
+    connect(monopolyPopup, &MonopolyPopup::resourceChosen,
+            this, [this](ResourceType type){
+                // m_game->activateMonopoly(type);
+            });
+
+    connect(devPopup, &DevCardPopup::devCardChosen, this, [this, monopolyPopup](DevCardType type) {
+                if (type != DevCardType::Monopoly) return;
+
+                // Defer opening until DevCardPopup finished closing / releasing grab
+                QTimer::singleShot(0, this, [monopolyPopup]() {
+                    monopolyPopup->openAtGlobal(QCursor::pos());
+                });
+            });
 }

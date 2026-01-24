@@ -34,6 +34,7 @@ add_library(catan_gui_qt
         components/panels/RobPlayerPopup.h components/panels/RobPlayerPopup.cpp
         components/panels/PlayerDot.h components/panels/PlayerDot.cpp
         components/panels/DevCardPopup.h components/panels/DevCardPopup.cpp
+        components/panels/MonopolyPopup.h components/panels/MonopolyPopup.cpp
 )
 
 target_include_directories(catan_gui_qt

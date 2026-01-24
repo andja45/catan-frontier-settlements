@@ -38,7 +38,7 @@ Widget::Widget(QWidget *parent, Board* b)
     players.push_back(new Player(1, "Marko"));
 
     Bank* bank = new Bank();
-    auto* overlay = new RightOverlay(players, bank, this);
+    auto* overlay = new RightOverlay(players, bank, toolbar, this);
 
     qboard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 

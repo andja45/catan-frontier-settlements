@@ -6,7 +6,7 @@
 #include <QTimer>
 
 #include <components/cards/QCard.h>
-#include <components/panels/RobPlayerPopup.h>
+#include "BoardToolbar.h"
 
 #include <player/Player.h>
 #include <player/Bank.h>
@@ -28,7 +28,7 @@ struct PlayerUiRow {
 class RightOverlay : public QWidget {
     Q_OBJECT
 public:
-    explicit RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* parent=nullptr);
+    explicit RightOverlay(std::vector<Player*>& players, Bank* bank, BoardToolbar* toolbar, QWidget* parent=nullptr);
 
     void addChatMessage(const QString& author, const QString& message);
     void refreshAll();
@@ -45,6 +45,7 @@ private:
     void buildChatUi(FloatingPanel* panel);
     void buildBankUi(FloatingPanel* panel);
     void buildYouUi(FloatingPanel* panel);
+    void setUpPopups();
 
 private:
     int m_margin = 12;
@@ -77,7 +78,7 @@ private:
     QTimer* m_refreshTimer = nullptr;
 
     // bank cards in fixed order
-    std::array<QCard*, 5> m_bankCards {nullptr, nullptr, nullptr, nullptr, nullptr};
+    std::array<QCard*, 6> m_bankCards {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
     // "you" cards in fixed order
     std::array<QCard*, 5> m_youCards {nullptr, nullptr, nullptr, nullptr, nullptr};
@@ -85,7 +86,6 @@ private:
     // player rows
     std::vector<PlayerUiRow> m_playerRows;
 
-    // for robber popup
-    RobPlayerPopup* m_robPopup = nullptr;
+    BoardToolbar* m_toolbar;
 };
 #endif // RIGHTOVERLAY_H

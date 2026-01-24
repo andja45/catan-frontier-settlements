@@ -98,8 +98,8 @@ void DevCardPopup::rebuild() {
         connect(card, &QCard::clicked, this, [this, i](Qt::MouseButton b) {
             if (b != Qt::LeftButton) return;
             selectIndex(i);
-            emit devCardChosen(m_cards[i]);
             closePopup();
+            emit devCardChosen(m_cards[i]);
         });
 
         // Optional: allow hover to "preselect" visually (nice UX)
