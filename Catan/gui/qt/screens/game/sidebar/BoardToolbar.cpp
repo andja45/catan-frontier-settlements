@@ -3,6 +3,7 @@
 #include <model/MoveCosts.h>
 
 BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
+
     setAttribute(Qt::WA_StyledBackground, true);
     setStyleSheet("background: transparent;");
     setAutoFillBackground(false);
@@ -11,6 +12,9 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     buttonsLayout->setContentsMargins(10,10,10,10);
     buttonsLayout->setSpacing(10);
     m_costPopup = new CostPopup();
+    m_tradePopup = new TradePopup();
+    m_tradeBankPopup = new TradeBankPopup(m_player, nullptr);
+
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setMinimumHeight(60);/*
@@ -47,19 +51,44 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
             createActionButton("Play Dev", ToolbarActionType::PlayDevCard)
             , ToolbarActionType::PlayDevCard)
         );
+
+
+    buttonsLayout->addWidget(
+        createPanelWithButton(
+            createTradeButton("Trade Players", ToolbarActionType::PlayerTrade)
+            , ToolbarActionType::PlayerTrade)
+        );
+
+    buttonsLayout->addWidget(
+        createPanelWithButton(
+            createTradeButton("Trade Bank", ToolbarActionType::BankTrade)
+            , ToolbarActionType::BankTrade)
+        );
+
     buttonsLayout->addStretch(1);
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("Roll Dice", ToolbarActionType::RollDice)
             , ToolbarActionType::RollDice)
         );
+    auto* diceEndBox = new QVBoxLayout();
 
-    buttonsLayout->addWidget(
+    auto* diceWidget = new DiceWidget(this);
+    diceEndBox->addWidget(diceWidget);
+
+    diceEndBox->addWidget(
         createPanelWithButton(
             createActionButton("End Turn", ToolbarActionType::EndTurn)
             , ToolbarActionType::EndTurn)
         );
 
+    buttonsLayout->addLayout(diceEndBox);
+    diceWidget->setDice(3, 5);
+
+    connect(m_tradePopup, &TradePopup::tradeSubmitted,
+            this, &BoardToolbar::playerTradeRequested);
+    connect(m_tradeBankPopup, &TradeBankPopup::tradeSubmitted,
+            this, &BoardToolbar::bankTradeRequested);
 /*
     buttonsLayout->addWidget(createMenuButton(
         "Build",
@@ -85,15 +114,35 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     addButton("End Turn", ToolbarActionType::BankTrade,buttonsLayout);*/
 }
 
-void BoardToolbar::addButton(const QString& text, ToolbarActionType action, QHBoxLayout* layout)
+void BoardToolbar::showTradePopup()
 {
-    auto* button = new QPushButton(text, this);
-    button->setMinimumHeight(36);
+    auto* button = qobject_cast<QWidget*>(sender());
+    if (!button) return;
 
-    connect(button, &QPushButton::clicked, this, [this, action]() {
-        emit actionTriggered(action);
-    });
-    layout->addWidget(button);
+    QPoint pos = button->mapToGlobal(
+        QPoint(button->width()/2 - m_tradePopup->sizeHint().width()/2,
+               -m_tradePopup->sizeHint().height() - 8));
+
+    m_tradePopup->move(pos);
+    m_tradePopup->show();
+    m_tradePopup->raise();
+}
+
+void BoardToolbar::showBankTradePopup()
+{
+
+    auto* button = qobject_cast<QWidget*>(sender());
+    if (!button) return;
+
+    QPoint pos = button->mapToGlobal(
+        QPoint(button->width()/2 - m_tradeBankPopup->sizeHint().width()/2,
+                -m_tradeBankPopup->sizeHint().height() - 8));
+
+    m_tradeBankPopup->move(pos);
+    m_tradeBankPopup->show();
+    m_tradeBankPopup->raise();
+    m_tradeBankPopup->activateWindow();
+
 }
 FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActionType action) {
     auto* panel = new FloatingPanel(this);
@@ -124,7 +173,40 @@ FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActio
 
     return panel;
 }
+QPushButton* BoardToolbar::createTradeButton(const QString& text,ToolbarActionType action) {
+    auto* btn = new QPushButton(text);
+    btn->setMinimumHeight(32);
+    btn->setStyleSheet(R"(
+    QPushButton {
+        background: transparent;
+        border: none;
+        padding: 6px 14px;
+        font-weight: 500;
+    }
 
+    QPushButton:hover {
+        background: rgba(0, 0, 0, 18);
+    }
+
+    QPushButton:pressed {
+        background: rgba(0, 0, 0, 35);
+    }
+
+    QPushButton:disabled {
+        color: #999;
+    }
+    )");
+    if(action == ToolbarActionType::PlayerTrade){
+        connect(btn, &QPushButton::clicked,
+            this, &BoardToolbar::showTradePopup);
+    }
+    else{
+        connect(btn,&QPushButton::clicked,
+                this,  &BoardToolbar::showBankTradePopup);
+    }
+
+    return btn;
+}
 QPushButton* BoardToolbar::createActionButton(const QString& text,ToolbarActionType action) {
     auto* btn = new QPushButton(text);
     btn->setMinimumHeight(32);

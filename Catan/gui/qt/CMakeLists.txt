@@ -31,6 +31,11 @@ add_library(catan_gui_qt
         screens/game/sidebar/BoardToolbar.h screens/game/sidebar/BoardToolbar.cpp
         components/panels/CostPopup.h components/panels/CostPopup.cpp
         components/cards/CountBadge.h components/cards/CountBadge.cpp
+        components/panels/TradePopup.h components/panels/TradePopup.cpp
+        components/panels/TradeBankPopup.h components/panels/TradeBankPopup.cpp
+        components/panels/TradeOfferedPopup.h components/panels/TradeOfferedPopup.cpp
+
+        components/DiceWidget.h components/DiceWidget.cpp
 )
 
 target_include_directories(catan_gui_qt
