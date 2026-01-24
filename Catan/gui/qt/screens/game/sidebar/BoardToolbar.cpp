@@ -3,6 +3,7 @@
 #include <model/MoveCosts.h>
 
 BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
+
     setAttribute(Qt::WA_StyledBackground, true);
     setStyleSheet("background: transparent;");
     setAutoFillBackground(false);
@@ -11,6 +12,8 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     buttonsLayout->setContentsMargins(10,10,10,10);
     buttonsLayout->setSpacing(10);
     m_costPopup = new CostPopup();
+    m_tradePopup = new TradePopup();
+    m_tradeBankPopup = new TradeBankPopup(m_player, nullptr);
 
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -49,29 +52,43 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
             , ToolbarActionType::PlayDevCard)
         );
 
+
     buttonsLayout->addWidget(
         createPanelWithButton(
             createTradeButton("Trade Players", ToolbarActionType::PlayerTrade)
             , ToolbarActionType::PlayerTrade)
         );
+
     buttonsLayout->addWidget(
         createPanelWithButton(
             createTradeButton("Trade Bank", ToolbarActionType::BankTrade)
             , ToolbarActionType::BankTrade)
         );
+
     buttonsLayout->addStretch(1);
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("Roll Dice", ToolbarActionType::RollDice)
             , ToolbarActionType::RollDice)
         );
+    auto* diceEndBox = new QVBoxLayout();
 
-    buttonsLayout->addWidget(
+    auto* diceWidget = new DiceWidget(this);
+    diceEndBox->addWidget(diceWidget);
+
+    diceEndBox->addWidget(
         createPanelWithButton(
             createActionButton("End Turn", ToolbarActionType::EndTurn)
             , ToolbarActionType::EndTurn)
         );
 
+    buttonsLayout->addLayout(diceEndBox);
+    diceWidget->setDice(3, 5);
+
+    connect(m_tradePopup, &TradePopup::tradeSubmitted,
+            this, &BoardToolbar::playerTradeRequested);
+    connect(m_tradeBankPopup, &TradeBankPopup::tradeSubmitted,
+            this, &BoardToolbar::bankTradeRequested);
 /*
     buttonsLayout->addWidget(createMenuButton(
         "Build",
@@ -99,24 +116,33 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
 
 void BoardToolbar::showTradePopup()
 {
-    if (!m_tradePopup) {
-        m_tradePopup = new TradePopup(this);
-
-        connect(m_tradePopup, &TradePopup::tradeSubmitted,
-                this, &BoardToolbar::playerTradeRequested);
-    }
-
-    QWidget* button = sender()->isWidgetType()
-                          ? qobject_cast<QWidget*>(sender())
-                          : nullptr;
+    auto* button = qobject_cast<QWidget*>(sender());
     if (!button) return;
 
-    const QPoint globalPos = button->mapToGlobal(
-        QPoint(button->width()/2 - m_tradePopup->width()/2,
-               -m_tradePopup->height() - 8));
+    QPoint pos = button->mapToGlobal(
+        QPoint(button->width()/2 - m_tradePopup->sizeHint().width()/2,
+               -m_tradePopup->sizeHint().height() - 8));
 
-    m_tradePopup->move(globalPos);
+    m_tradePopup->move(pos);
     m_tradePopup->show();
+    m_tradePopup->raise();
+}
+
+void BoardToolbar::showBankTradePopup()
+{
+
+    auto* button = qobject_cast<QWidget*>(sender());
+    if (!button) return;
+
+    QPoint pos = button->mapToGlobal(
+        QPoint(button->width()/2 - m_tradeBankPopup->sizeHint().width()/2,
+                -m_tradeBankPopup->sizeHint().height() - 8));
+
+    m_tradeBankPopup->move(pos);
+    m_tradeBankPopup->show();
+    m_tradeBankPopup->raise();
+    m_tradeBankPopup->activateWindow();
+
 }
 FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActionType action) {
     auto* panel = new FloatingPanel(this);
@@ -170,9 +196,14 @@ QPushButton* BoardToolbar::createTradeButton(const QString& text,ToolbarActionTy
         color: #999;
     }
     )");
-
-    connect(btn, &QPushButton::clicked,
+    if(action == ToolbarActionType::PlayerTrade){
+        connect(btn, &QPushButton::clicked,
             this, &BoardToolbar::showTradePopup);
+    }
+    else{
+        connect(btn,&QPushButton::clicked,
+                this,  &BoardToolbar::showBankTradePopup);
+    }
 
     return btn;
 }

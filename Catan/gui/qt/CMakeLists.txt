@@ -34,7 +34,8 @@ add_library(catan_gui_qt
         components/panels/TradePopup.h components/panels/TradePopup.cpp
         components/panels/TradeBankPopup.h components/panels/TradeBankPopup.cpp
         components/panels/TradeOfferedPopup.h components/panels/TradeOfferedPopup.cpp
-        components/panels/TradeMakerPopup.h components/panels/TradeMakerPopup.cpp
+
+        components/DiceWidget.h components/DiceWidget.cpp
 )
 
 target_include_directories(catan_gui_qt
