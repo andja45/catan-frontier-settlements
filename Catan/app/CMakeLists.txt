@@ -11,6 +11,12 @@ add_executable(Catan
         ../network/MoveProtoFactory.h
         ../network/MoveProtoSerializer.h
         ../network/MoveProtoSerializer.cpp
+        ../network/GameNetwork.h
+        ../network/GameNetwork.cpp
+        ../network/MessageFramer.h
+        ../network/MessageFramer.cpp
+        ../network/NetworkTransport.h
+        ../network/NetworkTransport.cpp
 )
 
 target_link_libraries(Catan
