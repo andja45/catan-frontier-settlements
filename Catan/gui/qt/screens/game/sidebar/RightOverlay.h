@@ -71,6 +71,7 @@ private:
     // --- players ---
     QTableWidget* m_playersTable = nullptr;
     QVector<Player*> m_players;
+    Player* m_playerYou;
 
     // timer polling
     QTimer* m_refreshTimer = nullptr;

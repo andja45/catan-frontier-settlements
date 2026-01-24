@@ -71,6 +71,7 @@ RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* p
 
         stackL->addWidget(p);
     }
+    m_playerYou = m_players[m_players.size() - 1];
 
     m_you = new FloatingPanel(this);
     m_you->setAttribute(Qt::WA_TransparentForMouseEvents, false);
@@ -102,12 +103,16 @@ RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, QWidget* p
         // m_game->playDevCard(dt);
     });
 
-    QVector<DevCardType> hand = {DevCardType::Knight, DevCardType::RoadBuilding, DevCardType::YearOfPlenty};
-
     // TEMP testing shortcut: press D to open dev popup
     auto* devShortcut = new QShortcut(QKeySequence(Qt::Key_D), this);
-    connect(devShortcut, &QShortcut::activated, this, [this, devPopup, hand]() {
-        devPopup->setCards(hand);
+    connect(devShortcut, &QShortcut::activated, this, [this, devPopup]() {
+        m_playerYou->addDevCard(DevCardType::Knight);
+        m_playerYou->addDevCard(DevCardType::Monopoly);
+        m_playerYou->addDevCard(DevCardType::Knight);
+        m_playerYou->addDevCard(DevCardType::YearOfPlenty);
+        auto devs = m_playerYou->getDevCardList();
+        QVector<DevCardType> qdevs(devs.begin(), devs.end());
+        devPopup->setCards(qdevs);
         devPopup->openAtGlobal(QCursor::pos());
     });
 
@@ -190,13 +195,11 @@ void RightOverlay::buildYouUi(FloatingPanel* panel) {
     auto* row = new QCardRow(youBox);
     row->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    auto playerYou = m_players[m_players.size() - 1];
-
-    m_youCards[0] = row->addCard({CardKind::Resource, ResourceType::Wood,  DevCardType::None, playerYou->getResources()[ResourceType::Wood]});
-    m_youCards[1] = row->addCard({CardKind::Resource, ResourceType::Brick, DevCardType::None, playerYou->getResources()[ResourceType::Brick]});
-    m_youCards[2] = row->addCard({CardKind::Resource, ResourceType::Wool,  DevCardType::None, playerYou->getResources()[ResourceType::Wool]});
-    m_youCards[3] = row->addCard({CardKind::Resource, ResourceType::Wheat, DevCardType::None, playerYou->getResources()[ResourceType::Wheat]});
-    m_youCards[4] = row->addCard({CardKind::Resource, ResourceType::Ore,   DevCardType::None, playerYou->getResources()[ResourceType::Ore]});
+    m_youCards[0] = row->addCard({CardKind::Resource, ResourceType::Wood,  DevCardType::None, m_playerYou->getResources()[ResourceType::Wood]});
+    m_youCards[1] = row->addCard({CardKind::Resource, ResourceType::Brick, DevCardType::None, m_playerYou->getResources()[ResourceType::Brick]});
+    m_youCards[2] = row->addCard({CardKind::Resource, ResourceType::Wool,  DevCardType::None, m_playerYou->getResources()[ResourceType::Wool]});
+    m_youCards[3] = row->addCard({CardKind::Resource, ResourceType::Wheat, DevCardType::None, m_playerYou->getResources()[ResourceType::Wheat]});
+    m_youCards[4] = row->addCard({CardKind::Resource, ResourceType::Ore,   DevCardType::None, m_playerYou->getResources()[ResourceType::Ore]});
 
 
     youLayout->addWidget(row);

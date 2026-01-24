@@ -4,13 +4,14 @@
 #include "FloatingPanel.h"
 #include <QVector>
 
+#include <types/DevCardType.h>
+
 class QLabel;
 class QPushButton;
 class QVBoxLayout;
 class QCardRow;
 class QCard;
 
-#include <types/DevCardType.h>
 
 class DevCardPopup : public FloatingPanel {
     Q_OBJECT
