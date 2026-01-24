@@ -2,13 +2,12 @@
 // Created by jovan on 20/01/2026.
 //
 
-#include "MoveProtoSerializer.h"
 
 #include <cstdint>
+#include "MoveProtoSerializer.h"
 
 #include "board/Edge.h"
 
-#include "proto/move.pb.h"
 #include "move/turn/RollDiceMove.h"
 #include "move/turn/EndTurnMove.h"
 #include "move/build/BuildRoadMove.h"
@@ -26,10 +25,13 @@
 #include "move/devcard/PlayDevCardMove.h"
 #include "move/devcard/YearOfPlentyMove.h"
 
+#include "common.pb.h"
+#include "move.pb.h"
 
 
 catan::Move MoveProtoSerializer::toProto(const Move& move) {
     catan::Move proto;
+
 
     proto.set_player_id(move.getPlayerId());
 
@@ -104,7 +106,7 @@ catan::Move MoveProtoSerializer::toProto(const Move& move) {
         case MoveType::Monopoly: {
             proto.set_type(catan::Move::Monopoly);
             auto* m = static_cast<const MonopolyMove*>(&move);
-            proto.mutable_monopoly()->set_resource(static_cast<int32_t>(m->getResource()));
+            proto.mutable_monopoly()->set_resource_type(static_cast<catan::ResourceType>(m->getResource()));
             break;
         }
 
@@ -119,8 +121,8 @@ catan::Move MoveProtoSerializer::toProto(const Move& move) {
             proto.set_type(catan::Move::YearOfPlenty);
             auto* m = static_cast<const YearOfPlentyMove*>(&move);
             auto* yop_proto = proto.mutable_year_of_plenty();
-            yop_proto->set_first_resource(static_cast<int32_t>(m->getFirst()));
-            yop_proto->set_second_resource(static_cast<int32_t>(m->getSecond()));
+            yop_proto->set_resource_1(static_cast<catan::ResourceType>(m->getFirst()));
+            yop_proto->set_resource_2(static_cast<catan::ResourceType>(m->getSecond()));
             break;
         }
 
@@ -128,20 +130,20 @@ catan::Move MoveProtoSerializer::toProto(const Move& move) {
             proto.set_type(catan::Move::BankTrade);
             auto* m = static_cast<const BankTradeMove*>(&move);
             auto* bank_proto = proto.mutable_bank_trade();
-            bank_proto->set_give(static_cast<int32_t>(m->getGive()));
-            bank_proto->set_receive(static_cast<int32_t>(m->getReceive()));
+            bank_proto->set_get_resource(static_cast<catan::ResourceType>(m->getGive()));
+            bank_proto->set_get_resource(static_cast<catan::ResourceType>(m->getReceive()));
             break;
         }
 
         case MoveType::PlayerTradeRequest: {
             proto.set_type(catan::Move::PlayerTradeRequest);
             auto* m = static_cast<const PlayerTradeRequestMove*>(&move);
-            auto* req_proto = proto.mutable_player_trade_request();
+            auto* req_proto = proto.mutable_trade_request();
             for (auto const& [res, count] : m->getGive()) {
-                (*req_proto->mutable_give())[static_cast<int32_t>(res)] = count;
+                (*req_proto->mutable_give_resource())[static_cast<int32_t>(res)] = count;
             }
             for (auto const& [res, count] : m->getReceive()) {
-                (*req_proto->mutable_receive())[static_cast<int32_t>(res)] = count;
+                (*req_proto->mutable_get_resource())[static_cast<int32_t>(res)] = count;
             }
             break;
         }
@@ -149,15 +151,15 @@ catan::Move MoveProtoSerializer::toProto(const Move& move) {
         case MoveType::PlayerTradeResponse: {
             proto.set_type(catan::Move::PlayerTradeResponse);
             auto* m = static_cast<const PlayerTradeResponseMove*>(&move);
-            proto.mutable_player_trade_response()->set_trade_id(m->getTradeRequestId());
+            proto.mutable_trade_response()->set_trade_request_id(m->getTradeRequestId());
             break;
         }
 
         case MoveType::PlayerTradeAccept: {
             proto.set_type(catan::Move::PlayerTradeAccept);
             auto* m = static_cast<const PlayerTradeAcceptMove*>(&move);
-            auto* acc_proto = proto.mutable_player_trade_accept();
-            acc_proto->set_accepted_player_id(m->getAcceptedPlayerId());
+            auto* acc_proto = proto.mutable_trade_accept();
+            acc_proto->set_accept_player_id(m->getAcceptedPlayerId());
             acc_proto->set_trade_id(m->getTradeId());
             break;
         }

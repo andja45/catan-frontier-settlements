@@ -7,7 +7,10 @@
 
 #include <memory>
 #include "move/Move.h"
-#include "proto/move.pb.h"
+
+namespace catan {
+    class Move;
+}
 
 class MoveProtoFactory {
 public:

@@ -27,6 +27,8 @@ message Move {
   }
 
   MoveType type = 1;
+  uint32 player_id = 2;
+
 
   oneof payload {
     // TURN
@@ -57,28 +59,15 @@ message Move {
   }
 }
 
-// ==========================================
-// BASIC MOVES
-// ==========================================
-
 message RollDiceMove {
-  uint32 player_id = 1;
 }
+
 message EndTurnMove {
   uint32 player_id = 1;
 }
-
-// ==========================================
-// BUILDING MOVES
-// ==========================================
-
 message BuildRoadMove { uint32 edge_id = 1; }
 message BuildSettlementMove { uint32 node_id = 1; }
 message BuildCityMove { uint32 node_id = 1; }
-
-// ==========================================
-// ROBBER/KNIGHT MOVES
-// ==========================================
 
 message DiscardCardsMove {
   map<int32, int32> discarded = 1;
@@ -86,10 +75,6 @@ message DiscardCardsMove {
 message SetRobberMove { uint32 tile_id = 1; }
 
 message StealCardMove { uint32 victim_player_id = 1; }
-
-// ==========================================
-// DEVCARDS MOVES
-// ==========================================
 
 message BuyDevCardMove {}
 
@@ -102,9 +87,6 @@ message YearOfPlentyMove {
 
 message MonopolyMove { ResourceType resource_type = 1; }
 
-// ==========================================
-// TRADES MOVES
-// ==========================================
 
 message BankTradeMove {
   ResourceType give_resource = 1;
@@ -121,6 +103,6 @@ message PlayerTradeResponseMove {
 }
 
 message PlayerTradeAcceptMove {
-  uint32 player_id = 1;
+  uint32 accept_player_id = 1;
   uint32 trade_id = 2;
 }

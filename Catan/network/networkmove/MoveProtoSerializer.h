@@ -5,8 +5,10 @@
 #ifndef CATAN_MOVEPROTOSERIALIZER_H
 #define CATAN_MOVEPROTOSERIALIZER_H
 
-#include "proto/move.pb.h"
+#include "common.pb.h"
+#include "move.pb.h"
 #include "move/Move.h"
+
 
 class MoveProtoSerializer {
 public:
