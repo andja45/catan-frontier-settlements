@@ -2,7 +2,7 @@
 // Created by jovan on 24/01/2026.
 //
 
-#include "NetworkTransport.h"
+#include "../NetworkTransport.h"
 #include <QHostAddress>
 
 NetworkTransport::NetworkTransport(QObject* parent) : QObject(parent)
