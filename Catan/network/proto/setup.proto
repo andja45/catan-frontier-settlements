@@ -63,7 +63,7 @@ message LobbyInfo{
 message TileInfo{
   int32 q=1;
   int32 r=2;
-  catan.ResourceType resource=3;
+  net.ResourceType resource=3;
   int32 tile_number=4;
 }
 
@@ -71,7 +71,7 @@ message PortInfo{
   int32 q=1;
   int32 r=2;
   int32 i=3;
-  catan.ResourceType resource=4;
+  net.ResourceType resource=4;
 }
 
 message BoardInfo{

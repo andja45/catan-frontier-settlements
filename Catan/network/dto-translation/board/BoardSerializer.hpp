@@ -5,10 +5,21 @@
 #ifndef CATAN_BOARDSERIALIZER_HPP
 #define CATAN_BOARDSERIALIZER_HPP
 
+#include <board/Board.h>
+
+#include "move.pb.h"
+#include "setup.pb.h"
+#include "common.pb.h"
+#include "envelope.pb.h"
 
 class BoardSerializer {
 public:
-     static catan::ResourceType toProto(const Board& board);
+     static net::ResourceType toProto(ResourceType type);
+     static net::TileInfo serializeTile(const TileDef& t);
+     static net::PortInfo serializePort(const PortDef& p);
+
+     static net::BoardInfo serializeBoard(const Board& board);
+
 };
 
 #endif //CATAN_BOARDSERIALIZER_HPP

@@ -25,9 +25,7 @@
 #include "move/devcard/PlayDevCardMove.h"
 #include "move/devcard/YearOfPlentyMove.h"
 
-//#include "common.pb.h"
-//#include "move.pb.h"
-
+#include "ProtoHeaders.hpp"
 
 net::Move MoveProtoSerializer::toProto(const Move& move) {
     net::Move proto;

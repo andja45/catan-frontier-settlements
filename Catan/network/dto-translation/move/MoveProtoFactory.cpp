@@ -20,7 +20,8 @@
 #include "move/devcard/MonopolyMove.h"
 #include "move/devcard/PlayDevCardMove.h"
 #include "move/devcard/YearOfPlentyMove.h"
-//#include "move.pb.h"
+
+#include "move.pb.h"
 
 
 std::unique_ptr<Move> MoveProtoFactory::fromProto(const net::Move& proto) {

@@ -4,6 +4,38 @@
 
 #include "BoardSerializer.hpp"
 
-catan::ResourceType toProto(ResourceType r) {
-    return static_cast<catan::ResourceType>(r);
+net::ResourceType BoardSerializer::toProto(ResourceType r) {
+    return static_cast<net::ResourceType>(r);
+}
+
+net::TileInfo BoardSerializer::serializeTile(const TileDef &t)  {
+    net::TileInfo proto;
+    proto.set_q(t.q);
+    proto.set_r(t.r);
+    proto.set_resource(toProto(t.res));
+    proto.set_tile_number(t.number);
+    return proto;
+}
+
+net::PortInfo BoardSerializer::serializePort(const PortDef &p)  {
+    net::PortInfo proto;
+    proto.set_q(p.q);
+    proto.set_r(p.r);
+    proto.set_i(p.i);
+    proto.set_resource(toProto(static_cast<ResourceType>(p.tradeType)));
+    return proto;
+}
+
+net::BoardInfo BoardSerializer::serializeBoard(const Board &board) {
+    net::BoardInfo proto;
+    // serialize tiles
+    for (const auto&t: board.getTileDefs()) {
+        *proto.add_tiles() = serializeTile(t);
+
+    }
+    // serialize ports
+    for (const auto& p : board.getPortDefs()) {
+        *proto.add_ports() = serializePort(p);
+    }
+    return proto;
 }
