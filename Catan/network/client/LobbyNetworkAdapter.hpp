@@ -4,7 +4,7 @@
 
 #ifndef CATAN_LOBBYNETWORKADAPTER_HPP
 #define CATAN_LOBBYNETWORKADAPTER_HPP
-
+// get transport
 class LobbyNetworkAdapter {
 };
 

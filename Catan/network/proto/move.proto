@@ -7,7 +7,7 @@ import "common.proto";
 message Move {
 
   enum MoveType {
-    RollDice = 0;
+    InvalidMoveType = 0;
     EndTurn = 1;
     BuildRoad = 2;
     BuildSettlement = 3;
@@ -23,7 +23,8 @@ message Move {
     PlayerTradeRequest = 13;
     PlayerTradeResponse = 14;
     PlayerTradeAccept = 15;
-    InvalidMoveType = 16;
+    RollDice = 16;
+    PlayerLeave = 17;
   }
 
   MoveType type = 1;
@@ -56,6 +57,8 @@ message Move {
     PlayerTradeRequestMove trade_request = 51;
     PlayerTradeResponseMove trade_response = 52;
     PlayerTradeAcceptMove trade_accept = 53;
+
+    LeaveMove leave_move= 60;
   }
 }
 
@@ -106,3 +109,5 @@ message PlayerTradeAcceptMove {
   uint32 accept_player_id = 1;
   uint32 trade_id = 2;
 }
+
+message LeaveMove {}

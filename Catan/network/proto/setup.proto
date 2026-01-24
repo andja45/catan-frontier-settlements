@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package net;
+
+import "common.proto";
+
+
+message Setup {
+
+  oneof payload {
+    Error error = 1;
+    Ack ack = 2;
+    Leave leave = 3;
+
+    HostRequest host_request = 10;
+    JoinRequest join_request = 11;
+    LobbyInfo lobby_info = 12;
+    StartGameRequest start_game_request = 13;
+    GameStart game_start = 14;
+    BoardInfo board_info = 15;
+
+  }
+}
+
+message Ack {}
+
+message Leave {}
+
+message Error{
+  string message = 1;
+}
+
+message HostRequest {
+  string player_name = 1;
+  string game_name = 2;
+}
+
+message JoinRequest {
+  string player_name = 1;
+  string game_name = 2;
+}
+
+message PlayerNames {
+  repeated string names = 1;
+}
+
+message GameConfig{
+  int32 num_players = 1;
+  int32 winning_points = 2;
+  enum BoardType{
+    CLASSIC=0;
+    EXTENDED=1;
+    CUSTOM=2;
+  }
+  BoardType board_type=3;
+}
+
+message LobbyInfo{
+  GameConfig config=1;
+  PlayerNames names=2;
+}
+
+message TileInfo{
+  int32 q=1;
+  int32 r=2;
+  catan.ResourceType resource=3;
+  int32 tile_number=4;
+}
+
+message PortInfo{
+  int32 q=1;
+  int32 r=2;
+  int32 i=3;
+  catan.ResourceType resource=4;
+}
+
+message BoardInfo{
+  repeated TileInfo tiles=1;
+  repeated PortInfo ports=2;
+}
+
+message StartGameRequest{}
+
+message GameStart{
+  int32 player_id=1;
+
+  int32 seed=2;
+}
+
+

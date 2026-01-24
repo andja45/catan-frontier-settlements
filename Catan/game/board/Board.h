@@ -16,7 +16,7 @@
 
 // helper struct to specify board layout and pass parameters to create tiles
 struct TileDef { int q, r; ResourceType res; int number; };
-
+struct PortDef { int q, r, i; TradeType tradeType;};
 //TODO consider trade and houses saved here?
 class Board {
 private:

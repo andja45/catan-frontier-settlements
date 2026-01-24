@@ -11,5 +11,5 @@ target_link_libraries(catan_networkmoves PUBLIC catan_game)
 
 target_include_directories(catan_networkmoves
         PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        .
 )

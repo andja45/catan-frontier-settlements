@@ -6,15 +6,15 @@
 #define CATAN_CLIENTCONNECTION_HPP
 
 
-class ClientConnection : public QObject {
+class Client : public QObject {
     Q_OBJECT
 public:
     ClientId id() const;
     void send(const Envelope&);
 
     signals:
-        void envelopeReceived(ClientConnection*, const Envelope&);
-    void disconnected(ClientConnection*);
+        void envelopeReceived(Client*, const Envelope&);
+    void disconnected(Client*);
 };
 
 #endif //CATAN_CLIENTCONNECTION_HPP

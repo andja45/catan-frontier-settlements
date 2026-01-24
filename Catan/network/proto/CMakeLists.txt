@@ -3,6 +3,8 @@ find_package(Protobuf REQUIRED)
 set(PROTO_FILES
         common.proto
         move.proto
+        envelope.proto
+        setup.proto
 )
 set(PROTO_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
