@@ -1,0 +1,11 @@
+//
+// Created by matija on 1/25/26.
+//
+
+#ifndef CATAN_HOSTJOINNETWORKADAPTER_HPP
+#define CATAN_HOSTJOINNETWORKADAPTER_HPP
+
+class HostJoinNetworkAdapter {
+};
+
+#endif //CATAN_HOSTJOINNETWORKADAPTER_HPP
