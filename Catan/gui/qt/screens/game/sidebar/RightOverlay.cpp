@@ -281,14 +281,16 @@ void RightOverlay::setUpPopups(){
         // m_game->playDevCard(dt);
     });
 
+
+    m_playerYou->addDevCard(DevCardType::Knight);
+    m_playerYou->addDevCard(DevCardType::Monopoly);
+    m_playerYou->addDevCard(DevCardType::RoadBuilding);
+    m_playerYou->addDevCard(DevCardType::YearOfPlenty);
+    m_playerYou->addDevCard(DevCardType::Knight);
+    m_playerYou->addDevCard(DevCardType::VictoryPoint);
+
     connect(m_toolbar, &BoardToolbar::actionTriggered, this, [this, devPopup](ToolbarActionType action) {
         if (action != ToolbarActionType::PlayDevCard) return;
-        m_playerYou->addDevCard(DevCardType::Knight);
-        m_playerYou->addDevCard(DevCardType::Monopoly);
-        m_playerYou->addDevCard(DevCardType::RoadBuilding);
-        m_playerYou->addDevCard(DevCardType::YearOfPlenty);
-        m_playerYou->addDevCard(DevCardType::Knight);
-        m_playerYou->addDevCard(DevCardType::VictoryPoint);
         devPopup->setCards(m_playerYou->getDevCards());
         devPopup->openAtGlobal(QCursor::pos());
     });

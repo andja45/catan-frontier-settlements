@@ -11,6 +11,8 @@
 #include <components/cards/QCardRow.h>
 #include <components/cards/QCard.h>
 
+#include <iostream>
+
 DevCardPopup::DevCardPopup(QWidget* parent)
     : FloatingPanel(Qt::Popup, parent)
 {
@@ -101,8 +103,7 @@ void DevCardPopup::rebuild() {
         QCard* card = m_row->addCard(spec);
         card->setCursor(Qt::PointingHandCursor);
 
-        connect(card, &QCard::clicked, this, [this, i](Qt::MouseButton b) {
-            if (b != Qt::LeftButton) return;
+        connect(card, &QCard::leftClicked, this, [this, i]() {
             selectIndex(i);
             emit devCardChosen(m_displayOrder[i]);
             closePopup();
