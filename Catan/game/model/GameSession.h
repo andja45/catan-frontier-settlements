@@ -8,6 +8,7 @@
 #include <random>
 #include <unordered_set>
 
+#include "GameData.h"
 #include "phase/TurnPhase.h"
 #include "rules/RulesEngine.h"
 #include "board/Board.h"
@@ -52,6 +53,9 @@ private:
  RulesEngine m_rules;
  int m_winningPints = 10; // TODO this will be read from gameConfig client-hosts sends
 
+ // game data
+ GameData m_gameData;
+
  // global info
  PlayerId m_longestRoadOwner = -1;
  PlayerId m_largestArmyOwner = -1;
@@ -91,7 +95,7 @@ private:
  std::mt19937 m_rng; // TODO dice can be with client-host
  std::uniform_int_distribution<int> m_d6{1, 6};
 public:
- GameSession(int numPlayers, std::vector<std::string> playerNames, PlayerId localPlayer, uint32_t seed);
+ GameSession(std::vector<std::string> playerNames, PlayerId localPlayer, uint32_t seed);
 
  void advancePhaseAfterMove();
  void enterDiscardCardsPhase() { setPhase(TurnPhase::DiscardCards); }
@@ -103,7 +107,6 @@ public:
  void markDevCardPlayedThisTurn() { m_devCardPlayedThisTurn = true; }
  bool hasPlayedDevCardThisTurn() const { return m_devCardPlayedThisTurn; }
  int rollDice();
- void endGame(); // TODO implement
 
  PlayerId localPlayer()   const { return m_localPlayerId; }
  PlayerId currentPlayer() const { return m_currentPlayerId; }
@@ -119,6 +122,8 @@ public:
  void setLongestRoadOwner(PlayerId playerId);
  void setLargestArmyOwner(PlayerId playerId);
  void setWinner(PlayerId playerId) { m_winner = playerId; }
+
+ GameData& gameData();
 
  Bank& bank() { return m_bank; }
  const Bank& bank() const { return m_bank; }
@@ -138,6 +143,8 @@ public:
 
  const Trade* getTrade(TradeId tradeId) const;
  std::vector<const Trade*> activeTrades() const; // TODO not sure if both public and if both needed
+
+ void endGame(); // TODO implement + fill some gameData fields there(awards, everyones points) maybe add endGame phase and all is grey? in function enter that phase
 };
 
 #endif //Catan_GAMESESSION_H

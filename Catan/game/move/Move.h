@@ -27,6 +27,8 @@ public:
     virtual void apply(GameSession&) const = 0;
 
     virtual bool providesAllValid() const { return false; }
+
+    PlayerId getPlayerId() const { return m_playerId; }
 };
 
 

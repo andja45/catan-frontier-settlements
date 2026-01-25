@@ -60,9 +60,19 @@ DevCardPopup::DevCardPopup(QWidget* parent)
     adjustSize();
 }
 
-void DevCardPopup::setCards(const QVector<DevCardType>& cards) {
+void DevCardPopup::setCards(const std::map<DevCardType, int>& cards) {
     m_cards = cards;
     m_selected = -1;
+
+    // rebuild the indexed order for UI
+    m_displayOrder.clear();
+    m_displayOrder.reserve(static_cast<int>(m_cards.size()));
+
+    for (const auto& [type, count] : m_cards) {
+        if (count <= 0) continue;
+        m_displayOrder.push_back(type);
+    }
+
     rebuild();
 }
 
@@ -70,43 +80,32 @@ void DevCardPopup::rebuild() {
     m_row->clear();
     m_cardWidgets.clear();
 
-    // If no cards, show a friendly message and disable
-    if (m_cards.isEmpty()) {
+    if (m_displayOrder.isEmpty()) {
         m_title->setText("No development cards to play");
         adjustSize();
         return;
-    } else {
-        m_title->setText("Choose a development card to play");
     }
+    m_title->setText("Choose a development card to play");
 
-    m_cardWidgets.reserve(m_cards.size());
+    m_cardWidgets.reserve(m_displayOrder.size());
 
-    for (int i = 0; i < m_cards.size(); ++i) {
-        const DevCardType dt = m_cards[i];
-
-        // Dev cards are visually undistinguished right now -> tint only.
+    for (int i = 0; i < m_displayOrder.size(); ++i) {
+        const DevCardType dt = m_displayOrder[i];
+        const int count = m_cards[dt];
         CardSpec spec;
-        spec.kind = CardKind::Development;      // or FaceDown if you want hidden
+        spec.kind = CardKind::Development;
         spec.resource = ResourceType::None;
-        spec.dev = dt;                        // if CardSpec has it; otherwise ignore
-        spec.countBadge = -1;
+        spec.dev = dt;
+        spec.countBadge = count;
 
         QCard* card = m_row->addCard(spec);
         card->setCursor(Qt::PointingHandCursor);
 
-        // Clicking a card chooses it immediately
         connect(card, &QCard::clicked, this, [this, i](Qt::MouseButton b) {
             if (b != Qt::LeftButton) return;
             selectIndex(i);
+            emit devCardChosen(m_displayOrder[i]);
             closePopup();
-            emit devCardChosen(m_cards[i]);
-        });
-
-        // Optional: allow hover to "preselect" visually (nice UX)
-        connect(card, &QCard::hovered, this, [this, i](bool on) {
-            if (!on) return;
-            // show hover only; do not permanently select
-            // (your QCard already highlights on hover)
         });
 
         m_cardWidgets.push_back(card);

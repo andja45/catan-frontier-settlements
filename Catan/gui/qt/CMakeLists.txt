@@ -35,6 +35,10 @@ add_library(catan_gui_qt
         components/panels/PlayerDot.h components/panels/PlayerDot.cpp
         components/panels/DevCardPopup.h components/panels/DevCardPopup.cpp
         components/panels/MonopolyPopup.h components/panels/MonopolyPopup.cpp
+        components/panels/TradePopup.h components/panels/TradePopup.cpp
+        components/panels/TradeBankPopup.h components/panels/TradeBankPopup.cpp
+        components/panels/TradeOfferedPopup.h components/panels/TradeOfferedPopup.cpp
+        components/DiceWidget.h components/DiceWidget.cpp
 )
 
 target_include_directories(catan_gui_qt

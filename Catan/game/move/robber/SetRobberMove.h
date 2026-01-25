@@ -21,6 +21,8 @@ public:
 
     bool providesAllValid() const override { return true; }
     std::unordered_set<TileId> allValid(const GameSession& session) const;
+
+    TileId getTileId() const { return m_tileId; }
 };
 
 

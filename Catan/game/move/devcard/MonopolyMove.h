@@ -16,6 +16,8 @@ public:
     MoveType type() const override { return MoveType::Monopoly; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
+
+    ResourceType getResource() const {return m_resource;}
 };
 
 

@@ -289,9 +289,7 @@ void RightOverlay::setUpPopups(){
         m_playerYou->addDevCard(DevCardType::YearOfPlenty);
         m_playerYou->addDevCard(DevCardType::Knight);
         m_playerYou->addDevCard(DevCardType::VictoryPoint);
-        auto devs = m_playerYou->getDevCardActivationList();
-        QVector<DevCardType> qdevs(devs.begin(), devs.end());
-        devPopup->setCards(qdevs);
+        devPopup->setCards(m_playerYou->getDevCards());
         devPopup->openAtGlobal(QCursor::pos());
     });
 

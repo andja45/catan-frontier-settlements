@@ -2,7 +2,7 @@
 #define DEVCARDPOPUP_H
 
 #include "FloatingPanel.h"
-#include <QVector>
+#include <map>
 
 #include <types/DevCardType.h>
 
@@ -19,7 +19,7 @@ public:
     explicit DevCardPopup(QWidget* parent = nullptr);
 
     // Pass all dev cards the player currently holds (one entry per card)
-    void setCards(const QVector<DevCardType>& cards);
+    void setCards(const std::map<DevCardType, int>& cards);
 
     void openAtGlobal(const QPoint& globalPos);
     void closePopup();
@@ -36,7 +36,8 @@ private:
     void selectIndex(int idx);
 
 private:
-    QVector<DevCardType> m_cards;
+    std::map<DevCardType, int> m_cards;
+    QVector<DevCardType> m_displayOrder;
 
     QVBoxLayout* m_root = nullptr;
     QLabel*      m_title = nullptr;

@@ -11,6 +11,8 @@ public:
     explicit QCard(QWidget* parent=nullptr);
 
     void setSpec(const CardSpec& s);
+    void incrementCount();
+    void decrementCount();
     const CardSpec& spec() const { return m_spec; }
 
     void setSelected(bool on);
@@ -21,6 +23,8 @@ public:
 signals:
     void clicked(Qt::MouseButton button);
     void hovered(bool on);
+    void leftClicked();
+    void rightClicked();
 
 protected:
     void paintEvent(QPaintEvent*) override;

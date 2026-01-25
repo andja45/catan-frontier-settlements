@@ -39,6 +39,9 @@ void RollDiceMove::apply(GameSession& session) const {
 
             const int amount = node->isCity() ? 2 : 1;
             session.player(owner).addResource(resource, amount);
+            session.gameData().addResourceRoll(resource, amount);
         }
     }
+
+    session.gameData().addDiceRoll(diceRoll); // only log when roll is accepted!
 }

@@ -19,7 +19,8 @@ enum class TurnPhase {
     StealCard,
 
     InitialPlacement, // Special phase for initial placement turns (every player chooses one road and settlement) //TODO consider breaking into two phases and ditch enum
-   }; // drzi to stanje sve dok ne dobije signal da je uradjeno nesto sto ga menja
+    GameOver
+}; // drzi to stanje sve dok ne dobije signal da je uradjeno nesto sto ga menja
 // tj to je stanje koje ceka, ne ono koje sledi
 
 #endif //CATAN_TURNPHASE_H

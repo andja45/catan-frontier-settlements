@@ -21,6 +21,7 @@ public:
 
     bool providesAllValid() const override { return true; }
     std::unordered_set<PlayerId> allValid(const GameSession &session) const; // for making gray players he cant chose
+    PlayerId getVictimPlayerId() const {return m_victimPlayerId; }
 };
 
 

@@ -12,7 +12,12 @@ public:
         m_layout->setContentsMargins(0,0,0,0);
         m_layout->setSpacing(6);
     }
+    explicit QCardRow(std::vector<ResourceType> resources, QWidget* parent=nullptr): QWidget(parent){
+        m_layout = new QHBoxLayout(this);
+        m_layout->setContentsMargins(0,0,0,0);
+        m_layout->setSpacing(6);
 
+    }
     QCard* addCard(const CardSpec& spec) {
         auto* c = new QCard(this);
         c->setSpec(spec);
@@ -29,6 +34,7 @@ public:
 
 private:
     QHBoxLayout* m_layout = nullptr;
+    std::vector<CardSpec> specs() const;
 };
 
 #endif // QCARDROW_H

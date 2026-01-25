@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package net;
+
+import "move.proto";
+
+// =====================
+// ENVELOPE
+// =====================
+
+enum MsgType {
+  MSG_UNKNOWN = 0;
+  MSG_MOVE = 1;
+  MSG_SETUP = 2;
+}
+
+message Envelope {
+  MsgType msg_type = 1;
+  uint32 seq = 2;
+
+  oneof payload {
+    Move move = 10;
+    Setup setup = 11;
+  }
+}
+
+// =====================
+// SETUP / LOBBY
+// =====================
+
+message Setup {
+  repeated string player_names = 1;
+  uint32 seed = 2;
+}

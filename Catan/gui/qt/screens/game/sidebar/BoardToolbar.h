@@ -15,6 +15,8 @@
 #include "components/panels/CostPopup.h"
 #include "../../game/types/ToolbarActionType.h"
 
+#include <components/panels/TradeBankPopup.h>
+#include <components/DiceWidget.h>
 class BoardToolbar : public QWidget
 {Q_OBJECT
 private:
@@ -23,7 +25,9 @@ private:
     QLabel* m_countSettlements;
     QLabel* m_countRoads;
     QLabel* m_countCities;
-
+    Player * m_player = nullptr;
+    TradeBankPopup* m_tradeBankPopup=nullptr;
+    TradePopup* m_tradePopup = nullptr;
     /*
     CountBadge* m_countSettlements;
     CountBadge* m_countRoads;
@@ -32,14 +36,19 @@ private:
     QLabel* createBadge(int count, QWidget* parent);//backup cause countbadge is awful for performances
     FloatingPanel* createPanelWithButton(QWidget* button, ToolbarActionType action);
     QPushButton* createActionButton(const QString& text,ToolbarActionType action);
+    QPushButton* createTradeButton(const QString& text,ToolbarActionType action);
     void paintEvent(QPaintEvent*) override;
-    bool eventFilter(QObject* obj, QEvent* event);
+    bool eventFilter(QObject* obj, QEvent* event) override;
     void addButton(const QString& text, ToolbarActionType action, QHBoxLayout* layout);
+    void showTradePopup();
+    void showBankTradePopup();
     QToolButton* createMenuButton(const QString& text, const QMap<QString, ToolbarActionType>& actions);
 
 public:
     BoardToolbar(QWidget* parent=nullptr);
 signals:
     void actionTriggered(ToolbarActionType action);
+    void playerTradeRequested(const TradeOffer& offer);
+    void bankTradeRequested(const TradeOffer& offer);
 };
 #endif // BOARDTOOLBAR_H

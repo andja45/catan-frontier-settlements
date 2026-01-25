@@ -10,7 +10,7 @@ static QString devLabel(DevCardType t) {
     case DevCardType::RoadBuilding:   return "RB";
     case DevCardType::YearOfPlenty:   return "YOP";
     case DevCardType::VictoryPoint:   return "VP";
-    default:                          return "?";
+    default:                          return "";
     }
 }
 
@@ -27,9 +27,15 @@ void QCard::setSelected(bool on) { m_selected = on; update(); }
 
 void QCard::enterEvent(QEnterEvent*) { m_hover = true; emit hovered(true); update(); }
 void QCard::leaveEvent(QEvent*) { m_hover = false; emit hovered(false); update(); }
-
+void QCard::incrementCount() { m_spec.countBadge++; update(); }
+void QCard::decrementCount() { if(m_spec.countBadge>0){m_spec.countBadge--; update();} }
 void QCard::mousePressEvent(QMouseEvent* e) {
-    emit clicked(e->button());
+    if (e->button() == Qt::LeftButton) {
+        emit leftClicked();
+    }
+    else if (e->button() == Qt::RightButton) {
+        emit rightClicked();
+    }
     QWidget::mousePressEvent(e);
 }
 
@@ -77,24 +83,33 @@ void QCard::paintEvent(QPaintEvent*) {
     if (m_spec.kind == CardKind::Development) {
         const QString label = devLabel(m_spec.dev);
 
-        // Choose readable color
-        QColor textColor = QColor(255,255,255,230);
-
         // Font: compact, bold
         QFont f = p.font();
         f.setBold(true);
-        f.setPointSize(9);   // tuned for 44x60 card
+        f.setPointSize(9);
         p.setFont(f);
 
+        // Text color
+        QColor textColor(255, 255, 255, 230);
+
+        // 🔑 Position near top, not center
+        const qreal topPadding = 6.0;
+        const qreal labelHeight = 14.0;
+
+        QRectF labelRect(
+            r.left() + 2,
+            r.top() + topPadding,
+            r.width() - 4,
+            labelHeight
+            );
+
         // Optional subtle shadow for contrast
-        QPointF center = r.center();
-        QRectF textRect = r.adjusted(0, 6, 0, -6); // slightly up
-
         p.setPen(QColor(0,0,0,120));
-        p.drawText(textRect.translated(1,1), Qt::AlignCenter, label);
+        p.drawText(labelRect.translated(1,1), Qt::AlignCenter, label);
 
+        // Main text
         p.setPen(textColor);
-        p.drawText(textRect, Qt::AlignCenter, label);
+        p.drawText(labelRect, Qt::AlignCenter, label);
     }
 
     // Count badge

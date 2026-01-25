@@ -9,19 +9,22 @@
 #include <move/robber/StealCardMove.h>
 #include <move/trade/PlayerTradeRequestMove.h>
 
-GameSession::GameSession(int numPlayers,
-                         std::vector<std::string> playerNames,
+GameSession::GameSession(std::vector<std::string> playerNames,
                          PlayerId localPlayer,
                          uint32_t seed)
     : m_board(std::make_unique<Board>())
     , m_localPlayerId(localPlayer)
     , m_rng(seed)
+    , m_gameData(0, playerNames) // TODO gameId will be set by client-host maybe on creation of room? roomId?
 {
-    m_players.reserve(numPlayers);
+    const int numPlayers = static_cast<int>(playerNames.size()); // deduced from vector of players
 
+    m_players.reserve(numPlayers);
     for (PlayerId id = 0; id < numPlayers; ++id) {
         m_players.push_back(std::make_unique<Player>(id, playerNames[id]));
     }
+
+    m_gameData.initialize();
 }
 
 bool GameSession::applyMove(const Move& move){
@@ -89,6 +92,7 @@ void GameSession::advancePhaseAfterMove() {
             advancePlayer(); // session does this, not move
             m_devCardPlayedThisTurn = false; // reseting for next turn
             m_activeTrades.clear();
+            m_gameData.addTurn();
             setPhase(TurnPhase::RollDice);
             break;
 
@@ -177,10 +181,14 @@ int GameSession::rollDice() {
 
     int dice1 = m_d6(m_rng);
     int dice2 = m_d6(m_rng);
+
     return dice1 + dice2;
 }
 
 void GameSession::setLongestRoadOwner(const PlayerId playerId) {
+    if (m_longestRoadOwner == playerId)
+        return; // no change
+
     if (longestRoadOwner() != types::InvalidPlayer){
         Player& previous = player(m_longestRoadOwner);
         previous.removePoints(2);
@@ -195,6 +203,9 @@ void GameSession::setLongestRoadOwner(const PlayerId playerId) {
 } // TODO add length of longestroad in player
 
 void GameSession::setLargestArmyOwner(const PlayerId playerId) {
+    if (m_largestArmyOwner == playerId)
+        return; // no change
+
     if (largestArmyOwner() != types::InvalidPlayer){
         Player& previous = player(m_largestArmyOwner);
         previous.removePoints(2);
@@ -205,7 +216,7 @@ void GameSession::setLargestArmyOwner(const PlayerId playerId) {
 
     Player& current = player(m_largestArmyOwner);
     current.addPoints(2);
-    current.setLongestRoad(true);
+    current.setLargestArmy(true);
 }
 
 std::vector<PlayerId> GameSession::playerIds() const {
@@ -264,3 +275,33 @@ bool GameSession::canStealFromAnyone(PlayerId thiefId) const {
 
     return false;
 }
+
+void GameSession::endGame() {
+    if (m_phase == TurnPhase::GameOver)
+        return;
+
+    setPhase(TurnPhase::GameOver);
+    m_gameData.markGameWon();
+
+    for (const auto& player : m_players) {
+        m_gameData.setPlayerPoints(
+            player->getName(),
+            player->getTotalPoints()
+        );
+    }
+
+    Player& winningPlayer = player(winner());
+    m_gameData.setWinningPlayer(winningPlayer.getName());
+
+    if (m_largestArmyOwner != types::InvalidPlayer) {
+        m_gameData.setLargestArmyOwner(
+            player(m_largestArmyOwner).getName()
+        );
+    }
+
+    if (m_longestRoadOwner != types::InvalidPlayer) {
+        m_gameData.setLongestRoadOwner(
+            player(m_longestRoadOwner).getName()
+        );
+    }
+} // gui gets renderstate that behaves differently in gameover phase, onphasechanged triggers redrawing

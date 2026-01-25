@@ -58,13 +58,6 @@ public:
     bool hasDevCard(DevCardType dev_card) const; // TODO implement
     bool hasDevCards() const; // TODO implement, remove if makes no sense for both bank and player to have these two
 
-    std::vector<DevCardType> getDevCardActivationList() {
-        std::vector<DevCardType> devs;
-        for(auto [dev, num] : m_devCards)
-            if(num > 0 && dev != DevCardType::VictoryPoint) devs.push_back(dev);
-        return devs;
-    }
-
     std::string getName() { return m_name; }
 };
 
