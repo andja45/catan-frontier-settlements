@@ -19,6 +19,8 @@
 #include <QPainter>
 #include <QShortcut>
 
+#include "components/panels/YearOfPlentyPopup.h"
+
 RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, BoardToolbar* toolbar, QWidget* parent)
     : m_bank(bank), m_toolbar(toolbar), QWidget(parent) {
     // -------- Chat panel --------
@@ -295,19 +297,34 @@ void RightOverlay::setUpPopups(){
         devPopup->openAtGlobal(QCursor::pos());
     });
 
-    auto monopolyPopup = new MonopolyPopup(this); // 'this' must be long-lived (e.g., main widget)               // optional
+    auto monopolyPopup = new MonopolyPopup(this);
 
     connect(monopolyPopup, &MonopolyPopup::resourceChosen,
             this, [this](ResourceType type){
                 // m_game->activateMonopoly(type);
             });
 
-    connect(devPopup, &DevCardPopup::devCardChosen, this, [this, monopolyPopup](DevCardType type) {
-                if (type != DevCardType::Monopoly) return;
+    auto yopPopup = new YearOfPlentyPopup(m_bank, this);
 
-                // Defer opening until DevCardPopup finished closing / releasing grab
-                QTimer::singleShot(0, this, [monopolyPopup]() {
-                    monopolyPopup->openAtGlobal(QCursor::pos());
-                });
+    connect(yopPopup, &YearOfPlentyPopup::yearOfPlentySubmitted,
+         this, [this](const YearOfPlentyChoice& choice) {
+         // controller / model call
+         // m_game->playYearOfPlenty(choice.receive);
+    });
+
+    connect(devPopup, &DevCardPopup::devCardChosen, this, [this, monopolyPopup, yopPopup](DevCardType type) {
+                if (type == DevCardType::Monopoly) {
+                    // Defer opening until DevCardPopup finished closing / releasing grab
+                    QTimer::singleShot(0, this, [monopolyPopup]() {
+                        monopolyPopup->openAtGlobal(QCursor::pos());
+                    });
+                }
+                else if (type == DevCardType::YearOfPlenty) {
+                    // Defer opening until DevCardPopup finished closing / releasing grab
+                    QTimer::singleShot(0, this, [yopPopup]() {
+                        yopPopup->openAtGlobal(QCursor::pos());
+                    });
+                }
+
             });
 }
