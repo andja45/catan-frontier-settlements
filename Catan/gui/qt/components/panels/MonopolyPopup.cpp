@@ -15,8 +15,7 @@ MonopolyPopup::MonopolyPopup(QWidget* parent)
     setWindowFlag(Qt::FramelessWindowHint, true);
     setAttribute(Qt::WA_StyledBackground, false);     // we paint rounded bg ourselves
     setAttribute(Qt::WA_TranslucentBackground, true); // true rounded corners for top-level popup
-
-    // Keep stylesheet minimal; don't style QFrame globally.
+    
     setStyleSheet(R"(
         QPushButton { background: transparent; }
     )");
@@ -31,6 +30,29 @@ MonopolyPopup::MonopolyPopup(QWidget* parent)
 
     m_row = new QCardRow(this);
     m_root->addWidget(m_row);
+
+    // Buttons row
+    auto* btnRow = new QHBoxLayout();
+    btnRow->addStretch(1);
+
+    m_cancelBtn = new QPushButton("Cancel", this);
+    m_confirmBtn = new QPushButton("Confirm", this);
+    m_confirmBtn->setEnabled(false);
+
+    btnRow->addWidget(m_cancelBtn);
+    btnRow->addWidget(m_confirmBtn);
+
+    m_root->addLayout(btnRow);
+
+    connect(m_cancelBtn, &QPushButton::clicked, this, [this]() {
+        closePopup();
+    });
+
+    connect(m_confirmBtn, &QPushButton::clicked, this, [this]() {
+        if (m_selected < 0 || m_selected >= m_choices.size()) return;
+        emit resourceChosen(m_choices[m_selected]);
+        closePopup();
+    });
 
     // Default choices (5 standard resources)
     m_choices = {
@@ -77,12 +99,8 @@ void MonopolyPopup::rebuild() {
         QCard* card = m_row->addCard(spec);
         card->setCursor(Qt::PointingHandCursor);
 
-        // Choose immediately on click
-        connect(card, &QCard::clicked, this, [this, i](Qt::MouseButton b) {
-            if (b != Qt::LeftButton) return;
-            selectIndex(i);
-            emit resourceChosen(m_choices[i]);
-            closePopup();
+        connect(card, &QCard::leftClicked, this, [this, i]() {
+            selectIndex(i);   // enable confirm
         });
 
         m_cardWidgets.push_back(card);
@@ -101,6 +119,9 @@ void MonopolyPopup::selectIndex(int idx) {
 
     if (m_selected >= 0 && m_selected < m_cardWidgets.size())
         m_cardWidgets[m_selected]->setSelected(true);
+
+    if (m_confirmBtn)
+        m_confirmBtn->setEnabled(m_selected >= 0);
 }
 
 void MonopolyPopup::openAtGlobal(const QPoint& globalPos) {
@@ -111,14 +132,13 @@ void MonopolyPopup::openAtGlobal(const QPoint& globalPos) {
 }
 
 void MonopolyPopup::closePopup() {
-    // reset transient visuals so next time starts clean
     for (auto* c : m_cardWidgets) {
         if (!c) continue;
         c->setSelected(false);
         c->clearHover();
     }
     m_selected = -1;
-
+    if (m_confirmBtn) m_confirmBtn->setEnabled(false);
     hide();
 }
 
