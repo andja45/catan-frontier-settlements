@@ -18,8 +18,24 @@ QCard::QCard(QWidget* parent) : QWidget(parent) {
     setMouseTracking(true);
     setCursor(Qt::PointingHandCursor);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-}
 
+    m_flickerTimer.setInterval(16); // ~60 FPS
+    connect(&m_flickerTimer, &QTimer::timeout, this, [this]() {
+        m_flickerAlpha -= 0.08;
+        if (m_flickerAlpha <= 0.0) {
+            m_flickerAlpha = 0.0;
+            m_flickerTimer.stop();
+        }
+        update();
+    });
+}
+void QCard::flicker(const QColor& color)
+{
+    m_flickerColor = color;
+    m_flickerAlpha = 0.6;   // initial intensity
+    m_flickerTimer.start();
+    update();
+}
 QSize QCard::sizeHint() const { return QSize(44, 60); } // tweak later
 
 void QCard::setSpec(const CardSpec& s) { m_spec = s; update(); }
@@ -28,6 +44,7 @@ void QCard::setSelected(bool on) { m_selected = on; update(); }
 void QCard::enterEvent(QEnterEvent*) { m_hover = true; emit hovered(true); update(); }
 void QCard::leaveEvent(QEvent*) { m_hover = false; emit hovered(false); update(); }
 void QCard::incrementCount() { m_spec.countBadge++; update(); }
+void QCard::setCount(int count){m_spec.countBadge=count;update();}
 void QCard::decrementCount() { if(m_spec.countBadge>0){m_spec.countBadge--; update();} }
 void QCard::mousePressEvent(QMouseEvent* e) {
     if (e->button() == Qt::LeftButton) {
@@ -111,7 +128,15 @@ void QCard::paintEvent(QPaintEvent*) {
         p.setPen(textColor);
         p.drawText(labelRect, Qt::AlignCenter, label);
     }
+    //Flicker:
+    if (m_flickerAlpha > 0.0) {
+        QColor c = m_flickerColor;
+        c.setAlphaF(m_flickerAlpha);
 
+        p.setPen(Qt::NoPen);
+        p.setBrush(c);
+        p.drawRoundedRect(r, radius, radius);
+    }
     // Count badge
         if (m_spec.countBadge >= 0) {
         const int badge = m_spec.countBadge;

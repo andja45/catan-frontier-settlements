@@ -26,52 +26,66 @@ TradeBankPopup::TradeBankPopup(Player* player, QWidget* parent)
     m_receiveRow = new QCardRow(this);
     QCard* helperCard;
     auto helperBox = new QHBoxLayout();
+
+    m_sendButton = new QPushButton("Send Trade", this);
     for(ResourceType resource : ResourceCardTypes){
 
         std::string labelname = "4:1";
+        //
         auto* rateLabel = new QLabel(QString::fromStdString(labelname));
         m_ratesLables[resource] = rateLabel;
         m_offer.give[resource] = 0;
         helperCard = m_giveRow->addCard(CardSpec({CardKind::Resource, resource, DevCardType::None, 0}));
         helperBox->addWidget(rateLabel);
+
+
         connect(helperCard, &QCard::leftClicked, this, [this, helperCard, resource]() {
-            if(m_playerResources[resource]>helperCard->spec().countBadge and m_tradeRates.at(helperCard->spec().resource)>helperCard->spec().countBadge){
-                helperCard->incrementCount();
-                m_offer.give[resource]++;
-                if(m_offer.give[resource]==m_tradeRates.at(helperCard->spec().resource)){
-                    m_validGive=true;
-                }
-                else{
-                    m_validGive=false;
-                }
+            if(m_playerResources[resource]>=m_tradeRates.at(helperCard->spec().resource) and m_selectedGive==ResourceType::None){
+                helperCard->setCount(m_tradeRates.at(helperCard->spec().resource));
+                m_selectedGive = resource;
+                m_sendButton->setEnabled(m_selectedReceive!=ResourceType::None);
+            }
+            else{
+                helperCard->flicker(GameTheme::getFlickerColorByResource(resource));
             }
         });
         connect(helperCard, &QCard::rightClicked, this, [this, helperCard, resource]() {
-            if(m_offer.give[resource]>0){
-                helperCard->decrementCount();
-                m_offer.give[resource]--;
-                m_validGive=false;
+            if(m_selectedGive == resource){
+                helperCard->setCount(0);
+                m_selectedGive = ResourceType::None;
+                m_sendButton->setEnabled(false);
+            }
+            else{
+                helperCard->flicker(GameTheme::getFlickerColorByResource(resource));
             }
         });
         m_giveCards.push_back(helperCard);
 
         helperCard=m_receiveRow->addCard(CardSpec({CardKind::Resource, resource, DevCardType::None, 0}));
         connect(helperCard, &QCard::leftClicked, this, [this, helperCard,resource]() {
-            if(helperCard->spec().countBadge<19){
-                helperCard->incrementCount();
-                m_offer.receive[resource]++;
+            if(m_selectedReceive==ResourceType::None){
+                helperCard->setCount(1);
+                m_selectedReceive = resource;
+                m_sendButton->setEnabled(m_selectedGive!=ResourceType::None);
+            }
+            else{
+                helperCard->flicker(GameTheme::getFlickerColorByResource(resource));
             }
         });
         connect(helperCard, &QCard::rightClicked, this, [this, helperCard,resource]() {
-            if(m_offer.receive[resource]>0){
-                helperCard->decrementCount();
-                m_offer.receive[resource]--;
+            if(m_selectedReceive== resource){
+                helperCard->setCount(0);
+                m_selectedReceive = ResourceType::None;
+                m_sendButton->setEnabled(false);
+            }
+            else{
+                helperCard->flicker(GameTheme::getFlickerColorByResource(resource));
             }
 
         });
         m_receiveCards.push_back(helperCard);
     }
-
+    //updateTradeRates(); KAD BUDE BILO POZIVANO ODKOMENTARISATI
     layout->addWidget(new QLabel("You give"));
     layout->addWidget(m_giveRow);
 
@@ -79,8 +93,7 @@ TradeBankPopup::TradeBankPopup(Player* player, QWidget* parent)
     layout->addWidget(new QLabel("You receive"));
     layout->addWidget(m_receiveRow);
 
-    m_sendButton = new QPushButton("Send Trade", this);
-    m_sendButton->setEnabled(true);
+
     layout->addWidget(m_sendButton);
 
     connect(m_sendButton, &QPushButton::clicked, this, [this]() {

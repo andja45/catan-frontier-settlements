@@ -30,3 +30,32 @@ QColor GameTheme::getColorByResource(ResourceType resource) {
         break;
     }
 }
+QColor GameTheme::getFlickerColorByResource(ResourceType resource) {
+    switch (resource) {
+    case ResourceType::Wood:
+        return QColor(255, 230, 120) ;  // warm pale yellow
+        break;
+    case ResourceType::Brick:
+        return QColor(120, 200, 255);   // light cyan / ice blue
+        break;
+    case ResourceType::Ore:
+        return QColor(255, 140, 0);     // orange
+        break;
+    case ResourceType::Wool:
+        return QColor(180, 100, 220);   // soft purple
+        break;
+    case ResourceType::Wheat:
+        return QColor(120, 120, 255);  // periwinkle blue
+        break;
+    case ResourceType::Desert:
+        return QColor(170, 90, 200);   // dusty violet
+        break;
+    case ResourceType::Sea:
+        return QColor(255, 200, 100);   // warm amber
+        break;
+    case ResourceType::None:
+    default:
+        return QColor(1,1,1);
+        break;
+    }
+}
