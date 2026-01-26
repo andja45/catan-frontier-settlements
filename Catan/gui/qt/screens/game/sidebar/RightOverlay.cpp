@@ -337,10 +337,10 @@ void RightOverlay::setUpPopups(){
     });
 
     auto* discardShortcut = new QShortcut(QKeySequence(Qt::Key_D), this);
+    m_playerYou->addResource(ResourceType::Brick, 2);
+    m_playerYou->addResource(ResourceType::Wheat, 5);
+    m_playerYou->addResource(ResourceType::Ore, 2);
     connect(discardShortcut, &QShortcut::activated, this, [this, discardPopup]() {
-        m_playerYou->addResource(ResourceType::Brick, 2);
-        m_playerYou->addResource(ResourceType::Wheat, 5);
-        m_playerYou->addResource(ResourceType::Ore, 2);
         discardPopup->openAtGlobal(QCursor::pos());
     });
 }
