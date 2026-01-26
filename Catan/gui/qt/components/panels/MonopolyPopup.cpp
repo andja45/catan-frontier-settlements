@@ -15,7 +15,7 @@ MonopolyPopup::MonopolyPopup(QWidget* parent)
     setWindowFlag(Qt::FramelessWindowHint, true);
     setAttribute(Qt::WA_StyledBackground, false);     // we paint rounded bg ourselves
     setAttribute(Qt::WA_TranslucentBackground, true); // true rounded corners for top-level popup
-    
+
     setStyleSheet(R"(
         QPushButton { background: transparent; }
     )");

@@ -130,7 +130,7 @@ void DevCardPopup::selectIndex(int idx) {
 
 void DevCardPopup::openAtGlobal(const QPoint& globalPos) {
     // show near point
-    move(globalPos + QPoint(12, 12));
+    move(globalPos - QPoint(180, 180));
     show();
     raise();
     activateWindow();

@@ -19,6 +19,7 @@
 #include <QPainter>
 #include <QShortcut>
 
+#include "components/panels/DiscardPopup.h"
 #include "components/panels/YearOfPlentyPopup.h"
 
 RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, BoardToolbar* toolbar, QWidget* parent)
@@ -327,4 +328,19 @@ void RightOverlay::setUpPopups(){
                 }
 
             });
+
+    auto* discardPopup = new DiscardPopup(m_playerYou, this);
+    connect(discardPopup, &DiscardPopup::discardConfirmed,
+            this, [this](const DiscardChoice& c) {
+        // controller/model:
+        // m_game->discardResources(currentPlayerId, c.discard);
+    });
+
+    auto* discardShortcut = new QShortcut(QKeySequence(Qt::Key_D), this);
+    connect(discardShortcut, &QShortcut::activated, this, [this, discardPopup]() {
+        m_playerYou->addResource(ResourceType::Brick, 2);
+        m_playerYou->addResource(ResourceType::Wheat, 5);
+        m_playerYou->addResource(ResourceType::Ore, 2);
+        discardPopup->openAtGlobal(QCursor::pos());
+    });
 }
