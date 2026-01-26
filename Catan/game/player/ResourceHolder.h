@@ -47,7 +47,7 @@ public:
 
     int getNumOfDevCards() const {return m_numOfDevCards;}
     int getNumOfDevCards(DevCardType d) const {return m_devCards.at(d);}
-    int getNumOfResourceCards() const {return m_numOfDevCards;};
+    int getNumOfResourceCards() const {return m_numOfResourceCards;};
     int getNumOfResourceCards(ResourceType r) const {return m_resources.at(r);}
     std::map<ResourceType, int> getResources() { return m_resources; }
     std::map<DevCardType, int> getDevCards() {return m_devCards; }

@@ -72,6 +72,7 @@ void DevCardPopup::setCards(const std::map<DevCardType, int>& cards) {
 
     for (const auto& [type, count] : m_cards) {
         if (count <= 0) continue;
+        if(type == DevCardType::VictoryPoint) continue;
         m_displayOrder.push_back(type);
     }
 
