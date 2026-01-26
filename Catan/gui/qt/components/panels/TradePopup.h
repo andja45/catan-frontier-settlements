@@ -5,6 +5,7 @@
 #include"../../game/types/ResourceType.h"
 #include<QPushButton>
 #include"FloatingPanel.h"
+#include"../../common/GameTheme.h"
 #include<array>
 struct TradeOffer {
     std::map<ResourceType,int> give;
@@ -36,6 +37,9 @@ private:
         {ResourceType::Wheat,2}
     };
     TradeOffer m_offer;
+
+    int m_givesSelected= 0;
+    int m_receivesSelected =0;
     std::vector<QCard*> m_giveCards;
     std::vector<QCard*> m_receiveCards;
     QCardRow* m_giveRow;

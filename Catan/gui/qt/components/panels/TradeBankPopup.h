@@ -30,6 +30,8 @@ private:
     Player* m_player;
     TradeOffer m_offer;
     bool m_validGive = false;
+    ResourceType m_selectedGive = ResourceType::None;
+    ResourceType m_selectedReceive = ResourceType::None;
     std::vector<QCard*> m_giveCards;
     std::vector<QCard*> m_receiveCards;
     QHBoxLayout* m_ratesBox;

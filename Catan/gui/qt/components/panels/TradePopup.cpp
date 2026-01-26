@@ -24,6 +24,7 @@ TradePopup::TradePopup(QWidget* parent)
     m_giveRow = new QCardRow(this);
     m_receiveRow = new QCardRow(this);
     QCard* helperCard;
+    m_sendButton = new QPushButton("Send Trade", this);
 
     for(ResourceType resource : ResourceCardTypes){
         m_offer.give[resource] = 0;
@@ -33,12 +34,23 @@ TradePopup::TradePopup(QWidget* parent)
             if(m_playerResources[resource]>helperCard->spec().countBadge){
                 helperCard->incrementCount();
                 m_offer.give[resource]++;
+                m_givesSelected++;
+                m_sendButton->setEnabled(m_givesSelected>0 and m_receivesSelected>0);
+            }
+            else{
+                helperCard->flicker(GameTheme::getFlickerColorByResource(resource));
             }
         });
         connect(helperCard, &QCard::rightClicked, this, [this, helperCard, resource]() {
             if(m_offer.give[resource]>0){
                 helperCard->decrementCount();
                 m_offer.give[resource]--;
+                m_givesSelected--;
+                m_sendButton->setEnabled(m_givesSelected>0 and m_receivesSelected>0);
+            }
+
+            else{
+                helperCard->flicker(GameTheme::getFlickerColorByResource(resource));
             }
         });
         m_giveCards.push_back(helperCard);
@@ -48,12 +60,24 @@ TradePopup::TradePopup(QWidget* parent)
             if(helperCard->spec().countBadge<19){
                 helperCard->incrementCount();
                 m_offer.receive[resource]++;
+                m_receivesSelected++;
+                m_sendButton->setEnabled(m_givesSelected>0 and m_receivesSelected>0);
+            }
+
+            else{
+                helperCard->flicker(GameTheme::getFlickerColorByResource(resource));
             }
         });
         connect(helperCard, &QCard::rightClicked, this, [this, helperCard,resource]() {
             if(m_offer.receive[resource]>0){
                 helperCard->decrementCount();
                 m_offer.receive[resource]--;
+                m_receivesSelected--;
+                m_sendButton->setEnabled(m_givesSelected>0 and m_receivesSelected>0);
+            }
+
+            else{
+                helperCard->flicker(GameTheme::getFlickerColorByResource(resource));
             }
 
         });
@@ -66,8 +90,7 @@ TradePopup::TradePopup(QWidget* parent)
     layout->addWidget(new QLabel("You receive"));
     layout->addWidget(m_receiveRow);
 
-    m_sendButton = new QPushButton("Send Trade", this);
-    m_sendButton->setEnabled(true);
+
     layout->addWidget(m_sendButton);
 
     connect(m_sendButton, &QPushButton::clicked, this, [this]() {

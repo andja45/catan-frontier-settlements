@@ -19,15 +19,8 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     m_tradeBankPopup = new TradeBankPopup(m_player, nullptr);
 
 
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    setMinimumHeight(60);/*
-    for(ToolbarActionType action : ToolbarActionTypes){
-        buttonsLayout->addWidget(
-            createPanelWithButton(
-                createActionButton(QString::fromStdString(nameFromToolbarActionType[action]), action)
-                )
-            );
-    }*/
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setMinimumHeight(60);
 
     buttonsLayout->addWidget(
         createPanelWithButton(
@@ -78,6 +71,7 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
 
     auto* diceWidget = new DiceWidget(this);
     diceEndBox->addWidget(diceWidget);
+    diceEndBox->setContentsMargins(4, 6, 4, 6);
 
     diceEndBox->addWidget(
         createPanelWithButton(
@@ -92,29 +86,7 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
             this, &BoardToolbar::playerTradeRequested);
     connect(m_tradeBankPopup, &TradeBankPopup::tradeSubmitted,
             this, &BoardToolbar::bankTradeRequested);
-/*
-    buttonsLayout->addWidget(createMenuButton(
-        "Build",
-        {
-            {"Road", ToolbarActionType::BuildRoad},
-            {"Settlement", ToolbarActionType::BuildSettlement},
-            {"City", ToolbarActionType::BuildCity}
-        }
-        ));
-    addButton("Buy Dev", ToolbarActionType::BuyDevCard,buttonsLayout);
-    addButton("Play Dev", ToolbarActionType::PlayDevCard,buttonsLayout);
-    buttonsLayout->addWidget(createMenuButton(
-        "Trade",
-        {
-            {"Player Trade", ToolbarActionType::PlayerTrade},
-            {"Bank Trade", ToolbarActionType::BankTrade}
-        }
-        ));
 
-    buttonsLayout->addStretch(1); // keeps Roll / End on the right
-
-    addButton("Roll Dice", ToolbarActionType::BankTrade,buttonsLayout);
-    addButton("End Turn", ToolbarActionType::BankTrade,buttonsLayout);*/
 }
 
 void BoardToolbar::showTradePopup()
@@ -149,13 +121,14 @@ void BoardToolbar::showBankTradePopup()
 }
 FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActionType action) {
     auto* panel = new FloatingPanel(this);
+    panel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     if(not MoveCosts::costFor(action).empty()){
         panel->setProperty("action", QVariant::fromValue(action));
         panel->setAttribute(Qt::WA_Hover);
         panel->installEventFilter(this);
     }
     auto* layout = new QHBoxLayout(panel);
-    layout->setContentsMargins(8, 27, 8, 27);
+    layout->setContentsMargins(8, 6, 8, 6);
     layout->setSpacing(0);
 
     button->setParent(panel);
@@ -178,7 +151,7 @@ FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActio
 }
 QPushButton* BoardToolbar::createTradeButton(const QString& text,ToolbarActionType action) {
     auto* btn = new QPushButton(text);
-    btn->setMinimumHeight(32);
+    btn->setMinimumHeight(50);
     btn->setStyleSheet(R"(
     QPushButton {
         background: transparent;
@@ -212,7 +185,11 @@ QPushButton* BoardToolbar::createTradeButton(const QString& text,ToolbarActionTy
 }
 QPushButton* BoardToolbar::createActionButton(const QString& text,ToolbarActionType action) {
     auto* btn = new QPushButton(text);
-    btn->setMinimumHeight(32);
+    if(action==ToolbarActionType::EndTurn){
+         btn->setMinimumHeight(32);
+    }
+    else{    btn->setMinimumHeight(50);
+    }
     btn->setStyleSheet(R"(
     QPushButton {
         background: transparent;
@@ -233,7 +210,6 @@ QPushButton* BoardToolbar::createActionButton(const QString& text,ToolbarActionT
         color: #999;
     }
     )");
-
     connect(btn, &QPushButton::clicked, this, [this, action] {
         emit actionTriggered(action);
     });

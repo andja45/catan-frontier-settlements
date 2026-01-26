@@ -10,6 +10,7 @@ class GameTheme
 public:
     GameTheme();
     static QColor getColorByResource (ResourceType resource);
+    static QColor getFlickerColorByResource (ResourceType resource);
 };
 
 #endif // GAMETHEME_H
