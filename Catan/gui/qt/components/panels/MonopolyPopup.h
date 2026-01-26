@@ -1,6 +1,8 @@
 #ifndef MONOPOLYPOPUP_H
 #define MONOPOLYPOPUP_H
 
+#include <QPushButton>
+
 #include "FloatingPanel.h"
 #include <QVector>
 
@@ -39,5 +41,8 @@ private:
 
     QVector<QCard*> m_cardWidgets;
     int m_selected = -1;
+
+    QPushButton* m_confirmBtn = nullptr;
+    QPushButton* m_cancelBtn = nullptr;
 };
 #endif // MONOPOLYPOPUP_H

@@ -72,6 +72,7 @@ void DevCardPopup::setCards(const std::map<DevCardType, int>& cards) {
 
     for (const auto& [type, count] : m_cards) {
         if (count <= 0) continue;
+        if(type == DevCardType::VictoryPoint) continue;
         m_displayOrder.push_back(type);
     }
 
@@ -129,7 +130,7 @@ void DevCardPopup::selectIndex(int idx) {
 
 void DevCardPopup::openAtGlobal(const QPoint& globalPos) {
     // show near point
-    move(globalPos + QPoint(12, 12));
+    move(globalPos - QPoint(180, 180));
     show();
     raise();
     activateWindow();
