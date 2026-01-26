@@ -69,23 +69,25 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
         );
 
     buttonsLayout->addStretch(1);
+    /*
     buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("Roll Dice", ToolbarActionType::RollDice)
             , ToolbarActionType::RollDice)
         );
-    auto* diceEndBox = new QVBoxLayout();
+    */
+    //auto* diceEndBox = new QVBoxLayout();
 
     auto* diceWidget = new DiceWidget(this);
-    diceEndBox->addWidget(diceWidget);
+    buttonsLayout->addWidget(diceWidget);
 
-    diceEndBox->addWidget(
+    buttonsLayout->addWidget(
         createPanelWithButton(
             createActionButton("End Turn", ToolbarActionType::EndTurn)
             , ToolbarActionType::EndTurn)
         );
 
-    buttonsLayout->addLayout(diceEndBox);
+    //buttonsLayout->addLayout(diceEndBox);
     diceWidget->setDice(3, 5);
 
     connect(m_tradePopup, &TradePopup::tradeSubmitted,
