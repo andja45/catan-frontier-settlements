@@ -7,12 +7,12 @@
 #include "Rule.h"
 #include "LargestArmyRule.h"
 #include "LongestRoadRule.h"
-#include "VictoryRule.h"
+#include "GameOverRule.h"
 
 RulesEngine::RulesEngine() { // good enough for now
     m_rules.push_back(std::make_unique<LongestRoadRule>());
     m_rules.push_back(std::make_unique<LargestArmyRule>());
-    m_rules.push_back(std::make_unique<VictoryRule>());
+    m_rules.push_back(std::make_unique<GameOverRule>());
 }
 
 void RulesEngine::addRule(std::unique_ptr<Rule> rule) {

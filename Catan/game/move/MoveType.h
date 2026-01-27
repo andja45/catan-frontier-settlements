@@ -33,6 +33,8 @@ enum class MoveType {
     PlayerTradeResponse,
     PlayerTradeAccept,
 
+    PlayerLeave,
+
     InvalidMoveType,
 };
 

@@ -36,6 +36,8 @@ private:
     int m_numOfCitiesLeft=5;
     int m_numOfSettlementsLeft=5;
 
+    bool m_isActive=true;
+
 public:
     explicit Player(PlayerId id, std::string name) : ResourceHolder(name), m_playerId(id) {}
 
@@ -76,6 +78,9 @@ public:
     ResourceType takeRandomResource();
 
     int minBankTradeRatio(ResourceType resource) const;
+
+    bool isActive() const {return m_isActive;}
+    void setLeft() {m_isActive=false;}
 };
 
 

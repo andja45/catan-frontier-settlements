@@ -43,6 +43,9 @@ class PlayerTradeRequestMove;
 // TODO when game gets offer move it saves trade request, this gets displayed to other players so they can choose to accept, when others accept its saved in trade struct and when owner does and it matches then trade happens according to stored data
 class GameSession {
 private:
+
+ int m_numOfActivePlayers;
+ bool m_isOver=false;
  std::unique_ptr<Board> m_board;
  std::vector<std::unique_ptr<Player>> m_players;
 
@@ -90,6 +93,8 @@ private:
  friend class PlayerTradeRequestMove;
  friend class PlayerTradeResponseMove;
  friend class PlayerTradeAcceptMove;
+ friend class SkipPlayerRule;
+
 //TODO DICE MOVE TWO DICES, LEAVE MOVE AND PLAYER HAS LEFT AND SKIP NEXT TU
  // dice
  std::mt19937 m_rng; // TODO dice can be with client-host
@@ -145,6 +150,12 @@ public:
  std::vector<const Trade*> activeTrades() const; // TODO not sure if both public and if both needed
 
  void endGame(); // TODO implement + fill some gameData fields there(awards, everyones points) maybe add endGame phase and all is grey? in function enter that phase
+
+ int activePlayersLeft() const { return m_numOfActivePlayers; }
+
+ void leavePlayer(PlayerId player_id);
+
+ //TODO what the fuck is this indentation???
 };
 
 #endif //Catan_GAMESESSION_H
