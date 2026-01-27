@@ -43,6 +43,9 @@ add_library(catan_gui_qt
         components/panels/YearOfPlentyPopup.h
         components/panels/DiscardPopup.cpp
         components/panels/DiscardPopup.h
+        screens/mainmenu/MainMenu.cpp
+        screens/mainmenu/MainMenu.h
+        resources/resources.qrc
 )
 
 target_include_directories(catan_gui_qt

@@ -1,5 +1,3 @@
-
-
 add_executable(Catan
         main.cpp
         ../controller/host-join/HostJoinController.cpp

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>catan.png</file>
+    </qresource>
+    <qresource prefix="/styles">
+        <file>catanbuttons.qss</file>
+    </qresource>
+
+</RCC>
