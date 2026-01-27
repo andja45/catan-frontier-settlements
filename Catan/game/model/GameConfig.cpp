@@ -7,17 +7,34 @@
 
 GameConfig::GameConfig(int numPlayers,
                        int winningPoints,
-                       uint32_t seed,
-                       std::vector<PlayerConfig> players)
+                       std::vector<std::string> players)
     : numPlayers(numPlayers),
       winningVictoryPoints(winningPoints),
-      randomSeed(seed),
       players(std::move(players))
 {
     assert(this->numPlayers == static_cast<int>(this->players.size()));
 }
 
-const PlayerConfig& GameConfig::player(const PlayerId id) const {
-    assert(id >= 0 && id < static_cast<PlayerId>(players.size())); // they will get next id svailable, client-host having id 0
+const std::string& GameConfig::player(const PlayerId id) const {
+    assert(id >= 0 && id < static_cast<PlayerId>(players.size())); // they will get next id available, client-host having id 0
     return players[id];
+}
+
+void GameConfig::addPlayer(const std::string &name) {
+    players.push_back(name);
+}
+
+void GameConfig::removePlayer(std::string name) {
+    for (auto it =players.begin(); it !=players.end(); ++it) {
+        if (*it == name) {
+            players.erase(it);
+            return;
+        }
+    }
+}
+
+void GameConfig::copySettingFromConfig(const GameConfig &config) {
+    numPlayers = config.numPlayers;
+    winningVictoryPoints = config.winningVictoryPoints;
+    boardType=config.boardType;
 }

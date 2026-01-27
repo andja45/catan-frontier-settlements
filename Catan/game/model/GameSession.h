@@ -90,12 +90,12 @@ private:
  friend class PlayerTradeRequestMove;
  friend class PlayerTradeResponseMove;
  friend class PlayerTradeAcceptMove;
-
+//TODO DICE MOVE TWO DICES, LEAVE MOVE AND PLAYER HAS LEFT AND SKIP NEXT TU
  // dice
  std::mt19937 m_rng; // TODO dice can be with client-host
  std::uniform_int_distribution<int> m_d6{1, 6};
 public:
- GameSession(std::vector<std::string> playerNames, PlayerId localPlayer, uint32_t seed);
+ GameSession(std::vector<std::string> playerNames, PlayerId localPlayer, uint32_t seed, std::unique_ptr<Board>board, int winPoints, std::string gameName);
 
  void advancePhaseAfterMove();
  void enterDiscardCardsPhase() { setPhase(TurnPhase::DiscardCards); }

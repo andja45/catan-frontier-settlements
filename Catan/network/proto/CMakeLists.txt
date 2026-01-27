@@ -3,6 +3,8 @@ find_package(Protobuf REQUIRED)
 set(PROTO_FILES
         common.proto
         move.proto
+        envelope.proto
+        setup.proto
 )
 set(PROTO_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
@@ -14,11 +16,12 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES}
 add_library(catan_proto STATIC
         ${PROTO_SRCS}
         ${PROTO_HDRS}
+        ProtoHeaders.hpp
 )
 
 target_link_libraries(catan_proto PUBLIC protobuf::libprotobuf)
 
-target_include_directories(catan_proto PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+target_include_directories(catan_proto PUBLIC ${CMAKE_CURRENT_BINARY_DIR} .
 )
 
 

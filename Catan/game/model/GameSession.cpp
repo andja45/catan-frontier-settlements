@@ -11,11 +11,14 @@
 
 GameSession::GameSession(std::vector<std::string> playerNames,
                          PlayerId localPlayer,
-                         uint32_t seed)
-    : m_board(std::make_unique<Board>())
+                         uint32_t seed,
+                         std::unique_ptr<Board> board,
+                         int winPoints,
+                         std::string gameName)
+    : m_board(std::move(board))
     , m_localPlayerId(localPlayer)
     , m_rng(seed)
-    , m_gameData(0, playerNames) // TODO gameId will be set by client-host maybe on creation of room? roomId?
+    , m_gameData(gameName, playerNames) // TODO gameId will be set by client-host maybe on creation of room? roomId?
 {
     const int numPlayers = static_cast<int>(playerNames.size()); // deduced from vector of players
 

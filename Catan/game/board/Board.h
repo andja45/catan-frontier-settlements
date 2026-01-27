@@ -16,7 +16,7 @@
 
 // helper struct to specify board layout and pass parameters to create tiles
 struct TileDef { int q, r; ResourceType res; int number; };
-
+struct PortDef { int q, r, i; TradeType tradeType;};
 //TODO consider trade and houses saved here?
 class Board {
 private:
@@ -45,6 +45,7 @@ public:
     void initializeBoard(std::vector<TileDef> tileDefs);
     void addTrade(NodeCoords nodeCoords, TradeType tradeType);
     void addTrade(EdgeCoords edgeCoords, TradeType tradeType);
+    void loadTrades(std::vector<PortDef> portDefs);
 
     std::vector<NodeCoords> getTradeCoords() const {return m_tradeCoords;}
 
@@ -52,8 +53,8 @@ public:
 
     TileId robberTile() const {} // TODO implement, this returns id
 
-    Tile* getTileAt(TileCoords coords);
-    Node* getNodeAt(NodeCoords);
+    Tile* getTileAt(TileCoords coords); // TODO make const and implement guards
+    Node* getNodeAt(NodeCoords) const;
     Edge* getEdgeAt(EdgeCoords);
 
     Node* getNodeById(NodeId nodeId) const;
@@ -95,7 +96,9 @@ public:
     bool isBuildingOwnedBy(PlayerId playerId, NodeId nodeId) const; // consider removing, use get node owner and check yourself
     bool isNodeSettlement(NodeId nodeId) const;
 
-    std::vector<AxialCoords> getBoardCords();
+    std::vector<AxialCoords> getBoardCords() const;
+    std::vector<TileDef> getTileDefs() const;
+    std::vector<PortDef> getPortDefs() const;
 
     std::vector<EdgeId> edgeIds() const; // TODO add
     std::vector<NodeId> nodeIds() const;

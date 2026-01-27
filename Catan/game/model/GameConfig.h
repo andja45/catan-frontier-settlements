@@ -8,29 +8,30 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <types/BoardType.hpp>
 #include "types/TypeAliases.h"
 
-struct PlayerConfig {
-    PlayerId id;
-    std::string name;
-};
 
 class GameConfig { // class used to pass game configuration from client-host to other clients for game setup and initialization
 public:
     int numPlayers = 0;
     int winningVictoryPoints = 10;
-    uint32_t randomSeed = 0; // for random sync
-    // board type?
-    std::vector<PlayerConfig> players;
+    BoardType boardType= BoardType::Classic;
+    std::vector<std::string> players;
 public:
     GameConfig() = default;
 
     GameConfig(int numPlayers,
                int winningPoints,
-               uint32_t seed,
-               std::vector<PlayerConfig> players);
+               std::vector<std::string> players);
 
-    const PlayerConfig& player(PlayerId id) const;
+    const std::string& player(PlayerId id) const;
+    void addPlayer(const std::string &name);
+    void removePlayer(std::string name);
+    void copySettingFromConfig(const GameConfig& config);
+    int getMaxPlayers() const {return numPlayers;}
+    std::vector<std::string> getPlayerNames() const {return players;}
+    int getPointsToWin() const {return winningVictoryPoints;}
 };
 
 #endif //CATAN_GAMECONFIG_H

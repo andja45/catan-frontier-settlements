@@ -89,7 +89,8 @@
         types/ToolbarActionType.h
         model/MoveCosts.h model/MoveCosts.cpp
         move/build/BuildSettlementMove.cpp
-)
+            types/BoardType.hpp
+    )
 
 target_include_directories(catan_game
         PUBLIC

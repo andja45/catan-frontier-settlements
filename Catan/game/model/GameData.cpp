@@ -1,7 +1,7 @@
 #include "GameData.h"
 #include <time.h>
 
-GameData::GameData(int gameId, std::vector<std::string> playerNames) : m_gameId(gameId), m_playerNames(playerNames) {
+GameData::GameData(std::string gameId, std::vector<std::string> playerNames) : m_gameName(gameId), m_playerNames(playerNames) {
     initialize();
 }
 
@@ -48,7 +48,7 @@ std::string GameData::getDate() const {
 nlohmann::json GameData::toJson() const {
     nlohmann::json jsonData;
 
-    jsonData["gameId"]        = m_gameId;
+    jsonData["gameId"]        = m_gameName;
     jsonData["numOfTurns"]  = m_numOfTurns;
     jsonData["datetime"]      = m_datetime;
     jsonData["isGameWon"]     = m_isGameWon;
@@ -69,7 +69,7 @@ nlohmann::json GameData::toJson() const {
 }
 
 void GameData::loadFromJson(const nlohmann::json &jsonData) {
-    m_gameId       = jsonData.at("gameId").get<int>();
+    m_gameName       = jsonData.at("gameId").get<std::string>();
     m_numOfTurns = jsonData.at("numOfTurns").get<int>();
     m_datetime     = jsonData.at("datetime").get<std::string>();
     m_isGameWon    = jsonData.at("isGameWon").get<bool>();

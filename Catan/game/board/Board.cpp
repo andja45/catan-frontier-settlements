@@ -161,6 +161,13 @@ void Board::addTrade(EdgeCoords edgeCoords, TradeType tradeType) {
      }
 }
 
+void Board::loadTrades(std::vector<PortDef> portDefs) {
+    for (const auto&[q, r, i, tradeType] : portDefs) {
+        NodeCoords nc(q,r,i);
+        addTrade(nc,static_cast<TradeType>(tradeType));
+    }
+}
+
 std::vector<Node *> Board::getNodesAdjacentToEdge(EdgeId edgeId) const {
     return getEdgeById(edgeId)->getNodes();
 }
@@ -173,8 +180,8 @@ Tile * Board::getTileAt(TileCoords coords) {
     return m_tilesByCoord[coords];
 }
 
-Node * Board::getNodeAt(NodeCoords nc) {
-    return m_nodesByCoord[nc];
+Node * Board::getNodeAt(NodeCoords nc) const{
+    return m_nodesByCoord.at(nc);
 }
 
 Edge * Board::getEdgeAt(EdgeCoords ec) {
@@ -328,10 +335,38 @@ bool Board::isNodeSettlement(NodeId nodeId) const {
 }
 
 
-std::vector<AxialCoords> Board::getBoardCords() {
+std::vector<AxialCoords> Board::getBoardCords() const{
     std::vector<AxialCoords> coords;
     for (auto&[coord, tile] : m_tilesByCoord) {
         coords.push_back(coord);
     }
     return coords;
+}
+
+std::vector<TileDef> Board::getTileDefs() const {
+    std::vector<TileDef> tileDefs;
+    for (const auto& tile : m_tiles) {
+        TileDef tdef;
+        AxialCoords coord = tile->getTileCoord();
+        tdef.q = coord.q();
+        tdef.r = coord.r();
+        tdef.res = tile->getResourceType();
+        tdef.number = tile->getNumber();
+        tileDefs.push_back(tdef);
+    }
+    return tileDefs;
+}
+
+std::vector<PortDef> Board::getPortDefs() const {
+    std::vector<PortDef> portDefs;
+    for (const auto& tradeCoord : m_tradeCoords) {
+        PortDef pdef;
+        pdef.q = tradeCoord.axialCoords().q();
+        pdef.r = tradeCoord.axialCoords().q();
+        pdef.i = static_cast<int>(tradeCoord.direction());
+        Node* node = getNodeAt(tradeCoord);
+        pdef.tradeType = node->getTradeResource();
+        portDefs.push_back(pdef);
+    }
+    return portDefs;
 }
