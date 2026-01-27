@@ -162,6 +162,10 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
             break;
         }
 
+        case MoveType::PlayerLeave: {
+            proto.set_type(net::Move::PlayerLeave);
+            break;
+        }
         default:
 
             break;

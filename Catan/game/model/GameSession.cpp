@@ -21,7 +21,7 @@ GameSession::GameSession(std::vector<std::string> playerNames,
     , m_gameData(gameName, playerNames) // TODO gameId will be set by client-host maybe on creation of room? roomId?
 {
     const int numPlayers = static_cast<int>(playerNames.size()); // deduced from vector of players
-
+    m_numOfActivePlayers=numPlayers;
     m_players.reserve(numPlayers);
     for (PlayerId id = 0; id < numPlayers; ++id) {
         m_players.push_back(std::make_unique<Player>(id, playerNames[id]));
@@ -129,7 +129,7 @@ void GameSession::enterDevCardPhase(DevCardType type) {
 
 void GameSession::advanceInitialPlacement() {
     const int playerCount = numPlayers();
-    if (playerCount == 0) return;
+    if (playerCount == 0 || m_numOfActivePlayers<=0) return;
 
     m_phaseMoveCount += 1;
 
@@ -154,14 +154,22 @@ void GameSession::advanceInitialPlacement() {
     }
 
     m_currentPlayerId = m_players[playerIndex]->getPlayerId(); // if player needs to be changed, he changes
+
+    if (!player(m_currentPlayerId).isActive()) {
+        advancePlayer();
+    }
 }
 
 
 void GameSession::advancePlayer() { // TODO maybe change later - add shuffling with same seed every client model uses
-    if (m_players.empty()) return;
+    if (m_players.empty() || m_numOfActivePlayers<=0) return;
 
     m_turnIndex = (m_turnIndex + 1) % m_players.size();
     m_currentPlayerId = m_players[m_turnIndex]->getPlayerId();
+
+    if (!player(m_currentPlayerId).isActive()) {
+        advancePlayer();
+    }
 
 }
 
@@ -307,4 +315,11 @@ void GameSession::endGame() {
             player(m_longestRoadOwner).getName()
         );
     }
+
+    m_isOver=true;
 } // gui gets renderstate that behaves differently in gameover phase, onphasechanged triggers redrawing
+
+void GameSession::leavePlayer(PlayerId player_id) {
+    player(player_id).setLeft();
+    m_numOfActivePlayers--;
+}

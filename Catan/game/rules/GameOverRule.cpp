@@ -2,10 +2,10 @@
 // Created by andja on 6.1.26..
 //
 
-#include "VictoryRule.h"
+#include "GameOverRule.h"
 #include "model/GameSession.h"
 
-void VictoryRule::evaluate(GameSession& session) {
+void GameOverRule::evaluate(GameSession& session) {
     for (const auto& p : session.players()) {
         if (p->getTotalPoints() >= session.winningPoints()) {
             session.setWinner(p->getPlayerId());
@@ -13,4 +13,7 @@ void VictoryRule::evaluate(GameSession& session) {
             return;
         }
     }
+
+    if (session.activePlayersLeft()<=0)
+        session.endGame();
 }
