@@ -4,6 +4,16 @@ add_executable(Catan
         main.cpp
         ../controller/host-join/HostJoinController.cpp
         ../controller/host-join/HostJoinController.hpp
+        ../controller/game/GameApp.cpp
+        ../controller/game/GameApp.hpp
+        ../controller/host-join/HostJoinApp.cpp
+        ../controller/host-join/HostJoinApp.hpp
+        ../controller/lobby/LobbyApp.cpp
+        ../controller/lobby/LobbyApp.hpp
+        ../controller/ApplicationRoot.cpp
+        ../controller/ApplicationRoot.hpp
+        ../controller/AbstractApplet.hpp
+        ../controller/RoleEnum.hpp
 )
 
 target_link_libraries(Catan
