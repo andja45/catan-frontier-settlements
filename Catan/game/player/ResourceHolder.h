@@ -6,40 +6,59 @@
 #define CATAN_RESOURCEHOLDER_H
 #include <map>
 #include <string>
+#include <vector>
 
 #include "../types/TypeAliases.h"
+#include <types/DevCardType.h>
 
-enum class DevType;
+enum class DevCardType;
 enum class ResourceType;
 
 class ResourceHolder {
-private:
+protected:
 	int m_numOfDevCards =0;
 	int m_numOfResourceCards =0;
     std::map<ResourceType, int> m_resources;
-    std::map<DevType, int> m_devCards;
+    std::map<DevCardType, int> m_devCards;
     bool m_hasLongestRoad=false;
     bool m_hasLargestMilitary=false;
 
+    std::string m_name;
 public:
-    ResourceHolder()  {}
+    ResourceHolder(const std::string &name="") : m_name(name)  {}
 
     bool hasResource(ResourceType resourceType, int amount) const { return m_resources.at(resourceType)>=amount; }
-    bool hasResources(ResourcePack pack) const;
+    bool hasResources(ResourcePack pack) const {
+        for (auto r:pack) {
+            if (!hasResource(r.first,r.second)) return false;
+        }
+        return true;
+    }
 
-    void removeResource(ResourceType resourceType, int amount) { m_resources[resourceType]-= amount; m_numOfResourceCards--;}
-    void addResource(ResourceType resourceType, int amount) { m_resources[resourceType]+= amount; m_numOfResourceCards++;}
-    void addDevCard(DevType devType) { m_devCards[devType]++; m_numOfDevCards++;}
-    void removeDevCard(DevType devType) { m_devCards[devType]--; m_numOfDevCards--;}
+    void removeResource(ResourceType resourceType, int amount) { m_resources[resourceType]-= amount; m_numOfResourceCards-=amount;}
+    void addResource(ResourceType resourceType, int amount) { removeResource(resourceType,-amount);}
+    void addDevCard(DevCardType devType) { m_devCards[devType]++; m_numOfDevCards++;}
+    void removeDevCard(DevCardType devType) { m_devCards[devType]--; m_numOfDevCards--;}
+    void removeResources(const ResourcePack& pack) { for (auto r:pack) removeResource(r.first,r.second);}
+    void addResources(const ResourcePack& pack) { for (auto r:pack) addResource(r.first,r.second);}
 
     bool hasLongestRoad() const {return m_hasLongestRoad;}
     bool hasLargestMilitary() const {return m_hasLargestMilitary;}
 
     int getNumOfDevCards() const {return m_numOfDevCards;}
-    int getNumOfResourceCards() const {return m_numOfDevCards;};
+    int getNumOfDevCards(DevCardType d) const {return m_devCards.at(d);}
+    int getNumOfResourceCards() const {return m_numOfResourceCards;};
+    int getNumOfResourceCards(ResourceType r) const {return m_resources.at(r);}
+    std::map<ResourceType, int> getResources() { return m_resources; }
+    std::map<DevCardType, int> getDevCards() {return m_devCards; }
 
     void setLongestRoad(bool longestRoad) {m_hasLongestRoad=longestRoad;}
-    void setLargestMilitary(bool largestMilitary) {m_hasLargestMilitary=largestMilitary;}
+    void setLargestArmy(bool largestMilitary) {m_hasLargestMilitary=largestMilitary;}
+
+    bool hasDevCard(DevCardType dev_card) const; // TODO implement
+    bool hasDevCards() const; // TODO implement, remove if makes no sense for both bank and player to have these two
+
+    std::string getName() { return m_name; }
 };
 
 

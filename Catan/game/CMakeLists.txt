@@ -1,7 +1,6 @@
-add_library(catan_game
+    add_library(catan_game
         board/Edge.h
         board/Tile.h
-        board/Edge.cpp
         board/Edge.h
         types/NodeType.h
         player/Player.cpp
@@ -10,28 +9,92 @@ add_library(catan_game
         board/Board.h
         move/Move.cpp
         move/Move.h
-        move/BuildRoadMove.cpp
-        move/BuildRoadMove.h
-        move/BuildSettlementMove.cpp
-        move/BuildSettlementMove.h
-        move/BuildCityMove.cpp
-        move/BuildCityMove.h
-        move/PlayerTradeMove.cpp
-        move/PlayerTradeMove.h
-        move/RollDiceMove.cpp
-        move/RollDiceMove.h
-        move/EndTurnMove.cpp
-        move/EndTurnMove.h
-        gamemodel/GameModel.cpp
-        gamemodel/GameModel.h
-        gamemodel/GameSession.cpp
-        gamemodel/GameSession.h
+        move/build/BuildRoadMove.cpp
+        move/build/BuildRoadMove.h
+        move/build/BuildSettlementMove.cpp
+        move/build/BuildSettlementMove.h
+        move/build/BuildCityMove.cpp
+        move/build/BuildCityMove.h
+        move/turn/RollDiceMove.cpp
+        move/turn/RollDiceMove.h
+        move/turn/EndTurnMove.cpp
+        move/turn/EndTurnMove.h
+        model/GameSession.cpp
+        model/GameSession.h
         types/TypeAliases.h
-        types/DevType.h
+        types/DevCardType.h
         board/Board.cpp
         types/Costs.h
         player/Bank.cpp
-)
+        board/coords/AxialCoords.cpp
+        board/coords/AxialCoords.hpp
+        board/coords/ElementCoords.hpp
+        types/Directions.h
+        board/coords/EdgeCoords.cpp
+        board/coords/EdgeCoords.hpp
+        board/coords/NodeCoords.cpp
+        board/coords/NodeCoords.hpp
+        board/factory/AbstractBoardCreator.hpp
+        board/factory/BoardCatalog.hpp
+        board/serialization/BoardLayoutToJson.cpp
+        board/serialization/BoardLayoutToJson.hpp
+        board/serialization/AbstractBoardSerializer.hpp
+        board/factory/RandomStandardMapCreator.cpp
+        board/factory/RandomStandardMapCreator.hpp
+        board/factory/RandomExtendedMapCreator.cpp
+        board/factory/RandomExtendedMapCreator.hpp
+        board/factory/LoadFromFileCreator.cpp
+        board/factory/LoadFromFileCreator.hpp
+        move/trade/BankTradeMove.h
+        move/robber/SetRobberMove.h
+        move/trade/BankTradeMove.cpp
+        model/GameData.h
+        model/GameData.cpp
+        types/ResourceType.h
+        rules/Rule.h
+        rules/LargestArmyRule.cpp
+        rules/LargestArmyRule.h
+        rules/LongestRoadRule.cpp
+        rules/LongestRoadRule.h
+            rules/GameOverRule.cpp
+            rules/GameOverRule.h
+        rules/RulesEngine.cpp
+        rules/RulesEngine.h
+        model/GameConfig.cpp
+        model/GameConfig.h
+        types/MapType.h
+        board/Edge.cpp
+        phase/TurnPhase.h
+        move/robber/DiscardCardsMove.cpp
+        move/robber/DiscardCardsMove.h
+        move/robber/StealCardMove.cpp
+        move/robber/StealCardMove.h
+        move/devcard/BuyDevCardMove.cpp
+        move/devcard/BuyDevCardMove.h
+        move/devcard/YearOfPlentyMove.cpp
+        move/devcard/YearOfPlentyMove.h
+        move/devcard/MonopolyMove.cpp
+        move/devcard/MonopolyMove.h
+        move/devcard/PlayDevCardMove.cpp
+        move/devcard/PlayDevCardMove.h
+        move/MoveType.h
+        move/trade/PlayerTradeRequestMove.cpp
+        move/trade/PlayerTradeRequestMove.h
+        move/trade/PlayerTradeResponseMove.cpp
+        move/trade/PlayerTradeResponseMove.h
+        move/robber/SetRobberMove.cpp
+        model/Trade.h
+        move/trade/PlayerTradeAcceptMove.cpp
+        move/trade/PlayerTradeAcceptMove.h
+        types/ToolbarActionType.h
+        model/MoveCosts.h model/MoveCosts.cpp
+        move/build/BuildSettlementMove.cpp
+            types/BoardType.hpp
+            move/turn/PlayerLeave.cpp
+            move/turn/PlayerLeave.hpp
+            rules/SkipPlayerRule.cpp
+            rules/SkipPlayerRule.hpp
+    )
 
 target_include_directories(catan_game
         PUBLIC

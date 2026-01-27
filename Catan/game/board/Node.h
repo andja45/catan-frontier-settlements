@@ -4,8 +4,7 @@
 #include <types/NodeType.h>
 #include <types/ResourceType.h>
 #include <types/TypeAliases.h>
-
-enum class Direction;
+#include <board/coords/NodeCoords.hpp>
 
 class Edge;
 class Tile;
@@ -14,54 +13,65 @@ enum class NodeType;
 
 class Node {
 private:
-    NodeType m_type=NodeType::None;
-    int m_ownerId=-1;
+    //TODO consider separate class, stored in board? player?
+    NodeType m_type=NodeType::None; // is it empty, settlement or city
+    PlayerId m_ownerId=-1;  // if it has building who owns it
 
+    // for easier neighbour search
     IncidentTiles m_incidentTiles{};
     IncidentEdges m_incidentEdges{};
 
-    int m_nodeID=-1;
-    inline static int m_numOfNodes=0;
+    NodeId m_nodeId=-1;
 
-    //index is nodes id relative to tile
-    HexCoords m_tileCoords = {-1,-1};
-    int m_nodeIndex=-1;
+    NodeCoords m_coords;
 
-    bool m_hasTrade=false;
-    ResourceType m_tradeResource=ResourceType::None;
+    bool m_hasTrade=false; //TODO consider separate class, stored in board? player?
+    TradeType m_tradeResource=TradeType::None; // if has trade than this resolve which resource its for
 public:
-    Node(HexCoords coords, int index,bool isPort=false, ResourceType portType=ResourceType::None) : Node(coords.first, coords.second, index, isPort, portType) {}
-    Node(int q, int r, int i, bool isPort=false, ResourceType portType=ResourceType::None) : m_nodeIndex(i) {
-        m_numOfNodes++; m_nodeID =m_numOfNodes;
-        m_tileCoords={q,r};
-        m_hasTrade=isPort; m_tradeResource=portType;
+    Node(NodeId id,NodeCoords nc,bool isPort=false, ResourceType portType=ResourceType::None) {
+        m_nodeId=id;
+        m_hasTrade=isPort;
+        m_tradeResource=portType;
+        m_coords=nc;
     }
-
+    // maybe place building that takes type and owner, and upgrade to city?
+    // is is is or manual check?
     bool isEmpty() const { return m_type==NodeType::None; }
-
+    bool isCity() const { return m_type==NodeType::City; }
+    bool isSettlement() const { return m_type==NodeType::Settlement; }
     bool hasTrade() const { return m_hasTrade; }
-	bool is3for1Trade() const; //TODO
+	bool is3for1Trade() const{return hasTrade() && getTradeResource() == TradeType::None;}
+    bool isTradeFor(ResourceType resourceType) const { return m_tradeResource==resourceType; } // manual check via get trade resouce
+    bool isTrade() const {return hasTrade();}
+
     ResourceType getTradeResource() const { return m_tradeResource; }
 
-    NodeType getNodeType() const { return m_type; }
-    int getOwner() const { return m_ownerId; }
+    NodeType getNodeBuildingType() const { return m_type; }
+    PlayerId getOwner() const { return m_ownerId; }
+
     IncidentTiles getIncidentTiles() const { return m_incidentTiles; }
     IncidentEdges getIncidentEdges() const { return m_incidentEdges; }
-    std::array<Node*,3> getIncidentNodes();
 
-    HexCoords getTileCoords() const {return m_tileCoords;}
-    int getNodeIndex() const {return m_nodeIndex;}
+    void setNodeBuildingType(const NodeType nodeType) { m_type = nodeType; }
+    void setOwner(PlayerId ownerId) { m_ownerId = ownerId;}
+    void setTrade(TradeType tradeResource) {m_tradeResource=tradeResource; m_hasTrade=true;}
+    void setId(NodeId nodeId){m_nodeId=nodeId;}
+    NodeId getNodeId() const {return m_nodeId;}
 
-    void setNodeType(const NodeType nodeType) { m_type = nodeType; }
-    void setOwner(int ownerId) { m_ownerId = ownerId; m_type=NodeType::Settlement; }
-    void upgradeToCity() {m_type=NodeType::City;}
-    void setTrade(ResourceType tradeResource) {m_hasTrade=true;m_tradeResource=tradeResource;}
+    void buildSettlement(PlayerId playerId) {m_ownerId=playerId; m_type=NodeType::Settlement;}
+    void buildCity() {m_type=NodeType::City;}
 
-    void addAdjacentTile(Tile * tile){ static int i=0; m_incidentTiles.at(i++)=tile;}
-    void addAdjacentEdge(Edge * edge){static int i=0; m_incidentEdges.at(i++)=edge;}
+    void addAdjacentTile(Tile * tile) {
+        m_incidentTiles.push_back(tile);
+    }
+    void addAdjacentEdge(Edge * edge) {
+            m_incidentEdges.insert(edge); // consider array with static integer
+    }
+
+    NodeCoords getCoords() const {return m_coords;}
 
     friend bool operator==(const Node &lhs, const Node &rhs) {
-        return lhs.m_nodeID == rhs.m_nodeID;
+        return lhs.m_nodeId == rhs.m_nodeId;
     }
     friend bool operator!=(const Node &lhs, const Node &rhs) {
         return !(lhs == rhs);

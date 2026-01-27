@@ -5,7 +5,9 @@
 #ifndef CATAN_COSTS_H
 #define CATAN_COSTS_H
 
+#include "ResourceType.h"
 #include  "../types/TypeAliases.h"
+#include <types/ResourceType.h>
 
 namespace Costs {
         inline const ResourcePack Road {

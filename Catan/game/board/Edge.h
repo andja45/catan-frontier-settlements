@@ -5,44 +5,46 @@
 #ifndef Catan_EDGE_H
 #define Catan_EDGE_H
 
+#include <stdexcept>
+
 #include "Node.h"
 #include "types/TypeAliases.h"
-
+#include <board/coords/EdgeCoords.hpp>
 class Edge {
 private:
     Node* m_start =nullptr;
     Node* m_end   =nullptr;
 
-    bool m_isRoad  =false;
-    int m_playerId =-1;
+    bool m_isOccupied  =false; //is road built
+    PlayerId m_playerId =-1;
 
-    int m_edgeId=-1;
-    HexCoords m_tileCoord{-1,-1};
+    EdgeId m_edgeId=-1;
 
-    int m_edgeIndex=-1;
-    inline static int m_numOfEdges=0;
+    EdgeCoords m_edgeCoords;
+
 
 public:
-    Edge(HexCoords, int i, Node *start, Node *end) : Edge(start->getTileCoords().first, start->getTileCoords().second, i, start, end) {}
-    Edge(int q, int r, int i, Node *start, Node *end) : m_start(start), m_end(end) {
-        m_numOfEdges++; m_edgeId =m_numOfEdges;
-        m_tileCoord              ={q,r}; m_edgeIndex=i;
-    }
+    Edge(EdgeId id,EdgeCoords ec) : m_edgeId(id), m_edgeCoords(ec) {}
+    Edge(EdgeId id,EdgeCoords ec, Node *start, Node *end) : m_start(start), m_end(end), m_edgeId(id), m_edgeCoords(ec) {}
+
 
     Node* getStart() const { return m_start; }
     Node* getEnd() const { return m_end; }
-    std::array<Node*,2> getNodes() const { return {m_start,m_end}; }
-    std::array<Edge*,4> adjacentEdges() const {
+    std::vector<Node*> getNodes() const { return {m_start,m_end}; }
+    void setNodes(Node* start, Node* end) {
+        m_start=start;
+        m_end=end;
+        if (m_start==nullptr || m_end==nullptr)
+            throw std::invalid_argument("Edge must have both start and end node set");
     }
+    void setId(EdgeId id) {m_edgeId=id;}
 
-    bool isRoad() const { return m_isRoad; }
+    bool isOccupied() const { return m_isOccupied; }
     int getOwner() const { return m_playerId; }
     int getEdgeId() const { return m_edgeId; }
-    int getEdgeIndex() const { return m_edgeIndex; }
-    HexCoords getTileCoord() const { return m_tileCoord; }
+    EdgeCoords getEdgeCoords() const { return m_edgeCoords; }
 
-    void setNodes(Node* node1, Node* node2) {m_start=node1;m_end=node2;}
-    void setRoad(int playerId) {m_isRoad=true; m_playerId=playerId;}
+    void setOwner(int playerId) {m_playerId=playerId; m_isOccupied=true;}
 
     friend bool operator==(const Edge &lhs, const Edge &rhs) {
         return lhs.m_edgeId == rhs.m_edgeId;
@@ -50,6 +52,11 @@ public:
     friend bool operator!=(const Edge &lhs, const Edge &rhs) {
         return !(lhs == rhs);
     }
+
+    bool hasTrade() const;
+    TradeType getTradeType();
+    EdgeDirection getDirection();
+
 };
 
 #endif //Catan_EDGE_H

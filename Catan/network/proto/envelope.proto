@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package net;
+
+import "move.proto";
+import "setup.proto";
+import "common.proto";
+
+enum MsgType {
+  MSG_UNKNOWN = 0;
+  MSG_MOVE = 1;
+  MSG_CHAT = 2;
+  MSG_SETUP = 3;
+}
+
+message Envelope {
+  MsgType msg_type = 1;
+  uint32 seq = 2;
+
+  oneof payload {
+    Move move = 10;
+    Chat chat = 11;
+    Setup setup = 12;
+  }
+}
