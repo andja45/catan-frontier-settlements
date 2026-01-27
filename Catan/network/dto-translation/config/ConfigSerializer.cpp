@@ -14,17 +14,13 @@ net::GameConfig::BoardType ConfigSerializer::toProto(BoardType t) {
     return net::GameConfig::CLASSIC; // fallback
 }
 
-net::LobbyInfo ConfigSerializer::serializeGameConfig(const GameConfig &cfg)  {
-    net::LobbyInfo proto;
+net::GameConfig ConfigSerializer::toProto(const GameConfig &cfg)  {
     net::GameConfig gcfg;
 
     gcfg.set_num_players(cfg.numPlayers);
     gcfg.set_winning_points(cfg.winningVictoryPoints);
     gcfg.set_board_type(toProto(cfg.boardType));
 
-    proto.mutable_config()->CopyFrom(gcfg);
-    for (const auto& name : cfg.players) {
-        proto.mutable_names()->add_names(name);
-    }
-    return proto;
+    gcfg.mutable_names()->Add(cfg.players.begin(),cfg.players.end());
+    return gcfg;
 }

@@ -13,12 +13,14 @@
 #include "envelope.pb.h"
 
 class BoardSerializer {
+private:
+     static net::BoardInfo::PortInfo serializePort(const PortDef& p);
+
+     static net::BoardInfo::TileInfo serializeTile(const TileDef& t);
+
 public:
      static net::ResourceType toProto(ResourceType type);
-     static net::TileInfo serializeTile(const TileDef& t);
-     static net::PortInfo serializePort(const PortDef& p);
-
-     static net::BoardInfo serializeBoard(const Board& board);
+     static net::BoardInfo toProto(const Board& board);
 
 };
 

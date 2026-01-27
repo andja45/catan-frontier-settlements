@@ -8,8 +8,8 @@ net::ResourceType BoardSerializer::toProto(ResourceType r) {
     return static_cast<net::ResourceType>(r);
 }
 
-net::TileInfo BoardSerializer::serializeTile(const TileDef &t)  {
-    net::TileInfo proto;
+net::BoardInfo::TileInfo BoardSerializer::serializeTile(const TileDef &t)  {
+    net::BoardInfo::TileInfo proto;
     proto.set_q(t.q);
     proto.set_r(t.r);
     proto.set_resource(toProto(t.res));
@@ -17,8 +17,8 @@ net::TileInfo BoardSerializer::serializeTile(const TileDef &t)  {
     return proto;
 }
 
-net::PortInfo BoardSerializer::serializePort(const PortDef &p)  {
-    net::PortInfo proto;
+net::BoardInfo::PortInfo BoardSerializer::serializePort(const PortDef &p)  {
+    net::BoardInfo::PortInfo proto;
     proto.set_q(p.q);
     proto.set_r(p.r);
     proto.set_i(p.i);
@@ -26,7 +26,7 @@ net::PortInfo BoardSerializer::serializePort(const PortDef &p)  {
     return proto;
 }
 
-net::BoardInfo BoardSerializer::serializeBoard(const Board &board) {
+net::BoardInfo BoardSerializer::toProto(const Board &board) {
     net::BoardInfo proto;
     // serialize tiles
     for (const auto&t: board.getTileDefs()) {

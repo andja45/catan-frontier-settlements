@@ -11,8 +11,9 @@
 #include "ProtoHeaders.hpp"
 
 class ConfigSerializer {
+public:
     static net::GameConfig::BoardType toProto(BoardType t);
-    net::LobbyInfo serializeGameConfig(const GameConfig& cfg);
+    static net::GameConfig toProto(const GameConfig& cfg);
 
 };
 

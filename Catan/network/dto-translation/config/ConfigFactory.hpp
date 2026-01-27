@@ -11,8 +11,9 @@
 #include "ProtoHeaders.hpp"
 
 class ConfigFactory {
+public:
     static BoardType fromProto(net::GameConfig::BoardType t);
-    static GameConfig makeGameConfig(const net::LobbyInfo& proto);
+    static GameConfig fromProto(const net::GameConfig& proto);
 
 };
 

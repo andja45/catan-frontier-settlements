@@ -63,6 +63,8 @@ message Move {
 }
 
 message RollDiceMove {
+  uint32 dice_1 = 1;
+  uint32 dice_2 = 2;
 }
 
 message EndTurnMove {
@@ -97,8 +99,9 @@ message BankTradeMove {
 }
 
 message PlayerTradeRequestMove {
-  map<int32, int32> give_resource = 1;
-  map<int32, int32> get_resource = 2;
+  uint32 trade_request_id = 1;
+  map<int32, int32> give_resource = 2;
+  map<int32, int32> get_resource = 3;
 }
 
 message PlayerTradeResponseMove {

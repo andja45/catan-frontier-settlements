@@ -9,10 +9,12 @@
 #include <board/Board.h>
 
 class BoardFactory {
+private:
+    static TileDef makeTile(const net::BoardInfo::TileInfo& proto);
+    static PortDef makePort(const net::BoardInfo::PortInfo& proto);
+public:
     static ResourceType fromProto(net::ResourceType r);
-    static TileDef makeTile(const net::TileInfo& proto);
-    static PortDef makePort(const net::PortInfo& proto);
-    static std::unique_ptr<Board> makeBoard(const net::BoardInfo& proto);
+    static std::unique_ptr<Board> fromProto(const net::BoardInfo& proto);
 };
 
 #endif //CATAN_BOARDFACTORY_HPP

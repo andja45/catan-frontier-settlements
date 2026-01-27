@@ -13,14 +13,13 @@ BoardType ConfigFactory::fromProto(net::GameConfig::BoardType t) {
     return BoardType::Classic;
 }
 
-GameConfig ConfigFactory::makeGameConfig(const net::LobbyInfo &proto)  {
-    const net::GameConfig& cfgProto = proto.config();
+GameConfig ConfigFactory::fromProto(const net::GameConfig &cfgProto)  {
     GameConfig cfg;
 
     cfg.numPlayers = cfgProto.num_players();
     cfg.winningVictoryPoints = cfgProto.winning_points();
     cfg.boardType = fromProto(cfgProto.board_type());
     cfg.numPlayers=cfgProto.num_players();
-    cfg.players=std::vector(proto.names().names().begin(),proto.names().names().end());
+    cfg.players=std::vector(cfgProto.names().begin(),cfgProto.names().end());
     return cfg;
 }

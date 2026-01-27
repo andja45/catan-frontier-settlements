@@ -8,7 +8,7 @@ ResourceType BoardFactory::fromProto(net::ResourceType r) {
     return static_cast<ResourceType>(r);
 }
 
-TileDef BoardFactory::makeTile(const net::TileInfo &proto) {
+TileDef BoardFactory::makeTile(const net::BoardInfo::TileInfo &proto) {
     return TileDef{
         .q = proto.q(),
         .r = proto.r(),
@@ -17,7 +17,7 @@ TileDef BoardFactory::makeTile(const net::TileInfo &proto) {
     };
 }
 
-PortDef BoardFactory::makePort(const net::PortInfo &proto) {
+PortDef BoardFactory::makePort(const net::BoardInfo::PortInfo &proto) {
     return PortDef{
         .q = proto.q(),
         .r = proto.r(),
@@ -26,7 +26,7 @@ PortDef BoardFactory::makePort(const net::PortInfo &proto) {
     };
 }
 
-std::unique_ptr<Board> BoardFactory::makeBoard(const net::BoardInfo &proto) {
+std::unique_ptr<Board> BoardFactory::fromProto(const net::BoardInfo &proto) {
 
     std::vector<TileDef> tiles;
     tiles.reserve(proto.tiles_size());
