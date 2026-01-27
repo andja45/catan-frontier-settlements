@@ -3,9 +3,6 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 
 add_library(catan_gui_qt
-        widget.cpp
-        widget.h
-        ui/widget.ui
         QBoard.cpp
         QBoard.h
         MainMenu.cpp
