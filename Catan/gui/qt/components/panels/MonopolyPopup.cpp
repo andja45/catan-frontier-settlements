@@ -16,9 +16,21 @@ MonopolyPopup::MonopolyPopup(QWidget* parent)
     setAttribute(Qt::WA_StyledBackground, false);     // we paint rounded bg ourselves
     setAttribute(Qt::WA_TranslucentBackground, true); // true rounded corners for top-level popup
 
+    // setStyleSheet(R"(
+    //     QPushButton { background: transparent; }
+    // )");
     setStyleSheet(R"(
-        QPushButton { background: transparent; }
+        QPushButton {
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0);
+        }
+        QPushButton:hover { background: rgba(0,0,0,18); }
+        QPushButton:pressed { background: rgba(0,0,0,32); }
+        QPushButton:disabled { color: rgba(0,0,0,120); }
+        QLabel#hint { color: rgba(0,0,0,160); }
     )");
+
 
     m_root = new QVBoxLayout(this);
     m_root->setContentsMargins(12, 12, 12, 12);
@@ -145,12 +157,13 @@ void MonopolyPopup::closePopup() {
 
 void MonopolyPopup::paintEvent(QPaintEvent*) {
     QPainter p(this);
+    p.save();
+
     p.setRenderHint(QPainter::Antialiasing, true);
 
     const qreal radius = 10.0;
     QRectF rr = rect();
     rr.adjust(0.5, 0.5, -0.5, -0.5);
-
     // Fill
     p.setPen(Qt::NoPen);
     p.setBrush(QColor(255, 255, 255, 240));
@@ -160,4 +173,6 @@ void MonopolyPopup::paintEvent(QPaintEvent*) {
     p.setPen(QPen(QColor(0, 0, 0, 40), 1.0));
     p.setBrush(Qt::NoBrush);
     p.drawRoundedRect(rr, radius, radius);
+
+    p.restore();
 }
