@@ -42,5 +42,8 @@ private:
     bool isOfferValid() const;
     void updateTradeRates();
     std::map<ResourceType, int> selectedResources(std::vector<QCard*> cards) const;
+    void paintEvent(QPaintEvent*);
+    void resetState();
+    void closeEvent(QCloseEvent* e);
 };
 #endif // TRADEBANKPOPUP_H

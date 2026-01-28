@@ -47,6 +47,9 @@ private:
     QPushButton* m_sendButton;
     bool isOfferValid() const;
     std::map<ResourceType, int> selectedResources(std::vector<QCard*> cards) const;
+    void paintEvent(QPaintEvent*);
+    void resetState();
+    void closeEvent(QCloseEvent* e);
 };
 
 #endif // TRADEPOPUP_H

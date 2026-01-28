@@ -25,9 +25,10 @@ private:
     QLabel* m_countSettlements;
     QLabel* m_countRoads;
     QLabel* m_countCities;
-    Player * m_player = nullptr;
+    Player * m_player = new Player(1,"Petar"); //TODO fix
     TradeBankPopup* m_tradeBankPopup=nullptr;
     TradePopup* m_tradePopup = nullptr;
+    QButtonGroup* m_buildGroup = nullptr;
     /*
     CountBadge* m_countSettlements;
     CountBadge* m_countRoads;
@@ -40,6 +41,7 @@ private:
     void paintEvent(QPaintEvent*) override;
     bool eventFilter(QObject* obj, QEvent* event) override;
     void addButton(const QString& text, ToolbarActionType action, QHBoxLayout* layout);
+    void clearBuildSelection();
     void showTradePopup();
     void showBankTradePopup();
     QToolButton* createMenuButton(const QString& text, const QMap<QString, ToolbarActionType>& actions);

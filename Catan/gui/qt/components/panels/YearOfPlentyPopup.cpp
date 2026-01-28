@@ -24,10 +24,10 @@ static const std::vector<ResourceType> kResourceCardTypes = {
 };
 
 YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)
-    : FloatingPanel(Qt::Popup, parent), m_bank(bank)
+    : FloatingPanel(Qt::Dialog, parent), m_bank(bank)
 {
     // True rounded popup window
-    setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
+    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_StyledBackground, false);
 
@@ -181,6 +181,22 @@ void YearOfPlentyPopup::openAtGlobal(const QPoint& globalPos) {
     activateWindow();
 }
 
-void YearOfPlentyPopup::closePopup() {
+void YearOfPlentyPopup::resetState(){
+    for (auto& [rt, cnt] : m_choice.receive) {
+        cnt = 0;
+    }
+
+    for (QCard* c : m_cards) {
+        CardSpec s = c->spec();
+        s.countBadge = 0;
+        c->setSpec(s);
+    }
+
+    updateUiState();
+}
+
+void YearOfPlentyPopup::closePopup(){
+    resetState();
     hide();
 }
+
