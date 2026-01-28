@@ -45,8 +45,9 @@ Widget::Widget(QWidget *parent, Board* b)
     overlay->setMinimumWidth(380);
     overlay->setMaximumWidth(600);
     overlay->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    overlay->setMinimumHeight(850);
 
-    auto* leftBox = new QVBoxLayout;  // ⚠️ NO parent here
+    auto* leftBox = new QVBoxLayout;
     leftBox->setContentsMargins(0, 0, 0, 0);
     leftBox->setSpacing(0);
 

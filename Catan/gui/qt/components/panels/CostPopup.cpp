@@ -17,6 +17,7 @@ CostPopup::CostPopup(QWidget* parent)
     layout->setContentsMargins(10, 8, 10, 8);
 
     m_row = new QCardRow(this);
+    m_row->setFixedHeight(50);
     layout->addWidget(m_row);
 }
 
@@ -30,7 +31,7 @@ void CostPopup::paintEvent(QPaintEvent*) {
 
     // Fill
     p.setPen(Qt::NoPen);
-    p.setBrush(Qt::white);
+    p.setBrush(QColor(255, 255, 255, 200));
     p.drawRoundedRect(rr, r, r);
 
     // Border
@@ -44,6 +45,7 @@ void CostPopup::refresh()
     m_row->clear();
     for(ResourceType resource : MoveCosts::costFor(m_action))
         m_row->addCard(CardSpec({CardKind::Resource, resource}));
+    m_row->adjustSize();
     adjustSize();
 }
 
