@@ -1,7 +1,10 @@
 #include "TradeOfferedPopup.h"
 
-TradeOfferedPopup::TradeOfferedPopup(TradeOffer offer, QWidget* parent): FloatingPanel(parent)
+#include "player/Player.h"
+
+TradeOfferedPopup::TradeOfferedPopup(Player* m_player, TradeOffer offer, QWidget* parent): FloatingPanel(parent)
 {
+    m_playerResources=m_player->getResources();
     m_offer=offer;
     setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_StyledBackground, true);
@@ -45,7 +48,7 @@ TradeOfferedPopup::TradeOfferedPopup(TradeOffer offer, QWidget* parent): Floatin
     m_acceptButton = new QPushButton("Accept", this);
     m_declineButton = new QPushButton("Decline", this);
 
-    if(not isOfferAcceptable()){
+    if(! isOfferAcceptable()){
         m_acceptButton->setEnabled(false);
     }
 

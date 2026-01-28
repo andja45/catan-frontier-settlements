@@ -1,25 +1,20 @@
 #ifndef TRADEOFFEREDPOPUP_H
 #define TRADEOFFEREDPOPUP_H
 #include"TradePopup.h"
+#include "player/Player.h"
 
 class TradeOfferedPopup : public FloatingPanel
 {
     Q_OBJECT
 public:
-    explicit TradeOfferedPopup(TradeOffer offer, QWidget* parent = nullptr);
+    explicit TradeOfferedPopup(Player *m_player, TradeOffer offer, QWidget *parent);
 
 signals:
     void tradeAccepted(const TradeOffer& offer);
     void tradeDeclined(const TradeOffer& offer);
 
 private:
-    std::map<ResourceType,int> m_playerResources = {
-        {ResourceType::Wood, 4},
-        {ResourceType::Brick,2},
-        {ResourceType::Wool, 3},
-        {ResourceType::Ore,1},
-        {ResourceType::Wheat,2}
-    };
+    std::map<ResourceType,int> m_playerResources ;
     TradeOffer m_offer;
     QCardRow* m_giveRow;
 
@@ -28,6 +23,7 @@ private:
     QCardRow* m_receiveRow;
     QPushButton* m_acceptButton;
     QPushButton* m_declineButton;
+
     bool isOfferAcceptable() const;
     std::map<ResourceType, int> selectedResources(std::vector<QCard*> cards) const;
 };

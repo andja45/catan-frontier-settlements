@@ -1,8 +1,9 @@
 #include "TradePopup.h"
 
-TradePopup::TradePopup(QWidget* parent)
+TradePopup::TradePopup(Player* p,QWidget* parent)
     : FloatingPanel(Qt::Popup, parent)
 {
+    m_playerResources= p->getResources();
     setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_StyledBackground, false);

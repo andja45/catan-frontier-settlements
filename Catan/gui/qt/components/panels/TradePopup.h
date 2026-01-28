@@ -7,6 +7,9 @@
 #include"FloatingPanel.h"
 #include"../../common/GameTheme.h"
 #include<array>
+
+#include "player/Player.h"
+
 struct TradeOffer {
     std::map<ResourceType,int> give;
     std::map<ResourceType,int> receive;
@@ -21,7 +24,7 @@ enum class TradePanelType {
 class TradePopup : public FloatingPanel {
     Q_OBJECT
 public:
-    explicit TradePopup(QWidget* parent = nullptr);
+    explicit TradePopup(Player*,QWidget* parent = nullptr);
 
     TradeOffer offer() const;
 
@@ -29,13 +32,7 @@ signals:
     void tradeSubmitted(const TradeOffer& offer);
 
 private:
-    std::map<ResourceType,int> m_playerResources = {
-        {ResourceType::Wood, 4},
-        {ResourceType::Brick,2},
-        {ResourceType::Wool, 3},
-        {ResourceType::Ore,1},
-        {ResourceType::Wheat,2}
-    };
+    std::map<ResourceType,int> m_playerResources ;
     TradeOffer m_offer;
 
     int m_givesSelected= 0;

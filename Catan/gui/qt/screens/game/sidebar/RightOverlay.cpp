@@ -20,6 +20,7 @@
 #include <QShortcut>
 
 #include "components/panels/DiscardPopup.h"
+#include "components/panels/TradeOfferedPopup.h"
 #include "components/panels/YearOfPlentyPopup.h"
 
 RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, BoardToolbar* toolbar, QWidget* parent)
@@ -343,4 +344,15 @@ void RightOverlay::setUpPopups(){
     connect(discardShortcut, &QShortcut::activated, this, [this, discardPopup]() {
         discardPopup->openAtGlobal(QCursor::pos());
     });
+
+    // TODO FIX!!! FOR TESTING ONLY
+    auto* tradeResponse = new TradeOfferedPopup(m_playerYou,{{{ResourceCardType::Brick,2},{ResourceCardType::Wood,1}},{{ResourceCardType::Ore,2}}}, this);
+
+    auto* tradeRespShrt = new QShortcut(QKeySequence(Qt::Key_T), this);
+    connect(tradeRespShrt, &QShortcut::activated, this, [this, tradeRespShrt, tradeResponse]() {
+        tradeResponse->show();
+    });
+
+
+    //TODO fix this sh
 }

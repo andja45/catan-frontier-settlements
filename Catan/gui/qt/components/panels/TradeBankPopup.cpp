@@ -4,6 +4,7 @@ TradeBankPopup::TradeBankPopup(Player* player, QWidget* parent)
     : FloatingPanel(parent)
 {
     m_player = player;
+    m_playerResources= m_player->getResources();
     setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_StyledBackground, false);

@@ -15,7 +15,7 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     buttonsLayout->setContentsMargins(10,10,10,10);
     buttonsLayout->setSpacing(10);
     m_costPopup = new CostPopup();
-    m_tradePopup = new TradePopup();
+    m_tradePopup = new TradePopup(m_player);
     m_tradeBankPopup = new TradeBankPopup(m_player, nullptr);
     m_buildGroup = new QButtonGroup(this);
     m_buildGroup->setExclusive(true);
@@ -74,12 +74,12 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
 
     auto* diceWidget = new DiceWidget(this);
     buttonsLayout->addWidget(diceWidget);
-
     buttonsLayout->addWidget(
         createPanelWithButton(
-            createActionButton("End Turn", ToolbarActionType::EndTurn)
-            , ToolbarActionType::EndTurn)
-        );
+            createActionButton("End Turn", ToolbarActionType::EndTurn),
+            ToolbarActionType::EndTurn
+        )
+    );
 
     //buttonsLayout->addLayout(diceEndBox);
     diceWidget->setDice(3, 5);
