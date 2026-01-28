@@ -44,6 +44,7 @@ RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, BoardToolb
 
     stackL->addWidget(m_bankIsland);
 
+
     for(auto player : players) m_players.push_back(player);
 
     for (int i = 0; i < m_players.size(); ++i) {
@@ -81,6 +82,7 @@ RightOverlay::RightOverlay(std::vector<Player*>& players, Bank* bank, BoardToolb
 
     m_you = new FloatingPanel(this);
     m_you->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+
     buildYouUi(m_you);
 
     stackL->addWidget(m_you);
@@ -134,10 +136,15 @@ void RightOverlay::buildChatUi(FloatingPanel* panel) {
 
 void RightOverlay::buildBankUi(FloatingPanel* panel) {
     auto* root = new QVBoxLayout(panel);
+
     root->setContentsMargins(10,10,10,10);
     root->setSpacing(10);
 
+    panel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
     auto* bankBox = new QGroupBox("Bank", panel);
+    bankBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
 
     // Layout INSIDE the group box so content respects the border/title
     auto* bankLayout = new QVBoxLayout(bankBox);
@@ -146,6 +153,9 @@ void RightOverlay::buildBankUi(FloatingPanel* panel) {
 
     auto* row = new QCardRow(bankBox);
     row->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    row->setMinimumHeight(50);
+    row->setMaximumHeight(80);
+
 
     m_bankCards[0] = row->addCard({CardKind::Resource, ResourceType::Wood,  DevCardType::None, m_bank->getResources()[ResourceType::Wood]});
     m_bankCards[1] = row->addCard({CardKind::Resource, ResourceType::Brick, DevCardType::None, m_bank->getResources()[ResourceType::Brick]});
@@ -156,13 +166,15 @@ void RightOverlay::buildBankUi(FloatingPanel* panel) {
 
     bankLayout->addWidget(row);
 
-    root->addWidget(bankBox, 1);
+    root->addWidget(bankBox);
 }
 
 void RightOverlay::buildYouUi(FloatingPanel* panel) {
     auto* root = new QVBoxLayout(panel);
     root->setContentsMargins(10,10,10,10);
     root->setSpacing(10);
+
+    panel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     auto* youBox = new QGroupBox("You", panel);
 
@@ -173,6 +185,8 @@ void RightOverlay::buildYouUi(FloatingPanel* panel) {
 
     auto* row = new QCardRow(youBox);
     row->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    row->setMinimumHeight(50);
+    row->setMaximumHeight(80);
 
     m_youCards[0] = row->addCard({CardKind::Resource, ResourceType::Wood,  DevCardType::None, m_playerYou->getResources()[ResourceType::Wood]});
     m_youCards[1] = row->addCard({CardKind::Resource, ResourceType::Brick, DevCardType::None, m_playerYou->getResources()[ResourceType::Brick]});

@@ -242,6 +242,7 @@ bool BoardToolbar::eventFilter(QObject* obj, QEvent* event)
 
         m_costPopup->move(globalPos);
         m_costPopup->show();
+        m_costPopup->adjustSize();
     }
     else if (event->type() == QEvent::HoverLeave) {
         m_costPopup->hide();
