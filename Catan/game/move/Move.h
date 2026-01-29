@@ -27,6 +27,7 @@ public:
     virtual void apply(GameSession&) const = 0;
 
     virtual bool providesAllValid() const { return false; }
+    virtual std::unordered_set<int> allValid(const GameSession &session) const { return {};}
 
     PlayerId getPlayerId() const { return m_playerId; }
 };

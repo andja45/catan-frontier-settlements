@@ -38,14 +38,25 @@ void ToolbarRenderState::updateFromPhase(TurnPhase phase) {
         case TurnPhase::YearOfPlenty:
         case TurnPhase::Monopoly:
         case TurnPhase::DiscardCards:
+            m_enabledPopups = {
+            GamePopups::DiscardCards
+        };
         case TurnPhase::SetRobber:
         case TurnPhase::StealCard:
+            m_enabledPopups = {
+            GamePopups::StealCard
+        };
             break;
     }
 }
 
 bool ToolbarRenderState::isEnabled(ToolbarButton button) const {
     return m_enabledButtons.find(button) != m_enabledButtons.end();
+}
+
+void ToolbarRenderState::clear() {
+    m_enabledButtons.clear();
+    m_enabledPopups.clear();
 }
 
 // maybe setenabled and setselected and then in roadbuilding auto selected

@@ -7,26 +7,13 @@ class TradeBankPopup: public FloatingPanel
 public:
     explicit TradeBankPopup(Player* player, QWidget* parent);
 
-    TradeOffer offer() const;
 
 signals:
     void tradeSubmitted(const TradeOffer& offer);
 
 private:
-    std::map<ResourceType,int> m_playerResources = {
-        {ResourceType::Wood, 8},
-        {ResourceType::Brick,2},
-        {ResourceType::Wool, 3},
-        {ResourceType::Ore,1},
-        {ResourceType::Wheat,2}
-    };
-    std::map<ResourceType,int> m_tradeRates = {
-        {ResourceType::Wood, 4},
-        {ResourceType::Brick,2},
-        {ResourceType::Wool, 2},
-        {ResourceType::Ore,4},
-        {ResourceType::Wheat,4}
-    };
+    std::map<ResourceType,int> m_playerResources ;
+    std::map<ResourceType,int> m_tradeRates ;
     Player* m_player;
     TradeOffer m_offer;
     bool m_validGive = false;
@@ -39,8 +26,10 @@ private:
     QCardRow* m_giveRow;
     QCardRow* m_receiveRow;
     QPushButton* m_sendButton;
-    bool isOfferValid() const;
     void updateTradeRates();
     std::map<ResourceType, int> selectedResources(std::vector<QCard*> cards) const;
+    void paintEvent(QPaintEvent*);
+    void resetState();
+    void closeEvent(QCloseEvent* e);
 };
 #endif // TRADEBANKPOPUP_H

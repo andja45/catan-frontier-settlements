@@ -25,6 +25,7 @@ static const std::vector<ResourceType> kResourceCardTypes = {
 DiscardPopup::DiscardPopup(Player* player, QWidget* parent)
     : FloatingPanel(Qt::Dialog, parent), m_player(player)
 {
+    setWindowModality(Qt::ApplicationModal);
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_StyledBackground, false);

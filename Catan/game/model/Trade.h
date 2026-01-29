@@ -11,7 +11,7 @@
 class Trade {
 private:
     TradeId m_id = -1;
-    PlayerId m_requester = types::InvalidPlayer;
+    PlayerId m_requester = types::InvalidPlayerId;
 
     ResourcePack m_give;
     ResourcePack m_receive;

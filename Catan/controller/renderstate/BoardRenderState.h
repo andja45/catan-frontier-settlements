@@ -8,6 +8,7 @@
 #include <unordered_set>
 
 #include "RenderState.h"
+#include "move/MoveType.h"
 #include "types/TypeAliases.h"
 
 
@@ -17,21 +18,13 @@ private:
     std::unordered_set<EdgeId> m_highlightedEdges;
     std::unordered_set<TileId> m_highlightedTiles;
 public:
-    void setHighlightedNodes(std::unordered_set<NodeId> nodes) {
-        m_highlightedNodes = std::move(nodes);
-    }
-
-    void setHighlightedEdges(std::unordered_set<EdgeId> edges) {
-        m_highlightedEdges = std::move(edges);
-    }
-
-    void setHighlightedTiles(std::unordered_set<TileId> tiles) {
-        m_highlightedTiles = std::move(tiles);
-    }
+    void setHighlighted(std::unordered_set<int> ids, MoveType type);
 
     bool isNodeHighlighted(NodeId nodeId) const;
     bool isEdgeHighlighted(EdgeId edgeId) const;
     bool isTileHighlighted(TileId tileId) const;
+
+    void clear(); // called after endmove applied (everything disabled until renderstate updated again)
 };
 
 

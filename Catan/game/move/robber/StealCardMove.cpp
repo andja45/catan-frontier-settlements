@@ -17,7 +17,7 @@ bool StealCardMove::isValid(const GameSession& session) const {
     if (m_playerId == m_victimPlayerId)
         return false;
 
-    if (m_victimPlayerId == types::InvalidPlayer) // is playerid valid
+    if (m_victimPlayerId == types::InvalidPlayerId) // is playerid valid
         return false;
 
     const Player& victim = session.player(m_victimPlayerId);

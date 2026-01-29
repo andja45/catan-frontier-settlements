@@ -14,7 +14,7 @@ bool SetRobberMove::isValid(const GameSession& session) const {
     if (session.phase() != TurnPhase::SetRobber)
         return false;
 
-    if (m_tileId == types::InvalidTile) // it has to be a valid tile TODO maybe later on set that -700,800 tile id is invalid, we just check if id -1
+    if (m_tileId == types::InvalidTileId) // it has to be a valid tile TODO maybe later on set that -700,800 tile id is invalid, we just check if id -1
         return false;
 
     if (board.isRobberOnTile(m_tileId)) // cant set on same tile

@@ -15,27 +15,28 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
     buttonsLayout->setContentsMargins(10,10,10,10);
     buttonsLayout->setSpacing(10);
     m_costPopup = new CostPopup();
-    m_tradePopup = new TradePopup();
+    m_tradePopup = new TradePopup(m_player);
     m_tradeBankPopup = new TradeBankPopup(m_player, nullptr);
-
+    m_buildGroup = new QButtonGroup(this);
+    m_buildGroup->setExclusive(true);
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setMinimumHeight(60);
 
     buttonsLayout->addWidget(
         createPanelWithButton(
-            createActionButton("Build Settle.", ToolbarActionType::BuildSettlement)
+            createActionButton("Road", ToolbarActionType::BuildRoad)
+            ,ToolbarActionType::BuildRoad)
+        );
+    buttonsLayout->addWidget(
+        createPanelWithButton(
+            createActionButton("House", ToolbarActionType::BuildSettlement)
             , ToolbarActionType::BuildSettlement)
         );
     buttonsLayout->addWidget(
         createPanelWithButton(
-            createActionButton("Build City", ToolbarActionType::BuildCity)
+            createActionButton("City", ToolbarActionType::BuildCity)
             , ToolbarActionType::BuildCity)
-        );
-    buttonsLayout->addWidget(
-        createPanelWithButton(
-            createActionButton("Build Road", ToolbarActionType::BuildRoad)
-            ,ToolbarActionType::BuildRoad)
         );
     buttonsLayout->addWidget(
         createPanelWithButton(
@@ -51,13 +52,13 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
 
     buttonsLayout->addWidget(
         createPanelWithButton(
-            createTradeButton("Trade Players", ToolbarActionType::PlayerTrade)
+            createTradeButton("Player Trade", ToolbarActionType::PlayerTrade)
             , ToolbarActionType::PlayerTrade)
         );
 
     buttonsLayout->addWidget(
         createPanelWithButton(
-            createTradeButton("Trade Bank", ToolbarActionType::BankTrade)
+            createTradeButton("Bank Trade", ToolbarActionType::BankTrade)
             , ToolbarActionType::BankTrade)
         );
 
@@ -73,12 +74,12 @@ BoardToolbar::BoardToolbar(QWidget* parent) : QWidget(parent) {
 
     auto* diceWidget = new DiceWidget(this);
     buttonsLayout->addWidget(diceWidget);
-
     buttonsLayout->addWidget(
         createPanelWithButton(
-            createActionButton("End Turn", ToolbarActionType::EndTurn)
-            , ToolbarActionType::EndTurn)
-        );
+            createActionButton("End Turn", ToolbarActionType::EndTurn),
+            ToolbarActionType::EndTurn
+        )
+    );
 
     //buttonsLayout->addLayout(diceEndBox);
     diceWidget->setDice(3, 5);
@@ -150,6 +151,7 @@ FloatingPanel* BoardToolbar::createPanelWithButton(QWidget* button, ToolbarActio
 
     return panel;
 }
+
 QPushButton* BoardToolbar::createTradeButton(const QString& text,ToolbarActionType action) {
     auto* btn = new QPushButton(text);
     btn->setMinimumHeight(50);
@@ -173,19 +175,50 @@ QPushButton* BoardToolbar::createTradeButton(const QString& text,ToolbarActionTy
         color: #999;
     }
     )");
-    if(action == ToolbarActionType::PlayerTrade){
-        connect(btn, &QPushButton::clicked,
-            this, &BoardToolbar::showTradePopup);
-    }
-    else{
-        connect(btn,&QPushButton::clicked,
-                this,  &BoardToolbar::showBankTradePopup);
-    }
+
+    connect(btn, &QPushButton::clicked, this, [this, action]() {
+        clearBuildSelection();
+
+        if (action == ToolbarActionType::PlayerTrade) {
+            showTradePopup();
+        } else if (action == ToolbarActionType::BankTrade) {
+            showBankTradePopup();
+        }
+    });
 
     return btn;
 }
+
+void BoardToolbar::clearBuildSelection()
+{
+    m_buildGroup->setExclusive(false);
+    for (auto* btn : m_buildGroup->buttons()) {
+        btn->setChecked(false);
+    }
+    m_buildGroup->setExclusive(true);
+}
+
 QPushButton* BoardToolbar::createActionButton(const QString& text,ToolbarActionType action) {
     auto* btn = new QPushButton(text);
+
+    const bool isBuildAction =
+        action == ToolbarActionType::BuildRoad ||
+        action == ToolbarActionType::BuildCity ||
+        action == ToolbarActionType::BuildSettlement;
+
+    btn->setCheckable(isBuildAction);
+
+    if (isBuildAction) {
+        m_buildGroup->addButton(btn);
+    }
+
+    connect(btn, &QPushButton::clicked, this, [this, action, isBuildAction] {
+        if (!isBuildAction) {
+            clearBuildSelection();
+        }
+        emit actionTriggered(action);
+    });
+
     if(action==ToolbarActionType::EndTurn){
          btn->setMinimumHeight(32);
     }
@@ -207,13 +240,15 @@ QPushButton* BoardToolbar::createActionButton(const QString& text,ToolbarActionT
         background: rgba(0, 0, 0, 35);
     }
 
+    QPushButton:checked {
+        font-weight: 700;
+        color: rgb(60,130,255);
+    }
+
     QPushButton:disabled {
         color: #999;
     }
     )");
-    connect(btn, &QPushButton::clicked, this, [this, action] {
-        emit actionTriggered(action);
-    });
 
     return btn;
 }

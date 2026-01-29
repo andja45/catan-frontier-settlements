@@ -90,10 +90,11 @@
         model/MoveCosts.h model/MoveCosts.cpp
         move/build/BuildSettlementMove.cpp
             types/BoardType.hpp
-            move/turn/PlayerLeave.cpp
-            move/turn/PlayerLeave.hpp
+            move/turn/PlayerLeaveMove.cpp
+            move/turn/PlayerLeaveMove.hpp
             rules/SkipPlayerRule.cpp
             rules/SkipPlayerRule.hpp
+            move/BoardMove.h
     )
 
 target_include_directories(catan_game

@@ -7,14 +7,13 @@
 
 #include <unordered_set>
 
-#include "../Move.h"
+#include "move/BoardMove.h"
 
-
-class BuildRoadMove final : public Move{ // final - no classes than extend this class
+class BuildRoadMove final : public BoardMove{ // final - no classes than extend this class
 private:
     EdgeId m_edgeId; // or HexCoords + edgeIndex
 public:
-    BuildRoadMove(PlayerId playerId, EdgeId edgeId) : Move(playerId), m_edgeId(edgeId) {}
+    BuildRoadMove(PlayerId playerId, EdgeId edgeId) : BoardMove(playerId), m_edgeId(edgeId) {}
 
     MoveType type() const override { return MoveType::BuildRoad; }
     bool isValid(const GameSession& session) const override;
@@ -24,6 +23,7 @@ public:
     std::unordered_set<EdgeId> allValid(const GameSession& session) const;
 
     EdgeId getEdgeId() const { return m_edgeId; }
+    void setBoardElementId(int elementId) { m_edgeId = static_cast<EdgeId>(elementId); }
 };
 
 
