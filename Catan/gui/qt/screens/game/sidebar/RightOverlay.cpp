@@ -346,12 +346,22 @@ void RightOverlay::setUpPopups(){
     });
 
     // TODO FIX!!! FOR TESTING ONLY
-    auto* tradeResponse = new TradeOfferedPopup(m_playerYou,{{{ResourceCardType::Brick,2},{ResourceCardType::Wood,1}},{{ResourceCardType::Ore,2}}}, this);
+    //auto* tradeResponse = new TradeOfferedPopup(m_playerYou,{{{ResourceCardType::Brick,2},{ResourceCardType::Wood,0}},{{ResourceCardType::Ore,1}}}, window());
 
-    auto* tradeRespShrt = new QShortcut(QKeySequence(Qt::Key_T), this);
-    connect(tradeRespShrt, &QShortcut::activated, this, [this, tradeRespShrt, tradeResponse]() {
-        tradeResponse->show();
-    });
+    for (int i = 0; i < 3; ++i) {
+        auto* trade = new TradeOfferedPopup(
+            m_playerYou,
+            {{{ResourceCardType::Brick,1+i}}, {{ResourceCardType::Ore,1}}},
+            window()
+        );
+        trade->stackAndShow();
+    }
+
+    /*auto* tradeRespShrt = new QShortcut(QKeySequence(Qt::Key_T), this);
+    connect(tradeRespShrt, &QShortcut::activated, this,
+    [tradeResponse]() {
+        tradeResponse->stackAndShow();
+    });*/
 
 
     //TODO fix this sh

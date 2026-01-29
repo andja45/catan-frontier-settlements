@@ -124,7 +124,7 @@ void LongestRoadRule::evaluate(GameSession& session) {
         }
     }
 
-    if (bestPlayer == types::InvalidPlayer)
+    if (bestPlayer == types::InvalidPlayerId)
         return;
 
     if (session.longestRoadOwner() != bestPlayer) {

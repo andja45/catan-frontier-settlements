@@ -1,4 +1,4 @@
-/*//
+//
 // Created by matija on 1/24/26.
 //
 
@@ -8,43 +8,57 @@
 #include <QObject>
 #include <memory>
 
+#include "GameNetworkAdapter.h"
 #include "model/GameSession.h"
 #include "renderstate/RenderState.h"
-#include "network/client/GameNetworkAdapter.h"
 #include "move/Move.h"
+#include "renderstate/BoardRenderState.h"
+#include "renderstate/ToolbarRenderState.h"
+#include "screens/game/widget.h"
 
 class ClientController : public QObject {
     Q_OBJECT
 private:
     GameSession& m_session;
-    RenderState& m_renderState;
     GameNetworkAdapter& m_adapter;
+
+    BoardRenderState m_boardRenderState;
+    ToolbarRenderState m_toolbarRenderState;
 
     std::unique_ptr<Move> m_activeTool;
     void setActiveTool(std::unique_ptr<Move> tool);
     void clearActiveTool();
 public:
-    ClientController(GameSession& session,
-                     RenderState& renderState,
-                     GameNetworkAdapter& adapter,
-                     QObject* parent = nullptr);
+    ClientController(GameSession &session, GameNetworkAdapter &adapter, Widget gameWindow, QObject *parent);
 
+    void sendMove(const Move* move);
 public slots:
     // TOOLBAR
-    void onBuildRoadClicked();
-    void onBuildSettlementClicked();
-    void onBuildCityClicked();
+    // BUILD:
+    void onBuildRoadClicked(PlayerId playerId);
+    void onBuildSettlementClicked(PlayerId playerId);
+    void onBuildCityClicked(PlayerId playerId);
+
+    // DEVCARDS:
+
+    // TRADE:
+
+    // TURN:
+
 
     // BOARD
     void onBoardElementClicked(int elementId);
 
     // NETWORK
-    void onMoveReceived(const Move& move);
-    void sendMove(const Move& move);
+    void onMoveReceived(Move* move);
+
+    // GLOBAL
+    void update();
 
     signals:
-        void onRenderStateChanged(const RenderState& state);
+        void onModelChanged(const BoardRenderState& state,
+                            const ToolbarRenderState& toolbarState);
 };
 
 
-#endif //CATAN_GAMECONTROLLER_HPP*/
+#endif //CATAN_GAMECONTROLLER_HPP

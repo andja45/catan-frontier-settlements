@@ -10,6 +10,7 @@
 RobPlayerPopup::RobPlayerPopup(QWidget* parent)
     : FloatingPanel(Qt::Dialog, parent)   // Popup closes when clicking outside
 {
+    setWindowModality(Qt::ApplicationModal);
     setWindowFlag(Qt::FramelessWindowHint, true);
     setAttribute(Qt::WA_StyledBackground, false);
     setAttribute(Qt::WA_TranslucentBackground, true);

@@ -9,8 +9,6 @@
 
 
 class RollDiceMove final : public Move{ // TODO consider adding dice rolled number that is set on server side (or client for convenience if we dont care about cheating)
-private:
-    PlayerId m_playerId;
 public:
     explicit RollDiceMove(PlayerId playerId) : Move(playerId){}
     // RollDiceMove move = 3; jer ne zelimo da moze to, samo je generisanje dozvoljeno

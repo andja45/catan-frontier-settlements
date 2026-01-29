@@ -24,6 +24,7 @@ add_subdirectory(game)
 add_subdirectory(gui)
 add_subdirectory(app)
 add_subdirectory(network)
+add_subdirectory(controller)
 
 #set_target_properties(catan_gui_qt PROPERTIES
 #        CXX_CLANG_TIDY ""

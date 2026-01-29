@@ -16,7 +16,7 @@ class GameNetworkAdapter : public QObject {
     Q_OBJECT
 public:
     explicit GameNetworkAdapter(QObject* parent = nullptr);
-    void sendMove(const Move& move);
+    void sendMove(const Move* move);
     void setTransport(std::unique_ptr<NetworkTransport> transport);
     void sendMessage(const std::string& message);
 

@@ -29,8 +29,8 @@ net::Envelope GameNetworkAdapter::wrapMessage(const std::string &message) const 
     return env;
 }
 
-void GameNetworkAdapter::sendMove(const Move& move) {
-    net::Envelope env = wrapMove(move);
+void GameNetworkAdapter::sendMove(const Move* move) {
+    net::Envelope env = wrapMove(*move);
     m_transport->sendEnvelope(env);
 }
 

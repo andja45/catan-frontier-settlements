@@ -23,7 +23,7 @@ private:
     void clearBoard();
     // TODO add ports, load ports, from file
 
-    TileId m_robberTile = types::InvalidTile; // TODO maybe just in board? no need for every tile to know isrobbery maybe?
+    TileId m_robberTile = types::InvalidTileId; // TODO maybe just in board? no need for every tile to know isrobbery maybe?
 
     // board is owner of all its elements, raw pointers are used inside to connect elements for convinience and optimization
     // make sure element id corresponds to index in these vectors during creation

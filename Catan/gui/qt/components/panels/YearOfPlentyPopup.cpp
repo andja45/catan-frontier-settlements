@@ -27,6 +27,7 @@ YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)
     : FloatingPanel(Qt::Dialog, parent), m_bank(bank)
 {
     // True rounded popup window
+    setWindowModality(Qt::ApplicationModal);
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_StyledBackground, false);
