@@ -16,7 +16,7 @@
 #include "move/turn/PlayerLeaveMove.hpp"
 #include "screens/game/widget.h"
 
-ClientController::ClientController(GameSession& session, GameNetworkAdapter& adapter, Widget gameWindow, QObject* parent)
+ClientController::ClientController(GameSession& session, GameNetworkAdapter& adapter, Widget &gameWindow, QObject* parent)
     : QObject(parent)
       , m_session(session)
       , m_adapter(adapter) {
@@ -54,7 +54,7 @@ void ClientController::onBuildRoadClicked(PlayerId playerId){
 }
 
 void ClientController::onBuildSettlementClicked(PlayerId playerId){
-    setActiveTool(std::move(std::make_unique<BuildSettlementMove>(playerId, types::InvalidNodeId)));
+    setActiveTool(std::make_unique<BuildSettlementMove>(playerId, types::InvalidNodeId));
     update();
 }
 
@@ -74,6 +74,7 @@ void ClientController::onBoardElementClicked(int elementId){
 
     boardMove->setBoardElementId(elementId);
     sendMove(m_activeTool.get());
+    clearActiveTool(); // if we want to enable multiple builds in a row, we can change this later
 }
 
 void ClientController::onMoveReceived(Move* receivedMove){

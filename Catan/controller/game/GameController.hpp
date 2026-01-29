@@ -29,7 +29,7 @@ private:
     void setActiveTool(std::unique_ptr<Move> tool);
     void clearActiveTool();
 public:
-    ClientController(GameSession &session, GameNetworkAdapter &adapter, Widget gameWindow, QObject *parent);
+    ClientController(GameSession &session, GameNetworkAdapter &adapter, Widget &gameWindow, QObject *parent);
 
     void sendMove(const Move* move);
 public slots:
