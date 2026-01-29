@@ -10,8 +10,9 @@
 #include <components/cards/QCard.h>
 
 MonopolyPopup::MonopolyPopup(QWidget* parent)
-    : FloatingPanel(Qt::Popup, parent)
+    : FloatingPanel(Qt::Dialog, parent)
 {
+    setWindowModality(Qt::ApplicationModal);
     setWindowFlag(Qt::FramelessWindowHint, true);
     setAttribute(Qt::WA_StyledBackground, false);     // we paint rounded bg ourselves
     setAttribute(Qt::WA_TranslucentBackground, true); // true rounded corners for top-level popup

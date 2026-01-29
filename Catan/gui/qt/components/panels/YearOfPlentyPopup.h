@@ -33,6 +33,9 @@ public:
     // optional: if bank amounts can change while open
     void setBankResources(const std::map<ResourceType,int>& bankResources);
     void openAtGlobal(const QPoint& globalPos);
+
+    void resetState();
+
     void closePopup();
 
     signals:

@@ -23,6 +23,7 @@ public:
     std::unordered_set<TileId> allValid(const GameSession& session) const;
 
     TileId getTileId() const { return m_tileId; }
+    void setBoardElementId(int elementId) { m_tileId = static_cast<TileId>(elementId); }
 };
 
 

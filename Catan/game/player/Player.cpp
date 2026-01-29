@@ -30,6 +30,9 @@ void Player::addCity() {
 // if we decide to remove houses stored in player have trades cashed when build settlement is called
 bool Player::has3for1Trade() const {
 	for (const auto& node:m_buildings) {
+		if (node==nullptr)
+			continue;
+
 		if (node->is3for1Trade())
 			return true;
 	}
@@ -38,6 +41,8 @@ bool Player::has3for1Trade() const {
 
 bool Player::hasTrade(ResourceType resourceType) const {
 	for (const auto& node:m_buildings) {
+		if (node==nullptr)
+			continue;
 		if (node->isTradeFor(resourceType))
 			return true;
 	}

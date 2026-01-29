@@ -105,6 +105,8 @@ void DevCardPopup::rebuild() {
         card->setCursor(Qt::PointingHandCursor);
 
         connect(card, &QCard::leftClicked, this, [this, i]() {
+            if (m_cards[m_displayOrder[i]]<=0) // we wont react if count 0
+                return;
             selectIndex(i);
             emit devCardChosen(m_displayOrder[i]);
             closePopup();

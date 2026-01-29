@@ -40,10 +40,6 @@ bool GameSession::applyMove(const Move& move){
     m_rules.evaluate(*this); // after every move, cus someone can interrupt longest road for example
     advancePhaseAfterMove(); // only session can advance phases, move only reads them
 
-    // onModelChanged();
-    // onPhaseChanged(); // notify controller -> view
-    // TODO ^
-
     return true;
 }
 
@@ -200,7 +196,7 @@ void GameSession::setLongestRoadOwner(const PlayerId playerId) {
     if (m_longestRoadOwner == playerId)
         return; // no change
 
-    if (longestRoadOwner() != types::InvalidPlayer){
+    if (longestRoadOwner() != types::InvalidPlayerId){
         Player& previous = player(m_longestRoadOwner);
         previous.removePoints(2);
         previous.setLongestRoad(false);
@@ -217,7 +213,7 @@ void GameSession::setLargestArmyOwner(const PlayerId playerId) {
     if (m_largestArmyOwner == playerId)
         return; // no change
 
-    if (largestArmyOwner() != types::InvalidPlayer){
+    if (largestArmyOwner() != types::InvalidPlayerId){
         Player& previous = player(m_largestArmyOwner);
         previous.removePoints(2);
         previous.setLargestArmy(false);
@@ -304,13 +300,13 @@ void GameSession::endGame() {
     Player& winningPlayer = player(winner());
     m_gameData.setWinningPlayer(winningPlayer.getName());
 
-    if (m_largestArmyOwner != types::InvalidPlayer) {
+    if (m_largestArmyOwner != types::InvalidPlayerId) {
         m_gameData.setLargestArmyOwner(
             player(m_largestArmyOwner).getName()
         );
     }
 
-    if (m_longestRoadOwner != types::InvalidPlayer) {
+    if (m_longestRoadOwner != types::InvalidPlayerId) {
         m_gameData.setLongestRoadOwner(
             player(m_longestRoadOwner).getName()
         );

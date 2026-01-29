@@ -22,13 +22,19 @@ enum class ToolbarButton {
     EndTurn
 };
 
+enum class GamePopups {
+    StealCard,
+    DiscardCards
+};
+
 class ToolbarRenderState final : public RenderState {
 private:
-    TurnPhase m_phase; // game always has a phase, even when initialized
     std::unordered_set<ToolbarButton> m_enabledButtons;
+    std::unordered_set<GamePopups> m_enabledPopups;
 public:
     void updateFromPhase(TurnPhase phase); // set + update
     bool isEnabled(ToolbarButton button) const;
+    void clear(); // called after endmove applied (everything disabled until renderstate updated again)
 };
 
 

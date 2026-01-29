@@ -5,7 +5,7 @@
 #include <memory>
 #include  "MoveProtoFactory.h"
 
-#include <move/turn/PlayerLeave.hpp>
+#include <move/turn/PlayerLeaveMove.hpp>
 
 #include "move/turn/RollDiceMove.h"
 #include "move/turn/EndTurnMove.h"
@@ -99,7 +99,7 @@ std::unique_ptr<Move> MoveProtoFactory::fromProto(const net::Move& proto) {
                 proto.trade_accept().trade_id());
 
     case net::Move::kLeaveMove:
-        return std::make_unique<PlayerLeave>(pId);
+        return std::make_unique<PlayerLeaveMove>(pId);
 
         default:
             return nullptr;

@@ -6,10 +6,9 @@
 #define CATAN_PLAYERLEAVE_HPP
 #include <move/Move.h>
 
-class PlayerLeave:public Move{
-private:
+class PlayerLeaveMove:public Move{
 public:
-    explicit PlayerLeave(PlayerId playerId) : Move(playerId) {}
+    explicit PlayerLeaveMove(PlayerId playerId) : Move(playerId) {}
 
     MoveType type() const override {return MoveType::PlayerLeave;}
     bool isValid(const GameSession &) const override;

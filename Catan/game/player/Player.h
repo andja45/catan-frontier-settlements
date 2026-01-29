@@ -39,7 +39,9 @@ private:
     bool m_isActive=true;
 
 public:
-    explicit Player(PlayerId id, std::string name) : ResourceHolder(name), m_playerId(id) {}
+    explicit Player(PlayerId id, std::string name) : ResourceHolder(name), m_playerId(id) {
+
+    }
 
     PlayerId getPlayerId() const { return m_playerId; }
 

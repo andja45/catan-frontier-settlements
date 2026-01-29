@@ -33,6 +33,7 @@ using ResourcePack = std::map<ResourceType, int>;
 using DevPack = std::map<DevCardType,int>;
 
 using PlayerId = int;
+using BoardElementId = int;
 using NodeId = int;
 using EdgeId = int;
 using TileId = int;
@@ -42,10 +43,10 @@ using TradeId = int;
 using Tool = Move;
 
 namespace types {
-    constexpr PlayerId InvalidPlayer = -1;
-    constexpr NodeId InvalidNode = -1;
-    constexpr EdgeId InvalidEdge = -1;
-    constexpr TileId InvalidTile = -1;
+    constexpr PlayerId InvalidPlayerId = -1;
+    constexpr NodeId InvalidNodeId = -1;
+    constexpr EdgeId InvalidEdgeId = -1;
+    constexpr TileId InvalidTileId = -1;
     constexpr Tool* InvalidTool = nullptr;
 }
 
