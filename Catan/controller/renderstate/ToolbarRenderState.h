@@ -12,7 +12,7 @@
 #include "phase/TurnPhase.h"
 
 
-enum class GamePopups {
+enum class GamePopups { // these are popups that arent triggered by click
     StealCard,
     DiscardCards
 };

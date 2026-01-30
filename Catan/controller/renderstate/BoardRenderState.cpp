@@ -52,8 +52,14 @@ bool BoardRenderState::isTileHighlighted(TileId tileId) const {
     return m_highlightedTiles.find(tileId) != m_highlightedTiles.end();
 }
 
+bool BoardRenderState::isPlayerHighlighted(PlayerId playerId) const {
+    return m_highlightedPlayers.find(playerId) != m_highlightedPlayers.end();
+}
+
 void BoardRenderState::clear() {
     m_highlightedNodes.clear();
     m_highlightedEdges.clear();
     m_highlightedTiles.clear();
+    m_highlightedPlayers.clear(); // difficult in gui, gui shouldnt have to care about that
+    // TODO think ab if to add trade choose player
 }

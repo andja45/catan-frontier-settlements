@@ -19,20 +19,22 @@ void ToolbarRenderState::updateFromPhase(TurnPhase phase) {
             ToolbarActionType::BuildCity,
             ToolbarActionType::BuyDevCard,
             ToolbarActionType::BuyDevCard,
+            ToolbarActionType::PlayerTrade,
+            ToolbarActionType::BankTrade,
             ToolbarActionType::EndTurn
         };
             break;
 
         case TurnPhase::InitialPlacement:
-            m_enabledButtons = {
-            ToolbarActionType::BuildRoad,
-            ToolbarActionType::BuildSettlement
-        };
+            /*m_enabledButtons = { TODO this is if we want our player to click the buttons himself
+            ToolbarButton::BuildRoad,
+            ToolbarButton::BuildSettlement
+        };*/
             break;
 
         case TurnPhase::RoadBuilding:
-            m_enabledButtons.insert(ToolbarActionType::BuildRoad); // TODO maybe we want player to have that button automatically selected, to be decided
-            break;
+            /*m_enabledButtons.insert(ToolbarButton::BuildRoad); // TODO maybe we want player to have that button automatically selected, to be decided
+            break;*/
 
         case TurnPhase::YearOfPlenty:
         case TurnPhase::Monopoly:
@@ -45,6 +47,7 @@ void ToolbarRenderState::updateFromPhase(TurnPhase phase) {
             m_enabledPopups = {
             GamePopups::StealCard
         };
+        case TurnPhase::GameOver:
             break;
     }
 }
