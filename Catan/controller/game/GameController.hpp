@@ -14,7 +14,7 @@
 #include "renderstate/BoardRenderState.h"
 #include "renderstate/ToolbarRenderState.h"
 #
-class ClientController : public QObject {
+class GameController : public QObject {
     Q_OBJECT
 private:
     GameSession& m_session;
@@ -29,7 +29,7 @@ private:
     void setActiveTool(std::unique_ptr<Move> tool);
     void clearActiveTool();
 public:
-    ClientController(GameSession &session, GameNetworkAdapter &adapter, GameWindow &gameWindow, QObject *parent);
+    GameController(GameSession &session, GameNetworkAdapter &adapter, GameWindow &gameWindow, QObject *parent);
 
     // GLOBAL
     void sendMove(const Move* move);

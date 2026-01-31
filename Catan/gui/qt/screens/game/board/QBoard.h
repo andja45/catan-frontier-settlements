@@ -30,12 +30,12 @@ public:
 // TODO controller connect here <<<
 public slots:
     void update(const BoardRenderState *renderState);
+    void onPlayBuildFeedback();
+
 signals:
     void tileClicked(TileId tileId);
     void nodeClicked(NodeId nodeId);
     void edgeClicked(EdgeId edgeId);
-
-    void playBuildShake();
 
 protected:
     void paintEvent(QPaintEvent *event) override;

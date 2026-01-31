@@ -4,6 +4,8 @@
 #include <types/TypeAliases.h>
 #include "QTile.h"
 
+#include <common/theme/GameTheme.h>
+
 void QTile::updateGeometry(const QPointF& center, double size) {
     const auto pts = hexPolygonPoints(center, size);
     m_poly.clear();
@@ -58,7 +60,7 @@ void QTile::paint(QPainter& p, double size) {
     // hover overlay (robber mode)
     if (m_hovered) {
         p.save();
-        p.setBrush(QBrush(QColor(155, 155, 155, 60)));
+        p.setBrush(QBrush(GameTheme::getGrayColor()));
         p.setPen(Qt::NoPen);
         p.drawPolygon(m_poly);
         p.restore();
@@ -66,7 +68,7 @@ void QTile::paint(QPainter& p, double size) {
 
     if (m_highlighted) {
         p.save();
-        p.setBrush(QBrush(QColor(247, 201, 94, 60)));
+        p.setBrush(QBrush(GameTheme::getGoldenColor()));
         p.setPen(Qt::NoPen);
         p.drawPolygon(m_poly);
         p.restore();

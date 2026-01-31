@@ -114,11 +114,16 @@ int main(int argc, char *argv[])
     forceGlowShortcut->setContext(Qt::ApplicationShortcut);
 
     w.connect(forceGlowShortcut, &QShortcut::activated, w.getBoard(), [qb=w.getBoard()]() {
-        qb->playBuildShake();
+        qb->onPlayBuildFeedback();
     });
-};
 
+    BoardRenderState rs{};
 
+    //rs.setHighlightedEdges({EdgeId{0},EdgeId{15},EdgeId{20}});
+    //rs.setHighlightedNodes({NodeId{3},NodeId{13},NodeId{22}});
+    //rs.setHighlightedTiles({TileId{2},TileId{16},TileId{21}});
+
+    w.getBoard()->update(&rs);
 
     return a.exec();
 }

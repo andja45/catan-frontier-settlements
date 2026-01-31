@@ -87,3 +87,19 @@ QColor GameTheme::getDisabledColorByResource(ResourceType resource) {
 QColor GameTheme::getPlayerColor(int playerId) {
     return GameTheme::playerColors[playerId % GameTheme::playerColors.size()];
 }
+
+QColor GameTheme::getGoldenColor() {
+    return QColor(209, 143, 0,200);
+}
+
+QColor GameTheme::getGoldenColorStrong() {
+    return QColor(209, 143, 0,250);
+}
+
+QColor GameTheme::getGrayColor() {
+    return QColor(94, 84, 62,80);
+}
+
+QColor GameTheme::getGrayColorStrong() {
+    return QColor(94, 84, 62,120);
+}

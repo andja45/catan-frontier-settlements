@@ -20,6 +20,7 @@ private:
     std::unordered_set<TileId> m_highlightedTiles;
     std::unordered_set<PlayerId> m_highlightedPlayers;
 public:
+    BoardRenderState() = default;
     void setHighlighted(std::unordered_set<int> ids, MoveType type);
     void setHighlightedNodes(std::unordered_set<NodeId> nodes) {
         m_highlightedNodes = std::move(nodes);

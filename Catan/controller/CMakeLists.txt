@@ -1,6 +1,6 @@
 add_library(catan_controller
-        game/ClientController.hpp
-        game/ClientController.cpp
+        game/GameController.hpp
+        game/GameController.cpp
         host-join/HostJoinController.hpp
         host-join/HostJoinController.cpp
         lobby/LobbyController.hpp

@@ -1,14 +1,13 @@
 #include "QBoard.h"
 
+#include "common/AudioManager.h"
 #include <QPainter>
 #include <QMouseEvent>
-#include <QPropertyAnimation>
 #include <QTimer>
+#include <QRandomGenerator>
 #include <QElapsedTimer>
 #include <QEasingCurve>
 #include <cmath>
-
-#include <iostream>
 
 static constexpr double SQRT3 = 1.7320508075688772;
 
@@ -248,10 +247,11 @@ void QBoard::update(const BoardRenderState *renderState) {
 }
 
 
-void QBoard::playBuildShake()
-{
-    const int durationMs = 700;
-    const double ampPx   = 4.0;
+void QBoard::onPlayBuildFeedback() {
+    AudioManager::instance().playBuild();
+
+    const int durationMs = 850;
+    const double ampPx   = 6.5;
     const double freqHz  = 20.0;
 
     m_shakeX = 0.0;
@@ -273,16 +273,28 @@ void QBoard::playBuildShake()
             timer->stop();
             timer->deleteLater();
             delete clock;
-            update();
+            QWidget::update();
             return;
         }
 
         const double strength = 1.0 - ease.valueForProgress(t);
         const double a = ampPx * strength;
 
-        const double w = 2.0 * M_PI * freqHz;
-        m_shakeX = a * std::sin(w * t);
-        m_shakeY = (a * 0.65) * std::cos(w * t * 0.9);
+        const double w1 = 2.0 * M_PI * freqHz;
+        const double w2 = 2.0 * M_PI * (freqHz * 1.7);
+
+        const double noiseX = (QRandomGenerator::global()->generateDouble() - 0.5) * 0.6;
+        const double noiseY = (QRandomGenerator::global()->generateDouble() - 0.5) * 0.6;
+
+        m_shakeX =
+            a * (0.7 * std::sin(w1 * t)
+               + 0.3 * std::sin(w2 * t + 1.3))
+            + noiseX * strength;
+
+        m_shakeY =
+            a * (0.6 * std::cos(w1 * t * 0.9)
+               + 0.4 * std::sin(w2 * t + 2.1))
+            + noiseY * strength;
 
         QWidget::update();
     });

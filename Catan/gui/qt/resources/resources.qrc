@@ -5,5 +5,14 @@
     <qresource prefix="/">
         <file>styles/catanbuttons.qss</file>
     </qresource>
+    <qresource prefix="/">
+        <file>audio/click.wav</file>
+        <file>audio/card.wav</file>
+        <file>audio/build.wav</file>
+        <file>audio/error.wav</file>
+        <file>audio/dice.wav</file>
+        <file>audio/victory.wav</file>
+        <file>audio/defeat.wav</file>
+    </qresource>
 
 </RCC>

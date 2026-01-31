@@ -1,5 +1,6 @@
 #include "ChooseDevCardPopup.h"
 
+#include "common/AudioManager.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -53,6 +54,8 @@ ChooseDevCardPopup::ChooseDevCardPopup(Player* player,QWidget* parent)
 
     m_cancelBtn = new QPushButton("Cancel", this);
     connect(m_cancelBtn, &QPushButton::clicked, this, [this]() {
+        AudioManager::instance().playClick();
+
         emit cancelled();
         closePopup();
     });

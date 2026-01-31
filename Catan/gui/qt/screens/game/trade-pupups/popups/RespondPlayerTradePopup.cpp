@@ -1,5 +1,6 @@
 #include "RespondPlayerTradePopup.h"
 
+#include "common/AudioManager.h"
 #include "player/Player.h"
 
 RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offer, TradeId tradeId , QWidget *parent) : FloatingPanel(parent)
@@ -96,12 +97,16 @@ RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offe
     layout->addLayout(buttons);
 
     connect(m_acceptButton, &QPushButton::clicked, this, [this]() {
+        AudioManager::instance().playClick();
+
         m_declineButton->setChecked(false);
         m_acceptButton->setChecked(true);
         emit tradeAccepted(m_playerId,m_tradeId);
     });
 
     connect(m_declineButton, &QPushButton::clicked, this, [this]() {
+        AudioManager::instance().playClick();
+
         m_declineButton->setChecked(true);
         m_acceptButton->setChecked(false);
 

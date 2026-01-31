@@ -2,6 +2,7 @@
 #include <cmath>
 #include <QPolygonF>
 #include <QPainter>
+#include <common/theme/GameTheme.h>
 
 bool QNode::hoverAllowed() const {
     if (!m_node && highlighted) return false;
@@ -68,7 +69,7 @@ void QNode::paint(QPainter& p, double size) {
         const double r = size / 3.2;
 
         // Ring (no fill)
-        QPen ring(QColor(155, 155, 155, 120));
+        QPen ring(GameTheme::getGrayColorStrong());
         ring.setWidthF(std::max(2.0, size / 30.0));
         p.setPen(ring);
         p.setBrush(Qt::NoBrush);
@@ -76,7 +77,7 @@ void QNode::paint(QPainter& p, double size) {
 
         // Subtle fill
         p.setPen(Qt::NoPen);
-        p.setBrush(QColor(155, 155, 155, 60));
+        p.setBrush(GameTheme::getGrayColor());
         p.drawEllipse(m_center, r, r);
 
         p.restore();
@@ -88,7 +89,7 @@ void QNode::paint(QPainter& p, double size) {
 
         // Ring (no fill)
 
-        QPen ring(QColor(247, 201, 94, 120));
+        QPen ring(GameTheme::getGoldenColorStrong());
         ring.setWidthF(std::max(2.0, size / 30.0));
         p.setPen(ring);
         p.setBrush(Qt::NoBrush);
@@ -96,7 +97,7 @@ void QNode::paint(QPainter& p, double size) {
 
         // Subtle fill
         p.setPen(Qt::NoPen);
-        p.setBrush(QColor(247, 201, 94, 60));
+        p.setBrush(GameTheme::getGoldenColor());
         p.drawEllipse(m_center, r, r);
 
         p.restore();

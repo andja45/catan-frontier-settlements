@@ -2,6 +2,7 @@
 #include <common/theme/GameTheme.h>
 #include <QPainter>
 #include <QMouseEvent>
+#include <common/AudioManager.h>
 
 static QString devLabel(DevCardType t) {
     switch (t) {
@@ -33,6 +34,8 @@ QCard::QCard(QWidget* parent) : QWidget(parent) {
 }
 void QCard::flicker(const QColor& color)
 {
+    AudioManager::instance().playError();
+
     m_flickerColor = color;
     m_flickerAlpha = 0.8;   // initial intensity
     m_flickerTimer.start();
@@ -59,6 +62,8 @@ void QCard::incrementCount() { m_spec.countBadge++; update(); }
 void QCard::setCount(int count){m_spec.countBadge=count;update();}
 void QCard::decrementCount() { if(m_spec.countBadge>0){m_spec.countBadge--; update();} }
 void QCard::mousePressEvent(QMouseEvent* e) {
+    AudioManager::instance().playCard();
+
     if (e->button() == Qt::LeftButton) {
         emit leftClicked();
     }
