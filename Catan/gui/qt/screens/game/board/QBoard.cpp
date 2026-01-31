@@ -2,6 +2,10 @@
 
 #include <QPainter>
 #include <QMouseEvent>
+#include <QPropertyAnimation>
+#include <QTimer>
+#include <QElapsedTimer>
+#include <QEasingCurve>
 #include <cmath>
 
 #include <iostream>
@@ -79,9 +83,11 @@ void QBoard::paintEvent(QPaintEvent *event) {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
 
-
     // Background
     p.fillRect(rect(), QColor(80, 140, 200));
+
+    p.save();
+    p.translate(m_shakeX, m_shakeY);
 
     // Auto-scale hex size to fit with margins
     const double margin = 20.0;
@@ -148,6 +154,8 @@ void QBoard::paintEvent(QPaintEvent *event) {
         p.setPen(pen);
         qn.paint(p, size);
     }
+
+    p.restore();
 }
 
 void QBoard::mouseMoveEvent(QMouseEvent* e) {
@@ -237,4 +245,47 @@ void QBoard::update(const BoardRenderState *renderState) {
     setHighlightedEdges(renderState->getHighlightedEdges());
 
     QWidget::update();
+}
+
+
+void QBoard::playBuildShake()
+{
+    const int durationMs = 700;
+    const double ampPx   = 4.0;
+    const double freqHz  = 20.0;
+
+    m_shakeX = 0.0;
+    m_shakeY = 0.0;
+
+    auto* timer = new QTimer(this);
+    timer->setInterval(8);
+
+    auto* clock = new QElapsedTimer();
+    clock->start();
+
+    QEasingCurve ease(QEasingCurve::OutExpo);
+
+    connect(timer, &QTimer::timeout, this, [=]() mutable {
+        const double t = clock->elapsed() / double(durationMs);
+        if (t >= 1.0) {
+            m_shakeX = 0.0;
+            m_shakeY = 0.0;
+            timer->stop();
+            timer->deleteLater();
+            delete clock;
+            update();
+            return;
+        }
+
+        const double strength = 1.0 - ease.valueForProgress(t);
+        const double a = ampPx * strength;
+
+        const double w = 2.0 * M_PI * freqHz;
+        m_shakeX = a * std::sin(w * t);
+        m_shakeY = (a * 0.65) * std::cos(w * t * 0.9);
+
+        QWidget::update();
+    });
+
+    timer->start();
 }

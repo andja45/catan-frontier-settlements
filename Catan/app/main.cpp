@@ -110,6 +110,15 @@ int main(int argc, char *argv[])
         w.getActionManager()->openStealCardPopup({1,2,3});
     });
 
+    auto* forceGlowShortcut = new QShortcut(QKeySequence(Qt::Key_B), &w);
+    forceGlowShortcut->setContext(Qt::ApplicationShortcut);
+
+    w.connect(forceGlowShortcut, &QShortcut::activated, w.getBoard(), [qb=w.getBoard()]() {
+        qb->playBuildShake();
+    });
+};
+
+
 
     return a.exec();
 }

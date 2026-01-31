@@ -125,7 +125,8 @@ void ClientController::onBoardElementClicked(int elementId){
 
     boardMove->setBoardElementId(elementId);
     sendMove(m_activeTool.get());
-    clearActiveTool(); // if we want to enable multiple builds in a row, we can change this later
+
+    emit buildPlaced(); // shake only after successful placement
 }
 
 void ClientController::onBuyDevCardClicked() {
@@ -147,9 +148,13 @@ void ClientController::onUseDevCardClicked(DevCardType cardType) {
 void ClientController::onStealCardPlayerChosen(PlayerId victimId) {
     if (!isLocalPlayersTurn("StealCard")) return;
 
-    auto move = std::make_unique<StealCardMove>(m_localPlayerId, victimId);
+    if (!m_activeTool) return;
 
-    sendMove(move.get());
+    auto* move = dynamic_cast<StealCardMove*>(m_activeTool.get());
+    if (!move) return;
+
+    move->setBoardElementId(victimId);
+    sendMove(m_activeTool.get());
 }
 
 void ClientController::onMonopolyResourceChosen(ResourceType resource) {
