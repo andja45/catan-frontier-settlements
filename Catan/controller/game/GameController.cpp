@@ -146,7 +146,6 @@ void GameController::updateActiveToolOnPhase(){
             break;
 
         default:
-            clearActiveTool();
             break;
     }
 }
@@ -317,6 +316,7 @@ void GameController::sendMove(const Move* move) {
         return;
     }
 
+    clearActiveTool(); // tool isnt active anymore after sending move (even sequential moves are made of multiple moves)
     update();
     m_adapter->sendMove(move);
 }
