@@ -93,13 +93,13 @@ QColor GameTheme::getGoldenColor() {
 }
 
 QColor GameTheme::getGoldenColorStrong() {
-    return QColor(209, 143, 0,250);
+    return QColor(209, 143, 0,250).lighter(100);
 }
 
 QColor GameTheme::getGrayColor() {
-    return QColor(94, 84, 62,80);
+    return QColor(200, 200, 200,80);
 }
 
 QColor GameTheme::getGrayColorStrong() {
-    return QColor(94, 84, 62,120);
+    return QColor(200, 200, 200,120).lighter(100);
 }

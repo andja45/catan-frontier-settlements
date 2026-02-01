@@ -7,12 +7,14 @@
 #include <QPainterPath>
 
 #include <board/Edge.h>
+#include <screens/game/board/elements/PulseState.hpp>
 
 class QEdge {
 public:
     bool highlighted = true;
 
     explicit QEdge(Edge* edge = nullptr) : m_edge(edge) {}
+    void setPulse(PulseState* pulse) { m_pulse = pulse; }
 
     Edge* edge() const { return m_edge; }
 
@@ -45,6 +47,7 @@ private:
     QPointF     m_p, m_q, m_center;
     QPainterPath   m_hit;            // for hit-test
     bool        m_hovered = false;
+    PulseState* m_pulse = nullptr;
 };
 
 #endif // QEDGE_H

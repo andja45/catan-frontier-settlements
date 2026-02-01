@@ -63,6 +63,8 @@ add_library(catan_gui_qt
         screens/game/action-popups/ActionManager.hpp
         screens/game/game-overlay/GameOverlay.cpp
         screens/game/game-overlay/GameOverlay.hpp
+        screens/game/board/elements/PulseState.cpp
+        screens/game/board/elements/PulseState.hpp
 )
 
 target_include_directories(catan_gui_qt

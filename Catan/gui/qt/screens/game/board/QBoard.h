@@ -46,6 +46,7 @@ protected:
 private:
     Board* m_board;
     double m_size = 40.0;       // hex radius (corner distance); will be auto-scaled
+    PulseState* m_pulse = nullptr;
 
     QTile* m_hoveredQTile = nullptr;
     std::vector<QTile> m_qtiles;
