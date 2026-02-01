@@ -6,12 +6,14 @@
 #include <QPainter>
 
 #include <board/Tile.h>
+#include <screens/game/board/elements/PulseState.hpp>
 
 class QTile {
 public:
     explicit QTile(Tile* tile = nullptr) : m_tile(tile) {}
 
     Tile* tile() const { return m_tile; }
+    void setPulse(PulseState* pulse) { m_pulse = pulse; }
 
     void updateGeometry(const QPointF& center, double size);
     bool contains(const QPointF& p) const;
@@ -32,6 +34,7 @@ private:
     QRectF    m_tokenRect;
     bool      m_hovered = false;
     bool      m_highlighted = false;
+    PulseState* m_pulse = nullptr;
 };
 
 #endif // QTILE_H

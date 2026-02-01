@@ -105,6 +105,7 @@ void QEdge::paint(QPainter& p, double size) {
         p.restore();
     }
 
+
     if (m_highlighted) {
         p.save();
         const double r = size / 3.2;
@@ -119,7 +120,8 @@ void QEdge::paint(QPainter& p, double size) {
 
         // Subtle fill
         p.setPen(Qt::NoPen);
-        p.setBrush(GameTheme::getGoldenColor());
+        auto col=m_pulse->pulseColor(GameTheme::getGoldenColor());
+        p.setBrush(col);
         p.drawEllipse(m_center, r, r);
 
         p.restore();

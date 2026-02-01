@@ -5,12 +5,14 @@
 #include <QPainterPath>
 
 #include <board/Node.h>
+#include <screens/game/board/elements/PulseState.hpp>
 
 class QNode {
 public:
     bool highlighted = true;
 
     explicit QNode(Node* node = nullptr) : m_node(node) {}
+    void setPulse(PulseState* pulse) { m_pulse = pulse; }
 
     Node* node() const { return m_node; }
 
@@ -39,6 +41,8 @@ private:
     QPainterPath m_hit;            // for hit-test
     bool        m_hovered = false;
     bool        m_highlighted = false;
+
+    PulseState* m_pulse = nullptr;
 };
 
 #endif // QNODE_H

@@ -97,7 +97,8 @@ void QNode::paint(QPainter& p, double size) {
 
         // Subtle fill
         p.setPen(Qt::NoPen);
-        p.setBrush(GameTheme::getGoldenColor());
+        auto col=m_pulse->pulseColor(GameTheme::getGoldenColor());
+        p.setBrush(col);
         p.drawEllipse(m_center, r, r);
 
         p.restore();

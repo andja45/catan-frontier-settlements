@@ -16,20 +16,29 @@ QBoard::QBoard(QWidget *parent, Board* board) : QWidget(parent), m_board(board) 
     setAutoFillBackground(true);
     setMouseTracking(true);
 
+    m_pulse=new PulseState(this);
+    connect(m_pulse, &PulseState::changed, this, QOverload<>::of(&QWidget::update));
+
     m_qtiles.clear();
     m_qtiles.reserve(m_board->getTiles().size());
-    for (const auto& tile : m_board->getTiles())
+    for (const auto& tile : m_board->getTiles()) {
         m_qtiles.emplace_back(tile.get());
+        m_qtiles.back().setPulse(m_pulse);
+    }
 
     m_qnodes.clear();
     m_qnodes.reserve(m_board->getNodes().size());
-    for(const auto& node : m_board->getNodes())
+    for(const auto& node : m_board->getNodes()) {
         m_qnodes.emplace_back(node.get());
+        m_qnodes.back().setPulse(m_pulse);
+    }
 
     m_qedges.clear();
     m_qedges.reserve(m_board->getEdges().size());
-    for(const auto& edge : m_board->getEdges())
+    for(const auto& edge : m_board->getEdges()) {
         m_qedges.emplace_back(edge.get());
+        m_qedges.back().setPulse(m_pulse);
+    }
 }
 
 QPointF QBoard::axialToPixelTile(const TileCoords& a, double size) {
