@@ -18,9 +18,16 @@ class PlayersOverlay :public QWidget {
 public:
     PlayersOverlay(std::vector<Player *> players, Bank *bank, PlayerId activePlayerId, QWidget *parent);
 
+private:
+    std::vector<PlayerView*> m_playerPanels;
     PlayerDetailedView * m_bankView;
-    PlayerDetailedView * m_activePlayerView;
-    std::vector<PlayerView*> m_playerViews;
+    PlayerDetailedView * m_localPlayerView;
+    std::vector<Player*> m_players;
+    void refreshTurnGlow();
+    PlayerId m_activePlayerId;
+public slots:
+    void setActivePlayer(PlayerId);
+
 };
 
 #endif //CATAN_PLAYERSOVERLAY_HPP

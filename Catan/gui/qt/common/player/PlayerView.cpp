@@ -108,3 +108,6 @@ void PlayerView::buildUi() {
     // badgeLayout3->addWidget(m_vpBadge);
 
    }
+
+
+

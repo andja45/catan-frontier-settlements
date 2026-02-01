@@ -10,7 +10,7 @@
 #include <player/Bank.h>
 #include <player/Player.h>
 
-PlayersOverlay::PlayersOverlay(std::vector<Player*>players,Bank* bank,PlayerId activePlayerId,QWidget *parent) {
+PlayersOverlay::PlayersOverlay(std::vector<Player*>players,Bank* bank,PlayerId activePlayerId,QWidget *parent):m_players(players) {
     setAttribute(Qt::WA_TransparentForMouseEvents, false);
     auto *stackBox = new QVBoxLayout(this);
     stackBox->setContentsMargins(0, 0, 0, 0);
@@ -19,18 +19,36 @@ PlayersOverlay::PlayersOverlay(std::vector<Player*>players,Bank* bank,PlayerId a
     m_bankView= new PlayerDetailedView(bank,this);
     stackBox->addWidget(m_bankView);
 
-    m_playerViews = std::vector<PlayerView*>();
+    m_playerPanels =  std::vector<PlayerView*>();
     for (auto*player : players) {
         auto* pv = new PlayerView(player,this);
-        m_playerViews.push_back(pv);
+        m_playerPanels.push_back(pv);
         stackBox->addWidget(pv);
     }
 
-    m_activePlayerView = new PlayerDetailedView(players[activePlayerId],this);
-    stackBox->addWidget(m_activePlayerView);
+    m_localPlayerView = new PlayerDetailedView(players[activePlayerId],this);
+
+    stackBox->addWidget(m_localPlayerView);
     stackBox->addStretch(1);
 
     // auto* t = new QTimer(this);
     // connect(t, &QTimer::timeout, this, &PlayersOverlay::refreshAll);
     // t->start(100);
+    m_activePlayerId=0;
+    refreshTurnGlow();
+}
+
+
+void PlayersOverlay::refreshTurnGlow()
+{
+    for (auto p:m_playerPanels) {
+        p->setActiveHighlight(false);
+    }
+
+    if (m_activePlayerId != -1)
+        m_playerPanels[m_activePlayerId]->setActiveHighlight(true);
+}
+void PlayersOverlay::setActivePlayer(PlayerId pid) {
+    m_activePlayerId=pid;
+    refreshTurnGlow();
 }

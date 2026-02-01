@@ -17,6 +17,14 @@ public:
         )");
         setMouseTracking(true);
     }
+
+    void setActiveHighlight(bool on) { m_activeHighlight = on; update(); }
+
+private:
+    bool m_activeHighlight = false;
+    bool activeHighlight() const { return m_activeHighlight; }
+    void paintEvent(QPaintEvent* e) override;
+
 };
 
 #endif // FLOATINGPANEL_H
