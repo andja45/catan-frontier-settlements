@@ -11,6 +11,9 @@
 
 #include <QRegularExpression>
 
+#include "common/AudioManager.h"
+#include "screens/game/action-popups/ActionManager.hpp"
+
 QString Chat::emojify(QString text)
 {
     struct Replace {
@@ -75,7 +78,11 @@ void Chat::buildChatUi() {
 
     auto sendNow = [this]() {
         const QString text = m_chatInput->text().trimmed();
-        if (text.isEmpty()) return;
+        if (text.isEmpty()) {
+        AudioManager::instance().playError();
+            return;
+        }
+        AudioManager::instance().playClick();
         emit chatSendRequested(text);
         m_chatInput->clear();
     };
