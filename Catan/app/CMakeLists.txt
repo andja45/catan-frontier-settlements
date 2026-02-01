@@ -2,6 +2,7 @@ add_executable(Catan
         main.cpp
         ../controller/host-join/HostJoinController.cpp
         ../controller/host-join/HostJoinController.hpp
+        ../controller/host-join/RoleType.hpp
 )
 
 target_link_libraries(Catan
@@ -13,5 +14,7 @@ target_link_libraries(Catan
         catan_game
 
 )
+qt_add_resources(Catan resources/resource.qrc)
+
 
 #set_target_properties(Catan PROPERTIES WIN32_EXECUTABLE TRUE)

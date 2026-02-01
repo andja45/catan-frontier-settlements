@@ -121,7 +121,7 @@ void QBoard::paintEvent(QPaintEvent *event) {
         // outline pen is owned by board, applied once
 
         p.setPen(pen);
-        qt.paint(p, size, m_placingRobber);
+        qt.paint(p, size);
     }
 
     for (auto& qe : m_qedges) {
@@ -153,27 +153,21 @@ void QBoard::paintEvent(QPaintEvent *event) {
 void QBoard::mouseMoveEvent(QMouseEvent* e) {
     const QPointF pos = e->position();
 
-    // --- Tile hover only if placing robber ---
     QTile* hitTile = nullptr;
-    if (m_placingRobber) {
-        for (auto& qt : m_qtiles) {
-            if (qt.contains(pos)) { hitTile = &qt; break; }
-        }
+    for (auto& qt : m_qtiles) {
+        if (qt.contains(pos)) { hitTile = &qt; break; }
     }
 
-    // --- Node hover (planning to gate it behind a future "placing building" flag) ---
     QNode* hitNode = nullptr;
     for (auto& qn : m_qnodes) {
         if (qn.contains(pos)) { hitNode = &qn; break; }
     }
 
-    // --- Edge hover (planning to gate it behind a future "placing road" flag) ---
     QEdge* hitEdge = nullptr;
     for (auto& qe : m_qedges) {
         if (qe.contains(pos)) { hitEdge = &qe; break; }
     }
 
-    if (hitTile == m_hoveredQTile && hitNode == m_hoveredQNode) return;
 
     if (m_hoveredQTile) m_hoveredQTile->setHovered(false);
     m_hoveredQTile = hitTile;
@@ -187,36 +181,22 @@ void QBoard::mouseMoveEvent(QMouseEvent* e) {
     m_hoveredQEdge = hitEdge;
     if (m_hoveredQEdge) m_hoveredQEdge->setHovered(true);
 
-    update();
+    QWidget::update();
 }
 
 void QBoard::mousePressEvent(QMouseEvent* e) {
     if (e->button() != Qt::LeftButton) return;
 
-    PlayerId player = 1; // TODO: wire to your current player
-
-    // If user clicked an edge, build a road
     if (m_hoveredQEdge) {
-        if (m_hoveredQEdge->handleClick(player)) {
-            update();
-            return;
-        }
+        edgeClicked(m_hoveredQEdge->edge()->getEdgeId());
     }
 
-    // If user clicked a node, build/upgrade there
     if (m_hoveredQNode) {
-        if (m_hoveredQNode->handleClick(player)) {
-            update();
-            return;
-        }
+        nodeClicked(m_hoveredQNode->node()->getNodeId());
     }
 
-    // Robber placement (only if that mode is enabled)
     if (m_placingRobber && m_hoveredQTile) {
-        Tile* tile = m_hoveredQTile->tile();
-        // m_board->placeRobber(tile->getId()) etc.
-        update();
-        return;
+        tileClicked(m_hoveredQTile->tile()->getTileId());
     }
 }
 
@@ -224,14 +204,37 @@ void QBoard::leaveEvent(QEvent* e) {
     Q_UNUSED(e);
 }
 
-void QBoard::setHighlightedEdges (const std::set<Edge*>& highlightedEdges) {
-    for(auto qedge : m_qedges) {
-        qedge.highlighted = highlightedEdges.find(qedge.edge()) != highlightedEdges.end();
+void QBoard::setHighlightedEdges (const std::vector<EdgeId>& highlightedEdges) {
+    for(int id : highlightedEdges) {
+        m_qedges[id].setHighlighted(true);
     }
 }
 
-void QBoard::setHighlightedNodes (const std::set<Node*>& highlightedNodes) {
-    for(auto qnode : m_qnodes) {
-        qnode.highlighted = highlightedNodes.find(qnode.node()) != highlightedNodes.end();
+void QBoard::setHighlightedNodes (const std::vector<NodeId>& highlightedNodes) {
+    for(int id: highlightedNodes) {
+        m_qnodes[id].setHighlighted(true);
     }
+}
+
+void QBoard::setHighlightedTiles(const std::vector<TileId> &highlightedTiles) {
+    for (int id:highlightedTiles) {
+        m_qtiles[id].setHighlighted(true);
+    }
+}
+
+void QBoard::clearHighlights() {
+    for (auto& qt : m_qtiles) qt.setHighlighted(false);
+    for (auto& qn : m_qnodes) qn.setHighlighted(false);
+    for (auto& qe : m_qedges) qe.setHighlighted(false);
+
+}
+
+void QBoard::update(const BoardRenderState *renderState) {
+    clearHighlights();
+
+    setHighlightedTiles(renderState->getHighlightedTiles());
+    setHighlightedNodes(renderState->getHighlightedNodes());
+    setHighlightedEdges(renderState->getHighlightedEdges());
+
+    QWidget::update();
 }

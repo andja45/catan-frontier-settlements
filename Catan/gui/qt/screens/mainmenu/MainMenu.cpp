@@ -65,7 +65,7 @@ void MainMenu::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
 
-    QPixmap bg(":/images/catan.png");
+    QPixmap bg(":/backgrounds/catan.png");
 
     painter.fillRect(rect(), Qt::red);
     painter.drawPixmap(rect(), bg);

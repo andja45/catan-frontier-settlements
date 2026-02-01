@@ -23,7 +23,7 @@ Bank::Bank() {
 	for (auto r : {ResourceType::Wood, ResourceType::Brick, ResourceType::Wool, ResourceType::Wheat, ResourceType::Ore}) {
 		res.insert({r, m_standardNumOfResources});
 	}
-	initializeBank(ResourcePack{},m_numberOfStandardDevCardsByType);
+	initializeBank(res,m_numberOfStandardDevCardsByType);
 }
 
 Bank::Bank(const ResourcePack &resources, const DevPack &devCards) {

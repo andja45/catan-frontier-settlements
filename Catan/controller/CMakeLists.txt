@@ -12,8 +12,13 @@ add_library(catan_controller
         renderstate/ToolbarRenderState.cpp
         renderstate/ChoosePlayerRenderState.cpp
         renderstate/ChoosePlayerRenderState.h
+        host-join/RoleType.hpp
 )
-
+target_link_libraries(catan_controller
+    PUBLIC
+    catan_game
+    catan_gui_qt
+)
 target_include_directories(catan_controller
         PUBLIC
         .

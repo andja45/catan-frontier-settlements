@@ -43,6 +43,8 @@ public:
             return;
         m_respondedPlayers.insert(player);
     }
+
+    std::vector<PlayerId> respondedPlayers() const { return std::vector<PlayerId>(m_respondedPlayers.begin(), m_respondedPlayers.end()); }
 };
 
 #endif //CATAN_TRADE_H

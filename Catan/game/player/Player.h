@@ -83,6 +83,8 @@ public:
 
     bool isActive() const {return m_isActive;}
     void setLeft() {m_isActive=false;}
+
+    double getRoadLength(){return m_roads.size();}; //TODO fix<<<<
 };
 
 

@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <memory>
+#include <screens/game/GameWindow.h>
 
 #include "GameNetworkAdapter.h"
 #include "model/GameSession.h"
@@ -14,9 +15,8 @@
 #include "move/Move.h"
 #include "renderstate/BoardRenderState.h"
 #include "renderstate/ToolbarRenderState.h"
-#include "screens/game/widget.h"
-
-class ClientController : public QObject {
+#
+class GameController : public QObject {
     Q_OBJECT
 private:
     GameSession& m_session;
@@ -29,7 +29,7 @@ private:
     void setActiveTool(std::unique_ptr<Move> tool);
     void clearActiveTool();
 public:
-    ClientController(GameSession &session, GameNetworkAdapter &adapter, Widget &gameWindow, QObject *parent);
+    GameController(GameSession &session, GameNetworkAdapter &adapter, GameWindow &gameWindow, QObject *parent);
 
     void sendMove(const Move* move);
 public slots:

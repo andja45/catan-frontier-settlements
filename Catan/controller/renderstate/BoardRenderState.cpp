@@ -28,6 +28,18 @@ void BoardRenderState::setHighlighted(std::unordered_set<int> ids, MoveType type
     }
 }
 
+std::vector<EdgeId> BoardRenderState::getHighlightedEdges() const {
+    return std::vector(m_highlightedEdges.begin(), m_highlightedEdges.end());
+}
+
+std::vector<NodeId> BoardRenderState::getHighlightedNodes() const {
+    return std::vector(m_highlightedNodes.begin(), m_highlightedNodes.end());
+}
+
+std::vector<TileId> BoardRenderState::getHighlightedTiles() const {
+    return std::vector(m_highlightedTiles.begin(), m_highlightedTiles.end());
+}
+
 bool BoardRenderState::isNodeHighlighted(NodeId nodeId) const {
     return m_highlightedNodes.find(nodeId) != m_highlightedNodes.end();
 }

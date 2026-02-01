@@ -20,7 +20,7 @@
 #include <QStackedBarSeries>
 #include<QDialog>
 #include<QPen>
-#include <common/GameTheme.h>
+#include <common/theme/GameTheme.h>
 #include "model/GameData.h"
 
 class GameDetailsView : public QDialog

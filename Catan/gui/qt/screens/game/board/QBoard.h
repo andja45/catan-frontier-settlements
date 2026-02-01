@@ -10,18 +10,30 @@
 #include <board/Board.h>
 #include <types/TypeAliases.h>
 
-#include "QTile.h"
-#include "QNode.h"
-#include "QEdge.h"
+#include "elements/QTile.h"
+#include "elements/QNode.h"
+#include "elements/QEdge.h"
+
+#include "renderstate/BoardRenderState.h"
 
 class QBoard : public QWidget {
     Q_OBJECT
 public:
     explicit QBoard(QWidget* parent = nullptr, Board* board = nullptr);
     Board* getBoard() { return m_board; }
-    void setPlacingRobber(bool on) { m_placingRobber = on; update(); }
-    void setHighlightedEdges (const std::set<Edge*>& highlightedEdges);
-    void setHighlightedNodes (const std::set<Node*>& highlightedNodes);
+
+    void setHighlightedEdges (const std::vector<EdgeId>& highlightedEdges);
+    void setHighlightedNodes (const std::vector<NodeId>& highlightedNodes);
+    void setHighlightedTiles (const std::vector<TileId>& highlightedTiles);
+
+    void clearHighlights();
+// TODO controller connect here <<<
+public slots:
+    void update(const BoardRenderState *renderState);
+signals:
+    void tileClicked(TileId tileId);
+    void nodeClicked(NodeId nodeId);
+    void edgeClicked(EdgeId edgeId);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -48,6 +60,7 @@ private:
     static QPointF axialToPixelNode(const NodeCoords& a, double size);
 
     QRectF boundsForLayout(double size) const;
+
 };
 
 #endif // QBOARD_H
