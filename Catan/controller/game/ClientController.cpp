@@ -2,7 +2,7 @@
 // Created by matija on 1/24/26.
 //
 
-#include "GameController.hpp"
+#include "ClientController.hpp"
 
 #include <utility>
 #include <QDebug>
@@ -14,7 +14,7 @@
 #include "move/robber/SetRobberMove.h"
 #include "move/turn/PlayerLeaveMove.hpp"
 
-GameController::GameController(GameSession& session, GameNetworkAdapter& adapter, GameWindow &gameWindow, QObject* parent)
+ClientController::ClientController(GameSession& session, GameNetworkAdapter& adapter, GameWindow &gameWindow, QObject* parent)
     : QObject(parent)
       , m_session(session)
       , m_adapter(adapter) {
@@ -27,7 +27,7 @@ GameController::GameController(GameSession& session, GameNetworkAdapter& adapter
     update();
 }
 
-void GameController::update(){ // filling renderstates and notifying view, only if its my turn
+void ClientController::update(){ // filling renderstates and notifying view, only if its my turn
     m_toolbarRenderState.updateFromPhase(m_session.phase());
 
     if (m_activeTool && m_activeTool->providesAllValid()) {
@@ -38,30 +38,30 @@ void GameController::update(){ // filling renderstates and notifying view, only 
     emit onModelChanged(m_boardRenderState, m_toolbarRenderState);
 }
 
-void GameController::setActiveTool(std::unique_ptr<Move> tool){
+void ClientController::setActiveTool(std::unique_ptr<Move> tool){
     m_activeTool = std::move(tool);
 }
 
-void GameController::clearActiveTool(){
+void ClientController::clearActiveTool(){
     m_activeTool.reset();
 }
 
-void GameController::onBuildRoadClicked(PlayerId playerId){
+void ClientController::onBuildRoadClicked(PlayerId playerId){
     setActiveTool(std::make_unique<BuildRoadMove>(playerId, types::InvalidEdgeId));
     update();
 }
 
-void GameController::onBuildSettlementClicked(PlayerId playerId){
+void ClientController::onBuildSettlementClicked(PlayerId playerId){
     setActiveTool(std::make_unique<BuildSettlementMove>(playerId, types::InvalidNodeId));
     update();
 }
 
-void GameController::onBuildCityClicked(PlayerId playerId) {
+void ClientController::onBuildCityClicked(PlayerId playerId) {
     setActiveTool(std::make_unique<BuildCityMove>(playerId, types::InvalidNodeId));
     update();
 }
 
-void GameController::onBoardElementClicked(int elementId){
+void ClientController::onBoardElementClicked(int elementId){
     if (!m_activeTool) {
         return;
     }
@@ -75,7 +75,7 @@ void GameController::onBoardElementClicked(int elementId){
     clearActiveTool(); // if we want to enable multiple builds in a row, we can change this later
 }
 
-void GameController::onMoveReceived(Move* receivedMove){
+void ClientController::onMoveReceived(Move* receivedMove){
     std::unique_ptr<Move> move(receivedMove);
     if (!move) return;
 
@@ -89,7 +89,7 @@ void GameController::onMoveReceived(Move* receivedMove){
     emit onModelChanged(m_boardRenderState, m_toolbarRenderState); // they will be cleared since im not active player rn, this will only make view redraw for me since someone else played
 }
 
-void GameController::sendMove(const Move* move) {
+void ClientController::sendMove(const Move* move) {
     if (!m_session.applyMove(*move)) {
         qDebug() << "Tried to send invalid move!"; // for testing onl<, will be removed later
         return;

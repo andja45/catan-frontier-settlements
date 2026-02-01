@@ -16,7 +16,7 @@
 #include "renderstate/BoardRenderState.h"
 #include "renderstate/ToolbarRenderState.h"
 #
-class GameController : public QObject {
+class ClientController : public QObject {
     Q_OBJECT
 private:
     GameSession& m_session;
@@ -29,7 +29,7 @@ private:
     void setActiveTool(std::unique_ptr<Move> tool);
     void clearActiveTool();
 public:
-    GameController(GameSession &session, GameNetworkAdapter &adapter, GameWindow &gameWindow, QObject *parent);
+    ClientController(GameSession &session, GameNetworkAdapter &adapter, GameWindow &gameWindow, QObject *parent);
 
     void sendMove(const Move* move);
 public slots:
