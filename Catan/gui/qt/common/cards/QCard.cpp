@@ -41,7 +41,7 @@ void QCard::flicker(const QColor& color)
     m_flickerTimer.start();
     update();
 }
-QSize QCard::sizeHint() const { return QSize(44, 58); } // tweak later
+QSize QCard::sizeHint() const { return QSize(44, 58); }
 
 QSize QCard::minimumSizeHint() const { return QSize(20, 35); }
 
@@ -89,7 +89,7 @@ void QCard::paintEvent(QPaintEvent*) {
             base = QColor(60, 70, 180);
         else base = GameTheme::getColorByResource(m_spec.resource);
     } else {
-        base = QColor(120, 90, 160); // dev card tint for now
+        base = QColor(120, 90, 160); // dev card tint
     }
 
     // Card body
