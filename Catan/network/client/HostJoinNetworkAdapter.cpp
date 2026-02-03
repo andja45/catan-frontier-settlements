@@ -26,12 +26,12 @@ void HostJoinNetworkAdapter::connectTo(const std::string &addr, std::uint16_t po
     m_transport->connectTo(addr, port);
 }
 
-std::unique_ptr<NetworkTransport> HostJoinNetworkAdapter::getTransport() {
-    disconnect(m_transport.get(), &NetworkTransport::envelopeReceived,
+void HostJoinNetworkAdapter::setTransport(NetworkTransport *t) {
+    m_transport=t;
+    connect(m_transport, &NetworkTransport::envelopeReceived,
             this, &HostJoinNetworkAdapter::onEnvelope);
-
-    return std::move(m_transport);
 }
+
 
 void HostJoinNetworkAdapter::sendHost(std::string gameName, std::string hostName) {
     auto env=wrapHost(gameName, hostName);
@@ -59,5 +59,5 @@ void HostJoinNetworkAdapter::handleAcceptResponse(const net::Envelope &env) {
 }
 
 void HostJoinNetworkAdapter::handleRejectResponse(const net::Envelope &env) {
-    emit rejectReceived();
+    emit rejectReceived(env.setup().error().message());
 }

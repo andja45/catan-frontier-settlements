@@ -1,11 +1,35 @@
 //
-// Created by matija on 1/27/26.
+// Created by matija on 2/1/26.
 //
 
-#ifndef CATAN_HOSTAPP_HPP
-#define CATAN_HOSTAPP_HPP
+#ifndef CATAN_HOSTJOINAPP_HPP
+#define CATAN_HOSTJOINAPP_HPP
+#include <QObject>
+#include <qobjectdefs.h>
+#include <QString>
+#include <qtmetamacros.h>
+#include <RoleType.hpp>
+#include <common/AbstractApplet.hpp>
+#include <common/ApplicationRoot.hpp>
+#include <host-join/HostJoinController.hpp>
+#include <model/GameConfig.h>
+#include <screens/connect/HostJoinView.h>
 
-class HostJoinApp {
+class HostJoinApp :  public AbstractApplet {
+
+public:
+    explicit HostJoinApp(ApplicationRoot *root,QWidget*parent, RoleType role);
+
+    void show() override {m_view->show();}
+    void hide() override {m_view->hide();}
+
+private:
+
+    HostJoinView* m_view;
+    HostJoinController* m_controller;
+
+    RoleType m_role;
+
 };
 
-#endif //CATAN_HOSTAPP_HPP
+#endif //CATAN_HOSTJOINAPP_HPP

@@ -7,14 +7,13 @@
 
 #include <unordered_set>
 
-#include "../Move.h"
+#include "move/BoardMove.h"
 
-
-class BuildCityMove final : public Move{
+class BuildCityMove final : public BoardMove{
 private:
     NodeId m_nodeId; // or HexCoords + nodeIndex
 public:
-    BuildCityMove(const PlayerId playerId, const NodeId nodeId) : Move(playerId), m_nodeId(nodeId) {}
+    BuildCityMove(const PlayerId playerId, const NodeId nodeId) : BoardMove(playerId), m_nodeId(nodeId) {}
 
     MoveType type() const override { return MoveType::BuildCity; }
     bool isValid(const GameSession& session) const override;
@@ -24,6 +23,7 @@ public:
     std::unordered_set<NodeId> allValid(const GameSession &session) const;
 
     NodeId getNodeId() const {return m_nodeId;}
+    void setBoardElementId(int elementId) { m_nodeId = static_cast<NodeId>(elementId); }
 };
 
 

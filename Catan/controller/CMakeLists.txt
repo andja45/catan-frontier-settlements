@@ -1,8 +1,47 @@
 add_library(catan_controller
+        game/GameController.hpp
+        game/GameController.cpp
+        lobby/LobbyController.hpp
+        lobby/LobbyController.cpp
+        renderstate/RenderState.h
+        renderstate/BoardRenderState.h
+        renderstate/BoardRenderState.cpp
+        renderstate/ToolbarRenderState.h
+        renderstate/ToolbarRenderState.cpp
+        renderstate/ChoosePlayerRenderState.cpp
+        renderstate/ChoosePlayerRenderState.h
+        RoleType.hpp
+
+        game/GameApp.cpp
+        game/GameApp.hpp
+        lobby/LobbyApp.cpp
+        lobby/LobbyApp.hpp
+        common/ApplicationRoot.cpp
+        common/ApplicationRoot.hpp
+        common/AbstractApplet.hpp
+        RoleType.hpp
+        menu/MenuApp.hpp
+        host-join/HostJoinApp.hpp
+        host-join/HostJoinController.cpp
+        host-join/HostJoinController.hpp
+        common/NetworkService.hpp
+        host-join/HostJoinApp.cpp
+        menu/MenuApp.cpp
 
 )
-
+target_link_libraries(catan_controller
+    PUBLIC
+    catan_game
+    catan_gui_qt
+)
 target_include_directories(catan_controller
         PUBLIC
         .
+)
+
+target_link_libraries(catan_controller
+        PUBLIC
+        catan_game
+        catan_gui_qt
+        catan_network_client
 )

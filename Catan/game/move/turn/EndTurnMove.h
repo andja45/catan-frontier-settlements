@@ -9,8 +9,6 @@
 
 
 class EndTurnMove final : public Move{
-private:
-    PlayerId m_playerId;
 public:
     explicit EndTurnMove(PlayerId playerId) : Move(playerId) {}
 

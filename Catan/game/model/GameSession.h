@@ -155,6 +155,18 @@ public:
 
  void leavePlayer(PlayerId player_id);
 
+ std::unordered_map<TradeId, Trade> * getTrades(){ return &m_activeTrades; }
+
+ std::vector<Player *> getPlayers() {
+     std::vector<Player *> result;
+     for (auto& p : m_players) {
+         result.push_back(p.get());
+     }
+     return result;
+ }
+
+ Bank * getBank(){return &m_bank;}
+
  //TODO what the fuck is this indentation???
 };
 

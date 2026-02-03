@@ -16,16 +16,16 @@ class GameNetworkAdapter : public QObject {
     Q_OBJECT
 public:
     explicit GameNetworkAdapter(QObject* parent = nullptr);
-    void sendMove(const Move& move);
-    void setTransport(std::unique_ptr<NetworkTransport> transport);
-    void sendMessage(const std::string& message);
+    void sendMove(const Move* move);
+    void setTransport(NetworkTransport *transport);
+    void sendMessage(const std::string &author, const std::string &message);
 
 signals:
-    void remoteMoveReceived(std::unique_ptr<Move> move);
-    void remoteMessageReceived(const std::string& message);
+    void remoteMoveReceived(Move* move);
+    void remoteMessageReceived(const std::string& author, const std::string& message);
 
 private:
-    std::unique_ptr<NetworkTransport> m_transport;
+    NetworkTransport* m_transport;
 
     net::Envelope wrapMove(const Move& move) const;
     net::Envelope wrapMessage(const std::string& message) const;

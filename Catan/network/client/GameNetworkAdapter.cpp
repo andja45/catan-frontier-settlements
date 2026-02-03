@@ -8,6 +8,7 @@
 
 GameNetworkAdapter::GameNetworkAdapter(QObject* parent)
   : QObject(parent)
+  , m_transport(nullptr)
 {
 }
 
@@ -29,18 +30,18 @@ net::Envelope GameNetworkAdapter::wrapMessage(const std::string &message) const 
     return env;
 }
 
-void GameNetworkAdapter::sendMove(const Move& move) {
-    net::Envelope env = wrapMove(move);
+void GameNetworkAdapter::sendMove(const Move* move) {
+    net::Envelope env = wrapMove(*move);
     m_transport->sendEnvelope(env);
 }
 
-void GameNetworkAdapter::setTransport(std::unique_ptr<NetworkTransport> transport) {
-    m_transport = std::move(transport);
-    connect(m_transport.get(), &NetworkTransport::envelopeReceived,
+void GameNetworkAdapter::setTransport(NetworkTransport* transport) {
+    m_transport=transport;
+    connect(m_transport, &NetworkTransport::envelopeReceived,
             this, &GameNetworkAdapter::onEnvelope);
 }
 
-void GameNetworkAdapter::sendMessage(const std::string &message) {
+void GameNetworkAdapter::sendMessage(const std::string& author,const std::string &message) {
     m_transport->sendEnvelope(wrapMessage(message));
 }
 
@@ -53,12 +54,13 @@ void GameNetworkAdapter::onEnvelope(const net::Envelope& env) {
 }
 
 void GameNetworkAdapter::handleMessage(const net::Envelope &env) {
-    auto msg =std::string(env.chat().message().begin(), env.chat().message().end());
-    emit remoteMessageReceived(msg);
+    auto msg = std::string(env.chat().message().begin(), env.chat().message().end());
+    // Author isn't currently encoded in the protobuf envelope, so emit empty author for now.
+    emit remoteMessageReceived("", msg);
 }
 
 void GameNetworkAdapter::handleMove(const net::Envelope &env) {
     auto move = MoveProtoFactory::fromProto(env.move());
     if (move)
-        emit remoteMoveReceived(std::move(move));
+        emit remoteMoveReceived(move.release());
 }

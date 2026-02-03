@@ -14,6 +14,7 @@ private:
     static std::vector<TileDef> loadBoardFromJson(std::istream& stream);
 public:
     std::unique_ptr<Board> getBoard() override;
+
     LoadFromFileCreator(const std::string& filePath) : m_filePath(filePath) {}
 };
 

@@ -1195,10 +1195,10 @@ NLOHMANN_JSON_NAMESPACE_END
     #undef JSON_HEDLEY_CPP_CAST
 #endif
 #if defined(__cplusplus)
-#  if JSON_HEDLEY_HAS_WARNING("-Wold-style-cast")
+#  if JSON_HEDLEY_HAS_WARNING("-Wold-styles-cast")
 #    define JSON_HEDLEY_CPP_CAST(T, expr) \
     JSON_HEDLEY_DIAGNOSTIC_PUSH \
-    _Pragma("clang diagnostic ignored \"-Wold-style-cast\"") \
+    _Pragma("clang diagnostic ignored \"-Wold-styles-cast\"") \
     ((T) (expr)) \
     JSON_HEDLEY_DIAGNOSTIC_POP
 #  elif JSON_HEDLEY_IAR_VERSION_CHECK(8,3,0)
@@ -9962,7 +9962,7 @@ class binary_reader
     }
 
     /*!
-    @brief Parses a C-style string from the BSON input.
+    @brief Parses a C-styles string from the BSON input.
     @param[in,out] result  A reference to the string variable where the read
                             string is to be stored.
     @return `true` if the \x00-byte indicating the end of the string was

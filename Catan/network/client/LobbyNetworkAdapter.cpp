@@ -26,14 +26,10 @@ void LobbyNetworkAdapter::sendStartRequest(const Board &board) const {
     m_transport->sendEnvelope(wrapStartRequest(board));
 }
 
-std::unique_ptr<NetworkTransport> LobbyNetworkAdapter::getTransport() {
-    return std::move(m_transport);
-}
-
-void LobbyNetworkAdapter::setTransport(std::unique_ptr<NetworkTransport> transport) {
-    m_transport = std::move(transport);
-    connect(m_transport.get(), &NetworkTransport::envelopeReceived,
-            this, &LobbyNetworkAdapter::onEnvelope);
+void LobbyNetworkAdapter::setTransport(NetworkTransport *transport) {
+    m_transport=transport;
+    connect(m_transport, &NetworkTransport::envelopeReceived,
+                this, &LobbyNetworkAdapter::onEnvelope);
 }
 
 net::Envelope LobbyNetworkAdapter::wrapConfig(const GameConfig &config) const {
@@ -93,5 +89,5 @@ void LobbyNetworkAdapter::handleGameStarted(const net::Envelope &env) {
     auto seed=data.seed();
     auto protoConfig=data.game_config();
     auto protoBoard=data.board_info();
-    emit gameStarted(myId, seed, ConfigFactory::fromProto(protoConfig), BoardFactory::fromProto(protoBoard));
+    emit gameStarted(myId, seed, ConfigFactory::fromProto(protoConfig), BoardFactory::fromProto(protoBoard).release());
 }

@@ -8,6 +8,8 @@
 #include <unordered_set>
 
 #include "RenderState.h"
+#include "move/MoveType.h"
+#include "../../game/types/TypeAliases.h"
 #include "types/TypeAliases.h"
 
 
@@ -16,7 +18,10 @@ private:
     std::unordered_set<NodeId> m_highlightedNodes;
     std::unordered_set<EdgeId> m_highlightedEdges;
     std::unordered_set<TileId> m_highlightedTiles;
+    std::unordered_set<PlayerId> m_highlightedPlayers;
 public:
+    BoardRenderState() = default;
+    void setHighlighted(std::unordered_set<int> ids, MoveType type);
     void setHighlightedNodes(std::unordered_set<NodeId> nodes) {
         m_highlightedNodes = std::move(nodes);
     }
@@ -28,10 +33,16 @@ public:
     void setHighlightedTiles(std::unordered_set<TileId> tiles) {
         m_highlightedTiles = std::move(tiles);
     }
+    std::vector<EdgeId> getHighlightedEdges() const;
+    std::vector<NodeId> getHighlightedNodes() const;
+    std::vector<TileId> getHighlightedTiles() const;
 
     bool isNodeHighlighted(NodeId nodeId) const;
     bool isEdgeHighlighted(EdgeId edgeId) const;
     bool isTileHighlighted(TileId tileId) const;
+    bool isPlayerHighlighted(PlayerId playerId) const;
+
+    void clear(); // called after endmove applied (everything disabled until renderstate updated again)
 };
 
 

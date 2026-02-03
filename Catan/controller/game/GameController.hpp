@@ -5,7 +5,88 @@
 #ifndef CATAN_GAMECONTROLLER_HPP
 #define CATAN_GAMECONTROLLER_HPP
 
-class GameController {
+#include <QObject>
+#include <memory>
+#include <renderstate/ChoosePlayerRenderState.h>
+#include <screens/game/GameWindow.h>
+
+#include "GameNetworkAdapter.h"
+#include "model/GameSession.h"
+#include "renderstate/BoardRenderState.h"
+#include "renderstate/ToolbarRenderState.h"
+#
+class GameController : public QObject {
+    Q_OBJECT
+private:
+    GameSession& m_session;
+    PlayerId m_localPlayerId = m_session.localPlayer();
+    bool isLocalPlayersTurn(const char* action) const;
+    GameNetworkAdapter* m_adapter;
+
+    BoardRenderState m_boardRenderState;
+    ToolbarRenderState m_toolbarRenderState;
+
+    std::unique_ptr<Move> m_activeTool;
+    void setActiveTool(std::unique_ptr<Move> tool);
+    void clearActiveTool();
+public:
+    GameController(GameSession &session, NetworkTransport* transport, GameWindow &gameWindow, QObject *parent);
+
+    // GLOBAL
+    void sendMove(const Move* move);
+    void update();
+    void updateActiveToolOnPhase();
+public slots:
+    // TOOLBAR
+    // BUILD:
+    void onBuildRoadClicked();
+    void onBuildSettlementClicked();
+    void onBuildCityClicked();
+
+    // DEVCARDS:
+    void onBuyDevCardClicked();
+    void onUseDevCardClicked(DevCardType cardType);
+    void onStealCardPlayerChosen(PlayerId victimId);
+    void onMonopolyResourceChosen(ResourceType resource);
+    void onYearOfPlentyResourcesChosen(ResourceType resource1, ResourceType resource2);
+
+    // ROBBER:
+    void onDiscardCardsSent(const ResourcePack& discarded);
+
+    // TRADE:
+    void onPlayerTradeRequestSent(const ResourcePack& give, const ResourcePack& receive);
+    void onPlayerTradeResponseSent(TradeId tradeRequestId);
+    void onPlayerTradeAcceptSent(TradeId tradeId, PlayerId acceptedPlayerId);
+
+    void onBankTradeSent(ResourceType give, ResourceType receive);
+
+    // TURN:
+    void onRollDiceClicked();
+    void onEndTurnClicked();
+
+    // BOARD
+    void onBoardElementClicked(int elementId); // in gui sends signal and unhecks button
+
+    // NETWORK
+    void onMoveReceived(Move* move);
+
+    void onModelChanged(const BoardRenderState& state,
+                            const ToolbarRenderState& toolbarState);
+    signals:
+        void buildPlaced();
+        void gameClosed();
+
+        void updateToolbar(const ToolbarRenderState&);
+        void updateBoard(const BoardRenderState&);
+        void updateActivePlayer(int id);
+        void updateChoosePlayer(const ChoosePlayerRenderState& rs);
+
+        void setDiscard();
+        void gameOver();
+        void gameWon();
+
+        void redraw();
+
 };
 
 #endif //CATAN_GAMECONTROLLER_HPP

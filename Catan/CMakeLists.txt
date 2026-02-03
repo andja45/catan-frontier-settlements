@@ -22,8 +22,20 @@ endif()
 add_subdirectory(libs)
 add_subdirectory(game)
 add_subdirectory(gui)
-add_subdirectory(app)
 add_subdirectory(network)
+add_subdirectory(controller)
+
+option(BUILD_CLIENT "Build the client executable" ON)
+option(BUILD_SERVER "Build the server executable" OFF)
+
+
+if(BUILD_CLIENT)
+    add_subdirectory(appClient)
+endif()
+
+if(BUILD_SERVER)
+    add_subdirectory(appServer)
+endif()
 
 #set_target_properties(catan_gui_qt PROPERTIES
 #        CXX_CLANG_TIDY ""

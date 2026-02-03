@@ -32,6 +32,11 @@ public:
     int getMaxPlayers() const {return numPlayers;}
     std::vector<std::string> getPlayerNames() const {return players;}
     int getPointsToWin() const {return winningVictoryPoints;}
+
+    void setBoardType(BoardType boardType) {this->boardType=boardType;}
+    void setNumPlayers(int numPlayers) {this->numPlayers=numPlayers;}
+    void setWinningPoints(int winningPoints) {this->winningVictoryPoints=winningPoints;}
+
 };
 
 #endif //CATAN_GAMECONFIG_H
