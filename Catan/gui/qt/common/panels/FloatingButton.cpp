@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "common/AudioManager.h"
+#include "common/audio/AudioManager.h"
 
 FloatingButton::FloatingButton(QWidget* parent)
     : QPushButton(parent)

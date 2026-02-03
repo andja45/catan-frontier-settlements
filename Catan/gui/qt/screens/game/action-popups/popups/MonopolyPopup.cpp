@@ -11,7 +11,7 @@
 
 #include <qevent.h>
 
-#include "common/AudioManager.h"
+#include "common/audio/AudioManager.h"
 
 MonopolyPopup::MonopolyPopup(QWidget *parent)
     : FloatingPanel( parent,Qt::Dialog)

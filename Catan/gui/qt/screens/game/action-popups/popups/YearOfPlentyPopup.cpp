@@ -16,7 +16,7 @@
 #include <common/cards/QCard.h>
 #include <player/Bank.h>
 
-#include "common/AudioManager.h"
+#include "common/audio/AudioManager.h"
 
 
 YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)

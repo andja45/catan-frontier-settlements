@@ -11,7 +11,7 @@
 
 #include <QRegularExpression>
 
-#include "common/AudioManager.h"
+#include "common/audio/AudioManager.h"
 #include "screens/game/action-popups/ActionManager.hpp"
 
 QString Chat::emojify(QString text)

@@ -6,7 +6,7 @@
 #include <screens/game/game-overlay/GameOverlay.hpp>
 #include <QPropertyAnimation>
 
-#include "common/AudioManager.h"
+#include "common/audio/AudioManager.h"
 
 GameOverlay::GameOverlay(QWidget* parent)
     : QWidget(parent)
