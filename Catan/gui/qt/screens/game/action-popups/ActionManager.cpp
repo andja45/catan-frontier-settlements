@@ -22,8 +22,8 @@ ActionManager::ActionManager(std::vector<Player*> players,PlayerId local, Bank *
 
 }
 
-void ActionManager::setStealCandidates(const std::vector<Player *> &candidates) {
-    m_stealPopup->setCandidates(QVector<Player*>(candidates.begin(), candidates.end()));
+void ActionManager::setStealCandidates(const ChoosePlayerRenderState &rs) {
+    openStealCardPopup(rs.getPlayers());
 }
 
 void ActionManager::openActionPopup(DevCardType type) {

@@ -56,7 +56,7 @@ BoardToolbar::BoardToolbar(Player* player,QWidget* parent) : QWidget(parent), m_
 
 }
 
-void BoardToolbar::updateState(ToolbarRenderState rs) {
+void BoardToolbar::updateState(const ToolbarRenderState& rs) {
     // we unclick build buttons here, consider changing
     clearBuildSelection();
     for (auto& [action, button] : m_buttons.toStdMap()) {

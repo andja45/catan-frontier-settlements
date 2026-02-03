@@ -2,7 +2,7 @@
 #include <common/theme/GameTheme.h>
 #include <QPainter>
 #include <QMouseEvent>
-#include <common/AudioManager.h>
+#include <common/audio/AudioManager.h>
 
 static QString devLabel(DevCardType t) {
     switch (t) {

@@ -14,7 +14,7 @@ public:
     explicit PulseState(QObject* parent = nullptr)
         : QObject(parent)
     {
-        m_timer.setInterval(16);
+        m_timer.setInterval(30);
         connect(&m_timer, &QTimer::timeout, this, &PulseState::tick);
         m_timer.start();
     }

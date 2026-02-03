@@ -1,6 +1,6 @@
 #include "QBoard.h"
 
-#include "common/AudioManager.h"
+#include "../../../common/audio/AudioManager.h"
 #include <QPainter>
 #include <QMouseEvent>
 #include <QTimer>
@@ -204,15 +204,18 @@ void QBoard::mousePressEvent(QMouseEvent* e) {
     if (e->button() != Qt::LeftButton) return;
 
     if (m_hoveredQEdge) {
-        edgeClicked(m_hoveredQEdge->edge()->getEdgeId());
+        emit edgeClicked(m_hoveredQEdge->edge()->getEdgeId());
+        emit elementClicked(m_hoveredQEdge->edge()->getEdgeId());
     }
 
     if (m_hoveredQNode) {
-        nodeClicked(m_hoveredQNode->node()->getNodeId());
+        emit nodeClicked(m_hoveredQNode->node()->getNodeId());
+        emit elementClicked(m_hoveredQNode->node()->getNodeId());
     }
 
     if (m_placingRobber && m_hoveredQTile) {
-        tileClicked(m_hoveredQTile->tile()->getTileId());
+        emit tileClicked(m_hoveredQTile->tile()->getTileId());
+        emit elementClicked(m_hoveredQTile->tile()->getTileId());
     }
 }
 
@@ -245,12 +248,12 @@ void QBoard::clearHighlights() {
 
 }
 
-void QBoard::update(const BoardRenderState *renderState) {
+void QBoard::update(const BoardRenderState &renderState) {
     clearHighlights();
 
-    setHighlightedTiles(renderState->getHighlightedTiles());
-    setHighlightedNodes(renderState->getHighlightedNodes());
-    setHighlightedEdges(renderState->getHighlightedEdges());
+    setHighlightedTiles(renderState.getHighlightedTiles());
+    setHighlightedNodes(renderState.getHighlightedNodes());
+    setHighlightedEdges(renderState.getHighlightedEdges());
 
     QWidget::update();
 }

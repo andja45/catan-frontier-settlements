@@ -1,8 +1,6 @@
 add_library(catan_controller
         game/GameController.hpp
         game/GameController.cpp
-        host-join/HostJoinController.hpp
-        host-join/HostJoinController.cpp
         lobby/LobbyController.hpp
         lobby/LobbyController.cpp
         renderstate/RenderState.h
@@ -12,7 +10,24 @@ add_library(catan_controller
         renderstate/ToolbarRenderState.cpp
         renderstate/ChoosePlayerRenderState.cpp
         renderstate/ChoosePlayerRenderState.h
-        host-join/RoleType.hpp
+        RoleType.hpp
+
+        game/GameApp.cpp
+        game/GameApp.hpp
+        lobby/LobbyApp.cpp
+        lobby/LobbyApp.hpp
+        common/ApplicationRoot.cpp
+        common/ApplicationRoot.hpp
+        common/AbstractApplet.hpp
+        RoleType.hpp
+        menu/MenuApp.hpp
+        host-join/HostJoinApp.hpp
+        host-join/HostJoinController.cpp
+        host-join/HostJoinController.hpp
+        common/NetworkService.hpp
+        host-join/HostJoinApp.cpp
+        menu/MenuApp.cpp
+
 )
 target_link_libraries(catan_controller
     PUBLIC

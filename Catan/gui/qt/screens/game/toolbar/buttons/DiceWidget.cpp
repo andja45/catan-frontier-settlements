@@ -1,6 +1,6 @@
 #include "DiceWidget.h"
 
-#include "common/AudioManager.h"
+#include "../../../../common/audio/AudioManager.h"
 #include <QPainter>
 #include <QMouseEvent>
 #include <QtMath>

@@ -32,7 +32,7 @@ public:
     GameOverlay* getOverlay() { return m_gameOverlay; }
     void paintEvent(QPaintEvent*);
 protected:
-
+    void closeEvent(QCloseEvent *event);
     void keyPressEvent(QKeyEvent* event) override;
 private:
     QBoard* m_qboard;
@@ -50,5 +50,8 @@ private:
     Bank* m_bank;
 
     std::unordered_map<TradeId,Trade>* m_trades;
+
+signals:
+    void closed();
 };
 #endif // WIDGET_H

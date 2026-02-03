@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <memory>
+#include <renderstate/ChoosePlayerRenderState.h>
 #include <screens/game/GameWindow.h>
 
 #include "GameNetworkAdapter.h"
@@ -20,7 +21,7 @@ private:
     GameSession& m_session;
     PlayerId m_localPlayerId = m_session.localPlayer();
     bool isLocalPlayersTurn(const char* action) const;
-    GameNetworkAdapter& m_adapter;
+    GameNetworkAdapter* m_adapter;
 
     BoardRenderState m_boardRenderState;
     ToolbarRenderState m_toolbarRenderState;
@@ -29,7 +30,7 @@ private:
     void setActiveTool(std::unique_ptr<Move> tool);
     void clearActiveTool();
 public:
-    GameController(GameSession &session, GameNetworkAdapter &adapter, GameWindow &gameWindow, QObject *parent);
+    GameController(GameSession &session, NetworkTransport* transport, GameWindow &gameWindow, QObject *parent);
 
     // GLOBAL
     void sendMove(const Move* move);
@@ -69,11 +70,23 @@ public slots:
     // NETWORK
     void onMoveReceived(Move* move);
 
-    signals:
-        void onModelChanged(const BoardRenderState& state,
+    void onModelChanged(const BoardRenderState& state,
                             const ToolbarRenderState& toolbarState);
-
+    signals:
         void buildPlaced();
+        void gameClosed();
+
+        void updateToolbar(const ToolbarRenderState&);
+        void updateBoard(const BoardRenderState&);
+        void updateActivePlayer(int id);
+        void updateChoosePlayer(const ChoosePlayerRenderState& rs);
+
+        void setDiscard();
+        void gameOver();
+        void gameWon();
+
+        void redraw();
+
 };
 
 #endif //CATAN_GAMECONTROLLER_HPP

@@ -29,14 +29,14 @@ public:
     void clearHighlights();
 // TODO controller connect here <<<
 public slots:
-    void update(const BoardRenderState *renderState);
+    void update(const BoardRenderState& renderState);
     void onPlayBuildFeedback();
 
 signals:
     void tileClicked(TileId tileId);
     void nodeClicked(NodeId nodeId);
     void edgeClicked(EdgeId edgeId);
-
+    void elementClicked(int id);
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent* e) override;

@@ -86,11 +86,11 @@ int main(int argc, char *argv[])
     GameWindow w(board.get(),m_players,2,m_bank,&trades,nullptr);
 
     HostJoinView* host=new HostJoinView(RoleType::Host);
-    HostJoinView* join=new HostJoinView(RoleType::Join);
+    HostJoinView* join=new HostJoinView(RoleType::Player);
     host->show();
 
     LobbyView* lobby1=new LobbyView("Najbolji catan",RoleType::Host,nullptr);
-    LobbyView* lobby2=new LobbyView("Najbolji catan",RoleType::Join,nullptr);
+    LobbyView* lobby2=new LobbyView("Najbolji catan",RoleType::Player,nullptr);
     lobby1->show();
 
     GameHistory* gameHist=new GameHistory();
@@ -123,7 +123,18 @@ int main(int argc, char *argv[])
     rs.setHighlightedNodes({NodeId{3},NodeId{13},NodeId{22}});
     rs.setHighlightedTiles({TileId{2},TileId{16},TileId{21}});
 
-    w.getBoard()->update(&rs);
+    w.getBoard()->update(rs);
+
+    auto go=w.getOverlay();
+    bool toggle1=false;
+    auto* shortcutWon = new QShortcut(QKeySequence(Qt::Key_W), &w);
+    w.connect(shortcutWon, &QShortcut::activated, go,[&toggle1,go](){if (toggle1) go->showGameWon(); else go->hideOverlay(); toggle1=!toggle1;});
+
+    bool toggle2=false;
+    auto* shortcutOver = new QShortcut(QKeySequence(Qt::Key_L), &w);
+    w.connect(shortcutOver, &QShortcut::activated, go,[&toggle2,go](){if (toggle2) go->showGameOver(); else go->hideOverlay();toggle2=!toggle2;});
+
+
 
     return a.exec();
 }

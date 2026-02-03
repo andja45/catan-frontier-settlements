@@ -56,7 +56,7 @@ LobbyView::LobbyView(const std::string &gameName,RoleType type, QWidget *parent)
     resize(600, 400);
 
 
-    if (type == RoleType::Join) {
+    if (type == RoleType::Player) {
         disableAll();
     }
 

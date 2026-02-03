@@ -71,7 +71,8 @@ signals:
     void buildSettlementClicked();
     void buildCityClicked();
 
+
 public slots:
-    void updateState(ToolbarRenderState rs);
+    void updateState(const ToolbarRenderState& rs);
 };
 #endif // BOARDTOOLBAR_H
