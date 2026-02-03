@@ -1,6 +1,6 @@
 #include "ChooseDevCardPopup.h"
 
-#include "common/AudioManager.h"
+#include "../../../../common/audio/AudioManager.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>

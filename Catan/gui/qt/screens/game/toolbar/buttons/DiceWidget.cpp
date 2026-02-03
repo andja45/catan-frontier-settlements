@@ -1,6 +1,6 @@
 #include "DiceWidget.h"
 
-#include "common/AudioManager.h"
+#include "../../../../common/audio/AudioManager.h"
 #include <QPainter>
 #include <QMouseEvent>
 #include <QtMath>
@@ -49,7 +49,7 @@ void DiceWidget::paintEvent(QPaintEvent*)
         p.setBrush(QColor(255, 255, 255, 60)); // translucent highlight
         p.drawRoundedRect(r, 8, 8);
 
-        // optional border glow
+        // border glow
         QPen glow(QColor(0, 0, 0, 60));
         glow.setWidthF(2.0);
         p.setBrush(Qt::NoBrush);

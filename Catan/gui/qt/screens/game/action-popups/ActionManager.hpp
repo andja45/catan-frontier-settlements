@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <player/Player.h>
+#include <renderstate/ChoosePlayerRenderState.h>
 
 struct DiscardChoice;
 struct YearOfPlentyChoice;
@@ -31,7 +32,7 @@ public:
     ActionManager(std::vector<Player *> players, PlayerId local, Bank *bank, QWidget *parent, QWidget *anchor);
 
 public slots:
-    void setStealCandidates(const std::vector<Player*>& candidates);
+    void setStealCandidates(const ChoosePlayerRenderState& rs);
 
     void openActionPopup(DevCardType type);
     void openDiscardPopup();

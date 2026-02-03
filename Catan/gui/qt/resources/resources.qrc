@@ -14,5 +14,9 @@
         <file>audio/victory.wav</file>
         <file>audio/defeat.wav</file>
     </qresource>
+    <qresource prefix="/">
+
+    </qresource>
+
 
 </RCC>

@@ -84,6 +84,11 @@ void GameWindow::paintEvent(QPaintEvent *paint_event) {
 
 }
 
+void GameWindow::closeEvent(QCloseEvent *event) {
+    emit closed();
+    QWidget::closeEvent(event);
+}
+
 void GameWindow::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_F11) {

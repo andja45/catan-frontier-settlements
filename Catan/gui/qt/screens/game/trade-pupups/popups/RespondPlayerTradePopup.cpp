@@ -1,6 +1,6 @@
 #include "RespondPlayerTradePopup.h"
 
-#include "common/AudioManager.h"
+#include "../../../../common/audio/AudioManager.h"
 #include "player/Player.h"
 
 RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offer, TradeId tradeId , QWidget *parent) : FloatingPanel(parent)

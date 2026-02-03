@@ -9,7 +9,7 @@
 #include "../../game/types/MapType.h"
 #include <QListWidgetItem>
 #include <QFileDialog>
-#include <host-join/RoleType.hpp>
+#include <RoleType.hpp>
 #include <model/GameConfig.h>
 
 
@@ -51,8 +51,8 @@ signals:
 
     void kickPlayerRequested(const QString &playerName);
     void addBotRequested(const QString &difficulty);
-    void customMapSelected(const QString& filePath);
 
+    void customMapSelected(const QString& filePath);
     void configChanged(const GameConfig& config);
 
 public slots:

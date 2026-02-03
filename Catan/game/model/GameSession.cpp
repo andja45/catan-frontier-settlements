@@ -319,3 +319,4 @@ void GameSession::leavePlayer(PlayerId player_id) {
     player(player_id).setLeft();
     m_numOfActivePlayers--;
 }
+

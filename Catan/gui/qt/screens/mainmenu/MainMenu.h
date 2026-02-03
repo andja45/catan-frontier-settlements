@@ -10,7 +10,14 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-private:
+    void closeEvent(QCloseEvent *event) override;
+signals:
+    void hostGame();
+    void joinGame();
+    void history();
+
+    void quit();
+
 };
 
 

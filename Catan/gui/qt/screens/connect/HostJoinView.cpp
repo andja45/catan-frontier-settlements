@@ -2,8 +2,13 @@
 
 #include <screens/connect/HostJoinView.h>
 
+void HostJoinView::closeEvent(QCloseEvent *event) {
+    emit closed();
+    QDialog::closeEvent(event);
+}
+
 HostJoinView::HostJoinView(RoleType type,QWidget *parent)
-    : QWidget(parent), m_type(type)
+    : QDialog(parent), m_type(type)
 {
     m_gameNameEdit = new QLineEdit(this);
     m_playerNameEdit = new QLineEdit(this);
@@ -57,10 +62,6 @@ void HostJoinView::onRejected(const std::string &reason = "Couldn't join game.")
 {
     m_errorLabel->setText(QString::fromStdString(reason));
     m_errorLabel->setVisible(true);
-}
-
-void HostJoinView::onAccepted() {
-    close();
 }
 
 void HostJoinView::clearError()

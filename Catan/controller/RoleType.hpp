@@ -7,7 +7,7 @@
 
 enum class RoleType {
     Host,
-    Join
+    Player
 };
 
 #endif //CATAN_HOSTJOINTYPE_HPP

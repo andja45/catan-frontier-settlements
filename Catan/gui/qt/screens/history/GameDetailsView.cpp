@@ -5,7 +5,7 @@ QGroupBox* GameDetailsView::SetBasicInfo(const GameData &game){
     auto *infoLayout = new QHBoxLayout(infoBox);
 
     infoLayout->addWidget(new QLabel(
-        QString("Game name: %1").arg(game.getGameName()), this));
+        QString("Game name: %1").arg(game.getGameName().data()), this));
 
     infoLayout->addWidget(new QLabel(
         QString("Date: %1")

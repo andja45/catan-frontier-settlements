@@ -28,7 +28,6 @@ YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_StyledBackground, false);
 
-    // only styles controls, not QFrame
     setStyleSheet(R"(
         QPushButton {
             padding: 6px 10px;
@@ -100,7 +99,7 @@ void YearOfPlentyPopup::updateUiState() {
         CardSpec s = c->spec();
         s.countBadge = m_choice.receive[rt];
 
-        // Optional: “disable look” when bank is empty
+        // “disable look” when bank is empty
         const bool bankHasAny = (m_bankResources.count(rt) ? m_bankResources.at(rt) : 0) > 0;
         if (!bankHasAny)
             s.disabled=true;
@@ -126,7 +125,7 @@ void YearOfPlentyPopup::rebuild() {
         CardSpec spec;
         spec.kind = CardKind::Resource;
         spec.resource = rt;
-        spec.dev = DevCardType::None;     // adjust if your CardSpec expects this
+        spec.dev = DevCardType::None;
         spec.countBadge = 0;              // selected amount
         QCard* card = m_row->addCard(spec);
 
