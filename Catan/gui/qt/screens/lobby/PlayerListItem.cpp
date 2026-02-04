@@ -1,21 +1,15 @@
 #include "PlayerListItem.h"
+#include <QHBoxLayout>
 
+PlayerListItem::PlayerListItem(const QColor& color, const QString& playerName, QWidget* parent)
+    : FloatingPanel(parent) {
 
-PlayerListItem::PlayerListItem(const QString &playerName, QWidget *parent)
-    : QWidget(parent), m_playerName(playerName)
-{
-    auto *nameLabel = new QLabel(playerName, this);
-    auto *kickButton = new QPushButton("Kick", this);
+    auto* layout = new QHBoxLayout(this);
+    layout->setContentsMargins(10, 6, 10, 6);
+    layout->setSpacing(0);
 
-    kickButton->setFixedWidth(50);
+    auto* dotText = new DotAndText(color, playerName, this);
 
-    auto *layout = new QHBoxLayout(this);
-    layout->addWidget(nameLabel);
+    layout->addWidget(dotText);
     layout->addStretch();
-    layout->addWidget(kickButton);
-
-
-    connect(kickButton, &QPushButton::clicked, this, [this]() {
-        emit kickRequested(m_playerName);
-    });
 }
