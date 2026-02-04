@@ -7,13 +7,16 @@
 #include <QLabel>
 #include <QPushButton>
 
-class PlayerListItem : public QWidget {
+#include "common/panels/FloatingPanel.h"
+#include "common/player/PlayerDot.h"
+
+class PlayerListItem : public FloatingPanel {
     Q_OBJECT
 
 private:
     QString m_playerName;
 public:
-    explicit PlayerListItem(const QString &playerName, QWidget *parent = nullptr);
+    explicit PlayerListItem(const QColor &color, const QString &playerName, QWidget *parent = nullptr);
 
 signals:
     void kickRequested(const QString &playerName);

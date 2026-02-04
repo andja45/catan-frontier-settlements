@@ -1,63 +1,77 @@
-#ifndef GAMEHOSTVIEW_H
-#define GAMEHOSTVIEW_H
+#ifndef LOBBYVIEW_H
+#define LOBBYVIEW_H
 
-#include <QLineEdit>
-#include <QSpinBox>
-#include <QGroupBox>
-#include "PlayerListItem.h"
-#include <QRadioButton>
-#include "../../game/types/MapType.h"
-#include <QListWidgetItem>
-#include <QFileDialog>
+#include <QWidget>
+#include <QString>
+#include <QListWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QSlider>
+#include <QButtonGroup>
+#include <QFrame>
+
 #include <RoleType.hpp>
 #include <model/GameConfig.h>
-
 
 class LobbyView : public QWidget {
     Q_OBJECT
 private:
-
     QString m_gameName;
-    QLabel *m_playerCountLabel;
-    QListWidget *m_playerList;
+
+    // Left
+    QLabel* m_playerCountLabel = nullptr;
+    QListWidget* m_playerList = nullptr;
+
+    // Right - config UI
+    QLabel* m_errorLabel = nullptr;
+
+    QButtonGroup* m_mapButtonGroup = nullptr;
+    QPushButton* m_normalBtn = nullptr;
+    QPushButton* m_extendedBtn = nullptr;
+    QPushButton* m_customBtn = nullptr;
+
+    QPushButton* m_loadBoardButton = nullptr;
     QString m_customMapPath;
-    QLabel *m_errorLabel;
 
-    QSpinBox *m_maxPlayersSpin;
-    QSpinBox *m_pointsToWinSpin;
+    QSlider* m_playersSlider = nullptr;
+    QLabel*  m_playersBubble = nullptr;
 
-    QButtonGroup *m_mapButtonGroup;
-    QRadioButton *m_classicMapRadio;
-    QRadioButton *m_extendedMapRadio;
-    QRadioButton *m_customMapRadio;
-    QPushButton *m_loadBoardButton;
-    QPushButton *m_startButton;
-    QGroupBox* setMapSelect();
+    QSlider* m_pointsSlider = nullptr;
+    QLabel*  m_pointsBubble = nullptr;
+
+    QPushButton* m_startButton = nullptr;
+
+    QWidget* makePlayersCard();
+    QWidget* makeSettingsCard();
     void addAddBotEntry();
+
+    void setMapButtonsEnabled(bool on);
+    void setControlsEnabled(bool on);
 public:
+    explicit LobbyView(const std::string& gameName, RoleType type, QWidget* parent = nullptr);
+
     void disableAll();
 
-    explicit LobbyView(const std::string &gameName,RoleType type, QWidget *parent = nullptr);
-
     void setPlayerCount(int count);
-    void addPlayer(const QString &playerName);
-    void removePlayer(const QString &playerName);
+    void addPlayer(const QString& playerName);
 
-    GameConfig getConfig(); //get config from fields
-    void setConfig(const GameConfig &config); //set fields from config
+    GameConfig getConfig() const;
+    void setConfig(const GameConfig &config);
 
-signals:
-    void startGameRequested(GameConfig config, std::string boardPath="");
-
-    void kickPlayerRequested(const QString &playerName);
-    void addBotRequested(const QString &difficulty);
-
-    void customMapSelected(const QString& filePath);
-    void configChanged(const GameConfig& config);
+    signals:
+        void startGameRequested(GameConfig config, std::string boardPath="");
+        void customMapSelected(const QString& filePath);
+        void configChanged(const GameConfig& config);
 
 public slots:
     void onAddPlayer(const QString &playerName);
-    void onRemovePlayer(const QString &playerName);
     void onConfigChanged(const GameConfig &config);
+
+private:
+    void buildUi(RoleType type);
+    QFrame* makeCard();
+    QPushButton* makeMapButton(const QString& text);
+    QLabel* makeBubbleLabel(const QString& text);
 };
-#endif // GAMEHOSTVIEW_H
+
+#endif // LOBBYVIEW_H
