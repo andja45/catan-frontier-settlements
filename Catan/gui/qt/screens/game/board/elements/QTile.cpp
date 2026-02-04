@@ -4,6 +4,7 @@
 #include <types/TypeAliases.h>
 #include "QTile.h"
 
+#include <QPainterPath>
 #include <common/theme/GameTheme.h>
 
 void QTile::updateGeometry(const QPointF& center, double size) {
@@ -50,21 +51,54 @@ QVector<QPointF> QTile::hexPolygonPoints(const QPointF& center, double size) {
     return pts;
 }
 
+static void drawRobber(QPainter& p, const QPointF& c, double size)
+{
+    p.save();
+    p.setRenderHint(QPainter::Antialiasing, true);
+
+    const double r = size * 0.18;                 // robber “head” radius
+    const QPointF headC(c.x(), c.y() - size*0.06);
+
+    QColor fill(50, 50, 50, 240);
+    QPen pen(Qt::black);
+    pen.setWidthF(std::max(1.2, size * 0.02));
+    p.setPen(pen);
+    p.setBrush(fill);
+
+    // head
+    p.drawEllipse(headC, r, r);
+
+    // hood/body (rounded triangle)
+    QPainterPath hood;
+    hood.moveTo(headC.x(), headC.y() - r * 0.9);
+    hood.quadTo(QPointF(headC.x() - r*1.3, headC.y() + r*0.2), QPointF(headC.x() - r*1.2, headC.y() + r*1.9));
+    hood.quadTo(QPointF(headC.x(),          headC.y() + r*2.4), QPointF(headC.x() + r*1.2, headC.y() + r*1.9));
+    hood.quadTo(QPointF(headC.x() + r*1.3, headC.y() + r*0.2), QPointF(headC.x(), headC.y() - r*0.9));
+    p.drawPath(hood);
+
+    // tiny “eyes” (optional, comment out if too much)
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor(220, 220, 220, 180));
+    p.drawEllipse(QPointF(headC.x() - r*0.35, headC.y() - r*0.10), r*0.12, r*0.12);
+    p.drawEllipse(QPointF(headC.x() + r*0.35, headC.y() - r*0.10), r*0.12, r*0.12);
+
+    p.restore();
+}
+
 void QTile::paint(QPainter& p, double size) {
     if (!m_tile) return;
 
-    // fill
     p.setBrush(brushFor(m_tile->getResourceType()));
+    p.setPen(QPen(Qt::black, 2));
     p.drawPolygon(m_poly);
 
-    // hover overlay (robber mode)
     if (m_hovered) {
-        p.save();
-        p.setBrush(QBrush(GameTheme::getGrayColor()));
-        p.setPen(Qt::NoPen);
-        p.drawPolygon(m_poly);
-        p.restore();
-    }
+            p.save();
+            p.setBrush(QBrush(GameTheme::getGrayColor()));
+            p.setPen(Qt::NoPen);
+            p.drawPolygon(m_poly);
+            p.restore();
+        }
 
     if (m_highlighted) {
         p.save();
@@ -75,18 +109,45 @@ void QTile::paint(QPainter& p, double size) {
         p.restore();
     }
 
-    // number token
+    const bool robberOn = m_tile->isRobberOnTile();
+    const bool isDesert = (m_tile->getResourceType() == ResourceType::Desert);
     const int num = m_tile->getNumber();
-    if (num == 7) return;
+    const double tokenR = size / 3.0; // token radius
 
-    p.save();
-    p.setBrush(QColor(240, 240, 210));
-    p.drawEllipse(m_center, size / 3.0, size / 3.0);
+    if (robberOn) {
+        if (isDesert) {
+            drawRobber(p, m_center, size);
+            return;
+        }
 
-    QFont font("Arial", size / 60.0 * (28 - 2.5 * std::abs(7 - num)));
-    p.setFont(font);
-    p.setPen((num == 6 || num == 8) ? QColor(255,0,0) : QColor(0,0,0));
+        p.save();
 
-    p.drawText(m_tokenRect, Qt::AlignCenter, QString::number(num));
-    p.restore();
+        p.setBrush(QColor(240, 240, 210));
+        p.setPen(QPen(Qt::black, std::max(1.2, size * 0.02)));
+        p.drawEllipse(m_center, tokenR, tokenR);
+
+        QPainterPath clip;
+        clip.addEllipse(m_center, tokenR * 0.98, tokenR * 0.98);
+        p.setClipPath(clip);
+
+        drawRobber(p, m_center, size);
+
+        p.restore();
+        return;
+    }
+
+    if (!isDesert) {
+        p.save();
+        p.setBrush(QColor(240, 240, 210));
+        p.setPen(QPen(Qt::black, std::max(1.2, size * 0.02)));
+        p.drawEllipse(m_center, tokenR, tokenR);
+
+        QFont font("Arial", size / 60.0 * (28 - 2.5 * std::abs(7 - num)));
+        p.setFont(font);
+        p.setPen((num == 6 || num == 8) ? QColor(255,0,0) : QColor(0,0,0));
+        p.drawText(m_tokenRect, Qt::AlignCenter, QString::number(num));
+
+        p.restore();
+    }
 }
+
