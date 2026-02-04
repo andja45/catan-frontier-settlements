@@ -62,6 +62,26 @@ static void applyHostJoinStyle(QWidget* w) {
             color: #b00020;
             font-weight: 900;
         }
+
+        QPushButton#ActionBtn:hover {
+            background-color: #3A93D4;
+            border-color: #2C7FB8;
+        }
+
+        QPushButton#ActionBtn:pressed {
+            background-color: #1F6FA5;
+            border-color: #184F75;
+        }
+
+        QPushButton#BackBtn:hover {
+            background-color: #EAF2F8;
+            border-color: #6FA3C7;
+        }
+
+        QPushButton#BackBtn:pressed {
+            background-color: #D6E6F2;
+            border-color: #5A8FB3;
+        }
     )");
 }
 

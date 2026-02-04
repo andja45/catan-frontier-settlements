@@ -53,8 +53,13 @@ static void applyHistoryStyle(QWidget* w) {
             color: white;
             padding: 0 26px;
         }
+        QPushButton#PrimaryBtn:hover {
+            background-color: #3A93D4;
+            border-color: #2C7FB8;
+        }
         QPushButton#PrimaryBtn:pressed {
-            background: rgba(35,110,160,235);
+            background-color: #1F6FA5;
+            border-color: #184F75;
         }
 
         QPushButton#SecondaryBtn {
@@ -67,8 +72,13 @@ static void applyHistoryStyle(QWidget* w) {
             color: #1f2a33;
             padding: 0 26px;
         }
+        QPushButton#SecondaryBtn:hover {
+            background-color: #EAF2F8;
+            border-color: #6FA3C7;
+        }
         QPushButton#SecondaryBtn:pressed {
-            background: rgba(255,255,255,180);
+            background-color: #D6E6F2;
+            border-color: #5A8FB3;
         }
     )");
 }

@@ -72,6 +72,21 @@ static void applyLobbyStyle(QWidget* w) {
             border: 2px solid rgba(0,0,0,80);
             color: white;
         }
+        QPushButton#MapBtn:hover {
+            background-color: #3A93D4;
+            border-color: #2C7FB8;
+            color: white;
+        }
+        QPushButton#MapBtn:pressed {
+            background-color: #1F6FA5;
+            border-color: #184F75;
+            padding-top: 1px;
+            padding-left: 1px;
+        }
+        QPushButton#MapBtn:checked:hover {
+            background-color: #3A93D4;
+            border-color: #2C7FB8;
+        }
 
         QPushButton#LoadBtn {
             min-height: 40px;
@@ -91,7 +106,7 @@ static void applyLobbyStyle(QWidget* w) {
             background: rgba(41,128,185,210);
         }
         QSlider::handle:horizontal {
-            width: 30px; height: 30px;      /* bigger so number fits */
+            width: 30px; height: 30px;
             margin: -11px 0;
             border-radius: 15px;
             background: white;
@@ -108,6 +123,15 @@ static void applyLobbyStyle(QWidget* w) {
             padding: 0 40px;
             color: white;
         }
+        QPushButton#StartBtn:hover {
+            background-color: #3A93D4;
+            border-color: #2C7FB8;
+        }
+        QPushButton#StartBtn:pressed {
+            background-color: #1F6FA5;
+            border-color: #184F75;
+        }
+
         QPushButton#StartBtn:disabled {
             background: rgba(0,0,0,22);
             border: 2px solid rgba(0,0,0,18);
