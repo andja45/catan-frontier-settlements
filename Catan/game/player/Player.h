@@ -31,7 +31,7 @@ private:
     int m_totalPoints=0; //kept in check by game as part of game logic and rules, do not calculate it here!
 
     int m_numOfRoadsLeft=15;
-    int m_numOfCitiesLeft=5;
+    int m_numOfCitiesLeft=4;
     int m_numOfSettlementsLeft=5;
 
     int m_lenOfRoad=0;
@@ -83,6 +83,9 @@ public:
 
     int getRoadLength()const {return m_lenOfRoad;};
     void setRoadLength(int length){m_lenOfRoad=length;}
+
+    int getNumRoadsBuilt()const {return m_roads.size();}
+    int getNumOfBuldingsBuilt()const {return m_buildings.size();}
 };
 
 
