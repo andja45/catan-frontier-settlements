@@ -328,6 +328,9 @@ void Board::placeRoad(PlayerId playerId, EdgeId edgeId) const {
 }
 void Board::placeSettlement(PlayerId playerId, NodeId nodeId) {
     Node* node = this->getNodeById(nodeId);
+    if (node == nullptr) {
+        return;
+    }
     node->setOwner(playerId);
     node->setNodeBuildingType(NodeType::Settlement);
 }
@@ -352,6 +355,9 @@ bool Board::isNodeSettlement(NodeId nodeId) const {
     return getNodeById(nodeId)->isSettlement();
 }
 
+bool Board::isNodeCity(NodeId nodeId) const {
+    return getNodeById(nodeId)->isCity();
+}
 
 std::vector<AxialCoords> Board::getBoardCords() const{
     std::vector<AxialCoords> coords;

@@ -96,6 +96,8 @@ public:
 
  void advancePhaseAfterMove();
  void enterDiscardCardsPhase() { setPhase(TurnPhase::DiscardCards); }
+ void enterMainPhase() { setPhase(TurnPhase::Main); }
+ void enterInitialPlacementPhase() { setPhase(TurnPhase::InitialPlacement); }
  void enterDevCardPhase(DevCardType type);
 
  bool applyMove(const Move& move);
