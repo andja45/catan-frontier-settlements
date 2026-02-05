@@ -292,7 +292,8 @@ QWidget* LobbyView::makeSettingsCard() {
             this,
             [this](QAbstractButton*) {
                 AudioManager::instance().playClick();
-                emit configChanged(getConfig());
+                if (m_role==RoleType::Host)
+                    emit configChanged(getConfig());
             });
 
     auto* playersLbl = new QLabel("Players", card);
@@ -305,7 +306,8 @@ QWidget* LobbyView::makeSettingsCard() {
     grid->addWidget(m_playersSlider, 2, 1, 1, 2);
 
     connect(m_playersSlider, &QSlider::valueChanged, this, [this](int){
-        emit configChanged(getConfig());
+        if (m_role==RoleType::Host)
+            emit configChanged(getConfig());
         m_playersSlider->update();
     });
 
@@ -319,7 +321,8 @@ QWidget* LobbyView::makeSettingsCard() {
     grid->addWidget(m_pointsSlider, 3, 1, 1, 2);
 
     connect(m_pointsSlider, &QSlider::valueChanged, this, [this](int){
-        emit configChanged(getConfig());
+        if (m_role==RoleType::Host)
+            emit configChanged(getConfig());
         m_pointsSlider->update();
     });
 
@@ -400,11 +403,13 @@ GameConfig LobbyView::getConfig() const {
 }
 
 void LobbyView::setConfig(const GameConfig& config) {
+    setWindowTitle(QString("Game lobby: %1").arg(m_gameName));
     m_playerList->clear();
     for (const auto& p: config.getPlayerNames()) {
         addPlayer(QString::fromStdString(p));
     }
     m_gameName=QString::fromStdString(config.getName());
+
     if (m_role==RoleType::Host) { // host sets settings clients observe them
         return;
     }
@@ -424,4 +429,5 @@ void LobbyView::onAddPlayer(const QString& playerName) {
 
 void LobbyView::onConfigChanged(const GameConfig& config) {
     setConfig(config);
+    update();
 }

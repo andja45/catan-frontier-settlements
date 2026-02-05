@@ -36,6 +36,7 @@ QString Chat::emojify(QString text)
         );
         text.replace(re, r.emoji);
     }
+    return text;
 }
 
 QSize Chat::sizeHint() const {
@@ -86,8 +87,8 @@ void Chat::buildChatUi() {
         emit chatSendRequested(text);
         m_chatInput->clear();
     };
-    QObject::connect(m_sendBtn, &QPushButton::clicked, this, sendNow);
-    QObject::connect(m_chatInput, &QLineEdit::returnPressed, this, sendNow);
+    connect(m_sendBtn, &QPushButton::clicked, this, sendNow);
+    connect(m_chatInput, &QLineEdit::returnPressed, this, sendNow);
 }
 
 void Chat::addChatMessage(const QString& author, const QString& message) {

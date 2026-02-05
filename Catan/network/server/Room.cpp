@@ -74,10 +74,11 @@ void Room::processMove(ClientConnection *c,const net::Move & move) {
     broadcastMove(move);
 }
 
-void Room::processMessage(ClientConnection *, const std::string &msg) {
+void Room::processMessage(ClientConnection * c, const std::string &msg) {
     auto env=net::Envelope();
     env.set_msg_type(net::MsgType::MSG_CHAT);
     env.mutable_chat()->set_message(msg);
+    env.mutable_chat()->set_player_name(c->name());
     broadcast(env);
 }
 
