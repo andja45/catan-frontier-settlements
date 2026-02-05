@@ -76,7 +76,7 @@ void ServerController::onEnvelope(ClientConnection* c, const net::Envelope& env)
 {
     std::string jsonString;
     google::protobuf::util::MessageToJsonString(env, &jsonString);
-    qDebug() << "Received message: \n" << jsonString;
+    qDebug() << "Received message: \n" << jsonString.c_str();
     m_dispatcher.dispatch(c, env);
 }
 

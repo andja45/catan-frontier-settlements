@@ -47,7 +47,7 @@ void HostJoinNetworkAdapter::sendJoin(std::string gameName, std::string playerNa
 void HostJoinNetworkAdapter::onEnvelope(const net::Envelope &env) {
     std::string jsonString;
     google::protobuf::util::MessageToJsonString(env, &jsonString);
-    qDebug() << "[Host-join] Received message: \n" << jsonString;
+    qDebug() << "[Host-join] Received message: \n" << jsonString.c_str();
 
     if (env.msg_type() == net::MSG_SETUP) {
         auto protoSetup = env.setup();
@@ -61,7 +61,7 @@ void HostJoinNetworkAdapter::onEnvelope(const net::Envelope &env) {
         }
     }
     google::protobuf::util::MessageToJsonString(env, &jsonString);
-    qDebug() << "Received unknown message: \n" << jsonString;
+    qDebug() << "Received unknown message: \n" << jsonString.c_str();
 }
 
 void HostJoinNetworkAdapter::handleAcceptResponse(const net::Envelope &env) {
