@@ -10,15 +10,13 @@ HostJoinController::HostJoinController(RoleType role, HostJoinView *view, Networ
 
     connect(m_view, &HostJoinView::requestSent,this, [this](const QString &gameName, const QString &playerName) {
         if (m_role==RoleType::Host) {
-        m_transport->sendHost(gameName.toStdString(), playerName.toStdString());
+            m_transport->sendHost(gameName.toStdString(), playerName.toStdString());
         } else {
-        m_transport->sendJoin(gameName.toStdString(), playerName.toStdString());
+            m_transport->sendJoin(gameName.toStdString(), playerName.toStdString());
         }
     });
 
-    connect(m_transport, &HostJoinNetworkAdapter::rejectReceived, this, [this](std::string msg) {
-        emit rejected(msg);
-    });
+    connect(m_transport, &HostJoinNetworkAdapter::rejectReceived,m_view,&HostJoinView::onRejected);
 
     connect(m_view,&HostJoinView::closed,[this]() {
         emit closed();

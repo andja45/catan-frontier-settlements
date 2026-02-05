@@ -1,4 +1,4 @@
-#define LOBBY_TEST_PLAYERS 1
+#define LOBBY_TEST_PLAYERS 0
 
 #include "LobbyView.h"
 
@@ -150,7 +150,7 @@ static QPushButton* makeMapBtn(QWidget* parent, const QString& text) {
 }
 
 LobbyView::LobbyView(const std::string& gameName, RoleType type, QWidget* parent)
-    : QWidget(parent),
+    : QWidget(parent), m_role(type),
       m_gameName(QString::fromStdString(gameName)) {
     setWindowTitle(QString("Game lobby: %1").arg(m_gameName));
 
@@ -365,6 +365,7 @@ void LobbyView::setMapButtonsEnabled(bool on) {
     if (m_customBtn)   m_customBtn->setEnabled(on);
 }
 
+
 void LobbyView::setPlayerCount(int count) {
     m_playerCountLabel->setText(QString("Players joined: %1").arg(count));
 }
@@ -385,11 +386,35 @@ void LobbyView::addPlayer(const QString& playerName) {
     setPlayerCount(m_playerList->count());
 }
 
-GameConfig LobbyView::getConfig() const { // TODO add
-
+GameConfig LobbyView::getConfig() const {
+    GameConfig config;
+    BoardType b = BoardType::Classic;
+    if (m_extendedBtn->isChecked()) b = BoardType::Extended;
+    else if (m_customBtn->isChecked()) {
+        b = BoardType::Custom;
+    }
+    config.setBoardType(b);
+    config.setNumPlayers(m_playersSlider->value());
+    config.setWinningPoints(m_pointsSlider->value());
+    return config;
 }
 
 void LobbyView::setConfig(const GameConfig& config) {
+    m_playerList->clear();
+    for (const auto& p: config.getPlayerNames()) {
+        addPlayer(QString::fromStdString(p));
+    }
+    m_gameName=QString::fromStdString(config.getName());
+    if (m_role==RoleType::Host) { // host sets settings clients observe them
+        return;
+    }
+
+    if (config.getBoardType() == BoardType::Extended) m_extendedBtn->setChecked(true);
+    else if (config.getBoardType() == BoardType::Custom) m_customBtn->setChecked(true);
+    else m_normalBtn->setChecked(true);
+
+    m_playersSlider->setValue(config.getMaxPlayers());
+    m_pointsSlider->setValue(config.getPointsToWin());
 
 }
 

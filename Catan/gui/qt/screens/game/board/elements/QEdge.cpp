@@ -89,7 +89,7 @@ void QEdge::paint(QPainter& p, double size) {
     // Hover ring: only over empty or settlement edges
     if (m_hovered && hoverAllowed()) {
         p.save();
-        const double r = size / 3.2;
+        const double r = size / 4.2;
 
         // Ring (no fill)
         QPen ring(GameTheme::getGrayColorStrong());
@@ -109,7 +109,7 @@ void QEdge::paint(QPainter& p, double size) {
 
     if (m_highlighted) {
         p.save();
-        const double r = size / 3.2;
+        const double r = size / 4.2;
 
         // Ring (no fill)
 

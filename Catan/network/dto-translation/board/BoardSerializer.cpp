@@ -30,12 +30,12 @@ net::BoardInfo BoardSerializer::toProto(const Board &board) {
     net::BoardInfo proto;
     // serialize tiles
     for (const auto&t: board.getTileDefs()) {
-        *proto.add_tiles() = serializeTile(t);
+        proto.mutable_tiles()->Add(serializeTile(t));
 
     }
     // serialize ports
     for (const auto& p : board.getPortDefs()) {
-        *proto.add_ports() = serializePort(p);
+        proto.mutable_ports()->Add( serializePort(p));
     }
     return proto;
 }

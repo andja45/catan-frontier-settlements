@@ -13,6 +13,9 @@ MenuApp::MenuApp(ApplicationRoot *root): AbstractApplet(root) {
     m_mainMenuView->connect(m_mainMenuView,&MainMenu::joinGame,[this]() {
         m_root->showJoinPopup();
     });
+    m_mainMenuView->connect(m_mainMenuView,&MainMenu::history,[this]() {
+        m_root->showHistory();
+    });
     m_mainMenuView->connect(m_mainMenuView, &MainMenu::quit, [this]() {
         m_root->closeApp();
     });

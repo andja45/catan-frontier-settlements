@@ -8,7 +8,8 @@
 
 bool PlayerTradeRequestMove::isValid(const GameSession& session) const {
     const Player& player = session.player(m_playerId);
-
+    if (m_tradeId==-1)
+        return false;
     if (session.currentPlayer() != m_playerId)
         return false;
 

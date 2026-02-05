@@ -18,27 +18,39 @@ LobbyController::LobbyController(LobbyView *view, NetworkTransport *transport): 
         m_transport->sendConfig(config);
     });
     connect(m_transport,&LobbyNetworkAdapter::configReceived, m_view,&LobbyView::onConfigChanged);
-    connect(m_transport,&LobbyNetworkAdapter::gameStarted,this,&LobbyController::onGameStarted);
+    connect(m_transport,&LobbyNetworkAdapter::gameStarted,this,[this](PlayerId myId, int seed,const GameConfig& config, Board* board) {
+        emit gameStarted(myId,seed,config,board);
+    });
+
     connect(m_view,&LobbyView::close,this,[this]() {
         m_transport->sendLeave();
         emit lobbyClosed();
     });
+    connect(m_transport,&LobbyNetworkAdapter::disconnected,this,[this]() {
+        emit lobbyClosed();
+    }); //popup service?
+    connect(m_transport,&LobbyNetworkAdapter::errored,this,[this](const std::string& error) {
+        m_transport->sendLeave();
+        emit lobbyClosed();
+    });
+
+    m_transport->sendJoined(); // we send ack to finalize us joining the room, awaiting for config from server
 }
 
 void LobbyController::onGameRequested(const GameConfig &config, const std::string& boardPath) {
     Board* board;
-    if (config.boardType==BoardType::Custom) {
-        board=(new LoadFromFileCreator(boardPath))->getBoard().get();
+    std::unique_ptr<AbstractBoardCreator> factory;
+    if (config.getBoardType()==BoardType::Custom) {
+        factory=std::make_unique<LoadFromFileCreator>(boardPath);
     }
-    else if (config.boardType==BoardType::Classic){
-        board=(new RandomStandardMapCreator())->getBoard().get();
+    else if (config.getBoardType()==BoardType::Classic){
+        factory=std::make_unique<RandomStandardMapCreator>();
     }
     else {
-        board=(new RandomExtendedMapCreator())->getBoard().get();
+        factory=std::make_unique<RandomExtendedMapCreator>();
     }
+        board=factory->getBoard().release();
+
     m_transport->sendStartRequest(*board);
 }
 
-void LobbyController::onGameStarted(PlayerId myId, int32_t gameSeed, const GameConfig &config, Board *board) {
-    emit gameStarted(config,board,myId,gameSeed);
-}

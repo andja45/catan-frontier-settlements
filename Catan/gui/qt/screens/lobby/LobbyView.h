@@ -40,13 +40,12 @@ private:
     QLabel*  m_pointsBubble = nullptr;
 
     QPushButton* m_startButton = nullptr;
+    RoleType m_role;
 
     QWidget* makePlayersCard();
     QWidget* makeSettingsCard();
-    void addAddBotEntry();
 
     void setMapButtonsEnabled(bool on);
-    void setControlsEnabled(bool on);
 public:
     explicit LobbyView(const std::string& gameName, RoleType type, QWidget* parent = nullptr);
 
@@ -58,20 +57,16 @@ public:
     GameConfig getConfig() const;
     void setConfig(const GameConfig &config);
 
-    signals:
-        void startGameRequested(GameConfig config, std::string boardPath="");
-        void customMapSelected(const QString& filePath);
-        void configChanged(const GameConfig& config);
+signals:
+    void startGameRequested(GameConfig config, std::string boardPath="");
+    void customMapSelected(const QString& filePath);
+    void configChanged(const GameConfig& config);
 
 public slots:
     void onAddPlayer(const QString &playerName);
     void onConfigChanged(const GameConfig &config);
 
 private:
-    void buildUi(RoleType type);
-    QFrame* makeCard();
-    QPushButton* makeMapButton(const QString& text);
-    QLabel* makeBubbleLabel(const QString& text);
 };
 
 #endif // LOBBYVIEW_H

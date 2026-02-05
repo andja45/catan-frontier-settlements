@@ -15,7 +15,7 @@ LobbyApp::LobbyApp(ApplicationRoot *root, RoleType role)
     m_lobbyController->connect(m_lobbyController,&LobbyController::lobbyClosed,[this]() {
        m_root->showMainMenu();
     });
-    m_lobbyController->connect(m_lobbyController,&LobbyController::gameStarted,[this](const GameConfig& config, Board* board, PlayerId myId, int seed) {
+    m_lobbyController->connect(m_lobbyController,&LobbyController::gameStarted,[this](PlayerId myId, int seed,const GameConfig& config, Board* board) {
         std::unique_ptr<Board> ptr(board);
         m_root->startGame(config,std::move(ptr),myId,seed);
     });

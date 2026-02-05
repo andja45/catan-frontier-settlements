@@ -20,7 +20,6 @@ public:
 
     DevCardType getCardType() const {return m_card;};
 
-    // TODO add allvalid - this will be done in gui, unclickable if <= 0
 };
 
 

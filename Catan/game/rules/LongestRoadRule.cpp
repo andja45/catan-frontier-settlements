@@ -25,7 +25,7 @@ void LongestRoadRule::createRoadGraph(GameSession& session, Player p) {
 
         for (auto neighbour : neighbours)
         {
-            p.addRoadInGraph(road_index, neighbour->getEdgeId());
+            addRoadInGraph(road_index, neighbour->getEdgeId());
             visited[neighbour->getEdgeId()] = true;
         }
 
@@ -122,6 +122,7 @@ void LongestRoadRule::evaluate(GameSession& session) {
             currentLongest = longestRoad;
             bestPlayer = p->getKnightsUsed();
         }
+        p->setRoadLength(longestRoad);
     }
 
     if (bestPlayer == types::InvalidPlayerId)

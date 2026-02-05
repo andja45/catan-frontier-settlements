@@ -138,8 +138,8 @@ HostJoinView::HostJoinView(RoleType type, QWidget *parent)
     backBtn->setObjectName("BackBtn");
     connect(backBtn, &QPushButton::clicked, this, [this]() {
         AudioManager::instance().playClick();
-        close();
-    }); // TODO connect to mainmenu
+        emit closed();
+    });
 
     cardLay->addWidget(title);
     cardLay->addLayout(formLayout);
@@ -187,3 +187,4 @@ void HostJoinView::onRejected(const std::string &reason /*= "Couldn't join game.
 void HostJoinView::clearError() {
     m_errorLabel->setVisible(false);
 }
+

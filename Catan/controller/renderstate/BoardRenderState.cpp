@@ -56,5 +56,4 @@ void BoardRenderState::clear() {
     m_highlightedNodes.clear();
     m_highlightedEdges.clear();
     m_highlightedTiles.clear();
-    // TODO think ab if to add trade choose player
 }

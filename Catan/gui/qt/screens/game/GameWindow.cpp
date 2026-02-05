@@ -7,7 +7,7 @@
 #include <player/Player.h>
 #include <screens/game/toolbar/BoardToolbar.h>
 
-GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId currentPlayer, Bank *bank,std::unordered_map<TradeId,Trade>* trades, QWidget *parent)
+GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId currentPlayer, Bank *bank,const std::pair<int,int>*dice,std::unordered_map<TradeId,Trade>* trades, QWidget *parent)
     : QWidget(parent), m_board(board), m_currentPlayerId(currentPlayer), m_bank(bank), m_players(players), m_trades(trades)
 {m_currentPlayer=players[currentPlayer];
 
@@ -22,7 +22,7 @@ GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId cur
     m_qboard = new QBoard(this, board);
     m_qboard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    m_toolbar = new BoardToolbar(m_currentPlayer,this);
+    m_toolbar = new BoardToolbar(m_currentPlayer,dice,this);
     m_toolbar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_toolbar->setMinimumHeight(60);
 

@@ -75,7 +75,7 @@ void GameData::loadFromJson(const nlohmann::json &jsonData) {
     m_isGameWon    = jsonData.at("isGameWon").get<bool>();
     m_playerNames  = jsonData.at("playerNames").get<std::vector<std::string>>();
     m_winningPlayer = jsonData.at("winningPlayer").get<std::string>();
-    m_largestArmyOwner = jsonData.at("largestArmyOwner").get<std::string>();
+    m_largestArmyOwner = jsonData.at("biggestArmyOwner").get<std::string>();
     m_longestRoadOwner = jsonData.at("longestRoadOwner").get<std::string>();
     m_pointsByPlayer = jsonData.at("pointsByPlayer").get<std::map<std::string, int>>();
 

@@ -11,6 +11,7 @@
 GameOverlay::GameOverlay(QWidget* parent)
     : QWidget(parent)
 {
+    m_text="Waiting for other players...";
     setAttribute(Qt::WA_TransparentForMouseEvents, false);
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_StyledBackground);

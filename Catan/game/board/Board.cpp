@@ -27,7 +27,8 @@ void Board::clearBoard() {
 
 
 // initializes tiles edge nodes and connects them together
-void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PORTS, break into parts?
+void Board::initializeBoard(std::vector<TileDef> tileMap) {
+    m_robberTile=types::InvalidTileId;
     clearBoard();
     for (const auto&[q, r, res, number] : tileMap) {
         // make tile for each tiledef
@@ -42,6 +43,11 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
 
         if (number >= 2 && number <= 12)
             m_tilesByNumber[number].push_back(rawTile);
+
+        if (m_robberTile==types::InvalidTileId && res==ResourceType::Desert) {
+            m_robberTile=id;
+            rawTile->setRobber(true);
+        }
 
         // make nodes
         auto nodeCoords = ax.getNodeCoords();
@@ -92,7 +98,7 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) { //TODO ROBBER AND PO
 
 std::vector<Edge *> Board::getEdgesAdjacentToNode(NodeId nodeId) const {
     Node* node=getNodeById(nodeId);
-    return std::vector(node->getIncidentEdges().begin(),node->getIncidentEdges().begin());
+    return std::vector(node->getIncidentEdges().begin(),node->getIncidentEdges().end());
 }
 std::vector<Tile *> Board::getTilesAdjacentToNode(NodeId nodeId) const {
     return getNodeById(nodeId)->getIncidentTiles();
@@ -176,16 +182,19 @@ std::vector<Tile *> Board::getTilesWithNumber(int num) {
     return m_tilesByNumber[num];
 }
 
-Tile * Board::getTileAt(TileCoords coords) {
-    return m_tilesByCoord[coords];
+Tile * Board::getTileAt(TileCoords coords) const {
+    if (m_tilesByCoord.find(coords)==m_tilesByCoord.end()) return nullptr;
+    return m_tilesByCoord.at(coords);
 }
 
 Node * Board::getNodeAt(NodeCoords nc) const{
+    if (m_nodesByCoord.find(nc)==m_nodesByCoord.end()) return nullptr;
     return m_nodesByCoord.at(nc);
 }
 
-Edge * Board::getEdgeAt(EdgeCoords ec) {
-    return m_edgesByCoord[ec];
+Edge * Board::getEdgeAt(EdgeCoords ec) const {
+    if (m_edgesByCoord.find(ec)==m_edgesByCoord.end()) return nullptr;
+    return m_edgesByCoord.at(ec);
 }
 
 Node * Board::getNodeById(NodeId nodeId) const {
@@ -237,8 +246,6 @@ PlayerId Board::getNodeOwner(NodeId nodeId) const {
     return node->getOwner();
 }
 
-// TODO clean these functions
-// TODO make uniform interface for edges and nodes!!
 
 bool Board::edgeTouchesNode(NodeId nodeId, EdgeId edgeId) const{
     Edge* edge = this->getEdgeById(edgeId);
@@ -269,7 +276,7 @@ bool Board::edgeTouchesPlayersBuilding(PlayerId playerId, EdgeId edgeId) const {
 bool Board::edgeTouchesPlayersRoad(PlayerId playerId, EdgeId edgeId) const{
     Edge* edge = this->getEdgeById(edgeId);
 
-    for (Edge* e : getEdgesAdjacentToNode(edgeId)) { // TODO fix
+    for (Edge* e : getEdgesAdjacentToNode(edgeId)) {
         if (!e) {
 		    continue;
 	    }
@@ -304,6 +311,13 @@ bool Board::nodeTouchesPlayerRoad(int playerId, int nodeId) const{
 }
 
 bool Board::tileTouchesPlayerBuilding(PlayerId playerId, TileId tileId) const {
+    auto tile = this->getTileById(tileId);
+    auto nodes=tile->getAdjacentNodes();
+    for (auto n : nodes) {
+        if (n->getOwner()==playerId)
+            return true;
+    }
+    return false;
 }
 
 void Board::placeRoad(PlayerId playerId, EdgeId edgeId) const {
@@ -365,7 +379,7 @@ std::vector<PortDef> Board::getPortDefs() const {
     for (const auto& tradeCoord : m_tradeCoords) {
         PortDef pdef;
         pdef.q = tradeCoord.axialCoords().q();
-        pdef.r = tradeCoord.axialCoords().q();
+        pdef.r = tradeCoord.axialCoords().r();
         pdef.i = static_cast<int>(tradeCoord.direction());
         Node* node = getNodeAt(tradeCoord);
         pdef.tradeType = node->getTradeResource();
@@ -374,8 +388,26 @@ std::vector<PortDef> Board::getPortDefs() const {
     return portDefs;
 }
 
+std::vector<EdgeId> Board::edgeIds() const {
+    std::vector<EdgeId> edgeIds;
+    for (const auto& edge : m_edges) {
+        edgeIds.push_back(edge->getEdgeId());
+    }
+    return edgeIds;
+}
+
 std::vector<NodeId> Board::nodeIds() const {
+    std::vector<NodeId> nodeIds;
+    for (const auto& node : m_nodes) {
+        nodeIds.push_back(node->getNodeId());
+    }
+    return nodeIds;
 }
 
 std::vector<TileId> Board::tileIds() const {
+    std::vector<TileId> tileIds;
+    for (const auto& tile : m_tiles) {
+        tileIds.push_back(tile->getTileId());
+    }
+    return tileIds;
 }

@@ -14,12 +14,14 @@
 #include "model/GameSession.h"
 #include "renderstate/BoardRenderState.h"
 #include "renderstate/ToolbarRenderState.h"
-#
+
 class GameController : public QObject {
     Q_OBJECT
 private:
     GameSession& m_session;
-    PlayerId m_localPlayerId = m_session.localPlayer();
+    GameWindow& m_gameWindow;
+    PlayerId m_localPlayerId;
+
     bool isLocalPlayersTurn(const char* action) const;
     GameNetworkAdapter* m_adapter;
 
@@ -29,12 +31,16 @@ private:
     std::unique_ptr<Move> m_activeTool;
     void setActiveTool(std::unique_ptr<Move> tool);
     void clearActiveTool();
+    void connectElements();
 public:
     GameController(GameSession &session, NetworkTransport* transport, GameWindow &gameWindow, QObject *parent);
 
     // GLOBAL
-    void sendMove(const Move* move);
-    void update();
+    bool sendMove(const Move *move);
+
+    void onError(const std::string &error);
+
+    void updateState();
     void updateActiveToolOnPhase();
 public slots:
     // TOOLBAR
@@ -70,22 +76,24 @@ public slots:
     // NETWORK
     void onMoveReceived(Move* move);
 
-    void onModelChanged(const BoardRenderState& state,
-                            const ToolbarRenderState& toolbarState);
-    signals:
-        void buildPlaced();
-        void gameClosed();
+    void updateView();
 
-        void updateToolbar(const ToolbarRenderState&);
-        void updateBoard(const BoardRenderState&);
-        void updateActivePlayer(int id);
-        void updateChoosePlayer(const ChoosePlayerRenderState& rs);
 
-        void setDiscard();
-        void gameOver();
-        void gameWon();
+signals:
+    void buildPlaced();
+    void gameClosed();
 
-        void redraw();
+    void updateToolbar(const ToolbarRenderState&);
+    void updateBoard(const BoardRenderState&);
+    void updateActivePlayer(int id);
+
+    void setChoosePlayer(const std::unordered_set<PlayerId>& rs);
+    void setDiscard();
+
+    void gameOver();
+    void gameWon();
+
+    void update();
 
 };
 

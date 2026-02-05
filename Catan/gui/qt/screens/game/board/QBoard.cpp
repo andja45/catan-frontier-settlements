@@ -200,20 +200,21 @@ void QBoard::mouseMoveEvent(QMouseEvent* e) {
     QWidget::update();
 }
 
-void QBoard::mousePressEvent(QMouseEvent* e) {
+void QBoard::mouseReleaseEvent(QMouseEvent* e) {
     if (e->button() != Qt::LeftButton) return;
 
-    if (m_hoveredQEdge) {
-        emit edgeClicked(m_hoveredQEdge->edge()->getEdgeId());
-        emit elementClicked(m_hoveredQEdge->edge()->getEdgeId());
-    }
 
     if (m_hoveredQNode) {
         emit nodeClicked(m_hoveredQNode->node()->getNodeId());
         emit elementClicked(m_hoveredQNode->node()->getNodeId());
     }
 
-    if (m_placingRobber && m_hoveredQTile) {
+    else if (m_hoveredQEdge) {
+        emit edgeClicked(m_hoveredQEdge->edge()->getEdgeId());
+        emit elementClicked(m_hoveredQEdge->edge()->getEdgeId());
+    }
+
+    else if (m_hoveredQTile) {
         emit tileClicked(m_hoveredQTile->tile()->getTileId());
         emit elementClicked(m_hoveredQTile->tile()->getTileId());
     }

@@ -30,7 +30,7 @@ static std::unique_ptr<Board> makeSmallBoard() {
     auto b = std::make_unique<Board>();
     std::vector<TileDef> tiles;
     tiles.push_back(TileDef{0, 0, ResourceType::Sea, 6});
-    tiles.push_back(TileDef{1, 0, ResourceType::Sea, 8});
+    tiles.push_back(TileDef{1, 0, ResourceType::Desert, 8});
     b->initializeBoard(tiles);
     return b;
 }
@@ -124,7 +124,7 @@ TEST_CASE("StealCardMove::isValid conditions", "[StealCardMove][isValid]") {
     }
 
     SECTION("Victim must touch robber tile") {
-        REQUIRE(board.tileTouchesPlayerBuilding(victim, board.robberTile()) == true);
+        REQUIRE(board.tileTouchesPlayerBuilding(victim, board.robberTileId()) == true);
         StealCardMove move(thief, victim);
         REQUIRE(move.isValid(session) == true);
     }

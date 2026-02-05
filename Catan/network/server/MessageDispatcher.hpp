@@ -14,7 +14,7 @@ class MessageDispatcher {
 public:
     explicit MessageDispatcher(RoomManager& rm);
 
-    void dispatch(ClientConnection *c, net::Envelope &env);
+    void dispatch(ClientConnection *c, const net::Envelope &env);
 
 private:
     RoomManager& m_roomManager;

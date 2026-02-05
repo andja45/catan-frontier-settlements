@@ -37,7 +37,9 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
 
         case MoveType::RollDice: {
             proto.set_type(net::Move::RollDice);
-            proto.mutable_roll_dice();
+            auto* m = static_cast<const RollDiceMove*>(&move);
+            proto.mutable_roll_dice()->set_dice_1(m->getDiceRoll().first);
+            proto.mutable_roll_dice()->set_dice_2(m->getDiceRoll().second);
             break;
         }
 
@@ -137,6 +139,7 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
             proto.set_type(net::Move::PlayerTradeRequest);
             auto* m = static_cast<const PlayerTradeRequestMove*>(&move);
             auto* req_proto = proto.mutable_trade_request();
+            req_proto->set_trade_request_id(m->getTradeId());
             for (auto const& [res, count] : m->getGive()) {
                 (*req_proto->mutable_give_resource())[static_cast<int32_t>(res)] = count;
             }

@@ -6,6 +6,7 @@
 
 #include <utility>
 #include <QDebug>
+#include <screens/game/action-popups/popups/YearOfPlentyPopup.h>
 
 #include "move/BoardMove.h"
 #include "move/build/BuildCityMove.h"
@@ -25,73 +26,17 @@
 #include "move/turn/RollDiceMove.h"
 
 GameController::GameController(GameSession& session, NetworkTransport* transport, GameWindow &gameWindow, QObject* parent)
-    : QObject(parent), m_session(session)
+    : QObject(parent), m_session(session), m_gameWindow(gameWindow)
     {
+    m_localPlayerId = session.localPlayer();
     m_adapter = new GameNetworkAdapter(this);
     m_adapter->setTransport(transport);
 
-    auto qboard= gameWindow.getBoard();
-    auto qtoolbar= gameWindow.getToolbar();
-    auto qchat = gameWindow.getChat();
-    auto qtradeOverlay = gameWindow.getTradeOverlay();
-    auto qactionManager = gameWindow.getActionManager();
-    auto qgameOverlay = gameWindow.getOverlay();
-    auto qplayersOverlay = gameWindow.getPlayersOverlay();
-
-    connect(m_adapter,&GameNetworkAdapter::remoteMoveReceived,
-            this, &GameController::onMoveReceived);
-    connect(&gameWindow,&GameWindow::closed,this,[&session, this]() {
-        m_adapter->sendMove( new PlayerLeaveMove(session.localPlayer()));
-        emit gameClosed();
-    });
-
-    connect(m_adapter,&GameNetworkAdapter::remoteMessageReceived,
-            qchat, [qchat](std::string a,std::string m) {
-                qchat->addChatMessage(QString::fromStdString(a), QString::fromStdString(m));
-            });
-    connect(qchat,&Chat::chatSendRequested,this, [this](const QString& msg) {
-        m_adapter->sendMessage("",msg.toStdString());
-    });
-
-    connect(qtoolbar,&BoardToolbar::buildRoadClicked,
-            this,&GameController::onBuildRoadClicked);
-    connect(qtoolbar,&BoardToolbar::buildSettlementClicked,
-            this,&GameController::onBuildSettlementClicked);
-    connect(qtoolbar,&BoardToolbar::buildCityClicked,
-            this,&GameController::onBuildCityClicked);
-
-    connect(qtoolbar,&BoardToolbar::buyDevCardRequested,
-            this,&GameController::onBuyDevCardClicked);
-    connect(qtoolbar,&BoardToolbar::endTurnRequested,
-            this,&GameController::onEndTurnClicked);
-    connect(qtoolbar,&BoardToolbar::diceRolled,
-            this,&GameController::onRollDiceClicked);
-    connect(qtoolbar,&BoardToolbar::devCardChosen,
-            this,&GameController::onUseDevCardClicked);
-
-    connect(qtoolbar,&BoardToolbar::bankTradeRequested,this,[this](TradeOffer offer) {
-        onBankTradeSent(offer.give.begin()->first, offer.receive.begin()->first);
-    });
-    connect(qtoolbar,&BoardToolbar::playerTradeRequested,this,[this](const TradeOffer& offer) {
-        onPlayerTradeRequestSent(offer.give,offer.receive);
-    });
-    connect(qtoolbar,&BoardToolbar::devCardChosen,this,&GameController::onUseDevCardClicked);
-
-    connect(qboard,&QBoard::elementClicked,this,&GameController::onBoardElementClicked);
-    connect(this,&GameController::buildPlaced,qboard,&QBoard::onPlayBuildFeedback);
-
-    connect(this,&GameController::gameOver,qgameOverlay,&GameOverlay::showGameOver);
-    connect(this,&GameController::gameWon,qgameOverlay,&GameOverlay::showGameWon);
-
-    connect(this,&GameController::updateToolbar,qtoolbar,&BoardToolbar::updateState);
-    connect(this,&GameController::updateBoard,qboard,&QBoard::update);
-    connect(this,&GameController::updateActivePlayer,qplayersOverlay,&PlayersOverlay::setActivePlayer);
-    connect(this,&GameController::updateChoosePlayer,qactionManager,&ActionManager::setStealCandidates);
-    connect(this,&GameController::redraw,qtradeOverlay,&TradeOverlay::refresh);
-    connect(this,&GameController::setDiscard,qactionManager,&ActionManager::openDiscardPopup);
-
-    update();
-
+    connectElements();
+    m_gameWindow.getOverlay()->show();
+    m_adapter->sendReady();
+    updateState();
+    updateView();
 }
 
 bool GameController::isLocalPlayersTurn(const char* action) const {
@@ -102,7 +47,8 @@ bool GameController::isLocalPlayersTurn(const char* action) const {
     return false;
 }
 
-void GameController::update(){ // filling renderstates and notifying view, only if its my turn
+void GameController::updateState(){ // filling renderstates and tools
+
     updateActiveToolOnPhase();
 
     m_toolbarRenderState.updateFromPhase(m_session.phase());
@@ -112,7 +58,22 @@ void GameController::update(){ // filling renderstates and notifying view, only 
             m_activeTool->type());
     }
 
-    emit onModelChanged(m_boardRenderState, m_toolbarRenderState);
+
+    
+    if (m_activeTool->type()==MoveType::DiscardCards) {
+        if (!m_session.hasPlayerDiscarded(m_localPlayerId) && m_session.playerMustDiscard(m_localPlayerId))
+        emit setDiscard();
+    }
+    if (m_activeTool->type()==MoveType::StealCard) {
+        emit setChoosePlayer(m_activeTool->allValid(m_session));
+    }
+
+    if (m_session.phase()==TurnPhase::GameOver) {
+        if (m_session.winner()==m_localPlayerId)
+            emit gameWon();
+        else
+            emit gameOver();
+    }
 }
 
 void GameController::setActiveTool(std::unique_ptr<Move> tool){
@@ -121,6 +82,105 @@ void GameController::setActiveTool(std::unique_ptr<Move> tool){
 
 void GameController::clearActiveTool(){
     m_activeTool.reset();
+}
+
+void GameController::connectElements() {
+
+    auto qboard= m_gameWindow.getBoard();
+    auto qtoolbar= m_gameWindow.getToolbar();
+    auto qchat = m_gameWindow.getChat();
+    auto qtradeOverlay = m_gameWindow.getTradeOverlay();
+    auto qactionManager = m_gameWindow.getActionManager();
+    auto qgameOverlay = m_gameWindow.getOverlay();
+    auto qplayersOverlay = m_gameWindow.getPlayersOverlay();
+
+    // ADAPTER
+    // receive move from adapter
+    connect(m_adapter,&GameNetworkAdapter::startGame,this,[this]() {
+        m_gameWindow.getOverlay()->hide();
+    });
+    connect(m_adapter,&GameNetworkAdapter::remoteMoveReceived,
+            this, &GameController::onMoveReceived);
+    // error from adapter
+    connect(m_adapter,&GameNetworkAdapter::errored,this,[this](const std::string& error) {
+        m_adapter->sendMove( new PlayerLeaveMove(m_session.localPlayer()));
+        emit gameClosed();
+    });
+    // disconnect
+    connect(m_adapter,&GameNetworkAdapter::disconnected,this,[this]() {
+        m_adapter->sendMove( new PlayerLeaveMove(m_session.localPlayer()));
+        emit gameClosed();
+    });
+    // receive message from adapter
+    connect(m_adapter,&GameNetworkAdapter::remoteMessageReceived,
+            qchat, [qchat](std::string a,std::string m) {
+                qchat->addChatMessage(QString::fromStdString(a), QString::fromStdString(m));
+            });
+    // send leave to adapter after game closes
+    connect(&m_gameWindow,&GameWindow::closed,this,[this]() {
+        m_adapter->sendMove( new PlayerLeaveMove(m_session.localPlayer()));
+        emit gameClosed();
+    });
+    // send message from chat to adapter
+    connect(qchat,&Chat::chatSendRequested,this, [this](const QString& msg) {
+        m_adapter->sendMessage(m_session.player(m_session.localPlayer()).getName(),msg.toStdString());
+    });
+
+    // TOOLBAR
+    // build buttons
+    connect(qtoolbar,&BoardToolbar::buildRoadClicked,
+            this,&GameController::onBuildRoadClicked);
+    connect(qtoolbar,&BoardToolbar::buildSettlementClicked,
+            this,&GameController::onBuildSettlementClicked);
+    connect(qtoolbar,&BoardToolbar::buildCityClicked,
+            this,&GameController::onBuildCityClicked);
+
+    // other buttons
+    connect(qtoolbar,&BoardToolbar::buyDevCardRequested,
+            this,&GameController::onBuyDevCardClicked);
+    connect(qtoolbar,&BoardToolbar::endTurnRequested,
+            this,&GameController::onEndTurnClicked);
+    connect(qtoolbar,&BoardToolbar::diceRolled,
+            this,&GameController::onRollDiceClicked);
+    connect(qtoolbar,&BoardToolbar::devCardChosen,
+            this,&GameController::onUseDevCardClicked);
+
+    // popup buttons
+    connect(qtoolbar,&BoardToolbar::bankTradeRequested,this,[this](TradeOffer offer) {
+        onBankTradeSent(offer.give.begin()->first, offer.receive.begin()->first);
+    });
+    connect(qtoolbar,&BoardToolbar::playerTradeRequested,this,[this](const TradeOffer& offer) {
+        onPlayerTradeRequestSent(offer.give,offer.receive);
+    });
+    connect(qtoolbar,&BoardToolbar::devCardChosen,this,&GameController::onUseDevCardClicked);
+
+    // BOARD
+    connect(qboard,&QBoard::elementClicked,this,&GameController::onBoardElementClicked);
+    connect(this,&GameController::buildPlaced,qboard,&QBoard::onPlayBuildFeedback);
+
+    // ACTION POPUPS
+    connect(qactionManager,&ActionManager::monopolyResourceChosen,this,&GameController::onMonopolyResourceChosen);
+    connect(qactionManager,&ActionManager::yearOfPlentySubmitted,this,[this](const YearOfPlentyChoice& c) {
+        onYearOfPlentyResourcesChosen((c.receive.begin()->first),(c.receive.begin()++)->first);
+    });
+    connect(qactionManager,&ActionManager::playerChosenToSteal,
+            this,&GameController::onStealCardPlayerChosen);
+
+
+    // GAME OVERLAY
+    connect(this,&GameController::gameOver,qgameOverlay,&GameOverlay::showGameOver);
+    connect(this,&GameController::gameWon,qgameOverlay,&GameOverlay::showGameWon);
+
+    // UPDATES TO VIEW
+    connect(this,&GameController::updateToolbar,qtoolbar,&BoardToolbar::updateState);
+    connect(this,&GameController::updateBoard,qboard,&QBoard::update);
+    connect(this,&GameController::updateActivePlayer,qplayersOverlay,&PlayersOverlay::setActivePlayer);
+    connect(this,&GameController::update,qtradeOverlay,&TradeOverlay::refresh);
+
+    connect(this,&GameController::setDiscard,qactionManager,&ActionManager::openDiscardPopup);
+    connect(this,&GameController::setChoosePlayer,qactionManager,&ActionManager::setStealCandidates);
+    connect(this,&GameController::setDiscard,qactionManager,&ActionManager::openDiscardPopup);
+
 }
 
 void GameController::updateActiveToolOnPhase(){
@@ -154,21 +214,21 @@ void GameController::onBuildRoadClicked(){
     if (!isLocalPlayersTurn("BuildRoad")) return;
 
     setActiveTool(std::make_unique<BuildRoadMove>(m_localPlayerId, types::InvalidEdgeId));
-    update();
+    updateState();
 }
 
 void GameController::onBuildSettlementClicked(){
     if (!isLocalPlayersTurn("BuildSettlement")) return;
 
     setActiveTool(std::make_unique<BuildSettlementMove>(m_localPlayerId, types::InvalidNodeId));
-    update();
+    updateState();
 }
 
 void GameController::onBuildCityClicked() {
     if (!isLocalPlayersTurn("BuildCity")) return;
 
     setActiveTool(std::make_unique<BuildCityMove>(m_localPlayerId, types::InvalidNodeId));
-    update();
+    updateState();
 }
 
 void GameController::onBoardElementClicked(int elementId){
@@ -180,9 +240,8 @@ void GameController::onBoardElementClicked(int elementId){
     if (!boardMove) return;
 
     boardMove->setBoardElementId(elementId);
-    sendMove(m_activeTool.get());
-
-    emit buildPlaced(); // shake only after successful placement
+    if (sendMove(m_activeTool.get()))
+        emit buildPlaced(); // shake only after successful placement
 }
 
 void GameController::onBuyDevCardClicked() {
@@ -234,14 +293,18 @@ void GameController::onDiscardCardsSent(const ResourcePack &discarded) {
 
     auto move = std::make_unique<DiscardCardsMove>(m_localPlayerId, discarded);
 
-    sendMove(move.get());
+    if (sendMove(move.get())) {
+        if (m_session.playerMustDiscard(m_localPlayerId)) {
+            //emit discardCards();
+        }
+    }
 }
 
 void GameController::onPlayerTradeRequestSent(const ResourcePack &give, const ResourcePack &receive) {
     if (!isLocalPlayersTurn("PlayerTradeRequest")) return;
 
-    auto move = std::make_unique<PlayerTradeRequestMove>(m_localPlayerId, give, receive);
-
+    std::unique_ptr<PlayerTradeRequestMove> move = std::make_unique<PlayerTradeRequestMove>(m_localPlayerId, give, receive);
+    move->setTradeId(m_session.getNextTradeId());
     sendMove(move.get());
 }
 
@@ -271,9 +334,10 @@ void GameController::onBankTradeSent(ResourceType give, ResourceType receive) {
 
 void GameController::onRollDiceClicked() {
     if (!isLocalPlayersTurn("RollDice")) return;
+    if (m_session.phase()!=TurnPhase::RollDice) return;
 
-    auto move = std::make_unique<RollDiceMove>(m_localPlayerId);
-
+    std::unique_ptr<RollDiceMove> move = std::make_unique<RollDiceMove>(m_localPlayerId);
+    move->setDiceRoll(m_session.rollDice());
     sendMove(move.get());
 }
 
@@ -289,34 +353,47 @@ void GameController::onEndTurnClicked() {
 }
 
 void GameController::onMoveReceived(Move* receivedMove){
+    if (receivedMove->getPlayerId()==m_localPlayerId) { // we skip moves from us, this is fallback server already does this
+        return;
+    }
     std::unique_ptr<Move> move(receivedMove);
-    if (!move) return;
+    if (!move) {
+        onError("Received empty move!");
+    }
 
     if (!m_session.applyMove(*move)) {
-        qDebug() << "Received invalid move from network!";
-        auto leaveMove = std::make_unique<PlayerLeaveMove>(m_session.localPlayer());
-        sendMove(leaveMove.get());
+        onError("Server Received invalid move!");
         return;
     }
 
-    emit onModelChanged(m_boardRenderState, m_toolbarRenderState); // they will be cleared since im not active player rn, this will only make view redraw for me since someone else played
+    if (m_session.currentPlayer()==m_localPlayerId) {
+        updateState();
+    }
+    updateView(); // renderstates will be cleared since im not active player rn, this will only make view redraw for me since someone else played
 }
 
-void GameController::onModelChanged(const BoardRenderState &state, const ToolbarRenderState &toolbarState) {
+void GameController::updateView() {
     emit updateActivePlayer(m_session.currentPlayer());
-    emit updateToolbar(toolbarState);
-    emit updateBoard(state);
-    emit redraw();
-
+    emit updateToolbar(m_toolbarRenderState);
+    emit updateBoard(m_boardRenderState);
+    emit update();
 }
 
-void GameController::sendMove(const Move* move) {
-    if (!m_session.applyMove(*move)) {
-        qDebug() << "Tried to send invalid move!"; // for testing onl<, will be removed later
-        return;
+bool GameController::sendMove(const Move *move) {
+    if (!m_session.applyMove(*move)) { // we apply local moves ourselves
+        onError("Tried to send invalid move!"); // we kick ourselves out of game
+        return false;
     }
-
-    clearActiveTool(); // tool isnt active anymore after sending move (even sequential moves are made of multiple moves)
-    update();
     m_adapter->sendMove(move);
+    clearActiveTool(); // tool isnt active anymore after sending move (even sequential moves are made of multiple moves)
+    updateState();
+    updateView();
+    return true;
+}
+
+void GameController::onError(const std::string& error) {
+    qDebug() << error;
+    auto leaveMove = std::make_unique<PlayerLeaveMove>(m_session.localPlayer());
+    sendMove(leaveMove.get());
+    emit gameClosed();
 }

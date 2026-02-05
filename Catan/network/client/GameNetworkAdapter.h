@@ -20,15 +20,25 @@ public:
     void setTransport(NetworkTransport *transport);
     void sendMessage(const std::string &author, const std::string &message);
 
+    void sendReady();
+
+    void onError(const std::string& error);
+    void onDisconnected();
 signals:
     void remoteMoveReceived(Move* move);
     void remoteMessageReceived(const std::string& author, const std::string& message);
 
+    void disconnected();
+    void errored(const std::string&);
+
+    void startGame();
 private:
     NetworkTransport* m_transport;
 
     net::Envelope wrapMove(const Move& move) const;
-    net::Envelope wrapMessage(const std::string& message) const;
+    net::Envelope wrapMessage(const std::string &author, const std::string &message) const;
+
+    void handleAck(const net::Envelope & env);
 
     void onEnvelope(const net::Envelope& env);
     void handleMessage(const net::Envelope& env); //no?

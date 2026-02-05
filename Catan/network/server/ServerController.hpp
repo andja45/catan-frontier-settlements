@@ -4,10 +4,8 @@
 
 #ifndef CATAN_SERVERCONTROLLER_HPP
 #define CATAN_SERVERCONTROLLER_HPP
+
 #include <MessageDispatcher.hpp>
-
-
-
 #include <QObject>
 #include <QTcpServer>
 #include <unordered_set>
@@ -23,11 +21,12 @@ public:
 
 private slots:
     void onNewConnection();
-    void onEnvelope(ClientConnection *, net::Envelope &env);
+    void onEnvelope(ClientConnection *, const net::Envelope &env);
     void onDisconnected(ClientConnection*);
+    void onErrored(ClientConnection *, const std::string &error);
 
 private:
-    QTcpServer m_server;
+    QTcpServer* m_server;
 
     std::unordered_set<ClientConnection*> m_clients;
 

@@ -8,33 +8,33 @@
 GameConfig::GameConfig(int numPlayers,
                        int winningPoints,
                        std::vector<std::string> players)
-    : numPlayers(numPlayers),
-      winningVictoryPoints(winningPoints),
-      players(std::move(players))
+    : m_numPlayers(numPlayers),
+      m_winningVictoryPoints(winningPoints),
+      m_players(std::move(players))
 {
-    assert(this->numPlayers == static_cast<int>(this->players.size()));
+    assert(this->m_numPlayers == static_cast<int>(this->m_players.size()));
 }
 
 const std::string& GameConfig::player(const PlayerId id) const {
-    assert(id >= 0 && id < static_cast<PlayerId>(players.size())); // they will get next id available, client-host having id 0
-    return players[id];
+    assert(id >= 0 && id < static_cast<PlayerId>(m_players.size())); // they will get next id available, client-host having id 0
+    return m_players[id];
 }
 
 void GameConfig::addPlayer(const std::string &name) {
-    players.push_back(name);
+    m_players.push_back(name);
 }
 
 void GameConfig::removePlayer(std::string name) {
-    for (auto it =players.begin(); it !=players.end(); ++it) {
+    for (auto it =m_players.begin(); it !=m_players.end(); ++it) {
         if (*it == name) {
-            players.erase(it);
+            m_players.erase(it);
             return;
         }
     }
 }
 
-void GameConfig::copySettingFromConfig(const GameConfig &config) {
-    numPlayers = config.numPlayers;
-    winningVictoryPoints = config.winningVictoryPoints;
-    boardType=config.boardType;
+void GameConfig::copySettingsFromConfig(const GameConfig &config) {
+    m_numPlayers = config.m_numPlayers;
+    m_winningVictoryPoints = config.m_winningVictoryPoints;
+    m_boardType=config.m_boardType;
 }

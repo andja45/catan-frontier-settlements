@@ -21,9 +21,7 @@ private:
     PlayerId m_playerId=-1;
 
     std::vector<Edge*> m_roads;
-    std::vector<Node*> m_buildings; // TODO remove in the future? or keep for trades and longest road?
-
-    std::vector<std::vector<int>> road_graph;
+    std::vector<Node*> m_buildings;
 
     //std::map<ResourceType,bool> m_has2for1Trade;
 
@@ -36,11 +34,12 @@ private:
     int m_numOfCitiesLeft=5;
     int m_numOfSettlementsLeft=5;
 
-    bool m_isActive=true;
+    int m_lenOfRoad=0;
+
+    bool m_isActive=true; //if player leaves game we set to false and skip him
 
 public:
     explicit Player(PlayerId id, std::string name) : ResourceHolder(name), m_playerId(id) {
-
     }
 
     PlayerId getPlayerId() const { return m_playerId; }
@@ -56,15 +55,13 @@ public:
     void addSettlement(Node* node);
     void addCity();
 
-    void addRoadInGraph(EdgeId edgeId1, EdgeId edgeId2);
-
     bool has3for1Trade() const;
     bool has2for1Trade(ResourceType resourceType) const {return hasTrade(resourceType);}
 
     bool hasCityLeft() const {return m_numOfCitiesLeft>0;}
     bool hasSettlementLeft() const {return m_numOfSettlementsLeft>0;}
     bool hasRoadLeft() const {return m_numOfRoadsLeft>0;}
-    bool hasBuildings() const {return m_buildings.size()>0;}
+    bool hasBuildings() const {return !m_buildings.empty();}
 
     int getTotalPoints() const {return m_totalPoints;}
 
@@ -84,7 +81,8 @@ public:
     bool isActive() const {return m_isActive;}
     void setLeft() {m_isActive=false;}
 
-    double getRoadLength(){return m_roads.size();}; //TODO fix<<<<
+    int getRoadLength()const {return m_lenOfRoad;};
+    void setRoadLength(int length){m_lenOfRoad=length;}
 };
 
 

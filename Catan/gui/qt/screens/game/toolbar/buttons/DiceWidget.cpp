@@ -5,20 +5,12 @@
 #include <QMouseEvent>
 #include <QtMath>
 
-DiceWidget::DiceWidget(QWidget* parent)
-    : QWidget(parent)
+DiceWidget::DiceWidget(const std::pair<int,int>*dice,QWidget* parent)
+    : QWidget(parent), m_diceValues(dice)
 {
     setAttribute(Qt::WA_StyledBackground, true);
     setCursor(Qt::PointingHandCursor);
     setMouseTracking(true);
-    setDice(1,1);
-}
-
-void DiceWidget::setDice(int d1, int d2)
-{
-    m_die1 = qBound(1, d1, 6);
-    m_die2 = qBound(1, d2, 6);
-    update();
 }
 
 void DiceWidget::updateDieRects()
@@ -30,6 +22,10 @@ void DiceWidget::updateDieRects()
     m_die2Rect = QRectF(size + spacing, (height() - size) / 2, size, size);
 }
 
+void DiceWidget::redraw() {
+    QWidget::update();
+}
+
 void DiceWidget::paintEvent(QPaintEvent*)
 {
     updateDieRects();
@@ -37,11 +33,11 @@ void DiceWidget::paintEvent(QPaintEvent*)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing, true);
 
-    drawDie(p, m_die1Rect, m_die1);
-    drawDie(p, m_die2Rect, m_die2);
+    drawDie(p, m_die1Rect, m_diceValues->first);
+    drawDie(p, m_die2Rect, m_diceValues->second);
 
     // Hover overlay
-    if (m_hoveredDie != 0) {
+    if (!m_disabled && m_hoveredDie != 0) {
         const QRectF& r = (m_hoveredDie == 1) ? m_die1Rect : m_die2Rect;
 
         p.save();
@@ -87,7 +83,10 @@ void DiceWidget::mousePressEvent(QMouseEvent* e){
 
 void DiceWidget::drawDie(QPainter& p, const QRectF& r, int value)
 {
-    p.setBrush(QColor(250, 250, 250));
+    auto color=QColor(250, 250, 250);
+    if (m_disabled)
+        color=color.darker(120);
+    p.setBrush(color);
     p.setPen(QColor(0, 0, 0, 120));
     p.drawRoundedRect(r, 8, 8);
 
@@ -140,4 +139,9 @@ void DiceWidget::leaveEvent(QEvent* e)
         update();
     }
     QWidget::leaveEvent(e);
+}
+
+void DiceWidget::setEnabled(bool enabled) {
+    m_disabled=!enabled;
+    update();
 }
