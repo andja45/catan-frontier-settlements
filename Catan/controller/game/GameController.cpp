@@ -268,7 +268,7 @@ void GameController::onStealCardPlayerChosen(PlayerId victimId) {
     auto* move = dynamic_cast<StealCardMove*>(m_activeTool.get());
     if (!move) return;
 
-    move->setBoardElementId(victimId);
+    move->setVictimPlayerId(victimId);
     sendMove(m_activeTool.get());
 }
 

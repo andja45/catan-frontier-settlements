@@ -15,6 +15,8 @@ public:
 
     QSize minimumSizeHint() const;
 
+    void mousePressEvent(QMouseEvent *event) override;
+
     void setMargin(int m) { m_contentLayout->setContentsMargins(m, m, m, m); }
 
 private:

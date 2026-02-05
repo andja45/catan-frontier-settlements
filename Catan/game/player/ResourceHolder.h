@@ -27,7 +27,11 @@ protected:
 public:
     ResourceHolder(const std::string &name="") : m_name(name)  {}
 
-    bool hasResource(ResourceType resourceType, int amount) const { return m_resources.at(resourceType)>=amount; }
+    bool hasResource(ResourceType resourceType, int amount) const {
+        auto it = m_resources.find(resourceType);
+        const int have = (it == m_resources.end()) ? 0 : it->second;
+        return have >= amount;
+    }
     bool hasResources(ResourcePack pack) const {
         for (auto r:pack) {
             if (!hasResource(r.first,r.second)) return false;

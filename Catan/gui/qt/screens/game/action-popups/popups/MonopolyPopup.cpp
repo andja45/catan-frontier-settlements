@@ -11,6 +11,8 @@
 
 #include <qevent.h>
 
+#include "common/audio/AudioManager.h"
+
 MonopolyPopup::MonopolyPopup(QWidget *parent)
     : FloatingPanel( parent,Qt::Dialog)
 {
@@ -70,6 +72,7 @@ MonopolyPopup::MonopolyPopup(QWidget *parent)
 
     connect(m_confirmBtn, &QPushButton::clicked, this, [this]() {
         if (m_selected < 0 || m_selected >= m_choices.size()) return;
+        AudioManager::instance().playClick();
         emit resourceChosen(m_choices[m_selected]);
         closePopup();
     });

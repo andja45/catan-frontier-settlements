@@ -16,6 +16,8 @@
 #include <common/cards/QCard.h>
 #include <player/Bank.h>
 
+#include "common/audio/AudioManager.h"
+
 
 YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)
     : FloatingPanel( parent,Qt::Dialog), m_bank(bank)
@@ -58,6 +60,7 @@ YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)
 
     connect(m_playBtn, &QPushButton::clicked, this, [this]() {
         // valid only when exactly 2 selected
+        AudioManager::instance().playClick();
         emit yearOfPlentySubmitted(m_choice);
         closePopup();
     });
@@ -98,7 +101,8 @@ void YearOfPlentyPopup::updateUiState() {
 
         // “disable look” when bank is empty
         const bool bankHasAny = (m_bankResources.count(rt) ? m_bankResources.at(rt) : 0) > 0;
-        s.disabled=true;
+        if (!bankHasAny)
+            s.disabled=true;
         c->setSpec(s);
 
         (void)bankHasAny;
@@ -106,11 +110,9 @@ void YearOfPlentyPopup::updateUiState() {
 }
 
 void YearOfPlentyPopup::rebuild() {
-
+    m_bankResources= m_bank->getResources();
     // init data
-    std::vector<ResourceType> m_types;
-    for (auto rt : m_types) {
-        m_bankResources[rt] = m_bank->getNumOfResourceCards(rt);
+    for (auto [rt,_] : m_bank->getResources()) {
         m_types.push_back(rt);
         m_choice.receive[rt] = 0;
     }

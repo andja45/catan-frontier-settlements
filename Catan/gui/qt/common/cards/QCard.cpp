@@ -155,7 +155,8 @@ void QCard::paintEvent(QPaintEvent*) {
         p.drawRoundedRect(r, radius, radius);
     }
     if (m_spec.disabled) {
-        QColor c = GameTheme::getColorByResource(ResourceType::None);
+        QColor c = GameTheme::getColorByResource(m_spec.resource).darker(100);
+        c.setAlpha(200);
         p.setPen(Qt::NoPen);
         p.setBrush(c);
         p.drawRoundedRect(r, radius, radius);

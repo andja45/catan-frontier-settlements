@@ -14,7 +14,6 @@ add_library(catan_network_client
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Network)
 
-
 target_link_libraries(catan_network_client
         PUBLIC
         Qt${QT_VERSION_MAJOR}::Core

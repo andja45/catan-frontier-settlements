@@ -6,6 +6,8 @@
 #include <screens/game/game-overlay/GameOverlay.hpp>
 #include <QPropertyAnimation>
 
+#include "common/audio/AudioManager.h"
+
 GameOverlay::GameOverlay(QWidget* parent)
     : QWidget(parent)
 {
@@ -37,14 +39,18 @@ void GameOverlay::showOverlay()
 }
 
 void GameOverlay::showGameOver() {
+    AudioManager::instance().playDefeat();
+
     m_text="Game Over";
-    m_textColor=Qt::red;
+    m_textColor=Qt::white;
     showOverlay();
 }
 
 void GameOverlay::showGameWon() {
+    AudioManager::instance().playVictory();
+
     m_text="You won!";
-    m_textColor=Qt::green;
+    m_textColor=Qt::white;
     showOverlay();
 
 }

@@ -3,7 +3,6 @@ project(Catan VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #add_compile_options(-Wall -Wextra)
 
@@ -21,15 +20,15 @@ endif()
 
 add_subdirectory(libs)
 add_subdirectory(game)
-add_subdirectory(gui)
 add_subdirectory(network)
-add_subdirectory(controller)
+if(BUILD_CLIENT)
+    add_subdirectory(gui)
+    add_subdirectory(controller)
+endif()
 
-option(BUILD_SERVER "Build the server executable" ON)
 option(BUILD_CLIENT "Build the client executable" ON)
-
-message(STATUS "BUILD_SERVER = ${BUILD_SERVER}")
-message(STATUS "BUILD_CLIENT = ${BUILD_CLIENT}")
+option(BUILD_SERVER "Build the server executable" ON)
+option(BUILD_TESTS "Build unit tests" ON)
 
 if(BUILD_CLIENT)
     add_subdirectory(appClient)
@@ -39,11 +38,8 @@ if(BUILD_SERVER)
     add_subdirectory(appServer)
 endif()
 
-#set_target_properties(catan_gui_qt PROPERTIES
-#        CXX_CLANG_TIDY ""
-#)
-#set_source_files_properties(
-#        gui/qt/ui/widget.cpp
-#        PROPERTIES
-#        SKIP_LINTING ON
-#)
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+

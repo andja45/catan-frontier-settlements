@@ -24,7 +24,7 @@ bool StealCardMove::isValid(const GameSession& session) const {
     if (victim.getNumOfResourceCards() == 0) // victim must have at least one card
         return false;
 
-    if (board.tileTouchesPlayerBuilding(m_victimPlayerId, board.robberTileId()))
+    if (!board.tileTouchesPlayerBuilding(m_victimPlayerId, board.robberTileId()))
         return false;
 
     return true;

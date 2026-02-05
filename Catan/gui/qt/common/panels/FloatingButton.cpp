@@ -1,5 +1,9 @@
 #include "FloatingButton.hpp"
 
+#include <iostream>
+
+#include "common/audio/AudioManager.h"
+
 FloatingButton::FloatingButton(QWidget* parent)
     : QPushButton(parent)
 {
@@ -54,4 +58,9 @@ QSize FloatingButton::minimumSizeHint() const {
     QSize minHint = QPushButton::minimumSizeHint();
     if (m_contentLayout) minHint = minHint.expandedTo(m_contentLayout->minimumSize());
     return minHint;
+}
+
+void FloatingButton::mousePressEvent(QMouseEvent* event) {
+    AudioManager::instance().playClick();
+    QPushButton::mousePressEvent(event);
 }

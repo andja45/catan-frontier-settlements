@@ -1,186 +1,405 @@
+#define LOBBY_TEST_PLAYERS 0
 
-#include <QButtonGroup>
-#include <QFormLayout>
-#include <screens/lobby/LobbyView.h>
-#include<string.h>
-#include <screens/lobby/AddBotListItem.h>
+#include "LobbyView.h"
 
-LobbyView::LobbyView(const std::string &gameName,RoleType type, QWidget *parent)
-    : QWidget(parent), m_gameName(QString::fromStdString(gameName)), m_role(type)
-{
+#include <algorithm>
+#include <QGridLayout>
+#include <QListWidgetItem>
+#include <QFileDialog>
+#include <QPalette>
+#include <QAbstractItemView>
+#include <QStyleOptionSlider>
 
+#include <common/theme/GameTheme.h>
+#include <screens/lobby/PlayerListItem.h>
+
+#include "common/audio/AudioManager.h"
+
+class ValueSlider : public QSlider {
+public:
+    using QSlider::QSlider;
+
+protected:
+    void paintEvent(QPaintEvent* e) override {
+        QSlider::paintEvent(e);
+
+        QStyleOptionSlider opt;
+        initStyleOption(&opt);
+        QRect handle = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
+
+        QPainter p(this);
+        p.setRenderHint(QPainter::Antialiasing, true);
+
+        QFont f = font();
+        f.setBold(true);
+        f.setPointSizeF(std::max(9.0, handle.height() * 0.45));
+        p.setFont(f);
+        p.setPen(QColor(25, 35, 45));
+
+        p.drawText(handle, Qt::AlignCenter, QString::number(value()));
+    }
+};
+
+static void applyLobbyStyle(QWidget* w) {
+    w->setStyleSheet(R"(
+        QLabel {
+        font-size: 16px;
+        font-weight: bold;
+        color: #1f2a33;
+        }
+
+        QWidget#Card {
+            background: rgba(255,255,255,185);
+            border: 2px solid rgba(0,0,0,40);
+            border-radius: 16px;
+        }
+
+        QLabel#Title {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        QPushButton#MapBtn {
+            min-width: 76px; max-width: 76px;
+            min-height: 54px; max-height: 54px;
+            border-radius: 12px;
+            background: rgba(255,255,255,220);
+            border: 2px solid rgba(0,0,0,55);
+            font-weight: 800;
+        }
+        QPushButton#MapBtn:checked {
+            background: rgba(41,128,185,235);
+            border: 2px solid rgba(0,0,0,80);
+            color: white;
+        }
+        QPushButton#MapBtn:hover {
+            background-color: #3A93D4;
+            border-color: #2C7FB8;
+            color: white;
+        }
+        QPushButton#MapBtn:pressed {
+            background-color: #1F6FA5;
+            border-color: #184F75;
+            padding-top: 1px;
+            padding-left: 1px;
+        }
+        QPushButton#MapBtn:checked:hover {
+            background-color: #3A93D4;
+            border-color: #2C7FB8;
+        }
+
+        QPushButton#LoadBtn {
+            min-height: 40px;
+            border-radius: 12px;
+            background: rgba(255,255,255,220);
+            border: 2px solid rgba(0,0,0,55);
+            font-weight: 700;
+            padding: 0 14px;
+        }
+
+        QSlider::groove:horizontal {
+            height: 10px; border-radius: 5px;
+            background: rgba(0,0,0,28);
+        }
+        QSlider::sub-page:horizontal {
+            border-radius: 5px;
+            background: rgba(41,128,185,210);
+        }
+        QSlider::handle:horizontal {
+            width: 30px; height: 30px;
+            margin: -11px 0;
+            border-radius: 15px;
+            background: white;
+            border: 2px solid rgba(0,0,0,60);
+        }
+
+        QPushButton#StartBtn {
+            min-height: 50px;
+            border-radius: 25px;
+            background: rgba(41,128,185,235);
+            border: 2px solid rgba(0,0,0,80);
+            font-size: 16px;
+            font-weight: 900;
+            padding: 0 40px;
+            color: white;
+        }
+        QPushButton#StartBtn:hover {
+            background-color: #3A93D4;
+            border-color: #2C7FB8;
+        }
+        QPushButton#StartBtn:pressed {
+            background-color: #1F6FA5;
+            border-color: #184F75;
+        }
+
+        QPushButton#StartBtn:disabled {
+            background: rgba(0,0,0,22);
+            border: 2px solid rgba(0,0,0,18);
+            color: rgba(0,0,0,90);
+        }
+
+        QListWidget { background: transparent; }
+    )");
+}
+
+static QPushButton* makeMapBtn(QWidget* parent, const QString& text) {
+    auto* b = new QPushButton(text, parent);
+    b->setObjectName("MapBtn");
+    b->setCheckable(true);
+    return b;
+}
+
+LobbyView::LobbyView(const std::string& gameName, RoleType type, QWidget* parent)
+    : QWidget(parent), m_role(type),
+      m_gameName(QString::fromStdString(gameName)) {
     setWindowTitle(QString("Game lobby: %1").arg(m_gameName));
 
-    m_playerCountLabel = new QLabel("Players joined: 0", this);
+    setAutoFillBackground(true);
+    QPalette pal = palette();
+    pal.setColor(QPalette::Window, GameTheme::getColorByResource(ResourceType::Sea));
+    setPalette(pal);
 
-    m_playerList = new QListWidget(this);
-    m_playerList->setSpacing(4);
-    addAddBotEntry();
+    applyLobbyStyle(this);
 
-    auto *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_playerCountLabel);
-    mainLayout->addWidget(m_playerList);
+    auto* root = new QHBoxLayout(this);
+    root->setContentsMargins(14, 14, 14, 14);
+    root->setSpacing(14);
 
-    m_maxPlayersSpin = new QSpinBox(this);
-    m_maxPlayersSpin->setRange(2, 4);
-    m_maxPlayersSpin->setValue(4);
+    root->addWidget(makePlayersCard(), 1);
+    root->addWidget(makeSettingsCard(), 2);
 
-    connect(m_maxPlayersSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
-        if (m_role==RoleType::Host)
-            emit configChanged(getConfig());
-    });
+    resize(860, 480);
 
-
-    m_pointsToWinSpin = new QSpinBox(this);
-    m_pointsToWinSpin->setRange(8, 20);
-    m_pointsToWinSpin->setValue(10);
-    connect(m_pointsToWinSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
-        if (m_role==RoleType::Host)
-            emit configChanged(getConfig());
-        });
-
-
-    auto *mapGroupBox = setMapSelect();
-    auto *settingsForm = new QFormLayout;
-    settingsForm->addRow("Max players:", m_maxPlayersSpin);
-    settingsForm->addRow("Points to win:", m_pointsToWinSpin);
-
-    auto *settingsBox = new QGroupBox("Game Settings", this);
-    settingsBox->setLayout(settingsForm);
-
-    m_errorLabel = new QLabel(this);
-    m_errorLabel->setStyleSheet("color: red;");
-    m_errorLabel->setAlignment(Qt::AlignCenter);
-    m_errorLabel->setVisible(false);
-
-    m_startButton = new QPushButton("Start Game", this);
-
-    auto *sideLayout = new QVBoxLayout;
-    sideLayout->addWidget(settingsBox);
-    sideLayout->addWidget(mapGroupBox);
-    sideLayout->addStretch();
-    sideLayout->addWidget(m_errorLabel);
-    sideLayout->addWidget(m_startButton);
-
-    auto *rootLayout = new QHBoxLayout(this);
-    rootLayout->addLayout(mainLayout, 3);
-    rootLayout->addLayout(sideLayout, 1);
-    resize(600, 400);
-
-
-    if (type == RoleType::Player) {
-        disableAll();
-    }
+    if (type == RoleType::Player) disableAll();
 
     connect(m_startButton, &QPushButton::clicked, this, [this]() {
-        MapType mapType = MapType::Classic;
-        if (m_customMapRadio->isChecked() && m_customMapPath.isEmpty()){
+        AudioManager::instance().playClick();
+        if (m_customBtn->isChecked() && m_customMapPath.isEmpty()) {
             m_errorLabel->setText("Please load a custom map before starting the game.");
             m_errorLabel->setVisible(true);
             return;
         }
-
         m_errorLabel->setVisible(false);
-        emit startGameRequested(getConfig(),m_customMapPath.toStdString());
+        emit startGameRequested(getConfig(), m_customMapPath.toStdString());
     });
 
+#if LOBBY_TEST_PLAYERS
+    onAddPlayer("Ana");
+    onAddPlayer("Marko");
+    onAddPlayer("Jovan");
+    onAddPlayer("Mina");
+#endif
 }
-QGroupBox* LobbyView::setMapSelect()
-{
-    m_mapButtonGroup = new QButtonGroup(this);
 
-    m_classicMapRadio = new QRadioButton("Classic", this);
-    m_extendedMapRadio = new QRadioButton("Extended", this);
-    m_customMapRadio = new QRadioButton("Custom", this);
+QWidget* LobbyView::makePlayersCard() {
+    auto* card = new QWidget(this);
+    card->setObjectName("Card");
+    card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    m_classicMapRadio->setChecked(true);
+    auto* lay = new QVBoxLayout(card);
+    lay->setContentsMargins(14, 14, 14, 14);
+    lay->setSpacing(12);
 
-    m_mapButtonGroup->addButton(m_classicMapRadio);
-    m_mapButtonGroup->addButton(m_extendedMapRadio);
-    m_mapButtonGroup->addButton(m_customMapRadio);
+    auto* title = new QLabel("Players", card);
+    title->setObjectName("Title");
+    title->setAlignment(Qt::AlignHCenter);
 
-    auto *mapLayout = new QVBoxLayout;
-    mapLayout->addWidget(m_classicMapRadio);
-    mapLayout->addWidget(m_extendedMapRadio);
-    mapLayout->addWidget(m_customMapRadio);
+    m_playerCountLabel = new QLabel("Players joined: 0", card);
+    m_playerCountLabel->setStyleSheet("font-size: 16px; font-weight: normal;");
+    m_playerCountLabel->setAlignment(Qt::AlignHCenter);
 
-    m_loadBoardButton = new QPushButton("Load Board", this);
+    m_playerList = new QListWidget(card);
+    m_playerList->setFrameShape(QFrame::NoFrame);
+    m_playerList->setSpacing(8);
+
+    m_playerList->setSelectionMode(QAbstractItemView::NoSelection);
+    m_playerList->setFocusPolicy(Qt::NoFocus);
+    m_playerList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    lay->addWidget(title);
+    lay->addWidget(m_playerCountLabel);
+    lay->addWidget(m_playerList, 1);
+
+    return card;
+}
+
+QWidget* LobbyView::makeSettingsCard() {
+    auto* card = new QWidget(this);
+    card->setObjectName("Card");
+    card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    auto* grid = new QGridLayout(card);
+    grid->setContentsMargins(16, 16, 16, 16);
+    grid->setHorizontalSpacing(12);
+    grid->setVerticalSpacing(22);
+    grid->setColumnMinimumWidth(0, 140);
+
+    auto* room = new QLabel(QString("Room name: %1").arg(m_gameName), card);
+    room->setObjectName("Title");
+    room->setAlignment(Qt::AlignHCenter);
+    grid->addWidget(room, 0, 0, 1, 3);
+
+    auto* boardLbl = new QLabel("Board", card);
+    grid->addWidget(boardLbl, 1, 0);
+
+    m_normalBtn   = makeMapBtn(card, "Standard");
+    m_extendedBtn = makeMapBtn(card, "Extended");
+    m_customBtn   = makeMapBtn(card, "Custom");
+    m_normalBtn->setChecked(true);
+
+    m_mapButtonGroup = new QButtonGroup(card);
+    m_mapButtonGroup->setExclusive(true);
+    m_mapButtonGroup->addButton(m_normalBtn, 1);
+    m_mapButtonGroup->addButton(m_extendedBtn, 2);
+    m_mapButtonGroup->addButton(m_customBtn, 3);
+
+    auto* mapBtns = new QHBoxLayout;
+    mapBtns->setContentsMargins(0, 0, 0, 0);
+    mapBtns->setSpacing(10);
+    mapBtns->addWidget(m_normalBtn);
+    mapBtns->addWidget(m_extendedBtn);
+    mapBtns->addWidget(m_customBtn);
+    mapBtns->addStretch(1);
+
+    auto* mapBtnsWrap = new QWidget(card);
+    mapBtnsWrap->setLayout(mapBtns);
+    mapBtnsWrap->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    grid->addWidget(mapBtnsWrap, 1, 1);
+
+    m_loadBoardButton = new QPushButton("Load board", card);
+    m_loadBoardButton->setObjectName("LoadBtn");
     m_loadBoardButton->setVisible(false);
-    mapLayout->addWidget(m_loadBoardButton);
+    grid->addWidget(m_loadBoardButton, 1, 2);
 
-    auto *mapGroupBox = new QGroupBox("Map", this);
-    mapGroupBox->setLayout(mapLayout);
+    connect(m_customBtn, &QPushButton::toggled, this, [this](bool checked){
+        m_loadBoardButton->setVisible(checked);
+    });
 
-    connect(m_customMapRadio, &QRadioButton::toggled, this,
-            [this](bool checked) {
-                m_loadBoardButton->setVisible(checked);
-            });
-    connect(m_loadBoardButton, &QPushButton::clicked, this, [this]() {
+    connect(m_loadBoardButton, &QPushButton::clicked, this, [this](){
+        AudioManager::instance().playClick();
         QString filePath = QFileDialog::getOpenFileName(
-            this,
-            "Load Custom Board",
-            QString(),
-            "JSON Files (*.json)"
-            );
-
+            this, "Load Custom Board", QString(), "JSON Files (*.json)"
+        );
         if (!filePath.isEmpty()) {
             m_customMapPath = filePath;
             m_errorLabel->setVisible(false);
             emit customMapSelected(filePath);
         }
     });
-    return mapGroupBox;
-}
-void LobbyView::addPlayer(const QString &playerName)
-{
-    int insertIndex = m_playerList->count() - 1;
 
-    auto *item = new QListWidgetItem;
-    auto *widget = new PlayerListItem(playerName);
+    connect(m_mapButtonGroup,
+            QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked),
+            this,
+            [this](QAbstractButton*) {
+                AudioManager::instance().playClick();
+                emit configChanged(getConfig());
+            });
+
+    auto* playersLbl = new QLabel("Players", card);
+    grid->addWidget(playersLbl, 2, 0);
+
+    m_playersSlider = new ValueSlider(Qt::Horizontal, card);
+    m_playersSlider->setRange(2, 8);
+    m_playersSlider->setValue(4);
+    m_playersSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    grid->addWidget(m_playersSlider, 2, 1, 1, 2);
+
+    connect(m_playersSlider, &QSlider::valueChanged, this, [this](int){
+        emit configChanged(getConfig());
+        m_playersSlider->update();
+    });
+
+    auto* pointsLbl = new QLabel("Winning points", card);
+    grid->addWidget(pointsLbl, 3, 0);
+
+    m_pointsSlider = new ValueSlider(Qt::Horizontal, card);
+    m_pointsSlider->setRange(3, 20);
+    m_pointsSlider->setValue(10);
+    m_pointsSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    grid->addWidget(m_pointsSlider, 3, 1, 1, 2);
+
+    connect(m_pointsSlider, &QSlider::valueChanged, this, [this](int){
+        emit configChanged(getConfig());
+        m_pointsSlider->update();
+    });
+
+    m_errorLabel = new QLabel(card);
+    m_errorLabel->setStyleSheet("color:#b00020; font-weight:800;");
+    m_errorLabel->setAlignment(Qt::AlignCenter);
+    m_errorLabel->setVisible(false);
+    grid->addWidget(m_errorLabel, 4, 0, 1, 3);
+
+    m_startButton = new QPushButton("Start", card);
+    m_startButton->setObjectName("StartBtn");
+
+    auto* startWrap = new QWidget(card);
+    startWrap->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    auto* startLay = new QHBoxLayout(startWrap);
+    startLay->setContentsMargins(0, 0, 0, 0);
+    startLay->addStretch(1);
+    startLay->addWidget(m_startButton);
+    startLay->addStretch(1);
+
+    grid->addWidget(startWrap, 5, 0, 1, 3);
+
+    grid->setAlignment(mapBtnsWrap, Qt::AlignVCenter);
+    grid->setAlignment(m_playersSlider, Qt::AlignVCenter);
+    grid->setAlignment(m_pointsSlider, Qt::AlignVCenter);
+    grid->setAlignment(startWrap, Qt::AlignVCenter);
+
+    return card;
+}
+
+void LobbyView::disableAll()
+{
+    if (m_startButton) m_startButton->setEnabled(false);
+    if (m_playersSlider) m_playersSlider->setEnabled(false);
+    if (m_pointsSlider)  m_pointsSlider->setEnabled(false);
+    setMapButtonsEnabled(false);
+    if (m_loadBoardButton) m_loadBoardButton->setEnabled(false);
+}
+
+void LobbyView::setMapButtonsEnabled(bool on) {
+    if (m_normalBtn)   m_normalBtn->setEnabled(on);
+    if (m_extendedBtn) m_extendedBtn->setEnabled(on);
+    if (m_customBtn)   m_customBtn->setEnabled(on);
+}
+
+
+void LobbyView::setPlayerCount(int count) {
+    m_playerCountLabel->setText(QString("Players joined: %1").arg(count));
+}
+
+void LobbyView::addPlayer(const QString& playerName) {
+    const int idx = m_playerList->count();
+    const QColor col = GameTheme::playerColors.at(idx % (int)GameTheme::playerColors.size());
+
+    auto* item = new QListWidgetItem;
+    auto* widget = new PlayerListItem(col, playerName, m_playerList);
 
     item->setSizeHint(widget->sizeHint());
-    item->setBackground(
-        (m_playerList->count() % 2 == 0)
-            ? QColor({211, 223, 240})
-            : QColor({215, 211, 240})
-        );
-    m_playerList->insertItem(insertIndex, item);
+    item->setBackground(Qt::transparent);
+
+    m_playerList->addItem(item);
     m_playerList->setItemWidget(item, widget);
 
-
-    connect(widget, &PlayerListItem::kickRequested,
-            this, &LobbyView::kickPlayerRequested);
-}
-void LobbyView::removePlayer(const QString &playerName)
-{
-    for (int i = 0; i < m_playerList->count(); ++i) {
-        auto *item = m_playerList->item(i);
-        auto *widget = qobject_cast<PlayerListItem*>(
-            m_playerList->itemWidget(item)
-            );
-
-        if (widget && widget->findChild<QLabel*>()->text() == playerName) {
-            delete m_playerList->takeItem(i);
-            return;
-        }
-    }
+    setPlayerCount(m_playerList->count());
 }
 
-GameConfig LobbyView::getConfig() {
+GameConfig LobbyView::getConfig() const {
     GameConfig config;
     BoardType b = BoardType::Classic;
-    if (m_extendedMapRadio->isChecked()) b = BoardType::Extended;
-    else if (m_customMapRadio->isChecked()) {
+    if (m_extendedBtn->isChecked()) b = BoardType::Extended;
+    else if (m_customBtn->isChecked()) {
         b = BoardType::Custom;
     }
     config.setBoardType(b);
-    config.setNumPlayers(m_maxPlayersSpin->cleanText().toInt());
-    config.setWinningPoints(m_pointsToWinSpin->cleanText().toInt());
-
+    config.setNumPlayers(m_playersSlider->value());
+    config.setWinningPoints(m_pointsSlider->value());
     return config;
 }
 
-void LobbyView::setConfig(const GameConfig &config) {
+void LobbyView::setConfig(const GameConfig& config) {
     m_playerList->clear();
     for (const auto& p: config.getPlayerNames()) {
         addPlayer(QString::fromStdString(p));
@@ -190,54 +409,19 @@ void LobbyView::setConfig(const GameConfig &config) {
         return;
     }
 
-    if (config.getBoardType() == BoardType::Extended) m_extendedMapRadio->setChecked(true);
-    else if (config.getBoardType() == BoardType::Custom) m_customMapRadio->setChecked(true);
-    else m_classicMapRadio->setChecked(true);
+    if (config.getBoardType() == BoardType::Extended) m_extendedBtn->setChecked(true);
+    else if (config.getBoardType() == BoardType::Custom) m_customBtn->setChecked(true);
+    else m_normalBtn->setChecked(true);
 
-    m_maxPlayersSpin->setValue(config.getMaxPlayers());
-    m_pointsToWinSpin->setValue(config.getPointsToWin());
+    m_playersSlider->setValue(config.getMaxPlayers());
+    m_pointsSlider->setValue(config.getPointsToWin());
 
 }
 
-void LobbyView::onAddPlayer(const QString &playerName) {
+void LobbyView::onAddPlayer(const QString& playerName) {
     addPlayer(playerName);
 }
 
-void LobbyView::onRemovePlayer(const QString &playerName) {
-    removePlayer(playerName);
-}
-
-void LobbyView::onConfigChanged(const GameConfig &config) {
+void LobbyView::onConfigChanged(const GameConfig& config) {
     setConfig(config);
 }
-
-void LobbyView::setPlayerCount(int count)
-{
-    m_playerCountLabel->setText(
-        QString("Players joined: %1").arg(count)
-        );
-}
-void LobbyView::addAddBotEntry()
-{
-    auto *item = new QListWidgetItem(m_playerList);
-    auto *widget = new AddBotListItem(m_playerList); // TODO remove this
-
-    item->setSizeHint(widget->sizeHint());
-    item->setBackground(QColor({239, 240, 211}));
-    m_playerList->addItem(item);
-    m_playerList->setItemWidget(item, widget);
-
-    connect(widget, &AddBotListItem::addBotRequested,
-            this, &LobbyView::addBotRequested);
-}
-
-void LobbyView::disableAll() {
-    m_startButton->setEnabled(false);
-    m_pointsToWinSpin->setEnabled(false);
-    m_maxPlayersSpin->setEnabled(false);
-    m_loadBoardButton->setEnabled(false);
-    m_extendedMapRadio->setEnabled(false);
-    m_classicMapRadio->setEnabled(false);
-    m_customMapRadio->setEnabled(false);
-}
-

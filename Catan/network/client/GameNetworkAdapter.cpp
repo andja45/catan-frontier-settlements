@@ -69,6 +69,10 @@ void GameNetworkAdapter::onDisconnected() {
 }
 
 void GameNetworkAdapter::onEnvelope(const net::Envelope& env) {
+    std::string jsonString;
+    google::protobuf::util::MessageToJsonString(env, &jsonString);
+    qDebug() << "[Game] Received message: \n" << jsonString;
+
     if (env.msg_type() == net::MSG_MOVE)
         handleMove(env);
     else if (env.msg_type() == net::MSG_CHAT)
