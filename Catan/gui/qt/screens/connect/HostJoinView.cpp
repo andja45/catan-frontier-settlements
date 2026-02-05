@@ -69,12 +69,3 @@ void HostJoinView::clearError()
     m_errorLabel->setVisible(false);
 }
 
-/*
- * #TODO: add za kontroler:
-connect(joinView, &GameJoinView::joinGameRequested,
-        controller, &GameController::tryJoinGame);
-
-connect(controller, &GameController::joinRejected,
-        joinView, &GameJoinView::onJoinRejected);
-
- * **/

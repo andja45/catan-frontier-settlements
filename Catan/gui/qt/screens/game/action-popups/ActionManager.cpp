@@ -22,8 +22,8 @@ ActionManager::ActionManager(std::vector<Player*> players,PlayerId local, Bank *
 
 }
 
-void ActionManager::setStealCandidates(const ChoosePlayerRenderState &rs) {
-    openStealCardPopup(rs.getPlayers());
+void ActionManager::setStealCandidates(const std::unordered_set<PlayerId>& set) {
+    openStealCardPopup(std::vector<PlayerId>(set.begin(), set.end()));
 }
 
 void ActionManager::openActionPopup(DevCardType type) {

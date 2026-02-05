@@ -27,7 +27,6 @@ public:
     void setHighlightedTiles (const std::vector<TileId>& highlightedTiles);
 
     void clearHighlights();
-// TODO controller connect here <<<
 public slots:
     void update(const BoardRenderState& renderState);
     void onPlayBuildFeedback();
@@ -40,7 +39,9 @@ signals:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent* e) override;
-    void mousePressEvent(QMouseEvent* e) override;
+
+    void mouseReleaseEvent(QMouseEvent *e);
+
     void leaveEvent(QEvent* e) override;
 
 private:

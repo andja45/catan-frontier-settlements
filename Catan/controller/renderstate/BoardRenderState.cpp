@@ -61,5 +61,4 @@ void BoardRenderState::clear() {
     m_highlightedEdges.clear();
     m_highlightedTiles.clear();
     m_highlightedPlayers.clear(); // difficult in gui, gui shouldnt have to care about that
-    // TODO think ab if to add trade choose player
 }

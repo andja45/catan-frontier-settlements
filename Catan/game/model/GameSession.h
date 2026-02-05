@@ -23,24 +23,10 @@ class Move;
 class StealCardMove;
 class PlayerTradeRequestMove;
 
-/*loopovi igranje igraca/bota i provere vict points road vitezi..*/
 // game session is like engine for our game that gets moves from all players from server and executes them to apply changes and keep game running
- // it not only applies our rules but from other to so we keep track of which players turn is it and also which player are we
+// it not only applies our rules but from other to so we keep track of which players turn is it and also which player are we
 
 
-// TODO add moves activateDevCard move gets dev card type, check if player has it and uses it (decrements counter, applies effect or enters new phase in separate move per dev card)
-// TODO add building bridges phase, and reuse initial phase counter (change name to phase counter), it receives build road move and ends after building two roads
-// TODO add monopoly and resource phase as well (because we are not accepting those moves unless we paid and activated dev card), add moves for monopoly and resource
-// alternative: merge robber move and steal card for knight and dice, merge activate and choose resource for monopoly and resource
-// for multi-step moves (monopoly and resources) is valid is false until both get chosen, only then do action buttons becomes clickable and move sent
-// keep bridge phase to reuse build road logic?
-
-// TODO add trade request and accept moves
-
-
-
-// TODO game session should keep track of pending trade requests, add TradeRequest class with playerId owner, trade pack give and trade pack receive, and it stores players that accepted trade so owner can choose
-// TODO when game gets offer move it saves trade request, this gets displayed to other players so they can choose to accept, when others accept its saved in trade struct and when owner does and it matches then trade happens according to stored data
 class GameSession {
 private:
 
@@ -54,7 +40,7 @@ private:
 
  // rules
  RulesEngine m_rules;
- int m_winningPints = 10; // TODO this will be read from gameConfig client-hosts sends
+ int m_winningPints=10;
 
  // game data
  GameData m_gameData;
@@ -80,6 +66,8 @@ private:
  TurnPhase m_phase = TurnPhase::InitialPlacement;
  void advanceInitialPlacement();
  void advancePlayer();
+
+
  void setPhase(TurnPhase phase) { m_phase = phase; } // add if needed later, for now direct setting
 
  // trades
@@ -95,12 +83,15 @@ private:
  friend class PlayerTradeAcceptMove;
  friend class SkipPlayerRule;
 
-//TODO DICE MOVE TWO DICES, LEAVE MOVE AND PLAYER HAS LEFT AND SKIP NEXT TU
  // dice
- std::mt19937 m_rng; // TODO dice can be with client-host
+ std::mt19937 m_rng;
  std::uniform_int_distribution<int> m_d6{1, 6};
+ std::pair<int,int> m_lastDiceRoll = {1,1};
+
 public:
  GameSession(std::vector<std::string> playerNames, PlayerId localPlayer, uint32_t seed, std::unique_ptr<Board>board, int winPoints, std::string gameName);
+
+ GameData& gameData(){return m_gameData;}
 
  void advancePhaseAfterMove();
  void enterDiscardCardsPhase() { setPhase(TurnPhase::DiscardCards); }
@@ -111,7 +102,11 @@ public:
  MoveType lastMoveType() const { return m_lastMoveType; }
  void markDevCardPlayedThisTurn() { m_devCardPlayedThisTurn = true; }
  bool hasPlayedDevCardThisTurn() const { return m_devCardPlayedThisTurn; }
- int rollDice();
+
+ std::pair<int, int> rollDice();
+ std::mt19937 copyRng()const {return m_rng;};
+ int getNextTradeId();
+ const std::pair<int,int>* getDice() const {return &m_lastDiceRoll;}
 
  PlayerId localPlayer()   const { return m_localPlayerId; }
  PlayerId currentPlayer() const { return m_currentPlayerId; }
@@ -128,8 +123,6 @@ public:
  void setLargestArmyOwner(PlayerId playerId);
  void setWinner(PlayerId playerId) { m_winner = playerId; }
 
- GameData& gameData();
-
  Bank& bank() { return m_bank; }
  const Bank& bank() const { return m_bank; }
 
@@ -141,15 +134,15 @@ public:
  const Player& player(PlayerId id) const { return *m_players.at(id); }
  Player& player(PlayerId id) { return *m_players.at(id); }
 
- bool playerMustDiscard(PlayerId playerId) const; // TODO this is a rule maybe, but i think no, happens during one move
+ bool playerMustDiscard(PlayerId playerId) const;
  bool hasPlayerDiscarded(PlayerId playerId) const;
  void markPlayerDiscarded(PlayerId playerId);
  bool allRequiredPlayersDiscarded() const;
 
  const Trade* getTrade(TradeId tradeId) const;
- std::vector<const Trade*> activeTrades() const; // TODO not sure if both public and if both needed
+ std::vector<const Trade*> activeTrades() const;
 
- void endGame(); // TODO implement + fill some gameData fields there(awards, everyones points) maybe add endGame phase and all is grey? in function enter that phase
+ void endGame();
 
  int activePlayersLeft() const { return m_numOfActivePlayers; }
 
@@ -167,7 +160,6 @@ public:
 
  Bank * getBank(){return &m_bank;}
 
- //TODO what the fuck is this indentation???
 };
 
 #endif //Catan_GAMESESSION_H

@@ -6,8 +6,9 @@
 #include <screens/lobby/AddBotListItem.h>
 
 LobbyView::LobbyView(const std::string &gameName,RoleType type, QWidget *parent)
-    : QWidget(parent), m_gameName(QString::fromStdString(gameName))
+    : QWidget(parent), m_gameName(QString::fromStdString(gameName)), m_role(type)
 {
+
     setWindowTitle(QString("Game lobby: %1").arg(m_gameName));
 
     m_playerCountLabel = new QLabel("Players joined: 0", this);
@@ -24,9 +25,20 @@ LobbyView::LobbyView(const std::string &gameName,RoleType type, QWidget *parent)
     m_maxPlayersSpin->setRange(2, 4);
     m_maxPlayersSpin->setValue(4);
 
+    connect(m_maxPlayersSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
+        if (m_role==RoleType::Host)
+            emit configChanged(getConfig());
+    });
+
+
     m_pointsToWinSpin = new QSpinBox(this);
     m_pointsToWinSpin->setRange(8, 20);
     m_pointsToWinSpin->setValue(10);
+    connect(m_pointsToWinSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, [this]() {
+        if (m_role==RoleType::Host)
+            emit configChanged(getConfig());
+        });
+
 
     auto *mapGroupBox = setMapSelect();
     auto *settingsForm = new QFormLayout;
@@ -67,10 +79,6 @@ LobbyView::LobbyView(const std::string &gameName,RoleType type, QWidget *parent)
             m_errorLabel->setVisible(true);
             return;
         }
-        if (m_extendedMapRadio->isChecked())
-            mapType = MapType::Extended;
-        else if (m_customMapRadio->isChecked())
-            mapType = MapType::Custom;
 
         m_errorLabel->setVisible(false);
         emit startGameRequested(getConfig(),m_customMapPath.toStdString());
@@ -166,11 +174,29 @@ GameConfig LobbyView::getConfig() {
         b = BoardType::Custom;
     }
     config.setBoardType(b);
-    config.setNumPlayers(-1);//TODO change later
+    config.setNumPlayers(m_maxPlayersSpin->cleanText().toInt());
+    config.setWinningPoints(m_pointsToWinSpin->cleanText().toInt());
+
+    return config;
 }
 
 void LobbyView::setConfig(const GameConfig &config) {
-    //TODO
+    m_playerList->clear();
+    for (const auto& p: config.getPlayerNames()) {
+        addPlayer(QString::fromStdString(p));
+    }
+    m_gameName=QString::fromStdString(config.getName());
+    if (m_role==RoleType::Host) { // host sets settings clients observe them
+        return;
+    }
+
+    if (config.getBoardType() == BoardType::Extended) m_extendedMapRadio->setChecked(true);
+    else if (config.getBoardType() == BoardType::Custom) m_customMapRadio->setChecked(true);
+    else m_classicMapRadio->setChecked(true);
+
+    m_maxPlayersSpin->setValue(config.getMaxPlayers());
+    m_pointsToWinSpin->setValue(config.getPointsToWin());
+
 }
 
 void LobbyView::onAddPlayer(const QString &playerName) {
@@ -194,7 +220,7 @@ void LobbyView::setPlayerCount(int count)
 void LobbyView::addAddBotEntry()
 {
     auto *item = new QListWidgetItem(m_playerList);
-    auto *widget = new AddBotListItem(m_playerList); //TODO careful
+    auto *widget = new AddBotListItem(m_playerList); // TODO remove this
 
     item->setSizeHint(widget->sizeHint());
     item->setBackground(QColor({239, 240, 211}));

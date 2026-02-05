@@ -65,6 +65,9 @@ add_library(catan_gui_qt
         screens/game/game-overlay/GameOverlay.hpp
         screens/game/board/elements/PulseState.cpp
         screens/game/board/elements/PulseState.hpp
+        screens/messageservice/PopupService.cpp
+        screens/messageservice/PopupService.hpp
+        screens/messageservice/MessageIntent.hpp
 )
 
 target_include_directories(catan_gui_qt

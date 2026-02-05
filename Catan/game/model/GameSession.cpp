@@ -18,7 +18,7 @@ GameSession::GameSession(std::vector<std::string> playerNames,
     : m_board(std::move(board))
     , m_localPlayerId(localPlayer)
     , m_rng(seed)
-    , m_gameData(gameName, playerNames) // TODO gameId will be set by client-host maybe on creation of room? roomId?
+    , m_gameData(gameName, playerNames)
 {
     const int numPlayers = static_cast<int>(playerNames.size()); // deduced from vector of players
     m_numOfActivePlayers=numPlayers;
@@ -26,7 +26,8 @@ GameSession::GameSession(std::vector<std::string> playerNames,
     for (PlayerId id = 0; id < numPlayers; ++id) {
         m_players.push_back(std::make_unique<Player>(id, playerNames[id]));
     }
-
+    m_phase = TurnPhase::InitialPlacement;
+    m_currentPlayerId = m_players[0]->getPlayerId();
     m_gameData.initialize();
 }
 
@@ -91,6 +92,7 @@ void GameSession::advancePhaseAfterMove() {
             advancePlayer(); // session does this, not move
             m_devCardPlayedThisTurn = false; // reseting for next turn
             m_activeTrades.clear();
+            m_nextTradeId=0; // we restart trades each turn
             m_gameData.addTurn();
             setPhase(TurnPhase::RollDice);
             break;
@@ -157,7 +159,7 @@ void GameSession::advanceInitialPlacement() {
 }
 
 
-void GameSession::advancePlayer() { // TODO maybe change later - add shuffling with same seed every client model uses
+void GameSession::advancePlayer() {
     if (m_players.empty() || m_numOfActivePlayers<=0) return;
 
     m_turnIndex = (m_turnIndex + 1) % m_players.size();
@@ -166,11 +168,13 @@ void GameSession::advancePlayer() { // TODO maybe change later - add shuffling w
     if (!player(m_currentPlayerId).isActive()) {
         advancePlayer();
     }
+}
 
+int GameSession::getNextTradeId() {
+    return m_nextTradeId++;
 }
 
 void GameSession::addTrade(Trade trade) {
-    trade.setId(m_nextTradeId++);
     m_activeTrades.emplace(trade.id(), std::move(trade));
 }
 
@@ -183,13 +187,14 @@ Trade * GameSession::getTrade(TradeId tradeId) {
     return (it != m_activeTrades.end()) ? &it->second : nullptr;
 }
 
-int GameSession::rollDice() {
+std::pair<int, int> GameSession::rollDice() {
     assert(m_phase == TurnPhase::RollDice);
 
     int dice1 = m_d6(m_rng);
     int dice2 = m_d6(m_rng);
 
-    return dice1 + dice2;
+    m_lastDiceRoll={dice1,dice2};
+    return {dice1,dice2};
 }
 
 void GameSession::setLongestRoadOwner(const PlayerId playerId) {
@@ -207,7 +212,7 @@ void GameSession::setLongestRoadOwner(const PlayerId playerId) {
     Player& current = player(m_longestRoadOwner);
     current.addPoints(2);
     current.setLongestRoad(true);
-} // TODO add length of longestroad in player
+}
 
 void GameSession::setLargestArmyOwner(const PlayerId playerId) {
     if (m_largestArmyOwner == playerId)

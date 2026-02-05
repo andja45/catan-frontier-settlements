@@ -17,10 +17,13 @@ net::GameConfig::BoardType ConfigSerializer::toProto(BoardType t) {
 net::GameConfig ConfigSerializer::toProto(const GameConfig &cfg)  {
     net::GameConfig gcfg;
 
-    gcfg.set_num_players(cfg.numPlayers);
-    gcfg.set_winning_points(cfg.winningVictoryPoints);
-    gcfg.set_board_type(toProto(cfg.boardType));
-
-    gcfg.mutable_names()->Add(cfg.players.begin(),cfg.players.end());
+    gcfg.set_num_players(cfg.getMaxPlayers());
+    gcfg.set_winning_points(cfg.getPointsToWin());
+    gcfg.set_board_type(toProto(cfg.getBoardType()));
+    auto names=gcfg.mutable_names();
+    for (auto p:cfg.getPlayerNames()) {
+        names->Add(p.c_str());
+    }
+    gcfg.set_game_name(cfg.getName());
     return gcfg;
 }

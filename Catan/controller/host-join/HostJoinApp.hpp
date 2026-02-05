@@ -23,6 +23,11 @@ public:
     void show() override {m_view->show();}
     void hide() override {m_view->hide();}
 
+    ~HostJoinApp() override{
+        m_view->deleteLater();
+        m_controller->deleteLater();
+    }
+
 private:
 
     HostJoinView* m_view;

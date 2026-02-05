@@ -11,6 +11,8 @@ enum MsgType {
   MSG_MOVE = 1;
   MSG_CHAT = 2;
   MSG_SETUP = 3;
+  MSG_ACK = 4;
+  MSG_ERROR = 5;
 }
 
 message Envelope {
@@ -21,5 +23,6 @@ message Envelope {
     Move move = 10;
     Chat chat = 11;
     Setup setup = 12;
+    Error error = 13;
   }
 }

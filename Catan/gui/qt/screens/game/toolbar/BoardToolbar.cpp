@@ -5,7 +5,7 @@
 #include"../../game/types/ResourceType.h"
 #include <model/MoveCosts.h>
 
-BoardToolbar::BoardToolbar(Player* player,QWidget* parent) : QWidget(parent), m_player(player) {
+BoardToolbar::BoardToolbar(Player* player,const std::pair<int,int>* dice,QWidget* parent) : QWidget(parent), m_player(player) {
     setAttribute(Qt::WA_StyledBackground, true);
     setStyleSheet("background: transparent;");
     setAutoFillBackground(false);
@@ -40,11 +40,18 @@ BoardToolbar::BoardToolbar(Player* player,QWidget* parent) : QWidget(parent), m_
 
     buttonsLayout->addStretch(1);
 
-    auto* diceWidget = new DiceWidget(this);
-    buttonsLayout->addWidget(diceWidget);
+    m_dice = new DiceWidget(dice,this);
+    buttonsLayout->addWidget(m_dice);
+    connect(m_dice, &DiceWidget::clicked, this, [this]() {
 
-    buttonsLayout->addWidget(createButtonForType(ToolbarActionType::EndTurn));
+        emit diceRolled();
+    });
 
+    //m_buttons[ToolbarActionType::RollDice] = m_dice;
+
+    auto btn=createButtonForType(ToolbarActionType::EndTurn);
+    buttonsLayout->addWidget(btn);
+    m_buttons[ToolbarActionType::EndTurn] = btn;
 
 
 
@@ -66,6 +73,7 @@ void BoardToolbar::updateState(const ToolbarRenderState& rs) {
             button->setEnabled(false);
         }
     }
+    QWidget::update();
 }
 
 void BoardToolbar::showPlayerTradePopup()
@@ -116,6 +124,8 @@ void BoardToolbar::disableAllButtons() {
     for (auto* btn : m_buttons) {
         btn->setEnabled(false);
     }
+    m_dice->setEnabled(false);
+
 }
 
 void BoardToolbar::enableAllButtons() {

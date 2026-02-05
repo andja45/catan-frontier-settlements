@@ -22,7 +22,7 @@ enum class PointDirection;
 using TileCoords = AxialCoords ;
 using OffsetCoords= AxialCoords;
 
-using NeighbourTiles = std::vector<Tile*>; // TODO class with iterator, keep in board instead of tile?
+using NeighbourTiles = std::vector<Tile*>;
 using NeighbourNodes = std::vector<Node*>;
 using NeighbourEdges = std::vector<Edge*>;
 

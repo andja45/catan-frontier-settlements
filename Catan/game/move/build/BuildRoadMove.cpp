@@ -31,7 +31,7 @@ bool BuildRoadMove::isValid(const GameSession& session) const {
         if (!player.hasBuildings())
             return false;
 
-        const Node* lastSettlement = player.getLastBuildingBuilt(); // TODO or just function that remembers lastbuiltSettlement, if we do computeLongestRoad in board (update will be in session)
+        const Node* lastSettlement = player.getLastBuildingBuilt();
         connected = board.edgeTouchesNode(lastSettlement->getNodeId(), m_edgeId);  // road need to touch last placed house
     }
     else if (session.phase() == TurnPhase::RoadBuilding) {

@@ -15,15 +15,18 @@ public:
     explicit LobbyNetworkAdapter(QObject* parent = nullptr);
     void setTransport(NetworkTransport* transport);
 
-
     void sendLeave() const;
     void sendConfig(const GameConfig& conf) const;
     void sendStartRequest(const Board& board) const;
+    void sendJoined();
 
+    void onError(const std::string& error);
+    void onDisconnected();
     signals:
         void configReceived(const GameConfig& config);
         void gameStarted(PlayerId myId, int32_t gameSeed, const GameConfig& config, Board* board);
-
+        void disconnected();
+        void errored(const std::string&);
 private:
     NetworkTransport* m_transport;
 

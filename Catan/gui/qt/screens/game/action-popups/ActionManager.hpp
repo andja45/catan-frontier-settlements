@@ -32,7 +32,7 @@ public:
     ActionManager(std::vector<Player *> players, PlayerId local, Bank *bank, QWidget *parent, QWidget *anchor);
 
 public slots:
-    void setStealCandidates(const ChoosePlayerRenderState& rs);
+    void setStealCandidates(const std::unordered_set<PlayerId> &set);
 
     void openActionPopup(DevCardType type);
     void openDiscardPopup();

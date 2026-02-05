@@ -27,7 +27,7 @@ protected:
     bool eventFilter(QObject* obj, QEvent* event) override;
 
 private:
-    QString m_text;
+    QString m_text="";
     QColor  m_textColor=Qt::white;
 };
 

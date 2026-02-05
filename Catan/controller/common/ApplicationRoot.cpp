@@ -5,18 +5,22 @@
 #include "ApplicationRoot.hpp"
 
 #include <game/GameApp.hpp>
+#include <history/HistoryApp.hpp>
 #include <host-join/HostJoinApp.hpp>
 #include <lobby/LobbyApp.hpp>
 #include <menu/MenuApp.hpp>
 
 ApplicationRoot::ApplicationRoot() {
     m_menu=new MenuApp(this);
-    m_service=new NetworkService();
+    m_netService=new NetworkService();
+    m_msgService=new PopupService();
 }
 
 void ApplicationRoot::showMainMenu() {
     clearPrevious();
     m_menu->show();
+    m_netService->disconnect();
+
 }
 
 void ApplicationRoot::showLobbyHost() {
@@ -52,22 +56,35 @@ void ApplicationRoot::startGame(const GameConfig &config, std::unique_ptr<Board>
     m_currentApplet->show();
 }
 
+void ApplicationRoot::showHistory() {
+    clearPrevious();
+    m_currentApplet=new HistoryApp(this);
+    m_currentApplet->show();
+}
+
 void ApplicationRoot::closeApp() {
     clearPrevious();
     m_menu->hide();
+}
+
+void ApplicationRoot::startApp() {
+    clearPrevious();
+    m_menu->show();
 }
 
 void ApplicationRoot::clearPrevious() {
     if (m_currentApplet) {
         m_currentApplet->hide();
         delete m_currentApplet;
+        m_currentApplet=nullptr;
     }
 }
 
 ApplicationRoot::~ApplicationRoot() {
     if (m_currentApplet) delete m_currentApplet;
-    if (m_service) delete m_service;
+    if (m_netService) delete m_netService;
     if (m_menu) delete m_menu;
+    if (m_msgService) delete m_msgService;
 }
 
 

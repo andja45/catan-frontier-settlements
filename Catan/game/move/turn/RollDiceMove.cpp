@@ -8,7 +8,20 @@
 bool RollDiceMove::isValid(const GameSession& session) const {
     if (session.currentPlayer() != m_playerId)
         return false;
+    if (!(0<m_diceRoll1&&m_diceRoll1<=6) || !(0<m_diceRoll2&&m_diceRoll2<=6))
+        return false;
+    if (session.localPlayer()!=m_playerId) // dice rolled remote, we roll again to confirm, everybody has same seed
+    {
+        auto rng=session.copyRng();
+        std::uniform_int_distribution<int> m_d6{1, 6};
 
+        int dice1 = m_d6(rng);
+        int dice2 = m_d6(rng);
+
+        if (dice1 + dice2 != getDiceRoll().first+getDiceRoll().second) {
+            return false;
+        }
+    }
     if (session.phase() != TurnPhase::RollDice)
         return false;
 
@@ -17,8 +30,13 @@ bool RollDiceMove::isValid(const GameSession& session) const {
 
 void RollDiceMove::apply(GameSession& session) const {
     Board& board = session.board();
+    if (session.localPlayer()!=m_playerId) // we dummy roll to keep seed in sync
+    {
+        session.rollDice(); //we keep sync
+    }
 
-    const int diceRoll = session.rollDice();
+    auto diceRolls=getDiceRoll();
+    const int diceRoll = diceRolls.first + diceRolls.second;
     if (diceRoll == 7) {
         session.enterDiscardCardsPhase(); // we force a phase, this isnt a sequence move
         return;

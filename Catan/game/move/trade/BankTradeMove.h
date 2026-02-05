@@ -25,6 +25,5 @@ public:
     // TODO gui takes care if >= mintrade then unclickable (mintrade is written under player rss and we get it from player)
 };
 
-// TODO its done so you can trade minratio for one bank rss
 
 #endif //CATAN_BANKTRADEMOVE_H

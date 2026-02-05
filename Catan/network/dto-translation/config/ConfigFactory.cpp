@@ -16,10 +16,11 @@ BoardType ConfigFactory::fromProto(net::GameConfig::BoardType t) {
 GameConfig ConfigFactory::fromProto(const net::GameConfig &cfgProto)  {
     GameConfig cfg;
 
-    cfg.numPlayers = cfgProto.num_players();
-    cfg.winningVictoryPoints = cfgProto.winning_points();
-    cfg.boardType = fromProto(cfgProto.board_type());
-    cfg.numPlayers=cfgProto.num_players();
-    cfg.players=std::vector(cfgProto.names().begin(),cfgProto.names().end());
+    cfg.setNumPlayers(cfgProto.num_players());
+    cfg.setWinningPoints(cfgProto.winning_points());
+    cfg.setBoardType(fromProto(cfgProto.board_type()));
+    cfg.setPlayers(std::vector(cfgProto.names().begin(),cfgProto.names().end()));
+
+    cfg.setName(cfgProto.game_name());
     return cfg;
 }

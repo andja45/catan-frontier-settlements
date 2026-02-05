@@ -55,8 +55,8 @@ public:
     void setLongestRoad(bool longestRoad) {m_hasLongestRoad=longestRoad;}
     void setLargestArmy(bool largestMilitary) {m_hasLargestMilitary=largestMilitary;}
 
-    bool hasDevCard(DevCardType dev_card) const; // TODO implement
-    bool hasDevCards() const; // TODO implement, remove if makes no sense for both bank and player to have these two
+    bool hasDevCard(DevCardType dev_card) const {return m_devCards.at(dev_card)>0;}
+    bool hasDevCards() const {return m_numOfDevCards>0;}
 
     std::string getName() { return m_name; }
     ResourcePack getResources() const {return m_resources;}

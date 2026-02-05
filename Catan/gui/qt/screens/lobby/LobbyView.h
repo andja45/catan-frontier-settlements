@@ -32,6 +32,8 @@ private:
     QRadioButton *m_customMapRadio;
     QPushButton *m_loadBoardButton;
     QPushButton *m_startButton;
+    RoleType m_role;
+
     QGroupBox* setMapSelect();
     void addAddBotEntry();
 public:

@@ -9,6 +9,7 @@
 #include <board/Board.h>
 #include <common/NetworkService.hpp>
 #include <model/GameConfig.h>
+#include <screens/messageservice/PopupService.hpp>
 
 #include "AbstractApplet.hpp"
 
@@ -24,20 +25,25 @@ public:
     void showHostPopup();
     void showJoinPopup();
     void startGame(const GameConfig& config, std::unique_ptr<Board> board, PlayerId myId, int seed);
+    void showHistory();
 
     void closeApp();
+    void startApp();
 
-    NetworkService* getNetworkService() {return m_service;}
+    NetworkService* getNetworkService() {return m_netService;}
+    PopupService* getPopupService() {return m_msgService;}
 
     void clearPrevious();
+    ~ApplicationRoot();
+
 
 private:
-    AbstractApplet* m_currentApplet;
+    AbstractApplet* m_currentApplet=nullptr;
 
-    MenuApp* m_menu;
-    NetworkService* m_service;
+    MenuApp* m_menu=nullptr;
+    NetworkService* m_netService=nullptr;
+    PopupService* m_msgService=nullptr;
 
-    ~ApplicationRoot();
 };
 
 #endif //CATAN_NAVIGATOR_HPP

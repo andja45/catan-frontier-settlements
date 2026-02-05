@@ -53,8 +53,8 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent)
     auto playClick = []() { AudioManager::instance().play(AudioManager::Sfx::Click); };
 
     connect(btnHost, &QPushButton::pressed, this, [playClick, this](){playClick(); emit hostGame();});
-    connect(btnJoin, &QPushButton::pressed, this, [playClick, this](){playClick(); emit hostGame();});
-    connect(btnHistory, &QPushButton::pressed, this, [playClick, this](){playClick(); emit hostGame();});
+    connect(btnJoin, &QPushButton::pressed, this, [playClick, this](){playClick(); emit joinGame();});
+    connect(btnHistory, &QPushButton::pressed, this, [playClick, this](){playClick(); emit history();});
 
     update();
 }

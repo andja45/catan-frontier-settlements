@@ -25,9 +25,11 @@ add_subdirectory(gui)
 add_subdirectory(network)
 add_subdirectory(controller)
 
+option(BUILD_SERVER "Build the server executable" ON)
 option(BUILD_CLIENT "Build the client executable" ON)
-option(BUILD_SERVER "Build the server executable" OFF)
 
+message(STATUS "BUILD_SERVER = ${BUILD_SERVER}")
+message(STATUS "BUILD_CLIENT = ${BUILD_CLIENT}")
 
 if(BUILD_CLIENT)
     add_subdirectory(appClient)

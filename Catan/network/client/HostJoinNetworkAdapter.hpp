@@ -16,9 +16,10 @@ private:
     net::Envelope wrapHost(std::string gameName, std::string hostName);
     net::Envelope wrapJoin(std::string gameName, std::string playerName);
 public:
-    explicit HostJoinNetworkAdapter(QObject* parent = nullptr){}
+    explicit HostJoinNetworkAdapter(QObject* parent = nullptr) {
+        m_transport=nullptr;
+    }
 
-    void connectTo(const std::string& addr, std::uint16_t port);
     void setTransport(NetworkTransport* );
 
     void onEnvelope(const net::Envelope& env);
@@ -32,6 +33,7 @@ public:
 signals:
     void rejectReceived(std::string reason);
     void acceptReceived();
+    //disconnect?
 
 };
 

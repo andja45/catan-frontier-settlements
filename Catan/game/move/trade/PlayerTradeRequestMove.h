@@ -12,8 +12,13 @@ class PlayerTradeRequestMove final : public Move {
 private:
     ResourcePack m_give;
     ResourcePack m_receive;
+    TradeId m_tradeId;
 public:
-    PlayerTradeRequestMove(PlayerId requestPlayerId, ResourcePack giveResources,ResourcePack receiveResources) : Move(requestPlayerId), m_give(giveResources), m_receive(receiveResources){}
+    PlayerTradeRequestMove(PlayerId requestPlayerId, ResourcePack giveResources,ResourcePack receiveResources) : Move(requestPlayerId), m_give(giveResources), m_receive(receiveResources) {
+        m_tradeId = -1;
+    }
+    void setTradeId(TradeId tradeId) {m_tradeId = tradeId;}
+    TradeId getTradeId() const {return m_tradeId;}
 
     MoveType type() const override { return MoveType::PlayerTradeRequest; }
     bool isValid(const GameSession& session) const override;
