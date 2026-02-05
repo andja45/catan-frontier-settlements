@@ -167,11 +167,11 @@ TEST_CASE("nodeTouchesAnyBuilding becomes true when an adjacent node is occupied
 TEST_CASE("edgeTouchesPlayersRoad checks roads adjacent to the edge endpoints, not nodeId==edgeId")
 {
     Board b;
-    b.initializeBoard(makeRadius2Board()); // see below
+    b.initializeBoard(makeRadius2Board());
 
     EdgeId e0 = b.edgeIds().front();
 
-    // Find edges incident to e0 (should include those sharing its endpoints)
+    // Find edges incident to e0
     auto incident = b.getIncidentEdges(e0);
     REQUIRE_FALSE(incident.empty());
 

@@ -31,9 +31,6 @@ static EdgeId pickAnyEdgeId(Board const& b)
     return ids.front();
 }
 
-// Pick a node that we know is a port (trade) node.
-// Your standard creator populates ports at fixed NodeCoords,
-// so this is deterministic.
 static Node* getKnownGenericPortNode(Board& b)
 {
     // From populatePorts(): NodeCoords({0,-2}, LeftTop) + Top are generic (None)
@@ -80,7 +77,7 @@ static Node* getKnown2for1PortNode(Board& b, ResourceType r)
 
 TEST_CASE("ResourceHolder add/remove resources keeps counts consistent")
 {
-    Player p(1, "Andjela"); 
+    Player p(1, "Andjela");
 
     // Assuming ResourceType enum contains these:
     p.addResource(ResourceType::Wood, 3);
