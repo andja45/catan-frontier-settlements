@@ -27,6 +27,9 @@ GameSession::GameSession(std::vector<std::string> playerNames,
         m_players.push_back(std::make_unique<Player>(id, playerNames[id]));
     }
 
+    m_turnIndex = 0;
+    m_currentPlayerId = m_players[m_turnIndex]->getPlayerId();
+
     m_gameData.initialize();
 }
 
@@ -61,7 +64,7 @@ void GameSession::advancePhaseAfterMove() {
         case TurnPhase::DiscardCards:
             if (allRequiredPlayersDiscarded()) {
                 setPhase(TurnPhase::SetRobber);
-                m_discardedPlayers.clear();
+                //m_discardedPlayers.clear();
             }
             return;
 
@@ -76,10 +79,6 @@ void GameSession::advancePhaseAfterMove() {
             break;
 
         case MoveType::SetRobber:
-            setPhase(TurnPhase::StealCard);
-            break;
-
-        case MoveType::StealCard:
             if (canStealFromAnyone(m_currentPlayerId)) {
                 setPhase(TurnPhase::StealCard);
             } else { // we established we can place on tile no one is at, in that case every player is greyed out

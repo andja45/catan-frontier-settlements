@@ -241,7 +241,7 @@ PlayerId Board::getNodeOwner(NodeId nodeId) const {
 // TODO make uniform interface for edges and nodes!!
 
 bool Board::edgeTouchesNode(NodeId nodeId, EdgeId edgeId) const{
-    Edge* edge = this->getEdgeById(nodeId);
+    Edge* edge = this->getEdgeById(edgeId);
 
     for (Node* n : edge->getNodes()) {
         if (!n) {
@@ -269,7 +269,7 @@ bool Board::edgeTouchesPlayersBuilding(PlayerId playerId, EdgeId edgeId) const {
 bool Board::edgeTouchesPlayersRoad(PlayerId playerId, EdgeId edgeId) const{
     Edge* edge = this->getEdgeById(edgeId);
 
-    for (Edge* e : getEdgesAdjacentToNode(edgeId)) {
+    for (Edge* e : getEdgesAdjacentToNode(edgeId)) { // TODO fix
         if (!e) {
 		    continue;
 	    }
@@ -301,6 +301,9 @@ bool Board::nodeTouchesPlayerRoad(int playerId, int nodeId) const{
             return true;
     }
 	return false;
+}
+
+bool Board::tileTouchesPlayerBuilding(PlayerId playerId, TileId tileId) const {
 }
 
 void Board::placeRoad(PlayerId playerId, EdgeId edgeId) const {
@@ -369,4 +372,10 @@ std::vector<PortDef> Board::getPortDefs() const {
         portDefs.push_back(pdef);
     }
     return portDefs;
+}
+
+std::vector<NodeId> Board::nodeIds() const {
+}
+
+std::vector<TileId> Board::tileIds() const {
 }
