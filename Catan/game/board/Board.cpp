@@ -92,6 +92,7 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) {
             nextNode->addAdjacentEdge(edge);
 
             node->addAdjacentTile(rawTile);
+            rawTile->addAdjacentNode(node);
         }
     }
 }

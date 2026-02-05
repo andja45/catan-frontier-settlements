@@ -50,14 +50,10 @@ static bool placeVictimBuildingTouchingTile(Board& board, PlayerId victim, TileI
     Tile* target = board.getTileById(tileId);
     if (!target) return false;
 
-    for (NodeId nid : board.nodeIds()) {
-        if (!board.isNodeFree(nid)) continue;
-
-        for (Tile* t : board.getTilesAdjacentToNode(nid)) {
-            if (t == target) {
-                board.placeSettlement(victim, nid);
-                return true;
-            }
+    for (Node* node : target->getAdjacentNodes()) {
+        if (node->isEmpty()) {
+            board.placeSettlement(victim, node->getNodeId());
+            return true;
         }
     }
     return false;

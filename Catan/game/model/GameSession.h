@@ -60,6 +60,7 @@ private:
  MoveType m_lastMoveType = MoveType::InvalidMoveType;
  bool m_devCardPlayedThisTurn = false;
  std::unordered_set<PlayerId> m_discardedPlayers;
+ bool canStealFrom(PlayerId thiefId, PlayerId victimId) const;
  bool canStealFromAnyone(PlayerId thiefId) const;
 
  // phase logic

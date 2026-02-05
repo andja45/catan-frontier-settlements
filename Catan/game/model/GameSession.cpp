@@ -272,16 +272,19 @@ std::vector<const Trade*> GameSession::activeTrades() const {
     return result;
 }
 
+bool GameSession::canStealFrom(PlayerId thiefId, PlayerId victimId) const {
+    if (victimId == thiefId) return false;
+    if (victimId == types::InvalidPlayerId) return false;
+
+    const Player& victim = player(victimId);
+    if (victim.getNumOfResourceCards() == 0) return false;
+
+    return board().tileTouchesPlayerBuilding(victimId, board().robberTileId());
+}
+
 bool GameSession::canStealFromAnyone(PlayerId thiefId) const {
-   for (PlayerId victimId : playerIds()) {
-        if (victimId == thiefId)
-            continue;
-
-        StealCardMove testMove(thiefId, victimId);
-        if (testMove.isValid(*this))
-            return true;
-    }
-
+    for (PlayerId v : playerIds())
+        if (canStealFrom(thiefId, v)) return true;
     return false;
 }
 
