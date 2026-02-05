@@ -18,7 +18,6 @@ private:
     std::unordered_set<NodeId> m_highlightedNodes;
     std::unordered_set<EdgeId> m_highlightedEdges;
     std::unordered_set<TileId> m_highlightedTiles;
-    std::unordered_set<PlayerId> m_highlightedPlayers;
 public:
     BoardRenderState() = default;
     void setHighlighted(std::unordered_set<int> ids, MoveType type);
@@ -40,7 +39,6 @@ public:
     bool isNodeHighlighted(NodeId nodeId) const;
     bool isEdgeHighlighted(EdgeId edgeId) const;
     bool isTileHighlighted(TileId tileId) const;
-    bool isPlayerHighlighted(PlayerId playerId) const;
 
     void clear(); // called after endmove applied (everything disabled until renderstate updated again)
 };
