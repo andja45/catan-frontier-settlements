@@ -21,7 +21,7 @@ static std::unique_ptr<Board> makeBoardWith2Tiles() {
 
     std::vector<TileDef> tiles;
     tiles.push_back(TileDef{0, 0, ResourceType::Sea, 6});
-    tiles.push_back(TileDef{1, 0, ResourceType::Sea, 8});
+    tiles.push_back(TileDef{1, 0, ResourceType::Desert, 8});
 
     b->initializeBoard(tiles);
     return b;
