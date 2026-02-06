@@ -15,14 +15,16 @@
 #include "board/Board.h"
 #include "types/TypeAliases.h"
 #include "types/ResourceType.h"
+#include "TestHelper.h"
 
 // ---------------- Helpers ----------------
-
+/*
 static ResourcePack pack(std::initializer_list<std::pair<ResourceType, int>> items) {
     ResourcePack p;
     for (auto& [t, a] : items) p[t] += a;
     return p;
 }
+*/
 
 // A small board crafted so we can control dice outcomes.
 // - one tile with number 8 (so 4+4 works)
