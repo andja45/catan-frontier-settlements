@@ -40,6 +40,8 @@ public:
 
     void onError(const std::string &error);
 
+    void onGameOver();
+
     void updateState();
     void updateActiveToolOnPhase();
 public slots:
@@ -61,7 +63,7 @@ public slots:
 
     // TRADE:
     void onPlayerTradeRequestSent(const ResourcePack& give, const ResourcePack& receive);
-    void onPlayerTradeResponseSent(TradeId tradeRequestId);
+    void onPlayerTradeResponseSent(TradeId tradeRequestId, bool response);
     void onPlayerTradeAcceptSent(TradeId tradeId, PlayerId acceptedPlayerId);
 
     void onBankTradeSent(ResourceType give, ResourceType receive);
@@ -78,6 +80,7 @@ public slots:
 
     void updateView();
 
+    void onGameStart();
 
 signals:
     void buildPlaced();
@@ -92,6 +95,8 @@ signals:
 
     void gameOver();
     void gameWon();
+
+    void gameOverlay(GameOverlayType);
 
     void update();
 

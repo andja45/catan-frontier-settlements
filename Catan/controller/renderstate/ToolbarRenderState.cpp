@@ -18,7 +18,7 @@ void ToolbarRenderState::updateFromPhase(TurnPhase phase) {
             ToolbarActionType::BuildSettlement,
             ToolbarActionType::BuildCity,
             ToolbarActionType::BuyDevCard,
-            ToolbarActionType::BuyDevCard,
+            ToolbarActionType::PlayDevCard,
             ToolbarActionType::PlayerTrade,
             ToolbarActionType::BankTrade,
             ToolbarActionType::EndTurn

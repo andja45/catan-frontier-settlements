@@ -99,7 +99,8 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
 
         case MoveType::BuyDevCard: {
             proto.set_type(net::Move::BuyDevCard);
-            proto.mutable_buy_dev_card();
+            auto* m=(static_cast<const BuyDevCardMove*>(&move));
+            proto.mutable_buy_dev_card()->set_card_type(static_cast<net::DevCardType>(static_cast<int32_t>(m->getDevCard())));
             break;
         }
 
@@ -130,8 +131,8 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
             proto.set_type(net::Move::BankTrade);
             auto* m = static_cast<const BankTradeMove*>(&move);
             auto* bank_proto = proto.mutable_bank_trade();
-            bank_proto->set_get_resource(static_cast<net::ResourceType>(m->getGive()));
             bank_proto->set_get_resource(static_cast<net::ResourceType>(m->getReceive()));
+            bank_proto->set_give_resource(static_cast<net::ResourceType>(m->getGive()));
             break;
         }
 

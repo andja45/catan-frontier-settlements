@@ -23,6 +23,8 @@ public:
 
     ~GameWindow();
 
+    void changeEvent(QEvent *event);
+
     QBoard* getBoard() { return m_qboard; }
     BoardToolbar* getToolbar() { return m_toolbar; }
     PlayersOverlay* getPlayersOverlay() { return m_playersOverlay; }

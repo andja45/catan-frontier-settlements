@@ -10,7 +10,7 @@ set(PROTO_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
 
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES}
-#        PROTOC_OUT_DIR ${PROTO_GEN_DIR}
+        #        PROTOC_OUT_DIR ${PROTO_GEN_DIR}
 )
 
 add_library(catan_proto STATIC

@@ -26,8 +26,7 @@ bool PlayerTradeRequestMove::isValid(const GameSession& session) const {
 }
 
 void PlayerTradeRequestMove::apply(GameSession& session) const {
-    Trade trade(m_playerId, m_give, m_receive); // creates trade
-
+    Trade trade(m_playerId, m_give, m_receive,m_tradeId); // creates trade
     session.addTrade(std::move(trade)); // adds trade to activeTrades
 }
 

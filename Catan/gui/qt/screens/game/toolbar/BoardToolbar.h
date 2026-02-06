@@ -74,7 +74,6 @@ signals:
 
 
 public slots:
-
     void updateState(const ToolbarRenderState& rs);
 };
 #endif // BOARDTOOLBAR_H

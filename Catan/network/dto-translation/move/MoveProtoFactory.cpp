@@ -33,9 +33,11 @@ std::unique_ptr<Move> MoveProtoFactory::fromProto(const net::Move& proto) {
 
     switch (proto.payload_case()) {
 
-      case net::Move::kRollDice:
-            return std::make_unique<RollDiceMove>(pId);
-
+        case net::Move::kRollDice: {
+            auto move= std::make_unique<RollDiceMove>(pId);
+            static_cast<RollDiceMove*>(move.get())->setDiceRoll(proto.roll_dice().dice_1(), proto.roll_dice().dice_2());
+            return std::move(move);
+        }
         case net::Move::kEndTurn:
             return std::make_unique<EndTurnMove>(pId);
 
@@ -62,9 +64,11 @@ std::unique_ptr<Move> MoveProtoFactory::fromProto(const net::Move& proto) {
         case net::Move::kStealCard:
             return std::make_unique<StealCardMove>(pId, proto.steal_card().victim_player_id());
 
-        case net::Move::kBuyDevCard:
-            return std::make_unique<BuyDevCardMove>(pId);
-
+        case net::Move::kBuyDevCard: {
+            auto dev=std::make_unique<BuyDevCardMove>(pId);
+            dev->setDevCard(static_cast<DevCardType>(proto.buy_dev_card().card_type()));
+            return std::move(dev);
+        }
         case net::Move::kMonopoly:
             return std::make_unique<MonopolyMove>(pId, static_cast<ResourceType>(proto.monopoly().resource_type()));
 
@@ -87,7 +91,9 @@ std::unique_ptr<Move> MoveProtoFactory::fromProto(const net::Move& proto) {
                 give[static_cast<ResourceType>(res)] = count;
             for (auto const& [res, count] : proto.trade_request().get_resource())
                 receive[static_cast<ResourceType>(res)] = count;
-            return std::make_unique<PlayerTradeRequestMove>(pId, give, receive);
+            auto move= std::make_unique<PlayerTradeRequestMove>(pId, give, receive);
+            move->setTradeId(proto.trade_request().trade_request_id());
+            return move;
         }
 
         case net::Move::kTradeResponse:

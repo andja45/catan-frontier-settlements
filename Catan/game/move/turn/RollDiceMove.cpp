@@ -5,6 +5,12 @@
 #include "RollDiceMove.h"
 #include "model/GameSession.h"
 
+void RollDiceMove::setDiceRoll(GameSession &session) {
+    auto [d1,d2]= session.rollDice();
+    m_diceRoll1=d1;
+    m_diceRoll2=d2;
+}
+
 bool RollDiceMove::isValid(const GameSession& session) const {
     if (session.currentPlayer() != m_playerId)
         return false;

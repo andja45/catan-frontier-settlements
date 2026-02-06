@@ -1,33 +1,28 @@
 #include "QCountBadge.h"
 
-QCountBadge::QCountBadge(int count, QWidget* parent)
-    : QLabel(QString::number(count), parent)
-{
-    setFixedSize(22, 22);
-    setAlignment(Qt::AlignCenter);
-    if (!m_golden) {
-        setStyleSheet(R"(
-        QLabel {
-            background: rgba(255,255,255,220);
-            color: black;
-            border: 2px solid black;
-            border-radius: 11px;
-            font: bold 8pt;
-        }
-    )");
-    }
-    else {
-        setStyleSheet(R"(
-        QLabel {
-            background: rgba(222,167,16,220);
-            color: black;
-            border: 2px solid black;
-            border-radius: 11px;
-            font: bold 8pt;
-        }
-    )");
-    }
+#include <common/theme/GameTheme.h>
 
+void QCountBadge::setColor(QColor col) {
+    m_color=col;
+    col=col.darker(100);
+    setStyleSheet(QString(R"(
+        QLabel {
+            background: (255,255,255,200);
+            color: black;
+            border: 3px solid %1;
+            border-radius: 12px;
+            font: bold 8pt;
+        }
+    )").arg(col.name(QColor::HexArgb)));
+    refresh();
+}
+
+QCountBadge::QCountBadge(int count, QWidget* parent)
+    : QLabel(QString::number(count), parent), m_count(count)
+{
+    setFixedSize(25, 25);
+    setAlignment(Qt::AlignCenter);
+    setColor(Qt::black);
 
     setAttribute(Qt::WA_TransparentForMouseEvents);
 }

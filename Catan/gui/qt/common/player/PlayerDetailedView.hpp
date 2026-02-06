@@ -14,14 +14,20 @@ class PlayerDetailedView : public FloatingPanel{
 private:
     ResourceHolder* m_player;
     std::vector<QCard*> m_cards;
+    QString m_text;
+    QColor m_color;
+    bool m_border;
+
+    void buildUi();
 
 public:
-    PlayerDetailedView(ResourceHolder *m_player,QWidget *parent);
+    PlayerDetailedView(ResourceHolder *player, QString text, QWidget *parent, bool border=false,QColor col=Qt::black);
 
+    void paintEvent(QPaintEvent *event) override;
 public slots:
+
+
     void refresh();
-private:
-    void buildUi();
 
 };
 

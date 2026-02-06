@@ -17,13 +17,18 @@ public:
     TradeOverlay(std::vector<Player *> players, PlayerId currentId, std::unordered_map<TradeId,Trade> *trades, QWidget *parent);
     //void paintEvent(QPaintEvent *event) override;
     QSize sizeHint() const;
+    void updateOverlayGeometry();
+
 public slots:
     void refresh();
 signals:
     void tradeRespondedPositive(PlayerId, TradeId);
     void tradeRespondedNegative(PlayerId, TradeId);
     void tradeAccepted(TradeId,PlayerId);
+    void tradeCancelled(TradeId);
+
 private slots:
+    void onTradeCancelled(TradeId);
     void onTradeAccepted(TradeId,PlayerId);
     void onTradeResponsePositive(TradeId,PlayerId);
     void onTradeResponseNegative(TradeId,PlayerId);
@@ -31,7 +36,6 @@ private slots:
 private:
     void rebuild();
 
-    void updateGeometry();
 
     void restart();
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -41,6 +45,8 @@ private:
     void addRespondWidget(const Trade & trade);
 
     void addWidgetForTrade(const Trade& trade);
+
+    void showEvent(QShowEvent *e);
 
     std::vector<Player*> m_players;
 

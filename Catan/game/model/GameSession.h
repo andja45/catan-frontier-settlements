@@ -73,7 +73,7 @@ private:
 
  // trades
  std::unordered_map<TradeId, Trade> m_activeTrades;
- TradeId m_nextTradeId = 1;
+ TradeId m_nextTradeId = 0;
 
  void addTrade(Trade trade);
  void removeTrade(TradeId tradeId);
@@ -106,7 +106,9 @@ public:
 
  std::pair<int, int> rollDice();
  std::mt19937 copyRng()const {return m_rng;};
- int getNextTradeId();
+ std::mt19937& getRng() {return m_rng;};
+
+    int getNextTradeId();
  const std::pair<int,int>* getDice() const {return &m_lastDiceRoll;}
 
  PlayerId localPlayer()   const { return m_localPlayerId; }
@@ -148,6 +150,8 @@ public:
  int activePlayersLeft() const { return m_numOfActivePlayers; }
 
  void leavePlayer(PlayerId player_id);
+
+ void dealInitial();
 
  std::unordered_map<TradeId, Trade> * getTrades(){ return &m_activeTrades; }
 

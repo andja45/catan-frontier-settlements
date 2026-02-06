@@ -103,6 +103,7 @@ void QTile::paint(QPainter& p, double size) {
     if (m_highlighted) {
         p.save();
         auto col=m_pulse->pulseColor(GameTheme::getGoldenColor());
+        col.setAlphaF(0.5);
         p.setBrush(QBrush(col));
         p.setPen(Qt::NoPen);
         p.drawPolygon(m_poly);

@@ -204,17 +204,17 @@ void QBoard::mouseReleaseEvent(QMouseEvent* e) {
     if (e->button() != Qt::LeftButton) return;
 
 
-    if (m_hoveredQNode) {
+    if (m_hoveredQNode && m_hoveredQNode->isHighlighted()) {
         emit nodeClicked(m_hoveredQNode->node()->getNodeId());
         emit elementClicked(m_hoveredQNode->node()->getNodeId());
     }
 
-    else if (m_hoveredQEdge) {
+    else if (m_hoveredQEdge && m_hoveredQEdge->isHighlighted()) {
         emit edgeClicked(m_hoveredQEdge->edge()->getEdgeId());
         emit elementClicked(m_hoveredQEdge->edge()->getEdgeId());
     }
 
-    else if (m_hoveredQTile) {
+    else if (m_hoveredQTile && m_hoveredQTile->isHighlighted()) {
         emit tileClicked(m_hoveredQTile->tile()->getTileId());
         emit elementClicked(m_hoveredQTile->tile()->getTileId());
     }

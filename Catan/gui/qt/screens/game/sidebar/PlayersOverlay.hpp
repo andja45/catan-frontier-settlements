@@ -26,7 +26,8 @@ private:
     void refreshTurnGlow();
     PlayerId m_activePlayerId;
 public slots:
-    void setActivePlayer(PlayerId);
+    void update(PlayerId);
+
 
 };
 

@@ -2,6 +2,8 @@
 #define DICEWIDGET_H
 #include <QWidget>
 #include <QPainter>
+#include <screens/game/board/elements/PulseState.hpp>
+
 class DiceWidget : public QWidget {
     Q_OBJECT
 public:
@@ -10,6 +12,7 @@ public:
 
     QSize sizeHint() const override { return {120, 60}; }
     void setEnabled(bool enabled=true);
+    void setHighlighted(bool highlight);
 
 signals:
     void clicked();
@@ -33,6 +36,9 @@ private:
     QRectF m_die2Rect;
 
     int m_hoveredDie = 0; // 0 none, 1 die1, 2 die2
-    int m_disabled=false;
+    bool m_disabled=false;
+    bool m_highlight=false;
+    PulseState* m_pulse = nullptr;
+
 };
 #endif // DICEWIDGET_H

@@ -4,12 +4,17 @@
 #include<QPainter>
 #include<QFont>
 #include<QLabel>
+#include <common/theme/GameTheme.h>
+
 class QCountBadge : public QLabel
 {
 private:
     int m_count=-1;
-    bool m_golden=false;
+    QColor m_color=Qt::black;
 public:
+    void setColor(QColor col);
+
+    void setGolden(bool golden){setColor(GameTheme::getGoldenColor());}
     explicit QCountBadge(int count, QWidget* parent);
     void incrementCount(int add){addToCount(1);}
     void decrementCount(int add){subtractFromCount(1);}

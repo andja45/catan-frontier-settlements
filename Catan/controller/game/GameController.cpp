@@ -33,10 +33,11 @@ GameController::GameController(GameSession& session, NetworkTransport* transport
     m_adapter->setTransport(transport);
 
     connectElements();
-    m_gameWindow.getOverlay()->show();
-    m_adapter->sendReady();
     updateState();
     updateView();
+    m_gameWindow.getOverlay()->show();
+    m_adapter->sendReady();
+
 }
 
 bool GameController::isLocalPlayersTurn(const char* action) const {
@@ -48,40 +49,48 @@ bool GameController::isLocalPlayersTurn(const char* action) const {
 }
 
 void GameController::updateState(){ // filling renderstates and tools
+    m_boardRenderState.clear();
+    m_toolbarRenderState.clear();
 
-    updateActiveToolOnPhase();
+    if (m_session.localPlayer()==m_session.currentPlayer()) {
+        updateActiveToolOnPhase();
+        m_toolbarRenderState.updateFromPhase(m_session.phase());
 
-    m_toolbarRenderState.updateFromPhase(m_session.phase());
-
-    if (m_activeTool && m_activeTool->providesAllValid()) {
-        m_boardRenderState.setHighlighted(m_activeTool->allValid(m_session),
-            m_activeTool->type());
+        if (m_activeTool && m_activeTool->providesAllValid()) {
+            m_boardRenderState.setHighlighted(m_activeTool->allValid(m_session),
+                m_activeTool->type());
+        }
     }
 
+    if (m_session.localPlayer()==m_session.currentPlayer()) {
+        emit gameOverlay(GameOverlayType::Hidden);
+    }
+    else {
+        emit gameOverlay(GameOverlayType::Empty);
+    }
 
-    
-    if (m_activeTool->type()==MoveType::DiscardCards) {
+    if (m_session.phase()==TurnPhase::DiscardCards) {
         if (!m_session.hasPlayerDiscarded(m_localPlayerId) && m_session.playerMustDiscard(m_localPlayerId))
-        emit setDiscard();
+            emit setDiscard();
     }
-    if (m_activeTool->type()==MoveType::StealCard) {
+    if (m_session.phase()==TurnPhase::StealCard) {
         emit setChoosePlayer(m_activeTool->allValid(m_session));
     }
 
     if (m_session.phase()==TurnPhase::GameOver) {
-        if (m_session.winner()==m_localPlayerId)
-            emit gameWon();
-        else
-            emit gameOver();
+        onGameOver();
     }
+
 }
 
 void GameController::setActiveTool(std::unique_ptr<Move> tool){
     m_activeTool = std::move(tool);
+
 }
 
 void GameController::clearActiveTool(){
     m_activeTool.reset();
+    m_activeTool=nullptr;
 }
 
 void GameController::connectElements() {
@@ -96,9 +105,7 @@ void GameController::connectElements() {
 
     // ADAPTER
     // receive move from adapter
-    connect(m_adapter,&GameNetworkAdapter::startGame,this,[this]() {
-        m_gameWindow.getOverlay()->hide();
-    });
+    connect(m_adapter,&GameNetworkAdapter::startGame,this,&GameController::onGameStart);
     connect(m_adapter,&GameNetworkAdapter::remoteMoveReceived,
             this, &GameController::onMoveReceived);
     // error from adapter
@@ -166,15 +173,24 @@ void GameController::connectElements() {
     connect(qactionManager,&ActionManager::playerChosenToSteal,
             this,&GameController::onStealCardPlayerChosen);
 
+    // TRADE
+    // accept
+    connect(qtradeOverlay,&TradeOverlay::tradeAccepted,this,&GameController::onPlayerTradeAcceptSent);
+    // respond
+    connect(qtradeOverlay,&TradeOverlay::tradeRespondedPositive,this,[this](PlayerId pid,TradeId tid) {
+        onPlayerTradeResponseSent(tid,true);
+    });
+    connect(qtradeOverlay,&TradeOverlay::tradeRespondedNegative,this,[this](PlayerId pid,TradeId tid) {
+        onPlayerTradeResponseSent(tid,false);
+    });
 
     // GAME OVERLAY
-    connect(this,&GameController::gameOver,qgameOverlay,&GameOverlay::showGameOver);
-    connect(this,&GameController::gameWon,qgameOverlay,&GameOverlay::showGameWon);
+    connect(this,&GameController::gameOverlay,qgameOverlay,&GameOverlay::overlay);
 
     // UPDATES TO VIEW
     connect(this,&GameController::updateToolbar,qtoolbar,&BoardToolbar::updateState);
     connect(this,&GameController::updateBoard,qboard,&QBoard::update);
-    connect(this,&GameController::updateActivePlayer,qplayersOverlay,&PlayersOverlay::setActivePlayer);
+    connect(this,&GameController::updateActivePlayer,qplayersOverlay,&PlayersOverlay::update);
     connect(this,&GameController::update,qtradeOverlay,&TradeOverlay::refresh);
 
     connect(this,&GameController::setDiscard,qactionManager,&ActionManager::openDiscardPopup);
@@ -215,6 +231,7 @@ void GameController::onBuildRoadClicked(){
 
     setActiveTool(std::make_unique<BuildRoadMove>(m_localPlayerId, types::InvalidEdgeId));
     updateState();
+    updateView();
 }
 
 void GameController::onBuildSettlementClicked(){
@@ -222,6 +239,7 @@ void GameController::onBuildSettlementClicked(){
 
     setActiveTool(std::make_unique<BuildSettlementMove>(m_localPlayerId, types::InvalidNodeId));
     updateState();
+    updateView();
 }
 
 void GameController::onBuildCityClicked() {
@@ -229,6 +247,7 @@ void GameController::onBuildCityClicked() {
 
     setActiveTool(std::make_unique<BuildCityMove>(m_localPlayerId, types::InvalidNodeId));
     updateState();
+    updateView();
 }
 
 void GameController::onBoardElementClicked(int elementId){
@@ -248,6 +267,7 @@ void GameController::onBuyDevCardClicked() {
     if (!isLocalPlayersTurn("BuyDev")) return;
 
     auto move = std::make_unique<BuyDevCardMove>(m_localPlayerId);
+    move->setDevCard(m_session);
 
     sendMove(move.get());
 }
@@ -289,8 +309,6 @@ void GameController::onYearOfPlentyResourcesChosen(ResourceType resource1, Resou
 }
 
 void GameController::onDiscardCardsSent(const ResourcePack &discarded) {
-    if (!isLocalPlayersTurn("DiscardCards")) return;
-
     auto move = std::make_unique<DiscardCardsMove>(m_localPlayerId, discarded);
 
     if (sendMove(move.get())) {
@@ -308,18 +326,17 @@ void GameController::onPlayerTradeRequestSent(const ResourcePack &give, const Re
     sendMove(move.get());
 }
 
-void GameController::onPlayerTradeResponseSent(TradeId tradeRequestId) {
-    if (!isLocalPlayersTurn("PlayerTradeResponse")) return;
-
-    auto move = std::make_unique<PlayerTradeResponseMove>(m_localPlayerId, tradeRequestId);
+void GameController::onPlayerTradeResponseSent(TradeId tid,bool response) {
+    // doesnt need to be local player!!!
+    auto move = std::make_unique<PlayerTradeResponseMove>(m_localPlayerId,tid,response);
 
     sendMove(move.get());
 }
 
 void GameController::onPlayerTradeAcceptSent(TradeId tradeId, PlayerId acceptedPlayerId) {
+    // doesnt need to be local player!!!
     if (!isLocalPlayersTurn("PlayerTradeAccept")) return;
-
-    auto move = std::make_unique<PlayerTradeAcceptMove>(m_localPlayerId, tradeId, acceptedPlayerId);
+    auto move = std::make_unique<PlayerTradeAcceptMove>(m_localPlayerId, acceptedPlayerId,tradeId);
 
     sendMove(move.get());
 }
@@ -337,7 +354,7 @@ void GameController::onRollDiceClicked() {
     if (m_session.phase()!=TurnPhase::RollDice) return;
 
     std::unique_ptr<RollDiceMove> move = std::make_unique<RollDiceMove>(m_localPlayerId);
-    move->setDiceRoll(m_session.rollDice());
+    move->setDiceRoll(m_session);
     sendMove(move.get());
 }
 
@@ -353,10 +370,10 @@ void GameController::onEndTurnClicked() {
 }
 
 void GameController::onMoveReceived(Move* receivedMove){
+    std::unique_ptr<Move> move(receivedMove);
     if (receivedMove->getPlayerId()==m_localPlayerId) { // we skip moves from us, this is fallback server already does this
         return;
     }
-    std::unique_ptr<Move> move(receivedMove);
     if (!move) {
         onError("Received empty move!");
     }
@@ -379,9 +396,15 @@ void GameController::updateView() {
     emit update();
 }
 
+void GameController::onGameStart() {
+    m_gameWindow.getOverlay()->hide();
+    updateState();
+    updateView();
+}
+
 bool GameController::sendMove(const Move *move) {
     if (!m_session.applyMove(*move)) { // we apply local moves ourselves
-        onError("Tried to send invalid move!"); // we kick ourselves out of game
+        qDebug()  <<"Tried to send invalid move!";
         return false;
     }
     m_adapter->sendMove(move);
@@ -396,4 +419,15 @@ void GameController::onError(const std::string& error) {
     auto leaveMove = std::make_unique<PlayerLeaveMove>(m_session.localPlayer());
     sendMove(leaveMove.get());
     emit gameClosed();
+}
+
+void GameController::onGameOver() {
+    if (m_session.winner()==m_localPlayerId){
+        emit gameOverlay(GameOverlayType::GameWon);
+        emit gameWon();
+    }
+    else {
+        emit gameOverlay(GameOverlayType::GameOver);
+        emit gameOver();
+    }
 }

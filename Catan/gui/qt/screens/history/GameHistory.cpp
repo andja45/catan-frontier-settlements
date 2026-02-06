@@ -147,7 +147,7 @@ void GameHistory::loadGameHistoryToTable() {
         }
     }
 
-    m_historyTable->resizeColumnsToContents();
+    //m_historyTable->resizeColumnsToContents();
 }
 
 GameHistory::GameHistory(QWidget *parent)

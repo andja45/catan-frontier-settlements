@@ -6,7 +6,7 @@ include(FetchContent)
 # Prefer an installed Catch2 v3, but fall back to fetching.
 find_package(Catch2 3 CONFIG QUIET)
 
-if(NOT Catch2_FOUND)
+if(NOT TARGET Catch2::Catch2WithMain)
     FetchContent_Declare(
             Catch2
             GIT_REPOSITORY https://github.com/catchorg/Catch2.git
@@ -14,6 +14,8 @@ if(NOT Catch2_FOUND)
     )
     FetchContent_MakeAvailable(Catch2)
 endif()
+
+find_package(Catch2 3 CONFIG QUIET)
 
 add_executable(catan_tests
         DiscardCardsMoveTest.cpp

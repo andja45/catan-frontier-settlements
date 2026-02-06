@@ -53,26 +53,36 @@ BoardToolbar::BoardToolbar(Player* player,const std::pair<int,int>* dice,QWidget
     buttonsLayout->addWidget(btn);
     m_buttons[ToolbarActionType::EndTurn] = btn;
 
-
-
-    connect(m_tradePopup, &RequestPlayerTradePopup::tradeSubmitted,
-            this, &BoardToolbar::playerTradeRequested);
-    connect(m_requestBankTradePopup, &RequestBankTradePopup::tradeSubmitted,
-            this, &BoardToolbar::bankTradeRequested);
-    connect(m_chooseDevCardPopup, &ChooseDevCardPopup::devCardChosen,this, &BoardToolbar::devCardChosen);
-
 }
 
 void BoardToolbar::updateState(const ToolbarRenderState& rs) {
     // we unclick build buttons here, consider changing
     clearBuildSelection();
+
     for (auto& [action, button] : m_buttons.toStdMap()) {
         if (rs.isEnabled(action)) {
             button->setEnabled(true);
         } else {
             button->setEnabled(false);
         }
+
+        if (!MoveCosts::costFor(action).empty()) {
+            ResourcePack rp;
+            for (auto r: MoveCosts::costFor(action)) {
+                rp[r]++;
+            }
+            if (!m_player->hasResources(rp))
+                button->setEnabled(false);
+        }
     }
+    if (rs.isEnabled(ToolbarActionType::RollDice)) {
+        m_dice->setEnabled(true);
+    }
+    else {
+        m_dice->setEnabled(false);
+    }
+
+
     QWidget::update();
 }
 
@@ -109,6 +119,8 @@ void BoardToolbar::showBankTradePopup()
 void BoardToolbar::showDevCardPopup() {
     auto* button = qobject_cast<QWidget*>(sender());
     if (!button) return;
+
+    m_chooseDevCardPopup->rebuild();
 
     QPoint pos = button->mapToGlobal(
         QPoint(button->width()/2 - m_chooseDevCardPopup->sizeHint().width()/2,
@@ -147,14 +159,17 @@ FloatingButton *BoardToolbar::createButtonForType( ToolbarActionType action) {
 
     if (action == ToolbarActionType::BuildSettlement) {
         m_countSettlements = new QCountBadge(m_player->getNumOfSettlementsLeft(), btn);
+        m_countSettlements->setColor(GameTheme::getPlayerColor(m_player->getPlayerId()));
         btn->addWidget(m_countSettlements);
     }
     else if (action == ToolbarActionType::BuildCity) {
         m_countCities = new QCountBadge(m_player->getNumOfCitiesLeft(), btn);
+        m_countCities->setColor(GameTheme::getPlayerColor(m_player->getPlayerId()));
         btn->addWidget(m_countCities);
     }
     else if (action == ToolbarActionType::BuildRoad) {
         m_countRoads = new QCountBadge(m_player->getNumOfRoadsLeft(), btn);
+        m_countRoads->setColor(GameTheme::getPlayerColor(m_player->getPlayerId()));
         btn->addWidget(m_countRoads);
     }
 
@@ -214,6 +229,7 @@ void BoardToolbar::clearBuildSelection()
         btn->setChecked(false);
     }
     m_buildGroup->setExclusive(true);
+
 }
 
 bool BoardToolbar::eventFilter(QObject* obj, QEvent* event)

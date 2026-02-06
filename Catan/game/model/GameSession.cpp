@@ -19,6 +19,7 @@ GameSession::GameSession(std::vector<std::string> playerNames,
     , m_localPlayerId(localPlayer)
     , m_rng(seed)
     , m_gameData(gameName, playerNames)
+    , m_winningPints(winPoints)
 {
     const int numPlayers = static_cast<int>(playerNames.size()); // deduced from vector of players
     m_numOfActivePlayers=numPlayers;
@@ -63,7 +64,7 @@ void GameSession::advancePhaseAfterMove() {
         case TurnPhase::DiscardCards:
             if (allRequiredPlayersDiscarded()) {
                 setPhase(TurnPhase::SetRobber);
-                //m_discardedPlayers.clear();
+                m_discardedPlayers.clear();
             }
             return;
 
@@ -84,7 +85,9 @@ void GameSession::advancePhaseAfterMove() {
                 setPhase(TurnPhase::Main);
             }
             break;
-
+        case MoveType::StealCard:
+            setPhase(TurnPhase::Main);
+            break;
         case MoveType::EndTurn:
             advancePlayer(); // session does this, not move
             m_devCardPlayedThisTurn = false; // reseting for next turn
@@ -128,13 +131,14 @@ void GameSession::advanceInitialPlacement() {
 
     m_phaseMoveCount += 1;
 
-    const int totalPlacementMoves = playerCount * 4; // *2 for both directios *2 for settlemet/road
+    const int totalPlacementMoves = playerCount * 4; // *2 for both directions *2 for settlement/road
 
     if (m_phaseMoveCount >= totalPlacementMoves) {
         m_phaseMoveCount = 0;
         m_turnIndex = 0;
         m_currentPlayerId = m_players[m_turnIndex]->getPlayerId(); // first player starts
         setPhase(TurnPhase::RollDice);
+        dealInitial();
         return;
     }
 
@@ -325,3 +329,14 @@ void GameSession::leavePlayer(PlayerId player_id) {
     m_numOfActivePlayers--;
 }
 
+void GameSession::dealInitial() {
+    for (auto &p:m_players) {
+        Node* lastHouse=p->getLastBuildingBuilt();
+        auto tiles=lastHouse->getIncidentTiles();
+        ResourcePack rs;
+        for (auto t:tiles) {
+            rs[t->getResourceType()]++;
+        }
+        p->addResources(rs);
+    }
+}

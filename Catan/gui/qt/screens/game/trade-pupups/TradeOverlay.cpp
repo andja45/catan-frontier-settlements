@@ -8,18 +8,17 @@
 #include <screens/game/trade-pupups/popups/AcceptPlayerTradePopup.hpp>
 
 TradeOverlay::TradeOverlay(std::vector<Player *> players, PlayerId currentId, std::unordered_map<TradeId,Trade> *trades, QWidget *parent): QWidget(parent) {
-    setAttribute(Qt::WA_StyledBackground, true);
-    setStyleSheet("background: transparent;");
-    setAutoFillBackground(false);
+    setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_TranslucentBackground);
 
     // we listen to resize in order for floating widget to be size of parent
     parent->installEventFilter(this);
+    setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     m_root=new QVBoxLayout(this);
     m_root->setContentsMargins(10,10,10,10);
     m_root->setSpacing(5);
 
-    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
     m_currentId=currentId;
     m_players = players;
@@ -34,52 +33,56 @@ QSize TradeOverlay::sizeHint() const {
     return QWidget::sizeHint();
 }
 
-bool TradeOverlay::eventFilter(QObject *obj, QEvent *event)
+bool TradeOverlay::eventFilter(QObject* obj, QEvent* event)
 {
     if (obj == parentWidget() && event->type() == QEvent::Resize) {
-        auto* re = static_cast<QResizeEvent*>(event);
-
-        int h = re->size().height();
-
-        int w = sizeHint().width();
-        w = qBound(70, w, 500);
-
-        setGeometry(0, 0, w, h);
+        updateOverlayGeometry();
     }
     return QWidget::eventFilter(obj, event);
 }
+
 
 
 void TradeOverlay::refresh() {
     rebuild();
 }
 
+void TradeOverlay::onTradeCancelled(TradeId id) {
+    emit tradeAccepted(id,-1);
+}
+
 void TradeOverlay::onTradeAccepted(TradeId tid, PlayerId pid) {
     emit tradeAccepted(tid,pid);
 }
 
-void TradeOverlay::onTradeResponsePositive(TradeId tid, PlayerId pid) {
-    emit tradeRespondedPositive(tid,pid);
+void TradeOverlay::onTradeResponsePositive( PlayerId pid,TradeId tid) {
+    emit tradeRespondedPositive(pid,tid);
 }
 
-void TradeOverlay::onTradeResponseNegative(TradeId tid , PlayerId pid) {
-    emit tradeRespondedNegative(tid, pid);
+void TradeOverlay::onTradeResponseNegative(PlayerId pid,TradeId tid) {
+    emit tradeRespondedNegative(pid,tid);
 }
 
 void TradeOverlay::rebuild() {
     if (!m_trades) return;
+    restart();
     for (auto [_,t]: *m_trades) {
         addWidgetForTrade(t);
     }
     m_root->addStretch(1);
-    updateGeometry();
+
+    layout()->invalidate();
+    layout()->activate();
+
+    updateOverlayGeometry();
+    update();
 }
-
-void TradeOverlay::updateGeometry()
+void TradeOverlay::updateOverlayGeometry()
 {
-    if (!parentWidget()) return;
+    if (!parentWidget())
+        return;
 
-    int w = sizeHint().width();
+    int w = qBound(150, sizeHint().width(), 500);
     int h = parentWidget()->height();
 
     setGeometry(0, 0, w, h);
@@ -104,15 +107,17 @@ void TradeOverlay::addAcceptWidget(const Trade &trade) {
            respondedPlayers.begin(),[this](PlayerId id) { return m_players[id]; });
     widget->setPlayers(respondedPlayers);
     connect(widget,&AcceptPlayerTradePopup::tradeAccepted,this,&TradeOverlay::onTradeAccepted);
+    connect(widget,&AcceptPlayerTradePopup::tradeCancelled,this,&TradeOverlay::onTradeCancelled);
     m_root->addWidget(widget);
 }
 
 void TradeOverlay::addRespondWidget(const Trade &trade) {
     auto* player=m_players[m_currentId];
-    TradeOffer offer={trade.give(),trade.receive()};
+    TradeOffer offer={trade.receive(),trade.give()}; // we exchange give and receive for responding player
     auto tradeId=trade.id();
     auto* widget=new RespondPlayerTradePopup(player,offer,tradeId,this);
     connect(widget,&RespondPlayerTradePopup::tradeAccepted,this,&TradeOverlay::onTradeResponsePositive);
+    connect(widget,&RespondPlayerTradePopup::tradeDeclined,this,&TradeOverlay::onTradeResponseNegative);
     m_root->addWidget(widget);
 }
 
@@ -123,4 +128,10 @@ void TradeOverlay::addWidgetForTrade(const Trade &trade) {
     else { // player is responder
         addRespondWidget(trade);
     }
+}
+
+void TradeOverlay::showEvent(QShowEvent* e)
+{
+    QWidget::showEvent(e);
+    updateOverlayGeometry();
 }
