@@ -28,6 +28,7 @@ add_executable(catan_tests
         MonopolyMoveTest.cpp
         YearOfPlentyMoveTest.cpp
         PlayDevCardMoveTest.cpp
+        PlayerLeaveMoveTests.cpp
 )
 
 target_link_libraries(catan_tests PRIVATE
