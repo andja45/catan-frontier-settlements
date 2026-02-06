@@ -22,13 +22,14 @@ add_executable(catan_tests
         BoardTest.cpp
         PlayerTest.cpp
         BankTest.cpp
-        RollDiceMoveTests.cpp
+        RollDiceMoveTest.cpp
         BuyDevCardMoveTest.cpp
         TestHelper.h
         MonopolyMoveTest.cpp
         YearOfPlentyMoveTest.cpp
         PlayDevCardMoveTest.cpp
-        PlayerLeaveMoveTests.cpp
+        PlayerLeaveMoveTest.cpp
+        EndTurnMoveTest.cpp
 )
 
 target_link_libraries(catan_tests PRIVATE
