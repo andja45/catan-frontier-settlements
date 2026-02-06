@@ -100,7 +100,7 @@ TEST_CASE("takeRandomResource removes exactly one resource card of an existing t
     p.addResource(ResourceType::Brick, 1);
     p.addResource(ResourceType::Wool, 0);
 
-    auto before = p.getResources(); // returns ResourcePack (map)
+    auto before = p.getResources();
 
     ResourceType drawn = p.takeRandomResource();
 
@@ -151,8 +151,6 @@ TEST_CASE("has3for1Trade is true if player has a settlement on a generic port no
 
     Node* portNode = getKnownGenericPortNode(*board);
 
-    // Place settlement on that node and register it in Player.
-    // (In your architecture, Board placement and Player inventory may be separate.)
     board->placeSettlement(1, portNode->getNodeId());
     p.addSettlement(portNode);
 
