@@ -68,8 +68,13 @@ private:
  void advanceInitialPlacement();
  void advancePlayer();
 
-
  void setPhase(TurnPhase phase) { m_phase = phase; } // add if needed later, for now direct setting
+
+#ifdef TESTING
+public:
+    void forcePhase(TurnPhase phase) { m_phase = phase; }
+private:
+#endif
 
  // trades
  std::unordered_map<TradeId, Trade> m_activeTrades;

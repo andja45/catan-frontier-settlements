@@ -22,12 +22,19 @@ add_executable(catan_tests
         BoardTest.cpp
         PlayerTest.cpp
         BankTest.cpp
+        BuyDevCardMoveTest.cpp
+        TestHelper.h
+        MonopolyMoveTest.cpp
+        YearOfPlentyMoveTest.cpp
+        PlayDevCardMoveTest.cpp
 )
 
 target_link_libraries(catan_tests PRIVATE
         catan_game
         Catch2::Catch2WithMain
 )
+
+target_compile_definitions(catan_tests PRIVATE TESTING)
 
 enable_testing()
 add_test(NAME catan_tests COMMAND catan_tests)
