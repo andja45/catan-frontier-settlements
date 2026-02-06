@@ -21,6 +21,7 @@ add_executable(catan_tests
         StealCardMoveTest.cpp
         BuildCityMoveTest.cpp
         BuildSettlementMoveTest.cpp
+        BuildRoadMoveTest.cpp
 )
 
 target_link_libraries(catan_tests PRIVATE
