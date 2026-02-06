@@ -2,7 +2,7 @@
 // Created by marko-cvijetinovic on 2/6/26.
 //
 
-
+#define TESTING
 #include <catch2/catch_test_macros.hpp>
 
 #include <memory>
@@ -84,7 +84,7 @@ TEST_CASE("RollDiceMove::isValid basic gate checks", "[RollDiceMove][isValid]") 
     RollDiceMove m0(/*player*/0, /*d1*/3, /*d2*/4);
     REQUIRE_FALSE(m0.isValid(session));
 
-    session.setPhaseForTests(TurnPhase::RollDice);
+    session.forcePhase(TurnPhase::RollDice);
     REQUIRE(session.currentPlayer() == 0);
 
     SECTION("invalid if not current player") {
@@ -108,8 +108,8 @@ TEST_CASE("RollDiceMove::isValid remote verification uses copyRng sum", "[RollDi
     GameSession session = make2P_diceBoard(/*localPlayer*/0, /*seed*/123);
 
     // Need RollDice phase and current player = 1 for remote check
-    session.setPhaseForTests(TurnPhase::RollDice);
-    session.setCurrentPlayerForTests(1);
+    session.forcePhase(TurnPhase::RollDice);
+    session.forceCurrentPlayer(1);
 
     int d1 = expectedRemoteDice(session);
     int d2 = expectedRemoteDice(session);
@@ -133,7 +133,7 @@ TEST_CASE("RollDiceMove::apply distributes resources for matched tiles") {
     GameSession session = make2P_diceBoard(/*localPlayer*/0, /*seed*/1);
     Board& board = session.board();
 
-    session.setPhaseForTests(TurnPhase::RollDice);
+    session.forcePhase(TurnPhase::RollDice);
 
     const PlayerId owner = 0;
     const int diceSum = 8;
@@ -182,7 +182,7 @@ TEST_CASE("RollDiceMove::apply gives 2 resources for city", "[RollDiceMove][appl
     GameSession session = make2P_diceBoard(/*localPlayer*/0, /*seed*/1);
     Board& board = session.board();
 
-    session.setPhaseForTests(TurnPhase::RollDice);
+    session.forcePhase(TurnPhase::RollDice);
 
     const PlayerId owner = 0;
     const int diceSum = 8;

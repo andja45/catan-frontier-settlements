@@ -68,12 +68,18 @@ private:
      void advanceInitialPlacement();
      void advancePlayer();
 
-
      void setPhase(TurnPhase phase) { m_phase = phase; } // add if needed later, for now direct setting
 
      // trades
      std::unordered_map<TradeId, Trade> m_activeTrades;
      TradeId m_nextTradeId = 1;
+
+#ifdef TESTING
+public:
+    void forcePhase(TurnPhase phase) { m_phase = phase; }
+    void forceCurrentPlayer(PlayerId p) { m_currentPlayerId = p; }
+private:
+#endif
 
      void addTrade(Trade trade);
      void removeTrade(TradeId tradeId);
@@ -160,10 +166,6 @@ public:
      }
 
      Bank * getBank(){return &m_bank;}
-
-    void setPhaseForTests(TurnPhase p) { m_phase = p; }
-    void setCurrentPlayerForTests(PlayerId p) { m_currentPlayerId = p; }
-
 };
 
 #endif //Catan_GAMESESSION_H
