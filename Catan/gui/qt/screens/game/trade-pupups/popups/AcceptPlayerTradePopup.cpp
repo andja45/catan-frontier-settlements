@@ -9,7 +9,6 @@
 
 AcceptPlayerTradePopup::AcceptPlayerTradePopup(Player *player, TradeOffer offer, TradeId tradeId, QWidget *parent): FloatingPanel(parent) {
 
-
     m_playerId=player->getPlayerId();
     m_tradeId=tradeId;
     m_offer=offer;
@@ -55,9 +54,11 @@ AcceptPlayerTradePopup::AcceptPlayerTradePopup(Player *player, TradeOffer offer,
 
 
     for(auto [resource,num]: m_offer.give){
+        if (num<=0) continue;
         giveRow->addCard(CardSpec({CardKind::Resource, resource, DevCardType::None, num}));
     }
     for(auto [resource,num]: m_offer.receive){
+        if (num<=0) continue;
          receiveRow->addCard(CardSpec({CardKind::Resource, resource, DevCardType::None, num}));
     }
 
@@ -91,6 +92,16 @@ void AcceptPlayerTradePopup::setPlayers(std::vector<Player *> players) {
 
 void AcceptPlayerTradePopup::rebuild() {
 
+    auto declineButton = new QPushButton(QStringLiteral("✖"), this);
+
+    m_buttonsBox->addWidget(declineButton);
+    m_buttonsBox->addSpacing(10);
+
+    connect(declineButton, &QPushButton::clicked, this, [this]() {
+           emit tradeCancelled(m_tradeId);
+           close();
+       });
+
     for (auto p:m_players) {
         auto* btn=new FloatingButton(this);
         auto* playerLabel=TextInDot::fromPlayer(p);
@@ -102,7 +113,6 @@ void AcceptPlayerTradePopup::rebuild() {
         m_buttonsBox->addWidget(btn);
         connect(btn, &QPushButton::clicked, this, [this, id=p->getPlayerId()]() {
             emit tradeAccepted(m_tradeId,id);
-            close();
         });
     }
 

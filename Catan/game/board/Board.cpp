@@ -291,9 +291,7 @@ bool Board::edgeTouchesPlayersBuilding(PlayerId playerId, EdgeId edgeId) const {
     return false;
 }
 bool Board::edgeTouchesPlayersRoad(PlayerId playerId, EdgeId edgeId) const{
-    Edge* edge = this->getEdgeById(edgeId);
-
-    for (Edge* e : getEdgesAdjacentToNode(edgeId)) {
+    for (Edge* e : getIncidentEdges(edgeId)) {
         if (!e) {
 		    continue;
 	    }

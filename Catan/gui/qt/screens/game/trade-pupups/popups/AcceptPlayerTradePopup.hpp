@@ -16,8 +16,8 @@ public:
     explicit AcceptPlayerTradePopup(Player *m_player, TradeOffer offer,TradeId tradeId, QWidget *parent);
     void setPlayers(std::vector<Player *> players);
 signals:
-        void tradeAccepted(TradeId,PlayerId);
-
+    void tradeAccepted(TradeId,PlayerId);
+    void tradeCancelled(TradeId);
 private:
     TradeOffer m_offer;
     TradeId m_tradeId;

@@ -40,7 +40,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent* e) override;
 
-    void mouseReleaseEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e) override;
 
     void leaveEvent(QEvent* e) override;
 

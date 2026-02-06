@@ -21,9 +21,10 @@ public:
     void setHovered(bool on) { m_hovered = on; }
     void setHighlighted(bool on) { m_highlighted = on; }
     bool hovered() const { return m_hovered; }
-    bool highlighted() const { return m_highlighted; }
+    bool isHighlighted() const { return m_highlighted; }
 
     void paint(QPainter& p, double size);
+
 
     static QVector<QPointF> hexPolygonPoints(const QPointF& center, double size);
 

@@ -41,6 +41,7 @@ private:
 
     QPushButton* m_startButton = nullptr;
     RoleType m_role;
+    QLabel * m_roomName;
 
     QWidget* makePlayersCard();
     QWidget* makeSettingsCard();

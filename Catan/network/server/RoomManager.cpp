@@ -114,6 +114,10 @@ void RoomManager::ackPlayer(ClientConnection *c) {
 
 void RoomManager::handleDisconnect(ClientConnection *client) {
     auto roomId = client->roomId();
+    if (!m_rooms.at(roomId)) {
+        m_rooms.erase(roomId);
+        return;
+    }
     m_rooms.at(roomId)->removePlayer(client);
 
     if (m_rooms.at(roomId)->isEmpty()) removeRoom(roomId);
@@ -126,7 +130,10 @@ void RoomManager::handleError(ClientConnection *client, const std::string &error
 
 void RoomManager::cleanEmptyRooms() {
     for (auto it=m_rooms.begin();it!=m_rooms.end();) {
-        if (it->second==nullptr || it->second->isEmpty()) {
+        if (it->second==nullptr ) {
+            m_rooms.erase(it);
+        }
+        else if (it->second->isEmpty()) {
             removeRoom(it->first);
         } else {
             ++it;

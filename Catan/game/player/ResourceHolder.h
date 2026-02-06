@@ -54,7 +54,7 @@ public:
     int getNumOfResourceCards() const {return m_numOfResourceCards;};
     int getNumOfResourceCards(ResourceType r)  {return m_resources[r];}
     std::map<ResourceType, int> getResources() { return m_resources; }
-    std::map<DevCardType, int> getDevCards() {return m_devCards; }
+    std::map<DevCardType, int> getDevCards() const {return m_devCards; }
 
     void setLongestRoad(bool longestRoad) {m_hasLongestRoad=longestRoad;}
     void setLargestArmy(bool largestMilitary) {m_hasLargestMilitary=largestMilitary;}

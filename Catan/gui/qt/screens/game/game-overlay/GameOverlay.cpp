@@ -24,10 +24,10 @@ GameOverlay::GameOverlay(QWidget* parent)
 
 void GameOverlay::showOverlay()
 {
-    setAttribute(Qt::WA_TransparentForMouseEvents, false);
     show();
     raise();
     update();
+    updateGeometry();
     setWindowOpacity(0.0);
 
     auto* anim = new QPropertyAnimation(this, "windowOpacity");
@@ -43,6 +43,7 @@ void GameOverlay::showGameOver() {
 
     m_text="Game Over";
     m_textColor=Qt::white;
+    setAttribute(Qt::WA_TransparentForMouseEvents, false);
     showOverlay();
 }
 
@@ -51,8 +52,32 @@ void GameOverlay::showGameWon() {
 
     m_text="You won!";
     m_textColor=Qt::white;
+    setAttribute(Qt::WA_TransparentForMouseEvents, false);
     showOverlay();
 
+}
+
+void GameOverlay::showWaiting() {
+    m_text="Waiting for other players...";
+    m_textColor=Qt::white;
+    setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    showOverlay();
+}
+
+void GameOverlay::showEmpty() {
+    m_text="";
+    m_textColor=Qt::white;
+    showOverlay();
+}
+
+void GameOverlay::overlay(GameOverlayType type) {
+    switch (type) {
+        case GameOverlayType::GameOver: showGameOver(); break;
+        case GameOverlayType::GameWon: showGameWon(); break;
+        case GameOverlayType::Waiting: showWaiting(); break;
+        case GameOverlayType::Empty: showEmpty(); break;
+        case GameOverlayType::Hidden: hideOverlay(); break;
+    }
 }
 
 void GameOverlay::hideOverlay()
@@ -75,7 +100,7 @@ void GameOverlay::paintEvent(QPaintEvent*)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
 
-    p.fillRect(rect(), QColor(0, 0, 0, 128));
+    p.fillRect(rect(), QColor(0, 0, 0, 50));
 
     QFont font = p.font();
     font.setBold(true);
@@ -107,4 +132,11 @@ void GameOverlay::paintEvent(QPaintEvent*)
     p.setBrush(m_textColor);
     p.drawPath(path);
 
+}
+
+void GameOverlay::updateGeometry()
+{
+    if (!parentWidget())
+        return;
+    setGeometry(parentWidget()->rect());
 }

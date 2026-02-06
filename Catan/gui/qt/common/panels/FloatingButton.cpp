@@ -28,7 +28,7 @@ FloatingButton::FloatingButton(QWidget* parent)
         }
 
         FloatingButton:checked {
-            background: rgba(200,225,255,240);
+            background: rgba(180,205,255,240);
             color: #1e6bd6;
         }
 

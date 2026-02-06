@@ -17,6 +17,7 @@ Room::Room(const std::string &name, ClientConnection *host) {
     m_config=std::make_unique<GameConfig>();
     m_seed = std::random_device{}();
     m_config->setNumPlayers(4); // so host can join!
+    m_config->setName(name);
 
 }
 

@@ -85,6 +85,5 @@ std::string TextInDot::getInitials(const std::string &name) {
             initials += toupper(name[i]);
         }
     }
-
     return initials;
 }

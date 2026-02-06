@@ -234,10 +234,10 @@ QWidget* LobbyView::makeSettingsCard() {
     grid->setVerticalSpacing(22);
     grid->setColumnMinimumWidth(0, 140);
 
-    auto* room = new QLabel(QString("Room name: %1").arg(m_gameName), card);
-    room->setObjectName("Title");
-    room->setAlignment(Qt::AlignHCenter);
-    grid->addWidget(room, 0, 0, 1, 3);
+    m_roomName = new QLabel(QString("Room name: %1").arg(m_gameName), card);
+    m_roomName->setObjectName("Title");
+    m_roomName->setAlignment(Qt::AlignHCenter);
+    grid->addWidget(m_roomName, 0, 0, 1, 3);
 
     auto* boardLbl = new QLabel("Board", card);
     grid->addWidget(boardLbl, 1, 0);
@@ -404,6 +404,7 @@ GameConfig LobbyView::getConfig() const {
 
 void LobbyView::setConfig(const GameConfig& config) {
     setWindowTitle(QString("Game lobby: %1").arg(m_gameName));
+    m_roomName->setText(QString("Room name: %1").arg(m_gameName));
     m_playerList->clear();
     for (const auto& p: config.getPlayerNames()) {
         addPlayer(QString::fromStdString(p));

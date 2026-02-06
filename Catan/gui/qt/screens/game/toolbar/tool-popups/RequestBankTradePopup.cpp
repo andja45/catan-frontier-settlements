@@ -180,7 +180,8 @@ std::map<ResourceType, int> RequestBankTradePopup::selectedResources(std::vector
     std::map<ResourceType, int> resources;
     for (QCard* card : cards){
         CardSpec spec = card->spec();
-        resources[spec.resource]=spec.countBadge;
+        if (spec.countBadge>0)
+            resources[spec.resource]=spec.countBadge;
     }
     return resources;
 }

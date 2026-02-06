@@ -7,10 +7,34 @@
 #include <QGroupBox>
 #include <QVBoxLayout>
 #include <common/cards/QCardRow.h>
+#include <common/theme/GameTheme.h>
 
-PlayerDetailedView::PlayerDetailedView(ResourceHolder *player, QWidget *parent) : FloatingPanel(parent), m_player(player) {
+
+
+
+PlayerDetailedView::PlayerDetailedView(ResourceHolder *player,QString text, QWidget *parent,bool border,QColor col) : FloatingPanel(parent), m_player(player), m_color(col),m_text(text), m_border(border) {
     this->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     buildUi();
+}
+
+void PlayerDetailedView::paintEvent(QPaintEvent *e) {
+
+    QWidget::paintEvent(e);
+    if (m_border) {
+        QPainter p(this);
+        p.setRenderHint(QPainter::Antialiasing, true);
+
+        const qreal radius = 12.0;
+        const QRectF hr = rect().adjusted(3, 3, -3, -3);
+
+        QPen pen(m_color);
+        pen.setWidth(3);
+        pen.setJoinStyle(Qt::RoundJoin);
+        p.setPen(pen);
+        p.setBrush(Qt::NoBrush);
+        p.drawRoundedRect(hr, radius, radius);
+
+    }
 }
 
 void PlayerDetailedView::refresh() {
@@ -29,7 +53,7 @@ void PlayerDetailedView::buildUi() {
 
     this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    auto* titleBox = new QGroupBox(m_player->getName().data(), this);
+    auto* titleBox = new QGroupBox(m_text, this);
     auto* paddingBox = new QVBoxLayout(titleBox);
     paddingBox->setContentsMargins(3, 5, 3, 3);
     paddingBox->setSpacing(0);
@@ -48,5 +72,6 @@ void PlayerDetailedView::buildUi() {
     paddingBox->addWidget(cardRow);
 
     root->addWidget(titleBox, 1);
+
 };
 

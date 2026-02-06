@@ -17,7 +17,9 @@ public:
     PlayerTradeRequestMove(PlayerId requestPlayerId, ResourcePack giveResources,ResourcePack receiveResources) : Move(requestPlayerId), m_give(giveResources), m_receive(receiveResources) {
         m_tradeId = -1;
     }
-    void setTradeId(TradeId tradeId) {m_tradeId = tradeId;}
+    void setTradeId(TradeId tradeId) {
+        m_tradeId = tradeId;
+    }
     TradeId getTradeId() const {return m_tradeId;}
 
     MoveType type() const override { return MoveType::PlayerTradeRequest; }

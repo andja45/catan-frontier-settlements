@@ -23,6 +23,7 @@ public:
     void closePopup();
 
     void showEvent(QShowEvent *event);
+    void rebuild();
 
 signals:
     void devCardChosen(DevCardType type);
@@ -33,8 +34,6 @@ protected:
 
     void closeEvent(QCloseEvent *e);
 
-private:
-    void rebuild();
     void selectIndex(int idx);
     void reset();
 
