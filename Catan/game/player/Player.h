@@ -37,9 +37,10 @@ private:
     int m_lenOfRoad=0;
 
     bool m_isActive=true; //if player leaves game we set to false and skip him
-
+    void initStandardEmpty();
 public:
     explicit Player(PlayerId id, std::string name) : ResourceHolder(name), m_playerId(id) {
+        initStandardEmpty();
     }
 
     PlayerId getPlayerId() const { return m_playerId; }

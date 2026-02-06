@@ -19,6 +19,8 @@ public:
     Bank();
 	Bank(const ResourcePack &resources, const DevPack &devCards);
 	void initializeBank(const ResourcePack &res, const DevPack &devCards);
+
+	DevCardType takeRandomDev();
 };
 
 

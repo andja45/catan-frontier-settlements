@@ -6,8 +6,17 @@
 #include "../board/Board.h"
 
 #include <random>
+#include <player/Bank.h>
 
+void Player::initStandardEmpty() {
+	for (auto r : {ResourceType::Wood, ResourceType::Brick, ResourceType::Wool, ResourceType::Wheat, ResourceType::Ore}) {
+		m_resources[r] =0;
+	}
+	for (auto d : {DevCardType::VictoryPoint, DevCardType::Monopoly, DevCardType::RoadBuilding, DevCardType::YearOfPlenty, DevCardType::Knight}) {
+		m_devCards[d] =0;
+	}
 
+}
 
 void Player::addRoad(Edge *edge) {
 	m_roads.push_back(edge);

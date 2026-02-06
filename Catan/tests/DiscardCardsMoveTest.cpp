@@ -146,9 +146,11 @@ TEST_CASE("DiscardCardsMove::isValid tests", "[DiscardCardsMove][isValid]")
     {
         GameSession session = make2P();
         const PlayerId p = 0;
+        const PlayerId p2 = 1;
 
         session.enterDiscardCardsPhase();
         giveResources(session, p, pack({{ResourceType::Wood, 8}}));
+        giveResources(session, p2, pack({{ResourceType::Wood, 8}}));
 
         DiscardCardsMove first(p, pack({{ResourceType::Wood, 4}}));
         REQUIRE(session.applyMove(first) == true);
@@ -169,11 +171,16 @@ TEST_CASE("DiscardCardsMove::apply effects", "[DiscardCardsMove][apply]")
     {
         GameSession session = make2P();
         const PlayerId p = 0;
+        const PlayerId p2 = 1;
 
         session.enterDiscardCardsPhase();
 
         // 8 total => discard 4
         giveResources(session, p, pack({
+            {ResourceType::Wood, 4},
+            {ResourceType::Brick, 4},
+        }));
+        giveResources(session, p2, pack({
             {ResourceType::Wood, 4},
             {ResourceType::Brick, 4},
         }));
