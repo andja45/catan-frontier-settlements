@@ -6,6 +6,7 @@
 #include <QtMultimedia/QSoundEffect>
 #include <screens/mainmenu/MainMenu.h>
 #include "../../common/audio/AudioManager.h"
+#include <QGuiApplication>
 
 MainMenu::MainMenu(QWidget *parent) : QWidget(parent)
 {

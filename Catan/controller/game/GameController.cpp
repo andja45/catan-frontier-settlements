@@ -392,7 +392,7 @@ bool GameController::sendMove(const Move *move) {
 }
 
 void GameController::onError(const std::string& error) {
-    qDebug() << error;
+    qDebug() << error.c_str();
     auto leaveMove = std::make_unique<PlayerLeaveMove>(m_session.localPlayer());
     sendMove(leaveMove.get());
     emit gameClosed();

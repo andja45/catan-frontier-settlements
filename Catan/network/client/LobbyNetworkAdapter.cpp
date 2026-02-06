@@ -85,7 +85,7 @@ net::Envelope LobbyNetworkAdapter::prepareEnvelope() const {
 void LobbyNetworkAdapter::onEnvelope(const net::Envelope &env) {
     std::string jsonString;
     google::protobuf::util::MessageToJsonString(env, &jsonString);
-    qDebug() << "[Lobby] Received message: \n" << jsonString;
+    qDebug() << "[Lobby] Received message: \n" << jsonString.c_str();
 
     if (env.msg_type() == net::MSG_SETUP) {
         auto protoSetup = env.setup();
@@ -98,7 +98,7 @@ void LobbyNetworkAdapter::onEnvelope(const net::Envelope &env) {
         std::string jsonString;
         google::protobuf::util::MessageToJsonString(env, &jsonString);
 
-        qDebug() << "Received unknown message: " << jsonString;
+        qDebug() << "Received unknown message: " << jsonString.c_str();
         onError("Received unknown message");
     }
 }

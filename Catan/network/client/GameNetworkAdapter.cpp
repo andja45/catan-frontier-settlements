@@ -71,7 +71,7 @@ void GameNetworkAdapter::onDisconnected() {
 void GameNetworkAdapter::onEnvelope(const net::Envelope& env) {
     std::string jsonString;
     google::protobuf::util::MessageToJsonString(env, &jsonString);
-    qDebug() << "[Game] Received message: \n" << jsonString;
+    qDebug() << "[Game] Received message: \n" << jsonString.c_str();
 
     if (env.msg_type() == net::MSG_MOVE)
         handleMove(env);
@@ -83,7 +83,7 @@ void GameNetworkAdapter::onEnvelope(const net::Envelope& env) {
     else {
         std::string jsonString;
         google::protobuf::util::MessageToJsonString(env, &jsonString);
-        qDebug() << "Received unknown message: \n" << jsonString;
+        qDebug() << "Received unknown message: \n" << jsonString.c_str();
         onError("Received unknown message");
     }
 
@@ -105,7 +105,7 @@ void GameNetworkAdapter::handleMove(const net::Envelope &env) {
     else {
         std::string jsonString;
         google::protobuf::util::MessageToJsonString(env, &jsonString);
-        qDebug() << "Received invalid move: \n" <<  jsonString;
+        qDebug() << "Received invalid move: \n" <<  jsonString.c_str();
         onError("Client Received invalid move");
     }
 }
