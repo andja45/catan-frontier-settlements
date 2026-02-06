@@ -22,6 +22,7 @@ add_executable(catan_tests
         BoardTest.cpp
         PlayerTest.cpp
         BankTest.cpp
+        RollDiceMoveTests.cpp
 )
 
 target_link_libraries(catan_tests PRIVATE
