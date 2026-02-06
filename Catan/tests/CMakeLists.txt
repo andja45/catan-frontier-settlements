@@ -22,6 +22,7 @@ add_executable(catan_tests
         BuildCityMoveTest.cpp
         BuildSettlementMoveTest.cpp
         LongestRoadRuleTest.cpp
+        LargestArmyRuleTest.cpp
 )
 
 target_link_libraries(catan_tests PRIVATE

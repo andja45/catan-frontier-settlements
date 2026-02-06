@@ -102,7 +102,7 @@ void LongestRoadRule::evaluate(GameSession& session) {
         createRoadGraph(session, *p);
         int length = findLongestRoad();
 
-        
+
 
         p->setRoadLength(length);
 

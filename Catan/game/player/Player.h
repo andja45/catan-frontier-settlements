@@ -71,6 +71,8 @@ public:
     int getNumOfCitiesLeft() const {return m_numOfCitiesLeft;}
     int getNumOfSettlementsLeft() const {return m_numOfSettlementsLeft;}
 
+    void addKnight() {m_knightsUsed += 1;}
+
     bool hasTrade(ResourceType resourceType) const;
 
     ResourcePack takeRandomResources(int amount); // for robber discard and steal card
