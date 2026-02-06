@@ -182,3 +182,28 @@ TEST_CASE("edgeTouchesPlayersRoad checks roads adjacent to the edge endpoints, n
     // Correct behavior: e0 "touches a player's road" via shared node.
     REQUIRE(b.edgeTouchesPlayersRoad(1, e0));
 }
+
+TEST_CASE("incident element counts are within expected ranges")
+{
+    Board b;
+    b.initializeBoard(makeRadius2Board());
+
+    for (auto nodeId : b.nodeIds()) {
+        auto tiles = b.getTilesAdjacentToNode(nodeId);
+        auto edges = b.getEdgesAdjacentToNode(nodeId);
+        auto nodes = b.getNodesAdjacentToNode(nodeId);
+
+        REQUIRE(tiles.size() <= 3);
+
+        // boundary nodes have 2, interior nodes have 3
+        REQUIRE((edges.size() == 2 || edges.size() == 3));
+
+        std::sort(nodes.begin(), nodes.end());
+        nodes.erase(std::unique(nodes.begin(), nodes.end()), nodes.end());
+        REQUIRE((nodes.size() == 2 || nodes.size() == 3));
+    }
+
+    for (auto edgeId : b.edgeIds()) {
+        REQUIRE(b.getNodesAdjacentToEdge(edgeId).size() == 2);
+    }
+}
