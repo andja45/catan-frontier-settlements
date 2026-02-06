@@ -14,6 +14,8 @@
 #include <board/coords/NodeCoords.hpp>
 #include <board/coords/EdgeCoords.hpp>
 
+#include <iostream>
+
 struct TileDef;
 
 
@@ -99,6 +101,11 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) {
 
 std::vector<Edge *> Board::getEdgesAdjacentToNode(NodeId nodeId) const {
     Node* node=getNodeById(nodeId);
+
+    if (node == nullptr) {
+        return {};
+    }
+
     return std::vector(node->getIncidentEdges().begin(),node->getIncidentEdges().end());
 }
 std::vector<Tile *> Board::getTilesAdjacentToNode(NodeId nodeId) const {
@@ -128,15 +135,21 @@ std::vector<Edge *> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
     Edge* edge=getEdgeById(edgeId);
     std::vector<Edge*> edges;
 
-    std::vector<Edge*> adjacentEdges1;
-    if (edge->getStart()->getOwner()==edge->getOwner())
-       adjacentEdges1=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getStart()->getNodeId()));
+    if (edge == nullptr) {
+        return {};
+    }
 
+    std::vector<Edge*> adjacentEdges1;
+    if (edge->getStart() != nullptr) {
+        if (edge->getStart()->getOwner()==edge->getOwner())
+            adjacentEdges1=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getStart()->getNodeId()));
+    }
 
     std::vector<Edge*> adjacentEdges2;
-    if (edge->getEnd()->getOwner()==edge->getOwner())
-        adjacentEdges2=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getEnd()->getNodeId()));
-
+    if (edge->getEnd() != nullptr) {
+        if (edge->getEnd()->getOwner()==edge->getOwner())
+            adjacentEdges2=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getEnd()->getNodeId()));
+    }
     adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
     adjacentEdges1.erase(std::remove_if(adjacentEdges1.begin(), adjacentEdges1.end(), [edgeId](Edge* e){return e->getEdgeId()==edgeId;}), adjacentEdges1.end());
 
@@ -323,6 +336,11 @@ bool Board::tileTouchesPlayerBuilding(PlayerId playerId, TileId tileId) const {
 
 void Board::placeRoad(PlayerId playerId, EdgeId edgeId) const {
     Edge* edge = this->getEdgeById(edgeId);
+
+    if (edge == nullptr) {
+        std::cerr << "GRESKA: Pokusaj postavljanja puta na nepostojecu ivicu " << edgeId << std::endl;
+        return;
+    }
 
     edge->setOwner(playerId);
 }

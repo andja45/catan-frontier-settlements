@@ -17,8 +17,10 @@ private:
     std::vector<std::vector<int>> road_graph;
     void addRoadInGraph(EdgeId edgeId1, EdgeId edgeId2);
     void createRoadGraph(GameSession& session, Player p);
+    int dfs(int current_road, std::vector<bool>& edge_visited);
     int findLongestRoad();
 public:
+    NodeId getCommonNode(GameSession& session, int e1, int e2);
     void evaluate(GameSession& session) override;
 };
 
