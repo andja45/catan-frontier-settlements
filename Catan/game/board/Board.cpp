@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <fstream>
 #include <memory>
-#include <queue>
+#include <set>
 #include <unordered_set>
 #include <vector>
 #include <board/coords/AxialCoords.hpp>
@@ -118,31 +118,47 @@ std::vector<Node *> Board::getNodesAdjacentToNode(NodeId nodeId) const {
 }
 
 Node * Board::getNodeBetweenEdges(EdgeId edge1Id, EdgeId edge2Id) const {
-    Edge* edge1=getEdgeById(edge1Id);
-    Edge* edge2=getEdgeById(edge2Id);
-    return edge1->getStart()==edge2->getEnd()?edge1->getStart():edge1->getEnd();
+    Edge* e1 = getEdgeById(edge1Id);
+    Edge* e2 = getEdgeById(edge2Id);
+    Node* a1 = e1->getStart();
+    Node* b1 = e1->getEnd();
+    Node* a2 = e2->getStart();
+    Node* b2 = e2->getEnd();
+
+    if (a1 == a2 || a1 == b2) return a1;
+    if (b1 == a2 || b1 == b2) return b1;
+    return nullptr; // not adjacent edges
 }
 
-// remove in future, use get incidentEdges and filter by get node between?
-std::vector<Edge *> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
-    Edge* edge=getEdgeById(edgeId);
-    std::vector<Edge*> edges;
+std::vector<Edge*> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
+    Edge* edge = getEdgeById(edgeId);
+    const PlayerId owner = edge->getOwner();
 
-    std::vector<Edge*> adjacentEdges1;
-    if (edge->getStart()->getOwner()==edge->getOwner())
-       adjacentEdges1=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getStart()->getNodeId()));
+    auto passable = [&](Node* n) {
+        return n && (n->isEmpty() || n->getOwner() == owner);
+    };
 
+    std::vector<Edge*> out;
 
-    std::vector<Edge*> adjacentEdges2;
-    if (edge->getEnd()->getOwner()==edge->getOwner())
-        adjacentEdges2=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getEnd()->getNodeId()));
+    auto addFromNode = [&](Node* n) {
+        if (!passable(n)) return;
+        for (Edge* e : getEdgesAdjacentToNode(n->getNodeId())) {
+            if (!e) continue;
+            if (e->getEdgeId() == edgeId) continue;      // exclude base edge
+            if (e->getOwner() != owner) continue;        // only same player's roads
+            out.push_back(e);
+        }
+    };
 
-    adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
-    adjacentEdges1.erase(std::remove_if(adjacentEdges1.begin(), adjacentEdges1.end(), [edgeId](Edge* e){return e->getEdgeId()==edgeId;}), adjacentEdges1.end());
+    addFromNode(edge->getStart());
+    addFromNode(edge->getEnd());
 
-    return adjacentEdges1;
+    // dedupe by id (safer than pointer-set)
+    std::sort(out.begin(), out.end(), [](Edge* a, Edge* b){ return a->getEdgeId() < b->getEdgeId(); });
+    out.erase(std::unique(out.begin(), out.end(), [](Edge* a, Edge* b){ return a->getEdgeId() == b->getEdgeId(); }), out.end());
+
+    return out;
 }
-
 std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
     Edge* edge=getEdgeById(edgeId);
     std::vector<Edge*> edges;

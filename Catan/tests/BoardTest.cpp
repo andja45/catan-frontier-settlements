@@ -207,3 +207,52 @@ TEST_CASE("incident element counts are within expected ranges")
         REQUIRE(b.getNodesAdjacentToEdge(edgeId).size() == 2);
     }
 }
+
+TEST_CASE("getIncidentContinuousEdges")
+{
+    Board b;
+    b.initializeBoard(makeRadius2Board());
+
+    const PlayerId P = 1;
+    const PlayerId Q = 2;
+
+    // Find an edge with at least one incident edge (excluding itself).
+    EdgeId baseEdgeId = types::InvalidEdgeId;
+    std::vector<Edge*> incident;
+
+    for (auto eid : b.edgeIds()) {
+        auto inc = b.getIncidentEdges(eid);
+        if (!inc.empty()) { // good enough
+            baseEdgeId = eid;
+            incident = std::move(inc);
+            break;
+        }
+    }
+    REQUIRE(baseEdgeId != types::InvalidEdgeId);
+    REQUIRE_FALSE(incident.empty());
+
+    // Own the base edge and at least one incident edge by player P
+    b.placeRoad(P, baseEdgeId);
+    EdgeId incId = incident.front()->getEdgeId();
+    b.placeRoad(P, incId);
+
+    // Determine the shared node between baseEdge and incident edge
+    Node* shared = b.getNodeBetweenEdges(baseEdgeId, incId);
+    REQUIRE(shared != nullptr);
+
+    auto contA = b.getIncidentContinuousEdges(baseEdgeId);
+    auto containsEdge = [](std::vector<Edge*> const& v, EdgeId id){
+        return std::any_of(v.begin(), v.end(), [id](Edge* e){ return e && e->getEdgeId() == id; });
+    };
+
+    // Case A: no settlement between
+    REQUIRE(containsEdge(b.getIncidentContinuousEdges(baseEdgeId), incId));
+
+    // Case B: shared node owned by P => continuity should include that incident edge
+    b.placeSettlement(P, shared->getNodeId());
+    REQUIRE(containsEdge(b.getIncidentContinuousEdges(baseEdgeId), incId));
+
+    // Case C: opponent places settlement on the shared node => should break continuity
+    b.placeSettlement(Q, shared->getNodeId());
+    REQUIRE_FALSE(containsEdge(b.getIncidentContinuousEdges(baseEdgeId), incId));
+}

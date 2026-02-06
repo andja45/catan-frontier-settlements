@@ -143,7 +143,7 @@ TEST_CASE("takeRandomResources(amount) removes exactly amount resources and retu
     }
 }
 
-TEST_CASE("has3for1Trade is true if player has a settlement on a generic port node")
+TEST_CASE("has3for1Trade on a generic port node")
 {
     auto board = makeStandardBoard();
 
@@ -157,7 +157,7 @@ TEST_CASE("has3for1Trade is true if player has a settlement on a generic port no
     REQUIRE(p.has3for1Trade());
 }
 
-TEST_CASE("hasTrade(resource) is true if player has settlement on a 2:1 port for that resource")
+TEST_CASE("hasTrade(resource) on a 2:1 port for that resource")
 {
     auto board = makeStandardBoard();
 
