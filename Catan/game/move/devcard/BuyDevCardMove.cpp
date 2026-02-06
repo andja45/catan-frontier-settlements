@@ -32,5 +32,8 @@ void BuyDevCardMove::apply(GameSession& session) const {
 
     DevCardType card = bank.takeRandomDev();
     player.addDevCard(card);
+
+    if (card == DevCardType::VictoryPoint) // applied as soon as player buys it
+        player.addPoints(1);
 }
 
