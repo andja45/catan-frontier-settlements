@@ -81,22 +81,22 @@ TEST_CASE("Custom Bank initializes exactly with provided resources/dev cards")
     REQUIRE(b.getNumOfDevCards(DevCardType::Monopoly) == 1);
 }
 
-TEST_CASE("takeRandomDev decreases dev card count by exactly 1 and returns a type that existed")
+TEST_CASE("takeRandomDev decreases dev card count")
 {
     // Controlled dev pack to make sure multiple keys exist and are > 0
     ResourcePack res {
-        {ResourceType::Wood, 1},
-        {ResourceType::Brick, 1},
-        {ResourceType::Wool, 1},
-        {ResourceType::Wheat, 1},
-        {ResourceType::Ore, 1},
-    };
+            {ResourceType::Wood, 1},
+            {ResourceType::Brick, 1},
+            {ResourceType::Wool, 1},
+            {ResourceType::Wheat, 1},
+            {ResourceType::Ore, 1},
+        };
 
     DevPack dev {
-        {DevCardType::Knight, 2},
-        {DevCardType::Monopoly, 1},
-        {DevCardType::VictoryPoint, 1},
-    };
+            {DevCardType::Knight, 2},
+            {DevCardType::Monopoly, 1},
+            {DevCardType::VictoryPoint, 1},
+        };
 
     Bank b(res, dev);
 
@@ -125,17 +125,17 @@ TEST_CASE("takeRandomDev decreases dev card count by exactly 1 and returns a typ
 TEST_CASE("takeRandomDev can exhaust a bank (invariant test)")
 {
     ResourcePack res {
-        {ResourceType::Wood, 1},
-        {ResourceType::Brick, 1},
-        {ResourceType::Wool, 1},
-        {ResourceType::Wheat, 1},
-        {ResourceType::Ore, 1},
-    };
+            {ResourceType::Wood, 1},
+            {ResourceType::Brick, 1},
+            {ResourceType::Wool, 1},
+            {ResourceType::Wheat, 1},
+            {ResourceType::Ore, 1},
+        };
 
     DevPack dev {
-        {DevCardType::Knight, 3},
-        {DevCardType::Monopoly, 2},
-    };
+            {DevCardType::Knight, 3},
+            {DevCardType::Monopoly, 2},
+        };
 
     Bank b(res, dev);
     REQUIRE(b.getNumOfDevCards() == 5);
