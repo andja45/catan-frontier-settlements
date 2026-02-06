@@ -21,6 +21,8 @@ void Player::addSettlement(Node *node) {
 
 void Player::addCity() {
 	m_numOfCitiesLeft--;
+	// buliding a city frees a settlement
+	m_numOfSettlementsLeft++;
 }
 
 // if we decide to remove houses stored in player have trades cashed when build settlement is called
