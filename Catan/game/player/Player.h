@@ -67,6 +67,7 @@ public:
 
     int getVictoryPointsUsed() const {return m_victoryPointsUsed;}
     int getKnightsUsed() const {return m_knightsUsed;}
+    void addKnightUsed() {++m_knightsUsed;}
     int getNumOfRoadsLeft() const {return m_numOfRoadsLeft;}
     int getNumOfCitiesLeft() const {return m_numOfCitiesLeft;}
     int getNumOfSettlementsLeft() const {return m_numOfSettlementsLeft;}
