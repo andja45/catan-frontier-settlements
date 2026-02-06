@@ -17,6 +17,10 @@ public:
         m_diceRoll1 = 0;
         m_diceRoll2 = 0;
     }
+
+    explicit RollDiceMove(PlayerId playerId, int diceRoll1, int diceRoll2)
+        : Move(playerId), m_diceRoll1(diceRoll1), m_diceRoll2(diceRoll2) {}
+
     // RollDiceMove move = 3; jer ne zelimo da moze to, samo je generisanje dozvoljeno
     void setDiceRoll(std::pair<int,int> roll) { m_diceRoll1 = roll.first; m_diceRoll2 = roll.first; }
     std::pair<int,int> getDiceRoll() const { return {m_diceRoll1, m_diceRoll2}; }
