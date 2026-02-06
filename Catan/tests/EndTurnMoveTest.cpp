@@ -10,10 +10,6 @@
 
 #include "TestHelper.h"
 
-#ifdef TESTING
-static void forceCurrent(GameSession& s, PlayerId p) { s.forceCurrentPlayer(p); }
-#endif
-
 TEST_CASE("EndTurnMove::isValid requires current player and Main phase") {
     GameSession session = make3PGame();
 

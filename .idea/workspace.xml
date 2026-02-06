@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BackendCodeEditorMiscSettings">
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d0a6877c-8d4e-4228-848c-6370c34e1da6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Catan/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Catan/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Catan/app/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Catan/app/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Catan/gui/qt/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Catan/gui/qt/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Catan/gui/qt/components/panels/TradeConfirmPopup.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Catan/gui/qt/components/panels/TradeConfirmPopup.h" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature/resource-holder-implementacija" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Catan/code/Model/Player/Bank.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Catan/code/Model/Player/ResourceHolder.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Catan/headers/Player/Bank.h" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="GWQaO6bV" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="36w5GjhQgLHdo7tmj5t8A9vL7XS" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "C/C++ File.main.cpp.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "develop",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/w/Desktop/skukl/KATAN/catan-frontier-settlements",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.first.attach.projects": "true",
+    "settings.editor.selected.configurable": "CMakeSettings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\w\Desktop\skukl\KATAN\catan-frontier-settlements\Catan\code\Model\Player" />
+      <recent name="C:\Users\w\Desktop\skukl\KATAN\catan-frontier-settlements\Catan\headers\Player" />
+      <recent name="C:\Users\w\Desktop\skukl\KATAN\catan-frontier-settlements\Catan\headers\Game" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="main.cpp" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="catan-frontier-settlements" TARGET_NAME="main.cpp" CONFIG_NAME="main.cpp">
+      <option name="sourceFile" value="C:\Users\w\Desktop\skukl\KATAN\catan-frontier-settlements\Catan\CMakeLists.txt" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="C/C++ File.main.cpp" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d0a6877c-8d4e-4228-848c-6370c34e1da6" name="Changes" comment="" />
+      <created>1765904749052</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1765904749052</updated>
+      <workItem from="1765904802305" duration="3096000" />
+      <workItem from="1765974080093" duration="646000" />
+      <workItem from="1765980057517" duration="15543000" />
+      <workItem from="1766057199706" duration="8784000" />
+      <workItem from="1766496032359" duration="9304000" />
+      <workItem from="1766579214072" duration="8460000" />
+      <workItem from="1766672446987" duration="3857000" />
+      <workItem from="1767446798452" duration="4839000" />
+      <workItem from="1767551699603" duration="1232000" />
+      <workItem from="1767728566385" duration="4723000" />
+      <workItem from="1768334476034" duration="825000" />
+      <workItem from="1768504605395" duration="22000" />
+      <workItem from="1769610708105" duration="1253000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Catan/game/board/Board.h</url>
+          <line>7</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

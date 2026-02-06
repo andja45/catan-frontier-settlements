@@ -36,6 +36,19 @@ static std::unique_ptr<Board> makeTestBoard() {
     return b;
 }
 
+static Node* firstNode(const GameSession& s) {
+
+    const auto& ids = s.board().getNodes();
+    REQUIRE(!ids.empty());
+    return ids[0].get();
+}
+static Node* secondNode(const GameSession& s) {
+
+    const auto& ids = s.board().getNodes();
+    REQUIRE(!ids.empty());
+    return ids[1].get();
+}
+
 static TileId firstTileId(const GameSession& s) {
     auto ids = s.board().tileIds();
     REQUIRE(ids.size() >= 1);
@@ -76,4 +89,5 @@ static GameSession make3PGame() {
 static void forcePhase(GameSession& session, TurnPhase phase) {
     session.forcePhase(phase);
 }
+static void forceCurrent(GameSession& s, PlayerId p) { s.forceCurrentPlayer(p); }
 #endif

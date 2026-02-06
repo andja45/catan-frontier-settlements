@@ -19,6 +19,7 @@ add_executable(catan_tests
         DiscardCardsMoveTest.cpp
         SetRobberMoveTest.cpp
         StealCardMoveTest.cpp
+
         BoardTest.cpp
         PlayerTest.cpp
         BankTest.cpp
@@ -30,6 +31,10 @@ add_executable(catan_tests
         PlayDevCardMoveTest.cpp
         PlayerLeaveMoveTest.cpp
         EndTurnMoveTest.cpp
+
+        BankTradeTest.cpp
+        PlayerTradeTest.cpp
+
 )
 
 target_link_libraries(catan_tests PRIVATE
