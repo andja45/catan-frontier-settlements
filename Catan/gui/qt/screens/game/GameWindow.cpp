@@ -30,9 +30,9 @@ GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId cur
     QWidget* rightOverlay=new QWidget(this);
     rightOverlay->setAttribute(Qt::WA_TranslucentBackground);
     QVBoxLayout* rightOverlayBox = new QVBoxLayout(rightOverlay);
-    m_chat->setMaximumHeight(600);
+    m_chat->setMaximumHeight(700);
     rightOverlay->setMinimumWidth(380);
-    rightOverlay->setMaximumWidth(600);
+    rightOverlay->setMaximumWidth(500);
     rightOverlay->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     rightOverlayBox->addWidget(m_chat);
     rightOverlayBox->addStretch(1);

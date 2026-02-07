@@ -39,7 +39,8 @@ void ActionManager::setAnchorWidget(QWidget* anchorWidget) {
 void ActionManager::openDiscardPopup() {
     auto* popup = ensureDiscardPopup();
     if (!popup) return;
-
+    if (popup->isVisible())
+        return;
     hideAllExcept(popup);
     popup->restart();
     //popup->openAtGlobal(m_player,m_bank , globalPos.isNull() ? defaultGlobalPos() : globalPos);

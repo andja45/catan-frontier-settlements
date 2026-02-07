@@ -40,13 +40,13 @@ QString Chat::emojify(QString text)
 }
 
 QSize Chat::sizeHint() const {
-    return {300,0};
+    return {500,0};
 }
 
 Chat::Chat(QWidget *parent) {
     setAttribute(Qt::WA_TransparentForMouseEvents, false);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    setMinimumHeight(100);
+    setMinimumHeight(250);
     setMinimumWidth(150);
     buildChatUi();
 }

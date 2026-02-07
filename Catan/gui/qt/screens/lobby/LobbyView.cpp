@@ -403,6 +403,7 @@ GameConfig LobbyView::getConfig() const {
 }
 
 void LobbyView::setConfig(const GameConfig& config) {
+    m_gameName=QString::fromStdString(config.getName());
     setWindowTitle(QString("Game lobby: %1").arg(m_gameName));
     m_roomName->setText(QString("Room name: %1").arg(m_gameName));
     m_playerList->clear();

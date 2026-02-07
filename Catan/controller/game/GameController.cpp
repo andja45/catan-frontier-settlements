@@ -6,6 +6,7 @@
 
 #include <utility>
 #include <QDebug>
+#include <screens/game/action-popups/popups/DiscardPopup.h>
 #include <screens/game/action-popups/popups/YearOfPlentyPopup.h>
 
 #include "move/BoardMove.h"
@@ -52,15 +53,6 @@ void GameController::updateState(){ // filling renderstates and tools
     m_boardRenderState.clear();
     m_toolbarRenderState.clear();
 
-    if (m_session.localPlayer()==m_session.currentPlayer()) {
-        updateActiveToolOnPhase();
-        m_toolbarRenderState.updateFromPhase(m_session.phase());
-
-        if (m_activeTool && m_activeTool->providesAllValid()) {
-            m_boardRenderState.setHighlighted(m_activeTool->allValid(m_session),
-                m_activeTool->type());
-        }
-    }
 
     if (m_session.localPlayer()==m_session.currentPlayer()) {
         emit gameOverlay(GameOverlayType::Hidden);
@@ -72,13 +64,25 @@ void GameController::updateState(){ // filling renderstates and tools
     if (m_session.phase()==TurnPhase::DiscardCards) {
         if (!m_session.hasPlayerDiscarded(m_localPlayerId) && m_session.playerMustDiscard(m_localPlayerId))
             emit setDiscard();
+        else
+            emit gameOverlay(GameOverlayType::Waiting);
     }
-    if (m_session.phase()==TurnPhase::StealCard) {
-        emit setChoosePlayer(m_activeTool->allValid(m_session));
-    }
-
     if (m_session.phase()==TurnPhase::GameOver) {
         onGameOver();
+    }
+
+    if (m_session.localPlayer()==m_session.currentPlayer()) {
+        updateActiveToolOnPhase();
+        m_toolbarRenderState.updateFromPhase(m_session.phase());
+
+        if (m_activeTool && m_activeTool->providesAllValid()) {
+            m_boardRenderState.setHighlighted(m_activeTool->allValid(m_session),
+                m_activeTool->type());
+        }
+    }
+
+    if (m_session.phase()==TurnPhase::StealCard) {
+        emit setChoosePlayer(m_activeTool->allValid(m_session));
     }
 
 }
@@ -170,8 +174,10 @@ void GameController::connectElements() {
     connect(qactionManager,&ActionManager::yearOfPlentySubmitted,this,[this](const YearOfPlentyChoice& c) {
         onYearOfPlentyResourcesChosen((c.receive.begin()->first),(c.receive.begin()++)->first);
     });
-    connect(qactionManager,&ActionManager::playerChosenToSteal,
-            this,&GameController::onStealCardPlayerChosen);
+    connect(qactionManager,&ActionManager::playerChosenToSteal,this,&GameController::onStealCardPlayerChosen);
+    connect(qactionManager,&ActionManager::discardConfirmed,this,[this](const DiscardChoice& choice) {
+        onDiscardCardsSent({choice.discard});
+    });
 
     // TRADE
     // accept
@@ -310,12 +316,7 @@ void GameController::onYearOfPlentyResourcesChosen(ResourceType resource1, Resou
 
 void GameController::onDiscardCardsSent(const ResourcePack &discarded) {
     auto move = std::make_unique<DiscardCardsMove>(m_localPlayerId, discarded);
-
-    if (sendMove(move.get())) {
-        if (m_session.playerMustDiscard(m_localPlayerId)) {
-            //emit discardCards();
-        }
-    }
+    sendMove(move.get());
 }
 
 void GameController::onPlayerTradeRequestSent(const ResourcePack &give, const ResourcePack &receive) {
@@ -387,6 +388,7 @@ void GameController::onMoveReceived(Move* receivedMove){
         updateState();
     }
     updateView(); // renderstates will be cleared since im not active player rn, this will only make view redraw for me since someone else played
+    updateState();
 }
 
 void GameController::updateView() {

@@ -70,6 +70,8 @@ add_library(catan_gui_qt
         screens/messageservice/MessageIntent.hpp
         common/panels/FloatingTextPill.cpp
         common/panels/FloatingTextPill.hpp
+        common/style/QtAppStyle.cpp
+        common/style/QtAppStyle.hpp
 )
 
 target_include_directories(catan_gui_qt

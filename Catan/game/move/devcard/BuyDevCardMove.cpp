@@ -42,7 +42,8 @@ void BuyDevCardMove::apply(GameSession& session) const {
     player.removeResources(Costs::DevCard);
 
     if (session.localPlayer()!=m_playerId){ // we draw again to sync with remote
-        auto _ = randomDevCard(session.getBank()->getDevCards(),session.getRng());
+        auto probe = randomDevCard(session.getBank()->getDevCards(),session.getRng());
+        (void)probe;
     }
 
     session.getBank()->removeDevCard(m_card);
