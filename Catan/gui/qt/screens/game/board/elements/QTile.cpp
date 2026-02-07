@@ -59,14 +59,12 @@ static void drawRobber(QPainter& p, const QPointF& c, double size)
     const double r = size * 0.18;
     const QPointF headC(c.x(), c.y() - size*0.06);
 
-    QColor fill(50, 50, 50, 260);
+    QColor fill(55, 55, 55, 255);
     QPen pen(Qt::black);
     pen.setWidthF(std::max(1.2, size * 0.02));
     p.setPen(pen);
     p.setBrush(fill);
 
-    // head
-    p.drawEllipse(headC, r, r);
 
     // hood/body (rounded triangle)
     QPainterPath hood;
@@ -75,6 +73,9 @@ static void drawRobber(QPainter& p, const QPointF& c, double size)
     hood.quadTo(QPointF(headC.x(),          headC.y() + r*2.4), QPointF(headC.x() + r*1.2, headC.y() + r*1.9));
     hood.quadTo(QPointF(headC.x() + r*1.3, headC.y() + r*0.2), QPointF(headC.x(), headC.y() - r*0.9));
     p.drawPath(hood);
+
+    // head
+    p.drawEllipse(headC, r, r);
 
     // tiny “eyes” (optional, comment out if too much)
     p.setPen(Qt::NoPen);

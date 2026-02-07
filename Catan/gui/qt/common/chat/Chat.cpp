@@ -8,10 +8,14 @@
 #include <QGroupBox>
 #include <QLineEdit>
 #include <QVBoxLayout>
+#include <QBrush>
+#include <QColor>
+#include <QFont>
 
 #include <QRegularExpression>
 
 #include "common/audio/AudioManager.h"
+#include "common/theme/GameTheme.h"
 #include "screens/game/action-popups/ActionManager.hpp"
 
 QString Chat::emojify(QString text)
@@ -92,9 +96,28 @@ void Chat::buildChatUi() {
 }
 
 void Chat::addChatMessage(const QString& author, const QString& message) {
+    addChatMessage(author, message, false);
+}
+
+void Chat::addChatMessage(const QString& author, const QString& message, bool isSystem) {
     if (!m_chatList) return;
     const QString time = QDateTime::currentDateTime().toString("HH:mm");
-    auto emojified = emojify(message);
-    m_chatList->addItem(QString("[%1] %2: %3").arg(time, author, emojified));
+    const auto emojified = emojify(message);
+
+    QString line;
+    if (author.trimmed().isEmpty())
+        line = QString("[%1] %2").arg(time, emojified);
+    else
+        line = QString("[%1] %2: %3").arg(time, author, emojified);
+
+    auto* item = new QListWidgetItem(line);
+    if (isSystem) {
+        item->setForeground(QBrush(GameTheme::getColorByResource(ResourceType::Sea)));
+        auto font = item->font();
+        font.setBold(false);
+        font.setWeight(QFont::DemiBold);
+        item->setFont(font);
+    }
+    m_chatList->addItem(item);
     m_chatList->scrollToBottom();
 }

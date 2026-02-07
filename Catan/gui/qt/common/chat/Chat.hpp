@@ -26,6 +26,7 @@ public:
 
 public slots:
     void addChatMessage(const QString& author, const QString& message);
+    void addChatMessage(const QString& author, const QString& message, bool isSystem);
 signals:
     void chatSendRequested(const QString& text);
 

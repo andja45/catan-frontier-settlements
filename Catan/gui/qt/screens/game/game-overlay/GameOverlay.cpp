@@ -67,6 +67,7 @@ void GameOverlay::showWaiting() {
 void GameOverlay::showEmpty() {
     m_text="";
     m_textColor=Qt::white;
+    setAttribute(Qt::WA_TransparentForMouseEvents, true);
     showOverlay();
 }
 

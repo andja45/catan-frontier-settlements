@@ -25,6 +25,7 @@
 #include "move/turn/EndTurnMove.h"
 #include "move/turn/PlayerLeaveMove.hpp"
 #include "move/turn/RollDiceMove.h"
+#include "move/MoveToString.h"
 
 GameController::GameController(GameSession& session, NetworkTransport* transport, GameWindow &gameWindow, QObject* parent)
     : QObject(parent), m_session(session), m_gameWindow(gameWindow)
@@ -175,7 +176,7 @@ void GameController::connectElements() {
     // ACTION POPUPS
     connect(qactionManager,&ActionManager::monopolyResourceChosen,this,&GameController::onMonopolyResourceChosen);
     connect(qactionManager,&ActionManager::yearOfPlentySubmitted,this,[this](const YearOfPlentyChoice& c) {
-        onYearOfPlentyResourcesChosen((c.receive.begin()->first),(c.receive.begin()++)->first);
+        onYearOfPlentyResourcesChosen((c.receive.begin()->first),(++c.receive.begin())->first);
     });
     connect(qactionManager,&ActionManager::playerChosenToSteal,this,&GameController::onStealCardPlayerChosen);
     connect(qactionManager,&ActionManager::discardConfirmed,this,[this](const DiscardChoice& choice) {
@@ -378,6 +379,9 @@ void GameController::onMoveReceived(Move* receivedMove){
     if (receivedMove->getPlayerId()==m_localPlayerId) { // we skip moves from us, this is fallback server already does this
         return;
     }
+
+    const std::string logLine = moveToString(*move, &m_session);
+
     if (!move) {
         onError("Received empty move!");
     }
@@ -385,6 +389,10 @@ void GameController::onMoveReceived(Move* receivedMove){
     if (!m_session.applyMove(*move)) {
         onError("Server Received invalid move!");
         return;
+    }
+
+    if (auto* qchat = m_gameWindow.getChat()) {
+        qchat->addChatMessage("", QString::fromStdString(logLine), true);
     }
 
     if (m_session.currentPlayer()==m_localPlayerId) {
@@ -412,6 +420,11 @@ bool GameController::sendMove(const Move *move) {
         qDebug()  <<"Tried to send invalid move!";
         return false;
     }
+
+    if (auto* qchat = m_gameWindow.getChat()) {
+        qchat->addChatMessage("", QString::fromStdString(moveToString(*move, &m_session)), true);
+    }
+
     m_adapter->sendMove(move);
     clearActiveTool(); // tool isnt active anymore after sending move (even sequential moves are made of multiple moves)
     updateState();

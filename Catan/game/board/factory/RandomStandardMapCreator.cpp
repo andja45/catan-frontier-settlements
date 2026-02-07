@@ -85,8 +85,8 @@ std::vector<TileDef> RandomStandardMapCreator::generateRandomBoard(){
         hexList.push_back(ResourceType::Brick);
     }
 
-    std::random_device rd;
-    std::mt19937 g(rd());
+    std::random_device rd{};
+    std::mt19937 g(333460); // TODO debug
     std::shuffle(hexList.begin(), hexList.end(), g);
 
     std::reverse(m_standardNumberOrder.begin(), m_standardNumberOrder.end());

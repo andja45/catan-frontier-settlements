@@ -78,6 +78,8 @@
         move/devcard/PlayDevCardMove.cpp
         move/devcard/PlayDevCardMove.h
         move/MoveType.h
+        move/MoveToString.h
+        move/MoveToString.cpp
         move/trade/PlayerTradeRequestMove.cpp
         move/trade/PlayerTradeRequestMove.h
         move/trade/PlayerTradeResponseMove.cpp
@@ -87,8 +89,7 @@
         move/trade/PlayerTradeAcceptMove.cpp
         move/trade/PlayerTradeAcceptMove.h
         types/ToolbarActionType.h
-        model/MoveCosts.h model/MoveCosts.cpp
-        move/build/BuildSettlementMove.cpp
+            move/build/BuildSettlementMove.cpp
             types/BoardType.hpp
             move/turn/PlayerLeaveMove.cpp
             move/turn/PlayerLeaveMove.hpp

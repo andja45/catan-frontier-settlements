@@ -76,7 +76,7 @@ public:
     }
     bool hasDevCards() const {return getNumOfDevCards()>0;}
 
-    std::string getName() { return m_name; }
+    std::string getName() const { return m_name; }
     ResourcePack getResources() const {return m_resources;}
 
 };

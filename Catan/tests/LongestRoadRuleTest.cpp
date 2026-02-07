@@ -6,7 +6,7 @@
 static GameSession makeTestSession() {
     std::vector<std::string> names = {"Ana", "Marko"};
     auto board = std::make_unique<Board>();
-    board->initializeBoard({TileDef{0, 0, ResourceType::Wheat, 8},{TileDef{2, 2, ResourceType::Wheat, 8}}});
+    board->initializeBoard({TileDef{0, 0, ResourceType::Wheat, 8},TileDef{1, 0, ResourceType::Wheat, 8},{TileDef{2, 2, ResourceType::Wheat, 8}}});
     return GameSession(names, 0, 1, std::move(board), 10, "test");
 }
 static void placeRoad(
@@ -15,12 +15,17 @@ static void placeRoad(
     REQUIRE(edge != nullptr);
     session.board().placeRoad(p, edge->getEdgeId());
     session.player(p).addRoad(edge);
-
 }
 static void placeRoads(
     GameSession& session,PlayerId p,const std::vector<EdgeCoords>& coords) {
     for (const auto& c : coords)
         placeRoad(session, p, c);
+}
+static void placeHouse(GameSession& session,PlayerId p,const NodeCoords& c) {
+    auto* node = session.board().getNodeAt(c);
+    REQUIRE(node != nullptr);
+    session.board().placeSettlement(p, node->getNodeId());
+    session.player(p).addSettlement(node);
 }
 
 TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
@@ -39,6 +44,7 @@ TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
         };
 
         placeRoads(session, p0, roads);
+        //placeHouse(session, p0, {{0,0}, PointDirection::Bottom});
 
         rule.evaluate(session);
 
@@ -59,6 +65,7 @@ TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
         };
 
         placeRoads(session, p0, roads);
+        //placeHouse(session, p0, {{0,0}, PointDirection::Bottom});
 
         rule.evaluate(session);
 
@@ -77,6 +84,7 @@ TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
             {{0,0}, EdgeDirection::BottomLeft},
             {{0,0}, EdgeDirection::Left},
         });
+        //placeHouse(session, p0, {{0,0}, PointDirection::Bottom});
 
         rule.evaluate(session);
         REQUIRE(session.longestRoadOwner() == p0);
@@ -88,6 +96,8 @@ TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
             {{2,2}, EdgeDirection::BottomRight},
             {{2,2}, EdgeDirection::Right},
         });
+        //placeHouse(session, p1, {{2,2}, PointDirection::Bottom});
+
 
         rule.evaluate(session);
         REQUIRE(session.longestRoadOwner() == p0);
@@ -109,6 +119,7 @@ TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
         placeRoad(session, p0, e1);
         placeRoad(session, p0, e2);
         placeRoad(session, p0, e3);
+        //placeHouse(session, p1, {{0,0}, PointDirection::Top});
 
         auto* edge1 = session.board().getEdgeAt(e1);
         auto* edge2 = session.board().getEdgeAt(e2);
@@ -138,6 +149,26 @@ TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
             {{0,0}, EdgeDirection::Left},
             {{0,0}, EdgeDirection::TopLeft},
         });
+        //placeHouse(session, p0, {{0,0}, PointDirection::Bottom});
+
+        rule.evaluate(session);
+
+        REQUIRE(session.player(p0).getRoadLength() == 6);
+    }
+
+    SECTION("Cycle with one stump on the side") {
+        GameSession session = makeTestSession();
+
+        placeRoads(session, p0, {
+            {{0,0}, EdgeDirection::Right},
+            {{0,0}, EdgeDirection::BottomRight},
+            {{0,0}, EdgeDirection::BottomLeft},
+            {{0,0}, EdgeDirection::Left},
+            {{0,0}, EdgeDirection::TopLeft},
+        });
+        placeRoad(session, p0, {{1,0}, EdgeDirection::TopLeft});
+        placeRoad(session, p0, {{1,0}, EdgeDirection::BottomLeft});
+        //placeHouse(session, p0, {{0,0}, PointDirection::Bottom});
 
         rule.evaluate(session);
 
