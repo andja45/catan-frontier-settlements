@@ -15,8 +15,6 @@ if(NOT TARGET Catch2::Catch2WithMain)
     FetchContent_MakeAvailable(Catch2)
 endif()
 
-find_package(Catch2 3 CONFIG QUIET)
-
 add_executable(catan_tests
         DiscardCardsMoveTest.cpp
         SetRobberMoveTest.cpp
@@ -37,6 +35,10 @@ add_executable(catan_tests
         BankTradeTest.cpp
         PlayerTradeTest.cpp
 
+        BuildCityMoveTest.cpp
+        BuildSettlementMoveTest.cpp
+        LongestRoadRuleTest.cpp
+        LargestArmyRuleTest.cpp
 )
 
 target_link_libraries(catan_tests PRIVATE

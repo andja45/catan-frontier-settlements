@@ -14,6 +14,8 @@
 #include <board/coords/NodeCoords.hpp>
 #include <board/coords/EdgeCoords.hpp>
 
+#include <iostream>
+
 struct TileDef;
 
 
@@ -99,6 +101,11 @@ void Board::initializeBoard(std::vector<TileDef> tileMap) {
 
 std::vector<Edge *> Board::getEdgesAdjacentToNode(NodeId nodeId) const {
     Node* node=getNodeById(nodeId);
+
+    if (node == nullptr) {
+        return {};
+    }
+
     return std::vector(node->getIncidentEdges().begin(),node->getIncidentEdges().end());
 }
 std::vector<Tile *> Board::getTilesAdjacentToNode(NodeId nodeId) const {
@@ -130,35 +137,37 @@ Node * Board::getNodeBetweenEdges(EdgeId edge1Id, EdgeId edge2Id) const {
     return nullptr; // not adjacent edges
 }
 
-std::vector<Edge*> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
-    Edge* edge = getEdgeById(edgeId);
-    const PlayerId owner = edge->getOwner();
 
-    auto passable = [&](Node* n) {
-        return n && (n->isEmpty() || n->getOwner() == owner);
-    };
+std::vector<Edge *> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
+    Edge* edge=getEdgeById(edgeId);
+    std::vector<Edge*> edges;
 
-    std::vector<Edge*> out;
+    if (edge == nullptr) {
+        return {};
+    }
 
-    auto addFromNode = [&](Node* n) {
-        if (!passable(n)) return;
-        for (Edge* e : getEdgesAdjacentToNode(n->getNodeId())) {
-            if (!e) continue;
-            if (e->getEdgeId() == edgeId) continue;      // exclude base edge
-            if (e->getOwner() != owner) continue;        // only same player's roads
-            out.push_back(e);
-        }
-    };
+    std::vector<Edge*> adjacentEdges1;
+    if (edge->getStart() != nullptr) {
+        if (edge->getStart()->isEmpty() || edge->getStart()->getOwner()==edge->getOwner())
+            adjacentEdges1=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getStart()->getNodeId()));
+    }
 
-    addFromNode(edge->getStart());
-    addFromNode(edge->getEnd());
+    std::vector<Edge*> adjacentEdges2;
+    if (edge->getEnd() != nullptr) {
+        if (edge->getEnd()->isEmpty() || edge->getEnd()->getOwner()==edge->getOwner())
+            adjacentEdges2=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getEnd()->getNodeId()));
+    }
+    std::vector<Edge*> continuousEdges;
+    adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
 
-    // dedupe by id (safer than pointer-set)
-    std::sort(out.begin(), out.end(), [](Edge* a, Edge* b){ return a->getEdgeId() < b->getEdgeId(); });
-    out.erase(std::unique(out.begin(), out.end(), [](Edge* a, Edge* b){ return a->getEdgeId() == b->getEdgeId(); }), out.end());
+    for (Edge* e : adjacentEdges1) {
+        if (e->getOwner()==edge->getOwner() && e->getEdgeId()!=edgeId)
+            continuousEdges.push_back(e);
+    }
 
-    return out;
+    return continuousEdges;
 }
+
 std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
     Edge* edge=getEdgeById(edgeId);
     std::vector<Edge*> edges;
@@ -338,10 +347,17 @@ bool Board::tileTouchesPlayerBuilding(PlayerId playerId, TileId tileId) const {
 void Board::placeRoad(PlayerId playerId, EdgeId edgeId) const {
     Edge* edge = this->getEdgeById(edgeId);
 
+    if (edge == nullptr) {
+        return;
+    }
+
     edge->setOwner(playerId);
 }
 void Board::placeSettlement(PlayerId playerId, NodeId nodeId) {
     Node* node = this->getNodeById(nodeId);
+    if (node == nullptr) {
+        return;
+    }
     node->setOwner(playerId);
     node->setNodeBuildingType(NodeType::Settlement);
 }
@@ -366,6 +382,9 @@ bool Board::isNodeSettlement(NodeId nodeId) const {
     return getNodeById(nodeId)->isSettlement();
 }
 
+bool Board::isNodeCity(NodeId nodeId) const {
+    return getNodeById(nodeId)->isCity();
+}
 
 std::vector<AxialCoords> Board::getBoardCords() const{
     std::vector<AxialCoords> coords;

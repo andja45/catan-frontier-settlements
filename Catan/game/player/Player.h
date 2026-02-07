@@ -73,6 +73,8 @@ public:
     int getNumOfCitiesLeft() const {return m_numOfCitiesLeft;}
     int getNumOfSettlementsLeft() const {return m_numOfSettlementsLeft;}
 
+    void addKnight() {m_knightsUsed += 1;}
+
     bool hasTrade(ResourceType resourceType) const;
 
     ResourcePack takeRandomResources(int amount); // for robber discard and steal card
@@ -83,7 +85,9 @@ public:
     bool isActive() const {return m_isActive;}
     void setLeft() {m_isActive=false;}
 
-    int getRoadLength()const {return m_lenOfRoad;};
+    int getRoadLength()const {
+        return m_lenOfRoad;
+    }
     void setRoadLength(int length){m_lenOfRoad=length;}
 
     int getNumRoadsBuilt()const {return m_roads.size();}
