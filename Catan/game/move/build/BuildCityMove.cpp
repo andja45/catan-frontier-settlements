@@ -39,6 +39,7 @@ void BuildCityMove::apply(GameSession& session) const {
 
     player.addPoints(1);
 
+    player.addCity();
     board.placeCity(m_playerId, m_nodeId);
 }
 
