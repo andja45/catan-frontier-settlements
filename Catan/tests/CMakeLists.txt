@@ -37,6 +37,7 @@ add_executable(catan_tests
 
         BuildCityMoveTest.cpp
         BuildSettlementMoveTest.cpp
+        BuildRoadMoveTest.cpp
         LongestRoadRuleTest.cpp
         LargestArmyRuleTest.cpp
 )

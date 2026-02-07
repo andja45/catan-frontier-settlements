@@ -104,6 +104,7 @@ public:
  void enterDiscardCardsPhase() { setPhase(TurnPhase::DiscardCards); }
  void enterMainPhase() { setPhase(TurnPhase::Main); }
  void enterInitialPlacementPhase() { setPhase(TurnPhase::InitialPlacement); }
+ void enterRoadBuildingPhase() { setPhase(TurnPhase::RoadBuilding); }
  void enterDevCardPhase(DevCardType type);
 
     bool applyMove(const Move& move);
