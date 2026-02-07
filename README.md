@@ -4,10 +4,10 @@ Catan: Frontier Settlements is our implementation of the famous board game. This
 
 Beyond the core gameplay, this version features several advanced extensions:
 - Parallel Game Sessions: The server can host multiple game rooms at once, enabling different groups to play separate matches simultaneously.
-- Custom and Random Maps: Game supports randomized boards and custom map configurations.
+- Customizable Game Rooms: The host can choose custom settings for their game: the number of players, victory point threshold, and map options.
 - In-Game Chat: Real-time messaging system for players to interact and negotiate during the game.
-- Game History and Statistics: Detailed tracking of match progress and player performance analytics.
-- Catan Extensions: Implementation of additional gameplay mechanics and expansions to the core game.
+- Game History and Statistics: After the game, players can view game statistics and match information.
+
 
 ## Installation
 
