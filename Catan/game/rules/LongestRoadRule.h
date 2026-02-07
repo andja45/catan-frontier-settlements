@@ -14,21 +14,13 @@
 class LongestRoadRule : public Rule {
 private:
 
-    std::unordered_map<int, std::vector<int>> createRoadGraph(GameSession &session, Player &p);
-
-    int dfsLongest(EdgeId current, const std::unordered_map<EdgeId, std::vector<EdgeId>> &graph,
-                   std::unordered_set<EdgeId> &used);
-
-    int playerLongestRoad(GameSession &session, Player &p);
-
-
 public:
+    int dfsLongest(const Edge *edge, PlayerId playerId, std::unordered_set<EdgeId> &visited, std::unordered_set<NodeId> &visitedNodes);
+
+    int computeLongestRoad(Player &p);
+
     void evaluate(GameSession& session) override;
 
-    std::pair<int, int> bfsFarthest(int start, const std::unordered_map<int, std::vector<int>> &graph,
-                                    std::unordered_set<EdgeId> &visited);
-
-    int playerLongestRoadDiameter(GameSession &session, Player &p);
 };
 
 

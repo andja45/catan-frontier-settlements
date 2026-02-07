@@ -172,7 +172,7 @@ TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
 
         rule.evaluate(session);
 
-        REQUIRE(session.player(p0).getRoadLength() == 7);
+        REQUIRE(session.player(p0).getRoadLength() == 6);
     }
 
 }
