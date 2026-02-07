@@ -5,10 +5,10 @@ std::array<QColor,8> GameTheme::playerColors={
     {
         {192, 57, 43},      // Red
         {41, 128, 185},     // Blue
-        {181, 159, 134},    // White
-        {241, 196, 15},     // Yellow
         {39, 174, 96},      // Green
+        {181, 159, 134},    // White
         {142, 90, 43},      // Brown
+        {241, 196, 15},     // Yellow
         {44, 44, 44},       // Black
         {143, 57, 179}      // Pink
     }

@@ -175,7 +175,7 @@ void GameController::connectElements() {
     // ACTION POPUPS
     connect(qactionManager,&ActionManager::monopolyResourceChosen,this,&GameController::onMonopolyResourceChosen);
     connect(qactionManager,&ActionManager::yearOfPlentySubmitted,this,[this](const YearOfPlentyChoice& c) {
-        onYearOfPlentyResourcesChosen((c.receive.begin()->first),(c.receive.begin()++)->first);
+        onYearOfPlentyResourcesChosen((c.receive.begin()->first),(++c.receive.begin())->first);
     });
     connect(qactionManager,&ActionManager::playerChosenToSteal,this,&GameController::onStealCardPlayerChosen);
     connect(qactionManager,&ActionManager::discardConfirmed,this,[this](const DiscardChoice& choice) {

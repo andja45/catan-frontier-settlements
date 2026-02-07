@@ -61,9 +61,9 @@ inline std::string toString (ResourceType resource)
 static const std::array<ResourceType, 5> ResourceCardTypes = {
     ResourceType::Wood,
     ResourceType::Brick,
-    ResourceType::Ore,
+	ResourceType::Wheat,
 	ResourceType::Wool,
-	ResourceType::Wheat
+    ResourceType::Ore,
 };
 
 #endif // RESOURCETYPE_H
