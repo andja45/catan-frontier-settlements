@@ -66,7 +66,7 @@ bool ToolbarRenderState::isEnabled(GamePopups popup) const {
 }
 
 void ToolbarRenderState::disableDev() {
-    m_enabledButtons.erase(ToolbarActionType::BuyDevCard);
+    m_enabledButtons.erase(ToolbarActionType::PlayDevCard);
 }
 
 // maybe setenabled and setselected and then in roadbuilding auto selected

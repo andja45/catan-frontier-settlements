@@ -21,6 +21,7 @@ private:
 
     int playerLongestRoad(GameSession &session, Player &p);
 
+
 public:
     void evaluate(GameSession& session) override;
 

@@ -81,7 +81,10 @@ void BoardToolbar::updateState(const ToolbarRenderState& rs) {
     else {
         m_dice->setEnabled(false);
     }
-
+// /
+    m_countCities->setText(QString::number(m_player->getNumOfCitiesLeft()));
+    m_countRoads->setText(QString::number(m_player->getNumOfRoadsLeft()));
+    m_countSettlements->setText(QString::number(m_player->getNumOfSettlementsLeft()));
 
     QWidget::update();
 }
