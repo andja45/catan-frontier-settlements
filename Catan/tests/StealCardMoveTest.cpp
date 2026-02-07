@@ -3,48 +3,9 @@
 //
 
 #include <catch2/catch_test_macros.hpp>
-
-#include <memory>
-#include <string>
-#include <vector>
-#include <initializer_list>
-
-#include "model/GameSession.h"
-#include "board/Board.h"
+#include "TestHelper.h"
 #include "move/robber/SetRobberMove.h"
 #include "move/robber/StealCardMove.h"
-#include "types/TypeAliases.h"
-#include "types/ResourceType.h"
-
-static ResourcePack pack(std::initializer_list<std::pair<ResourceType, int>> items) {
-    ResourcePack p;
-    for (auto& [t, a] : items) p[t] += a;
-    return p;
-}
-
-static void giveResources(GameSession& session, PlayerId playerId, const ResourcePack& p) {
-    session.player(playerId).addResources(p);
-}
-
-static std::unique_ptr<Board> makeSmallBoard() {
-    auto b = std::make_unique<Board>();
-    std::vector<TileDef> tiles;
-    tiles.push_back(TileDef{0, 0, ResourceType::Sea, 6});
-    tiles.push_back(TileDef{1, 0, ResourceType::Desert, 8});
-    b->initializeBoard(tiles);
-    return b;
-}
-
-static GameSession make2P() {
-    std::vector<std::string> names = {"Ana", "Marko"};
-    return GameSession(names, /*localPlayer*/ 0, /*seed*/ 1, makeSmallBoard(), /*winPoints*/ 10, "test");
-}
-
-static TileId firstTileId(const Board& b) {
-    auto ids = b.tileIds();
-    REQUIRE(!ids.empty());
-    return ids[0];
-}
 
 static bool placeVictimBuildingTouchingTile(Board& board, PlayerId victim, TileId tileId) {
     Tile* target = board.getTileById(tileId);
@@ -61,13 +22,13 @@ static bool placeVictimBuildingTouchingTile(Board& board, PlayerId victim, TileI
 
 TEST_CASE("StealCardMove flow after SetRobberMove (real GameSession transitions)",
           "[StealCardMove][phase][GameSession]") {
-    GameSession session = make2P();
+    GameSession session = make2PGame();
     Board& board = session.board();
 
     const PlayerId thief  = 0;
     const PlayerId victim = 1;
 
-    const TileId t0 = firstTileId(board);
+    const TileId t0 = firstTileId(session);
 
     session.enterDevCardPhase(DevCardType::Knight);
     REQUIRE(session.phase() == TurnPhase::SetRobber);
@@ -85,13 +46,13 @@ TEST_CASE("StealCardMove flow after SetRobberMove (real GameSession transitions)
 }
 
 TEST_CASE("StealCardMove::isValid conditions", "[StealCardMove][isValid]") {
-    GameSession session = make2P();
+    GameSession session = make2PGame();
     Board& board = session.board();
 
     const PlayerId thief  = 0;
     const PlayerId victim = 1;
 
-    const TileId t0 = firstTileId(board);
+    const TileId t0 = firstTileId(session);
 
     session.enterDevCardPhase(DevCardType::Knight);
     REQUIRE(session.phase() == TurnPhase::SetRobber);
@@ -127,13 +88,13 @@ TEST_CASE("StealCardMove::isValid conditions", "[StealCardMove][isValid]") {
 }
 
 TEST_CASE("StealCardMove::apply changes totals by 1", "[StealCardMove][apply]") {
-    GameSession session = make2P();
+    GameSession session = make2PGame();
     Board& board = session.board();
 
     const PlayerId thief  = 0;
     const PlayerId victim = 1;
 
-    const TileId t0 = firstTileId(board);
+    const TileId t0 = firstTileId(session);
 
     session.enterDevCardPhase(DevCardType::Knight);
     giveResources(session, victim, pack({{ResourceType::Wood, 1}, {ResourceType::Brick, 1}}));

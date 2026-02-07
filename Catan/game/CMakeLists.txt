@@ -95,6 +95,8 @@
             rules/SkipPlayerRule.cpp
             rules/SkipPlayerRule.hpp
             move/BoardMove.h
+            player/ResourceHolder.h
+            board/Node.h
     )
 
 target_include_directories(catan_game
