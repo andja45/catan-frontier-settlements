@@ -55,7 +55,7 @@ void GameSession::advancePhaseAfterMove() {
 
         case TurnPhase::RoadBuilding:
             incrementPhaseMoveCount();
-            if (m_phaseMoveCount >= 2) {
+            if (m_phaseMoveCount-1 >= 2) {
                 setPhase(TurnPhase::Main);
                 m_phaseMoveCount = 0;
             }
@@ -88,6 +88,7 @@ void GameSession::advancePhaseAfterMove() {
         case MoveType::StealCard:
             setPhase(TurnPhase::Main);
             break;
+        case MoveType::PlayerLeave:
         case MoveType::EndTurn:
             advancePlayer(); // session does this, not move
             m_devCardPlayedThisTurn = false; // reseting for next turn
@@ -96,6 +97,10 @@ void GameSession::advancePhaseAfterMove() {
             m_gameData.addTurn();
             setPhase(TurnPhase::RollDice);
             break;
+    case MoveType::YearOfPlenty:
+    case MoveType::Monopoly:
+        setPhase(TurnPhase::Main);
+    break;
 
         default:
             break;
@@ -142,6 +147,14 @@ void GameSession::advanceInitialPlacement() {
         return;
     }
 
+    advancePlayerInitial();
+}
+
+
+void GameSession::advancePlayerInitial() {
+    if (m_players.empty() || m_numOfActivePlayers<=0) return;
+    const int playerCount = numPlayers();
+
     const int placementTurn = m_phaseMoveCount / 2; // each player gets settlement + road in one placing
 
     int playerIndex;
@@ -155,7 +168,8 @@ void GameSession::advanceInitialPlacement() {
     m_currentPlayerId = m_players[playerIndex]->getPlayerId(); // if player needs to be changed, he changes
 
     if (!player(m_currentPlayerId).isActive()) {
-        advancePlayer();
+        m_phaseMoveCount+=2;
+        advancePlayerInitial();
     }
 }
 
@@ -322,6 +336,7 @@ void GameSession::endGame() {
     }
 
     m_isOver=true;
+    m_gameData.writeToFile();
 } // gui gets renderstate that behaves differently in gameover phase, onphasechanged triggers redrawing
 
 void GameSession::leavePlayer(PlayerId player_id) {

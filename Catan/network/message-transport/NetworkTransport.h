@@ -21,11 +21,13 @@ class NetworkTransport : public QObject {
     void setSocket(QTcpSocket* socket);
     void sendError(const std::string& error);
     void sendAck();
+    QTcpSocket::SocketState state() const;
     signals:
         void envelopeReceived(const net::Envelope& env);
 
         void disconnected(); // just propagate
         void errored(const std::string&);
+
 
 private:
     int32_t m_nextSeqToSend = 0;

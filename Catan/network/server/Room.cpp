@@ -42,9 +42,10 @@ void Room::removePlayer(ClientConnection *c) {
     c->setRoomId(std::nullopt);
     c->setHost(false);
     c->setStatus(ClientStatus::Connected);
-
-    m_config->removePlayer(c->name());
-    broadcastConfig();
+    if (m_state==RoomState::Lobby && m_config) {
+        m_config->removePlayer(c->name());
+        broadcastConfig();
+    }
 }
 
 void Room::kickPlayer(ClientConnection *c) {
@@ -58,11 +59,13 @@ void Room::kickPlayer(ClientConnection *c) {
 }
 
 void Room::processMove(ClientConnection *c,const net::Move & move) {
+
     if (m_state != RoomState::InGame){kickPlayer(c);return;}
     if (c->playerId()!=move.player_id()) {
         kickPlayer(c);
         return;
     }
+
 
     auto gameMove=MoveProtoFactory::fromProto(move);
     bool valid=gameMove->isValid(*m_session.get());
@@ -71,7 +74,9 @@ void Room::processMove(ClientConnection *c,const net::Move & move) {
         return;
     }
     m_session->applyMove(*gameMove.get());
-
+    if (move.type()==net::Move_MoveType_PlayerLeave) {
+        removePlayer(c);
+    }
     broadcastMove(move);
 }
 
@@ -110,8 +115,6 @@ void Room::processStartRequest(ClientConnection *c, const net::StartGameRequest 
     broadcastStartGame();
 
     m_state=RoomState::Lobby; // we are waiting for all players to ack
-    m_config=nullptr;
-
 }
 
 void Room::broadcast(const net::Envelope & env) {
@@ -202,6 +205,10 @@ void Room::lobbyToGame() {
     for (auto p:m_players) {
         p->ack();
     }
+}
+
+RoomState Room::getState() const {
+    return m_state;
 }
 
 void Room::processError(ClientConnection *client, const std::string &error) {

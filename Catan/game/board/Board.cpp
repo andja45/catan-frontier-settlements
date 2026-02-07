@@ -183,6 +183,7 @@ std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {
 
 void Board::addTrade(NodeCoords nodeCoords, TradeType tradeType) {
     Node* node=getNodeAt(nodeCoords);
+    if (!node) return;
     node->setTrade(tradeType);
     m_tradeCoords.push_back(nodeCoords);
 }
@@ -445,3 +446,10 @@ std::vector<TileId> Board::tileIds() const {
     }
     return tileIds;
 }
+
+void Board::loadPorts(std::vector<PortDef> portDefs) {
+    for (const auto&[q, r, i, tradeType] : portDefs) {
+        addTrade(NodeCoords{q,r,i},static_cast<TradeType>(tradeType));
+    }
+}
+

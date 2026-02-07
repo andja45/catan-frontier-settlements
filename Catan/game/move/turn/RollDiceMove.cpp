@@ -61,9 +61,14 @@ void RollDiceMove::apply(GameSession& session) const {
             if (owner == -1)
                 continue;
 
-            const int amount = node->isCity() ? 2 : 1;
+            int amount = node->isCity() ? 2 : 1;
+            if (amount>(session.bank().getResources())[resource]) // if bank doesnt have enough, we give what we can
+            {
+                amount=session.bank().getResources()[resource];
+            }
             session.player(owner).addResource(resource, amount);
             session.gameData().addResourceRoll(resource, amount);
+            session.bank().removeResource(resource, amount);
         }
     }
 

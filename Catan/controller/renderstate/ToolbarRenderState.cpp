@@ -65,6 +65,10 @@ bool ToolbarRenderState::isEnabled(GamePopups popup) const {
     return m_enabledPopups.find(popup) != m_enabledPopups.end();
 }
 
+void ToolbarRenderState::disableDev() {
+    m_enabledButtons.erase(ToolbarActionType::BuyDevCard);
+}
+
 // maybe setenabled and setselected and then in roadbuilding auto selected
 // is buildroad and signal clicked is sent, same as initialplacement, think
 // ab it

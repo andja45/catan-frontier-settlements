@@ -106,6 +106,7 @@ message PlayerTradeRequestMove {
 
 message PlayerTradeResponseMove {
   uint32 trade_request_id = 1;
+  bool is_positive = 2;
 }
 
 message PlayerTradeAcceptMove {

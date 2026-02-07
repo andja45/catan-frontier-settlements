@@ -61,7 +61,13 @@ YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)
     connect(m_playBtn, &QPushButton::clicked, this, [this]() {
         // valid only when exactly 2 selected
         AudioManager::instance().playClick();
-        emit yearOfPlentySubmitted(m_choice);
+        ResourcePack rp;
+        for (auto [rt, cnt] : m_choice.receive) {
+            if (cnt!=0) {
+                rp[rt] = cnt;
+            }
+        }
+        emit yearOfPlentySubmitted({rp});
         closePopup();
     });
 

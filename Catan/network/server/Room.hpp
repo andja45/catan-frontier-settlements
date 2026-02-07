@@ -53,6 +53,8 @@ public:
 
     void lobbyToGame();
 
+    RoomState getState() const;
+
 private:
     std::string m_name;
     RoomState m_state = RoomState::Lobby;

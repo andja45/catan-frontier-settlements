@@ -106,6 +106,8 @@ public:
     std::vector<EdgeId> edgeIds() const;
     std::vector<NodeId> nodeIds() const;
     std::vector<TileId> tileIds() const;
+
+    void loadPorts(std::vector<PortDef> portDefs);
 };
 
 

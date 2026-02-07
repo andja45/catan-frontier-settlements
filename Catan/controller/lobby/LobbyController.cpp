@@ -21,8 +21,7 @@ LobbyController::LobbyController(LobbyView *view, NetworkTransport *transport): 
     connect(m_transport,&LobbyNetworkAdapter::gameStarted,this,[this](PlayerId myId, int seed,const GameConfig& config, Board* board) {
         emit gameStarted(myId,seed,config,board);
     });
-
-    connect(m_view,&LobbyView::close,this,[this]() {
+    connect(m_view,&LobbyView::closed,this,[this]() {
         m_transport->sendLeave();
         emit lobbyClosed();
     });

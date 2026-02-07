@@ -12,7 +12,7 @@ class AbstractBoardSerializer {
 protected:
     std::string m_filePath;
 public:
-    virtual void serialize(Board)=0;
+    virtual void serialize(const Board &board)=0;
     virtual ~AbstractBoardSerializer() = default;
     AbstractBoardSerializer(std::string path) : m_filePath(path){}
 };

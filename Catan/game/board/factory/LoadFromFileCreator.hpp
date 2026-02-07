@@ -9,9 +9,10 @@
 class LoadFromFileCreator : public AbstractBoardCreator {
 private:
     std::string m_filePath;
-    std::vector<TileDef> loadBoardFromFile(); // loads from file based on extension
-    static std::vector<TileDef> loadBoardFromTxt(std::istream& stream);
-    static std::vector<TileDef> loadBoardFromJson(std::istream& stream);
+
+    std::pair<std::vector<TileDef>, std::vector<PortDef>> loadBoardFromFile(); // loads from file based on extension
+    static std::pair<std::vector<TileDef>, std::vector<PortDef>> loadBoardFromTxt(std::istream &stream);
+    static std::pair<std::vector<TileDef>, std::vector<PortDef>> loadBoardFromJson(std::istream &stream);
 public:
     std::unique_ptr<Board> getBoard() override;
 

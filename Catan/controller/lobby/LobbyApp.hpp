@@ -10,8 +10,10 @@
 
 #include "LobbyController.hpp"
 #include "../common/AbstractApplet.hpp"
+#include <QObject>
 
-class LobbyApp : public AbstractApplet{
+class LobbyApp : public QObject, public AbstractApplet{
+    Q_OBJECT
 public:
     explicit LobbyApp(ApplicationRoot *root, RoleType role);
 

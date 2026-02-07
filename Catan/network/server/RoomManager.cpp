@@ -55,6 +55,11 @@ bool RoomManager::requestJoinRoom(ClientConnection *client, const std::string &r
         return false;
     }
 
+    if (m_rooms[roomName]->getState()==RoomState::InGame) {
+        sendDecline(client, "Game already started!");
+        return false;
+    }
+
     if (client->hasRoom()) {
         sendDecline(client, "You are already in room!");
         return false;
@@ -74,20 +79,23 @@ void RoomManager::forwardMove(ClientConnection *sender, const net::Move &move) {
     if (room->isEmpty()) {
         removeRoom(roomId);
     }
+    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
+
 }
 
 void RoomManager::forwardStartGame(ClientConnection *host, const net::StartGameRequest &req) {
     auto roomId = host->roomId();
     auto room=m_rooms.at(roomId).get();
     room->processStartRequest(host, req);
-    if (room->isEmpty()) {
-        removeRoom(roomId);
-    }
+    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
+
 }
 
 void RoomManager::forwardMessage(ClientConnection *sender, const std::string &msg) {
     auto roomId = sender->roomId();
     m_rooms.at(roomId)->processMessage(sender, msg);
+    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
+
 }
 
 void RoomManager::forwardConfig(ClientConnection *host, const net::GameConfig & cfg) {
@@ -95,7 +103,7 @@ void RoomManager::forwardConfig(ClientConnection *host, const net::GameConfig & 
     auto room=m_rooms.at(roomId).get();
     room->processConfig(host, cfg);
     if (room->isEmpty()) {
-        removeRoom(roomId);
+        m_rooms.erase(roomId);
     }
 }
 
@@ -120,21 +128,23 @@ void RoomManager::handleDisconnect(ClientConnection *client) {
     }
     m_rooms.at(roomId)->removePlayer(client);
 
-    if (m_rooms.at(roomId)->isEmpty()) removeRoom(roomId);
+    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
 }
 
 void RoomManager::handleError(ClientConnection *client, const std::string &error) {
     auto roomId = client->roomId();
     m_rooms.at(roomId)->processError(client, error);
+    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
+
 }
 
 void RoomManager::cleanEmptyRooms() {
     for (auto it=m_rooms.begin();it!=m_rooms.end();) {
-        if (it->second==nullptr ) {
-            m_rooms.erase(it);
+        if (it->second == nullptr || it->second->isEmpty()) {
+            it = m_rooms.erase(it);
         }
         else if (it->second->isEmpty()) {
-            removeRoom(it->first);
+            m_rooms.erase(it);
         } else {
             ++it;
         }

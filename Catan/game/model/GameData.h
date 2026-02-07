@@ -66,6 +66,11 @@ public:
     std::string getLargestArmyOwner() const {return m_largestArmyOwner;}
 
     void loadFromJson(const nlohmann::json &jsonData);
+
+    void writeToFile() const;
+
     nlohmann::json toJson() const;
+
+    static std::string getHistoryPath();
 };
 #endif // GAMEDATA_H

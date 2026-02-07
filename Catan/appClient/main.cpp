@@ -12,6 +12,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setQuitOnLastWindowClosed(false);
     Q_INIT_RESOURCE(resources);
 
     catan::gui::qt::applyDefaultQtStyle(a);

@@ -67,22 +67,25 @@ void GameController::updateState(){ // filling renderstates and tools
         else
             emit gameOverlay(GameOverlayType::Waiting);
     }
-    if (m_session.phase()==TurnPhase::GameOver) {
-        onGameOver();
-    }
 
     if (m_session.localPlayer()==m_session.currentPlayer()) {
         updateActiveToolOnPhase();
         m_toolbarRenderState.updateFromPhase(m_session.phase());
-
+        if (m_session.hasPlayedDevCardThisTurn()) {
+            m_toolbarRenderState.disableDev();
+        }
         if (m_activeTool && m_activeTool->providesAllValid()) {
             m_boardRenderState.setHighlighted(m_activeTool->allValid(m_session),
                 m_activeTool->type());
         }
+
+        if (m_session.phase()==TurnPhase::StealCard) {
+            emit setChoosePlayer(m_activeTool->allValid(m_session));
+        }
     }
 
-    if (m_session.phase()==TurnPhase::StealCard) {
-        emit setChoosePlayer(m_activeTool->allValid(m_session));
+    if (m_session.phase()==TurnPhase::GameOver) {
+        onGameOver();
     }
 
 }

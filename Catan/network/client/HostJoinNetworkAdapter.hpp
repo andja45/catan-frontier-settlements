@@ -30,6 +30,10 @@ public:
     void sendHost(std::string gameName, std::string hostName);
     void sendJoin(std::string gameName, std::string playerName);
 
+    bool isConnected() const {
+        return m_transport != nullptr && m_transport->state() == QAbstractSocket::ConnectedState;
+    }
+
 signals:
     void rejectReceived(std::string reason);
     void acceptReceived();

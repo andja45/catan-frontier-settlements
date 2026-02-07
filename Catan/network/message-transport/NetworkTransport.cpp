@@ -64,3 +64,7 @@ void NetworkTransport::sendAck() {
     env.set_msg_type(net::MSG_ACK);
     sendEnvelope(env);
 }
+
+QTcpSocket::SocketState NetworkTransport::state() const {
+    return m_socket->state();
+}

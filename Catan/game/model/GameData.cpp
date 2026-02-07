@@ -1,4 +1,6 @@
 #include "GameData.h"
+
+#include <fstream>
 #include <time.h>
 
 GameData::GameData(std::string gameId, std::vector<std::string> playerNames) : m_gameName(gameId), m_playerNames(playerNames) {
@@ -68,6 +70,10 @@ nlohmann::json GameData::toJson() const {
     return jsonData;
 }
 
+std::string GameData::getHistoryPath() {
+    return "./resources/history.json";
+}
+
 void GameData::loadFromJson(const nlohmann::json &jsonData) {
     m_gameName       = jsonData.at("gameId").get<std::string>();
     m_numOfTurns = jsonData.at("numOfTurns").get<int>();
@@ -94,3 +100,17 @@ void GameData::loadFromJson(const nlohmann::json &jsonData) {
         m_resourceRolls[type] = count.get<int>();
     }
 }
+
+void GameData::writeToFile() const
+{
+    const char* historyPath = GameData::getHistoryPath().data();
+
+    std::ofstream out(historyPath, std::ios::app);
+    if (!out) {
+        throw std::runtime_error("Failed to open file");
+    }
+
+    out << toJson().dump(4)<<'\n';
+}
+
+

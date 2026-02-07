@@ -154,6 +154,7 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
             proto.set_type(net::Move::PlayerTradeResponse);
             auto* m = static_cast<const PlayerTradeResponseMove*>(&move);
             proto.mutable_trade_response()->set_trade_request_id(m->getTradeRequestId());
+            proto.mutable_trade_response()->set_is_positive(m->getIsPositive());
             break;
         }
 
@@ -168,6 +169,7 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
 
         case MoveType::PlayerLeave: {
             proto.set_type(net::Move::PlayerLeave);
+            proto.mutable_leave_move();
             break;
         }
         default:

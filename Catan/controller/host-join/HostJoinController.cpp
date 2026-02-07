@@ -4,9 +4,18 @@
 
 #include "HostJoinController.hpp"
 
+#include <QTimer>
+
 HostJoinController::HostJoinController(RoleType role, HostJoinView *view, NetworkTransport *transport) : QObject(nullptr), m_view(view), m_role(role) {
     m_transport = new HostJoinNetworkAdapter(this);
     m_transport->setTransport(transport);
+
+    // if we dont make connection we show error
+    QTimer* m_timer = new QTimer(this);
+    m_timer->setSingleShot(true);
+    m_timer->setInterval(5000);
+    m_timer->start();
+
 
     connect(m_view, &HostJoinView::requestSent,this, [this](const QString &gameName, const QString &playerName) {
         if (m_role==RoleType::Host) {
@@ -26,6 +35,10 @@ HostJoinController::HostJoinController(RoleType role, HostJoinView *view, Networ
         emit accepted();
     });
 
-
+    connect(m_timer, &QTimer::timeout, this, [this]() {
+        if (!m_transport->isConnected()) {
+            m_view->onRejected("Server not responding...");
+        }
+    });
 }
 

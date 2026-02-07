@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QPalette>
 #include <QAbstractItemView>
+#include <qevent.h>
 #include <QStyleOptionSlider>
 
 #include <common/theme/GameTheme.h>
@@ -277,9 +278,13 @@ QWidget* LobbyView::makeSettingsCard() {
 
     connect(m_loadBoardButton, &QPushButton::clicked, this, [this](){
         AudioManager::instance().playClick();
-        QString filePath = QFileDialog::getOpenFileName(
-            this, "Load Custom Board", QString(), "JSON Files (*.json)"
+        QString filePath =  QFileDialog::getOpenFileName(
+            this,
+            "Load Custom Board",
+            QString(),
+            "Board Files (*.json *.txt);;JSON Files (*.json);;Text Files (*.txt)"
         );
+
         if (!filePath.isEmpty()) {
             m_customMapPath = filePath;
             m_errorLabel->setVisible(false);
@@ -423,6 +428,11 @@ void LobbyView::setConfig(const GameConfig& config) {
     m_playersSlider->setValue(config.getMaxPlayers());
     m_pointsSlider->setValue(config.getPointsToWin());
 
+}
+
+void LobbyView::closeEvent(QCloseEvent *event) {
+    event->ignore();
+    emit closed();
 }
 
 void LobbyView::onAddPlayer(const QString& playerName) {

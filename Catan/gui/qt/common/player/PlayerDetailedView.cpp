@@ -40,9 +40,9 @@ void PlayerDetailedView::paintEvent(QPaintEvent *e) {
 void PlayerDetailedView::refresh() {
     if (m_cards[0]) m_cards[0]->setSpec({CardKind::Resource, ResourceType::Wood,  DevCardType::None, m_player->getResources()[ResourceType::Wood]});
     if (m_cards[1]) m_cards[1]->setSpec({CardKind::Resource, ResourceType::Brick, DevCardType::None, m_player->getResources()[ResourceType::Brick]});
-    if (m_cards[2]) m_cards[2]->setSpec({CardKind::Resource, ResourceType::Wool,  DevCardType::None, m_player->getResources()[ResourceType::Wool]});
-    if (m_cards[3]) m_cards[3]->setSpec({CardKind::Resource, ResourceType::Wheat, DevCardType::None, m_player->getResources()[ResourceType::Wheat]});
-    if (m_cards[4]) m_cards[4]->setSpec({CardKind::Resource, ResourceType::Ore,   DevCardType::None, m_player->getResources()[ResourceType::Ore]});
+    if (m_cards[2]) m_cards[2]->setSpec({CardKind::Resource, ResourceType::Ore,   DevCardType::None, m_player->getResources()[ResourceType::Ore]});
+    if (m_cards[3]) m_cards[3]->setSpec({CardKind::Resource, ResourceType::Wool,  DevCardType::None, m_player->getResources()[ResourceType::Wool]});
+    if (m_cards[4]) m_cards[4]->setSpec({CardKind::Resource, ResourceType::Wheat, DevCardType::None, m_player->getResources()[ResourceType::Wheat]});
     if (m_cards[5]) m_cards[5]->setSpec({CardKind::Development, ResourceType::None, DevCardType::None,m_player->getNumOfDevCards()});
 }
 

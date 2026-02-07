@@ -99,7 +99,6 @@ void AcceptPlayerTradePopup::rebuild() {
 
     connect(declineButton, &QPushButton::clicked, this, [this]() {
            emit tradeCancelled(m_tradeId);
-           close();
        });
 
     for (auto p:m_players) {

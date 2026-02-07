@@ -162,7 +162,7 @@ void QCard::paintEvent(QPaintEvent*) {
         p.drawRoundedRect(r, radius, radius);
     }
     // Count badge
-        if (m_spec.countBadge >= 0) {
+        if (m_spec.countBadge > 0) {
         const int badge = m_spec.countBadge;
         qreal number_radius = 25;
         QRectF b((r.right() + r.left()) / 2 - number_radius / 2, (r.top() + r.bottom()) / 2 - number_radius / 2,

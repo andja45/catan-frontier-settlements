@@ -65,6 +65,9 @@ private:
 
      // phase logic
      TurnPhase m_phase = TurnPhase::InitialPlacement;
+
+     void advancePlayerInitial();
+
      void advanceInitialPlacement();
      void advancePlayer();
 

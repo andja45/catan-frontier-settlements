@@ -27,6 +27,8 @@ public:
     void clear(); // called after endmove applied (everything disabled until renderstate updated again)
 
     bool isEnabled(GamePopups popup) const;
+
+    void disableDev();
 };
 
 

@@ -57,11 +57,13 @@ public:
 
     GameConfig getConfig() const;
     void setConfig(const GameConfig &config);
+    void closeEvent(QCloseEvent *event) override;
 
 signals:
     void startGameRequested(GameConfig config, std::string boardPath="");
     void customMapSelected(const QString& filePath);
     void configChanged(const GameConfig& config);
+    void closed();
 
 public slots:
     void onAddPlayer(const QString &playerName);
