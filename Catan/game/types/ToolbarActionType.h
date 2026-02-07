@@ -15,8 +15,9 @@ enum class ToolbarActionType {
     EndTurn
 };
 static const inline std::map<ToolbarActionType, std::string> nameFromToolbarActionType = {
-    {ToolbarActionType::BuildRoad, "Build Road"},
-    {ToolbarActionType::BuildSettlement, "Build Settlement"},
+    {ToolbarActionType::BuildRoad, "Road"},
+    {ToolbarActionType::BuildSettlement, "House"},
+    {ToolbarActionType::BuildCity, "City"},
     {ToolbarActionType::BuyDevCard, "Buy Dev"},
     {ToolbarActionType::PlayDevCard, "Play Dev"},
     {ToolbarActionType::PlayerTrade, "Player Trade "},

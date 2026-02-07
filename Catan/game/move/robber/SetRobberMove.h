@@ -6,14 +6,13 @@
 #define CATAN_SETTINGROBBERMOVE_H
 
 #include <unordered_set>
-#include "../Move.h"
+#include "move/BoardMove.h"
 
-
-class SetRobberMove final : public Move {
+class SetRobberMove final : public BoardMove {
 private:
     TileId m_tileId;
 public:
-    SetRobberMove(PlayerId playerId, TileId tileId) : Move(playerId), m_tileId(tileId) {}
+    SetRobberMove(PlayerId playerId, TileId tileId) : BoardMove(playerId), m_tileId(tileId) {}
 
     MoveType type() const override { return MoveType::SetRobber; }
     bool isValid(const GameSession&) const override;
@@ -23,6 +22,7 @@ public:
     std::unordered_set<TileId> allValid(const GameSession& session) const;
 
     TileId getTileId() const { return m_tileId; }
+    void setBoardElementId(int elementId) { m_tileId = static_cast<TileId>(elementId); }
 };
 
 

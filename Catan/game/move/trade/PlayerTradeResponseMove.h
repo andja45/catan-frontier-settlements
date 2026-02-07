@@ -10,13 +10,14 @@
 class PlayerTradeResponseMove final : public Move {
 private:
     TradeId m_tradeRequestId; // we need to know which trade he responded to, in case of more active trades
+    bool m_wantsTrade;
 public:
-    PlayerTradeResponseMove(PlayerId respondPlayerId,TradeId tradeRequestId) : Move(respondPlayerId), m_tradeRequestId(tradeRequestId){}
+    PlayerTradeResponseMove(PlayerId respondPlayerId,TradeId tradeRequestId, bool positive=true) : Move(respondPlayerId), m_tradeRequestId(tradeRequestId), m_wantsTrade(positive){}
 
     MoveType type() const override { return MoveType::PlayerTradeResponse; }
     bool isValid(const GameSession& session) const override;
     void apply(GameSession& session) const override;
-
+    bool getIsPositive() const {return m_wantsTrade;}
     TradeId getTradeRequestId() const {return m_tradeRequestId;}
 
     // TODO mark yes as gray if !isvalid in gui (dont need allvalid)

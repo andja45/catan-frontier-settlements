@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package net;
+
+import "common.proto";
+
+
+message Setup {
+
+  enum MessageType {
+    UNKNOWN = 0;
+    REJECT = 1;
+    ACCEPT = 2;
+
+    HOST_REQUEST = 10;
+    JOIN_REQUEST = 11;
+
+    LEAVE = 20;
+    GAME_CONFIG = 21;
+    START_GAME_REQUEST = 22;
+    GAME_START = 23;
+  }
+  MessageType type = 1;
+
+  oneof payload {
+    Declined error = 2;
+    Accepted ack = 3;
+
+    HostRequest host_request = 10;
+    JoinRequest join_request = 11;
+    Leave leave = 12;
+
+    GameConfig game_config = 20;
+    StartGameRequest start_game_request = 21;
+    GameStart game_start = 22;
+  }
+}
+
+message Accepted {}
+
+message Leave {}
+
+message Declined{
+  string message = 1;
+}
+
+message HostRequest {
+  string player_name = 1;
+  string game_name = 2;
+}
+
+message JoinRequest {
+  string player_name = 1;
+  string game_name = 2;
+}
+
+
+message GameConfig{
+  int32 num_players = 1;
+  int32 winning_points = 2;
+  enum BoardType{
+    CLASSIC=0;
+    EXTENDED=1;
+    CUSTOM=2;
+  }
+  BoardType board_type=3;
+  repeated string names = 4;
+  string game_name = 5;
+}
+
+message BoardInfo{
+  message TileInfo{
+    int32 q=1;
+    int32 r=2;
+    net.ResourceType resource=3;
+    int32 tile_number=4;
+  }
+
+  message PortInfo{
+    int32 q=1;
+    int32 r=2;
+    int32 i=3;
+    net.ResourceType resource=4;
+  }
+  repeated TileInfo tiles=1;
+  repeated PortInfo ports=2;
+}
+
+message StartGameRequest{
+  BoardInfo board_info=1;
+}
+
+message GameStart{
+  int32 player_id=1;
+  int32 seed=2;
+  GameConfig game_config=3;
+  BoardInfo board_info=4;
+}
+
+

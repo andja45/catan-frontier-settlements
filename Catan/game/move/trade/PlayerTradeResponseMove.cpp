@@ -30,6 +30,6 @@ void PlayerTradeResponseMove::apply(GameSession& session) const {
     Trade* trade = session.getTrade(m_tradeRequestId);
     if (!trade)
         return;
+    trade->markResponded(m_playerId,m_wantsTrade);
 
-    trade->markResponded(m_playerId);
 }

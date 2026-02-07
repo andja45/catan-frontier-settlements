@@ -8,8 +8,18 @@ add_library(catan_ascii_view
         board/NodeView.cpp
         board/NodeView.hpp
         board/BoardTypes.hpp
-        player/PlayerView.cpp
-        player/PlayerView.hpp
+        drawing/AsciiTypes.hpp
+        drawing/AsciiCanvas.cpp
+        drawing/AsciiCanvas.hpp
+        drawing/AsciiDrawable.cpp
+        drawing/AsciiDrawable.hpp
+        drawing/AsciiComposite.cpp
+        drawing/AsciiComposite.hpp
+        drawing/AsciiWindow.cpp
+        drawing/AsciiWindow.hpp
+        drawing/AsciiTheme.hpp
+        drawing/AsciiTextDrawable.cpp
+        drawing/AsciiTextDrawable.hpp
 )
 
 target_include_directories(catan_ascii_view

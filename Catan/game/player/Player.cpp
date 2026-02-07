@@ -6,11 +6,16 @@
 #include "../board/Board.h"
 
 #include <random>
+#include <player/Bank.h>
 
+void Player::initStandardEmpty() {
+	for (auto r : {ResourceType::Wood, ResourceType::Brick, ResourceType::Wool, ResourceType::Wheat, ResourceType::Ore}) {
+		m_resources[r] =0;
+	}
+	for (auto d : {DevCardType::VictoryPoint, DevCardType::Monopoly, DevCardType::RoadBuilding, DevCardType::YearOfPlenty, DevCardType::Knight}) {
+		m_devCards[d] =0;
+	}
 
-void Player::addRoadInGraph(EdgeId edgeId1, EdgeId edgeId2) {
-	road_graph[int(edgeId1)].push_back(int(edgeId2));
-	road_graph[int(edgeId2)].push_back(int(edgeId1));
 }
 
 void Player::addRoad(Edge *edge) {
@@ -25,11 +30,16 @@ void Player::addSettlement(Node *node) {
 
 void Player::addCity() {
 	m_numOfCitiesLeft--;
+	// buliding a city frees a settlement
+	m_numOfSettlementsLeft++;
 }
 
 // if we decide to remove houses stored in player have trades cashed when build settlement is called
 bool Player::has3for1Trade() const {
 	for (const auto& node:m_buildings) {
+		if (node==nullptr)
+			continue;
+
 		if (node->is3for1Trade())
 			return true;
 	}
@@ -38,6 +48,8 @@ bool Player::has3for1Trade() const {
 
 bool Player::hasTrade(ResourceType resourceType) const {
 	for (const auto& node:m_buildings) {
+		if (node==nullptr)
+			continue;
 		if (node->isTradeFor(resourceType))
 			return true;
 	}

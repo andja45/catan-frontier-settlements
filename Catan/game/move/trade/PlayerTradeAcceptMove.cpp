@@ -10,15 +10,16 @@ bool PlayerTradeAcceptMove::isValid(const GameSession& session) const {
     const Trade* trade = session.getTrade(m_tradeId);
     if (!trade)
         return false;
+    if (session.phase() != TurnPhase::Main)
+        return false;
 
     if (session.currentPlayer() != m_playerId) // he can only accept, he sent the trade
         return false;
 
     if (trade->requester() != m_playerId) // he also sent the trade
         return false;
-
-    if (session.phase() != TurnPhase::Main)
-        return false;
+    if (m_acceptedPlayerId==-1) //we allow -1 for reset
+        return true;
 
     if (!trade->hasAccepted(m_acceptedPlayerId))
         return false;
@@ -37,21 +38,22 @@ bool PlayerTradeAcceptMove::isValid(const GameSession& session) const {
 }
 
 void PlayerTradeAcceptMove::apply(GameSession& session) const {
-    Trade* trade = session.getTrade(m_tradeId);
-    if (!trade)
-        return;
+    if (m_acceptedPlayerId!=-1){ //we use -1 to cancel trade
+        Trade* trade = session.getTrade(m_tradeId);
+        if (!trade)
+            return;
 
-    Player& requester = session.player(trade->requester());
-    Player& acceptedPlayer = session.player(m_acceptedPlayerId);
+        Player& requester = session.player(trade->requester());
+        Player& acceptedPlayer = session.player(m_acceptedPlayerId);
 
-    // Requester -> Accepted Player
-    requester.removeResources(trade->give());
-    acceptedPlayer.addResources(trade->give());
+        // Requester -> Accepted Player
+        requester.removeResources(trade->give());
+        acceptedPlayer.addResources(trade->give());
 
-    // Accepted Player -> Requester
-    acceptedPlayer.removeResources(trade->receive());
-    requester.addResources(trade->receive());
-
+        // Accepted Player -> Requester
+        acceptedPlayer.removeResources(trade->receive());
+        requester.addResources(trade->receive());
+    }
     session.removeTrade(m_tradeId); // this trade is finished
 }
 

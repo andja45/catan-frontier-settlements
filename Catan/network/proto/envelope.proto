@@ -3,15 +3,16 @@ syntax = "proto3";
 package net;
 
 import "move.proto";
-
-// =====================
-// ENVELOPE
-// =====================
+import "setup.proto";
+import "common.proto";
 
 enum MsgType {
   MSG_UNKNOWN = 0;
   MSG_MOVE = 1;
-  MSG_SETUP = 2;
+  MSG_CHAT = 2;
+  MSG_SETUP = 3;
+  MSG_ACK = 4;
+  MSG_ERROR = 5;
 }
 
 message Envelope {
@@ -20,15 +21,8 @@ message Envelope {
 
   oneof payload {
     Move move = 10;
-    Setup setup = 11;
+    Chat chat = 11;
+    Setup setup = 12;
+    Error error = 13;
   }
-}
-
-// =====================
-// SETUP / LOBBY
-// =====================
-
-message Setup {
-  repeated string player_names = 1;
-  uint32 seed = 2;
 }

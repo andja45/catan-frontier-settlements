@@ -1,0 +1,17 @@
+//
+// Created by jovan on 20/01/2026.
+//
+
+#ifndef CATAN_MOVEPROTOSERIALIZER_H
+#define CATAN_MOVEPROTOSERIALIZER_H
+
+#include "move/Move.h"
+#include "MoveProtoFactory.h"
+
+
+class MoveProtoSerializer {
+public:
+    static net::Move toProto(const Move& move);
+};
+
+#endif //CATAN_MOVEPROTOSERIALIZER_H

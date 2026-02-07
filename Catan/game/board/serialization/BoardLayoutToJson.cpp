@@ -9,26 +9,35 @@
 #include <json.hpp>
 using json=nlohmann::json;
 
-void BoardLayoutToJson::serialize(Board board) {
-    nlohmann::json saveBoard = json::array();
+void BoardLayoutToJson::serialize(const Board& board) {
+    json root;
+    root["type"] = "catan_board";
+
+    root["tiles"] = json::array();
     for (const auto& tile : board.getTiles()) {
-        saveBoard.push_back({
+        root["tiles"].push_back({
             {"q", tile->getTileCoord().q()},
             {"r", tile->getTileCoord().r()},
-            {"type", tile->getResourceType()},
+            {"resource", toString(tile->getResourceType())},
             {"number", tile->getNumber()}
         });
     }
 
-    json root;
-    root = saveBoard;
+    root["ports"] = json::array();
+    for (const auto& port : board.getPortDefs()) {
+        root["ports"].push_back({
+            {"q", port.q},
+            {"r", port.r},
+            {"dir", port.i},
+            {"resource", toString(port.tradeType)}
+        });
+    }
 
     std::ofstream saveFile(m_filePath);
-    if (!saveFile.is_open()) {
+    if (!saveFile) {
         std::cerr << "Cannot open file for writing: " << m_filePath << std::endl;
         return;
     }
 
     saveFile << root.dump(4);
-    saveFile.close();
 }

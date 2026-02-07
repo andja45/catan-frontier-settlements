@@ -22,7 +22,7 @@ enum class PointDirection;
 using TileCoords = AxialCoords ;
 using OffsetCoords= AxialCoords;
 
-using NeighbourTiles = std::vector<Tile*>; // TODO class with iterator, keep in board instead of tile?
+using NeighbourTiles = std::vector<Tile*>;
 using NeighbourNodes = std::vector<Node*>;
 using NeighbourEdges = std::vector<Edge*>;
 
@@ -33,6 +33,7 @@ using ResourcePack = std::map<ResourceType, int>;
 using DevPack = std::map<DevCardType,int>;
 
 using PlayerId = int;
+using BoardElementId = int;
 using NodeId = int;
 using EdgeId = int;
 using TileId = int;
@@ -42,10 +43,10 @@ using TradeId = int;
 using Tool = Move;
 
 namespace types {
-    constexpr PlayerId InvalidPlayer = -1;
-    constexpr NodeId InvalidNode = -1;
-    constexpr EdgeId InvalidEdge = -1;
-    constexpr TileId InvalidTile = -1;
+    constexpr PlayerId InvalidPlayerId = -1;
+    constexpr NodeId InvalidNodeId = -1;
+    constexpr EdgeId InvalidEdgeId = -1;
+    constexpr TileId InvalidTileId = -1;
     constexpr Tool* InvalidTool = nullptr;
 }
 

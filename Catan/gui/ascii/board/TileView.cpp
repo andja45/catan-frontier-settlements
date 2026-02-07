@@ -6,8 +6,10 @@
 
 #include <board/BoardView.hpp>
 #include <board/Tile.h>
-#include "BoardTypes.hpp"
+#include "../drawing/AsciiTypes.hpp"
 #include <types/TypeAliases.h>
+#include <drawing/AsciiTheme.hpp>
+#include <drawing/AsciiCanvas.hpp>
 
 char TileView::resourceToChar( const BoardTheme& theme) const {
     switch (m_tile->getResourceType()) {
@@ -22,24 +24,26 @@ char TileView::resourceToChar( const BoardTheme& theme) const {
     }
 }
 
-void TileView::draw(Canvas &canvas, const BoardTheme &theme) const {
-    int rows=m_size.second-2;
-    int max_width=m_size.first-2;
+void TileView::render(Canvas &canvas) const {
+    const auto& theme=BoardTheme::getInstance();
+
+    int rows=m_size.height-2;
+    int max_width=m_size.width-2;
     //int min_width=max_width-2*rows/2;
     int margin=2;
     //int cols=min_width-margin*2;
     int spacing=rows/2;
 
-    int x= m_pos.first-(max_width-1)/2;
-    int y=m_pos.second-rows/2;
+    int x= -(max_width-1)/2;
+    int y=-rows/2;
 
     for (int r=0; r<rows; r++) {
         int c;
         for (c=spacing; c<spacing+margin; c++) {
-            canvas[x+c][y+r]={' ',1};
+            canvas.setCell({x+c,y+r},{' ',1});
         }
         for (; c<max_width-margin-spacing; c++) {
-            canvas[x+c][y+r]={resourceToChar(theme),1};
+            canvas.setCell({x+c,y+r},{resourceToChar(theme),1});
         }
         spacing-=2;
         spacing=abs(spacing);
@@ -47,23 +51,23 @@ void TileView::draw(Canvas &canvas, const BoardTheme &theme) const {
     }
 
     for (int i = -1; i <= 2; ++i) {
-        canvas[m_pos.first+i][m_pos.second]={' ',1};
+        canvas.setCell({i,0},{' ',1});
     }
     if (!m_tile->isRobberOnTile()) {
-        canvas[m_pos.first][m_pos.second]   ={(char)('0'+m_tile->getNumber()/10),1};
-        canvas[m_pos.first+1][m_pos.second] ={(char)('0'+m_tile->getNumber()%10),1};
+        canvas.setCell({0,0},{(char)('0'+m_tile->getNumber()/10),1});
+        canvas.setCell({1,0},{(char)('0'+m_tile->getNumber()%10),1});
     }
     else {
-        canvas[m_pos.first][m_pos.second]   ={theme.robberChar,1};
-        canvas[m_pos.first+1][m_pos.second] ={theme.robberChar,1};
+        canvas.setCell({0,0},{theme.robberChar,1});
+        canvas.setCell({1,0},{theme.robberChar,1});
 
     }
 }
 
-std::vector<std::pair<NodeAsciiDirection, ScreenCoords> > TileView::getNodes(ScreenCoords m_pos, ScreenCoords m_size) {
+std::vector<std::pair<NodeAsciiDirection, ScreenCoords> > TileView::getNodes(ScreenCoords pos, ScreenSize size) {
 
-    auto [width,height]=m_size;
-    auto [x,y]=m_pos;
+    auto [width,height]=size;
+    auto [x,y]=pos;
 
     int halfStepY=height/2;
     int halfStepX=width/2;

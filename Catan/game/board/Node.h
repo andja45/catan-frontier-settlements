@@ -13,7 +13,6 @@ enum class NodeType;
 
 class Node {
 private:
-    //TODO consider separate class, stored in board? player?
     NodeType m_type=NodeType::None; // is it empty, settlement or city
     PlayerId m_ownerId=-1;  // if it has building who owns it
 
@@ -25,7 +24,7 @@ private:
 
     NodeCoords m_coords;
 
-    bool m_hasTrade=false; //TODO consider separate class, stored in board? player?
+    bool m_hasTrade=false;
     TradeType m_tradeResource=TradeType::None; // if has trade than this resolve which resource its for
 public:
     Node(NodeId id,NodeCoords nc,bool isPort=false, ResourceType portType=ResourceType::None) {

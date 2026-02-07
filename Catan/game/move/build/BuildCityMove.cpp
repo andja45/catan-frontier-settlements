@@ -19,7 +19,7 @@ bool BuildCityMove::isValid(const GameSession& session) const {
     if (!player.hasCityLeft())
         return false;
 
-    if (!player.hasResources(Costs::Settlement))
+    if (!player.hasResources(Costs::City))
         return false;
 
     if (!board.isNodeSettlement(m_nodeId))
@@ -39,6 +39,7 @@ void BuildCityMove::apply(GameSession& session) const {
 
     player.addPoints(1);
 
+    player.addCity();
     board.placeCity(m_playerId, m_nodeId);
 }
 

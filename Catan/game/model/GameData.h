@@ -13,7 +13,7 @@
 class GameData {
 private:
     // INFO:
-    int m_gameId = -1;
+    std::string m_gameName="";
     std::string m_datetime;
 
     // STATE:
@@ -35,7 +35,7 @@ private:
 
 public:
     GameData(){};
-    GameData(int gameId, std::vector<std::string> playerNames);
+    GameData(std::string gameId, std::vector<std::string> playerNames);
 
     void initialize();
     void markGameWon() {m_isGameWon = true;}
@@ -51,7 +51,7 @@ public:
     void setLargestArmyOwner(std::string largestArmyOwner) {m_largestArmyOwner = largestArmyOwner;}
     void setLongestRoadOwner(std::string longestRoadOwner) {m_longestRoadOwner = longestRoadOwner;}
 
-    int getId() const {return m_gameId;}
+    std::string getGameName() const {return m_gameName;}
     int getNumOfPlayers() const {return static_cast<int>(m_playerNames.size());}
     bool isGameWon() const {return m_isGameWon;}
 
@@ -66,6 +66,11 @@ public:
     std::string getLargestArmyOwner() const {return m_largestArmyOwner;}
 
     void loadFromJson(const nlohmann::json &jsonData);
+
+    void writeToFile() const;
+
     nlohmann::json toJson() const;
+
+    static std::string getHistoryPath();
 };
 #endif // GAMEDATA_H

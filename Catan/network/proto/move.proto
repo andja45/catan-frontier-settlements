@@ -7,7 +7,7 @@ import "common.proto";
 message Move {
 
   enum MoveType {
-    RollDice = 0;
+    InvalidMoveType = 0;
     EndTurn = 1;
     BuildRoad = 2;
     BuildSettlement = 3;
@@ -23,7 +23,8 @@ message Move {
     PlayerTradeRequest = 13;
     PlayerTradeResponse = 14;
     PlayerTradeAccept = 15;
-    InvalidMoveType = 16;
+    RollDice = 16;
+    PlayerLeave = 17;
   }
 
   MoveType type = 1;
@@ -56,10 +57,14 @@ message Move {
     PlayerTradeRequestMove trade_request = 51;
     PlayerTradeResponseMove trade_response = 52;
     PlayerTradeAcceptMove trade_accept = 53;
+
+    LeaveMove leave_move= 60;
   }
 }
 
 message RollDiceMove {
+  uint32 dice_1 = 1;
+  uint32 dice_2 = 2;
 }
 
 message EndTurnMove {
@@ -76,7 +81,7 @@ message SetRobberMove { uint32 tile_id = 1; }
 
 message StealCardMove { uint32 victim_player_id = 1; }
 
-message BuyDevCardMove {}
+message BuyDevCardMove { DevCardType card_type = 1; }
 
 message PlayDevCardMove { DevCardType card_type = 1; }
 
@@ -94,15 +99,19 @@ message BankTradeMove {
 }
 
 message PlayerTradeRequestMove {
-  map<int32, int32> give_resource = 1;
-  map<int32, int32> get_resource = 2;
+  uint32 trade_request_id = 1;
+  map<int32, int32> give_resource = 2;
+  map<int32, int32> get_resource = 3;
 }
 
 message PlayerTradeResponseMove {
   uint32 trade_request_id = 1;
+  bool is_positive = 2;
 }
 
 message PlayerTradeAcceptMove {
   uint32 accept_player_id = 1;
   uint32 trade_id = 2;
 }
+
+message LeaveMove {}

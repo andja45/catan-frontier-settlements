@@ -56,8 +56,8 @@
         rules/LargestArmyRule.h
         rules/LongestRoadRule.cpp
         rules/LongestRoadRule.h
-        rules/VictoryRule.cpp
-        rules/VictoryRule.h
+            rules/GameOverRule.cpp
+            rules/GameOverRule.h
         rules/RulesEngine.cpp
         rules/RulesEngine.h
         model/GameConfig.cpp
@@ -89,7 +89,15 @@
         types/ToolbarActionType.h
         model/MoveCosts.h model/MoveCosts.cpp
         move/build/BuildSettlementMove.cpp
-)
+            types/BoardType.hpp
+            move/turn/PlayerLeaveMove.cpp
+            move/turn/PlayerLeaveMove.hpp
+            rules/SkipPlayerRule.cpp
+            rules/SkipPlayerRule.hpp
+            move/BoardMove.h
+            player/ResourceHolder.h
+            board/Node.h
+    )
 
 target_include_directories(catan_game
         PUBLIC

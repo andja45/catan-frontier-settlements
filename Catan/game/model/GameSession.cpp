@@ -11,19 +11,25 @@
 
 GameSession::GameSession(std::vector<std::string> playerNames,
                          PlayerId localPlayer,
-                         uint32_t seed)
-    : m_board(std::make_unique<Board>())
+                         uint32_t seed,
+                         std::unique_ptr<Board> board,
+                         int winPoints,
+                         std::string gameName)
+    : m_board(std::move(board))
     , m_localPlayerId(localPlayer)
     , m_rng(seed)
-    , m_gameData(0, playerNames) // TODO gameId will be set by client-host maybe on creation of room? roomId?
+    , m_gameData(gameName, playerNames)
+    , m_winningPints(winPoints)
 {
     const int numPlayers = static_cast<int>(playerNames.size()); // deduced from vector of players
-
+    m_numOfActivePlayers=numPlayers;
     m_players.reserve(numPlayers);
     for (PlayerId id = 0; id < numPlayers; ++id) {
         m_players.push_back(std::make_unique<Player>(id, playerNames[id]));
     }
-
+    m_turnIndex = 0;
+    m_phase = TurnPhase::InitialPlacement;
+    m_currentPlayerId = m_players[0]->getPlayerId();
     m_gameData.initialize();
 }
 
@@ -37,10 +43,6 @@ bool GameSession::applyMove(const Move& move){
     m_rules.evaluate(*this); // after every move, cus someone can interrupt longest road for example
     advancePhaseAfterMove(); // only session can advance phases, move only reads them
 
-    // onModelChanged();
-    // onPhaseChanged(); // notify controller -> view
-    // TODO ^
-
     return true;
 }
 
@@ -53,7 +55,7 @@ void GameSession::advancePhaseAfterMove() {
 
         case TurnPhase::RoadBuilding:
             incrementPhaseMoveCount();
-            if (m_phaseMoveCount >= 2) {
+            if (m_phaseMoveCount-1 >= 2) {
                 setPhase(TurnPhase::Main);
                 m_phaseMoveCount = 0;
             }
@@ -77,24 +79,28 @@ void GameSession::advancePhaseAfterMove() {
             break;
 
         case MoveType::SetRobber:
-            setPhase(TurnPhase::StealCard);
-            break;
-
-        case MoveType::StealCard:
             if (canStealFromAnyone(m_currentPlayerId)) {
                 setPhase(TurnPhase::StealCard);
             } else { // we established we can place on tile no one is at, in that case every player is greyed out
                 setPhase(TurnPhase::Main);
             }
             break;
-
+        case MoveType::StealCard:
+            setPhase(TurnPhase::Main);
+            break;
+        case MoveType::PlayerLeave:
         case MoveType::EndTurn:
             advancePlayer(); // session does this, not move
             m_devCardPlayedThisTurn = false; // reseting for next turn
             m_activeTrades.clear();
+            m_nextTradeId=0; // we restart trades each turn
             m_gameData.addTurn();
             setPhase(TurnPhase::RollDice);
             break;
+    case MoveType::YearOfPlenty:
+    case MoveType::Monopoly:
+        setPhase(TurnPhase::Main);
+    break;
 
         default:
             break;
@@ -126,19 +132,28 @@ void GameSession::enterDevCardPhase(DevCardType type) {
 
 void GameSession::advanceInitialPlacement() {
     const int playerCount = numPlayers();
-    if (playerCount == 0) return;
+    if (playerCount == 0 || m_numOfActivePlayers<=0) return;
 
     m_phaseMoveCount += 1;
 
-    const int totalPlacementMoves = playerCount * 4; // *2 for both directios *2 for settlemet/road
+    const int totalPlacementMoves = playerCount * 4; // *2 for both directions *2 for settlement/road
 
     if (m_phaseMoveCount >= totalPlacementMoves) {
         m_phaseMoveCount = 0;
         m_turnIndex = 0;
         m_currentPlayerId = m_players[m_turnIndex]->getPlayerId(); // first player starts
         setPhase(TurnPhase::RollDice);
+        dealInitial();
         return;
     }
+
+    advancePlayerInitial();
+}
+
+
+void GameSession::advancePlayerInitial() {
+    if (m_players.empty() || m_numOfActivePlayers<=0) return;
+    const int playerCount = numPlayers();
 
     const int placementTurn = m_phaseMoveCount / 2; // each player gets settlement + road in one placing
 
@@ -151,19 +166,30 @@ void GameSession::advanceInitialPlacement() {
     }
 
     m_currentPlayerId = m_players[playerIndex]->getPlayerId(); // if player needs to be changed, he changes
+
+    if (!player(m_currentPlayerId).isActive()) {
+        m_phaseMoveCount+=2;
+        advancePlayerInitial();
+    }
 }
 
 
-void GameSession::advancePlayer() { // TODO maybe change later - add shuffling with same seed every client model uses
-    if (m_players.empty()) return;
+void GameSession::advancePlayer() {
+    if (m_players.empty() || m_numOfActivePlayers<=0) return;
 
     m_turnIndex = (m_turnIndex + 1) % m_players.size();
     m_currentPlayerId = m_players[m_turnIndex]->getPlayerId();
 
+    if (!player(m_currentPlayerId).isActive()) {
+        advancePlayer();
+    }
+}
+
+int GameSession::getNextTradeId() {
+    return m_nextTradeId++;
 }
 
 void GameSession::addTrade(Trade trade) {
-    trade.setId(m_nextTradeId++);
     m_activeTrades.emplace(trade.id(), std::move(trade));
 }
 
@@ -176,20 +202,21 @@ Trade * GameSession::getTrade(TradeId tradeId) {
     return (it != m_activeTrades.end()) ? &it->second : nullptr;
 }
 
-int GameSession::rollDice() {
+std::pair<int, int> GameSession::rollDice() {
     assert(m_phase == TurnPhase::RollDice);
 
     int dice1 = m_d6(m_rng);
     int dice2 = m_d6(m_rng);
 
-    return dice1 + dice2;
+    m_lastDiceRoll={dice1,dice2};
+    return {dice1,dice2};
 }
 
 void GameSession::setLongestRoadOwner(const PlayerId playerId) {
     if (m_longestRoadOwner == playerId)
         return; // no change
 
-    if (longestRoadOwner() != types::InvalidPlayer){
+    if (longestRoadOwner() != types::InvalidPlayerId){
         Player& previous = player(m_longestRoadOwner);
         previous.removePoints(2);
         previous.setLongestRoad(false);
@@ -200,13 +227,13 @@ void GameSession::setLongestRoadOwner(const PlayerId playerId) {
     Player& current = player(m_longestRoadOwner);
     current.addPoints(2);
     current.setLongestRoad(true);
-} // TODO add length of longestroad in player
+}
 
 void GameSession::setLargestArmyOwner(const PlayerId playerId) {
     if (m_largestArmyOwner == playerId)
         return; // no change
 
-    if (largestArmyOwner() != types::InvalidPlayer){
+    if (largestArmyOwner() != types::InvalidPlayerId){
         Player& previous = player(m_largestArmyOwner);
         previous.removePoints(2);
         previous.setLargestArmy(false);
@@ -263,16 +290,19 @@ std::vector<const Trade*> GameSession::activeTrades() const {
     return result;
 }
 
+bool GameSession::canStealFrom(PlayerId thiefId, PlayerId victimId) const {
+    if (victimId == thiefId) return false;
+    if (victimId == types::InvalidPlayerId) return false;
+
+    const Player& victim = player(victimId);
+    if (victim.getNumOfResourceCards() == 0) return false;
+
+    return board().tileTouchesPlayerBuilding(victimId, board().robberTileId());
+}
+
 bool GameSession::canStealFromAnyone(PlayerId thiefId) const {
-   for (PlayerId victimId : playerIds()) {
-        if (victimId == thiefId)
-            continue;
-
-        StealCardMove testMove(thiefId, victimId);
-        if (testMove.isValid(*this))
-            return true;
-    }
-
+    for (PlayerId v : playerIds())
+        if (canStealFrom(thiefId, v)) return true;
     return false;
 }
 
@@ -293,15 +323,35 @@ void GameSession::endGame() {
     Player& winningPlayer = player(winner());
     m_gameData.setWinningPlayer(winningPlayer.getName());
 
-    if (m_largestArmyOwner != types::InvalidPlayer) {
+    if (m_largestArmyOwner != types::InvalidPlayerId) {
         m_gameData.setLargestArmyOwner(
             player(m_largestArmyOwner).getName()
         );
     }
 
-    if (m_longestRoadOwner != types::InvalidPlayer) {
+    if (m_longestRoadOwner != types::InvalidPlayerId) {
         m_gameData.setLongestRoadOwner(
             player(m_longestRoadOwner).getName()
         );
     }
+
+    m_isOver=true;
+    m_gameData.writeToFile();
 } // gui gets renderstate that behaves differently in gameover phase, onphasechanged triggers redrawing
+
+void GameSession::leavePlayer(PlayerId player_id) {
+    player(player_id).setLeft();
+    m_numOfActivePlayers--;
+}
+
+void GameSession::dealInitial() {
+    for (auto &p:m_players) {
+        Node* lastHouse=p->getLastBuildingBuilt();
+        auto tiles=lastHouse->getIncidentTiles();
+        ResourcePack rs;
+        for (auto t:tiles) {
+            rs[t->getResourceType()]++;
+        }
+        p->addResources(rs);
+    }
+}

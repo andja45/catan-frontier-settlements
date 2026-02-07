@@ -12,7 +12,7 @@ public:
     : AbstractBoardSerializer(path) {
     }
 
-    void serialize(Board) override;
+    void serialize(const Board &board) override;
 
     ~BoardLayoutToJson() override{}
 };
