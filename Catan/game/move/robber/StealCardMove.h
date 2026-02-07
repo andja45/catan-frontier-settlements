@@ -5,6 +5,7 @@
 #ifndef CATAN_STEALCARD_H
 #define CATAN_STEALCARD_H
 
+#include <random>
 #include <unordered_set>
 
 #include "move/BoardMove.h"
@@ -24,6 +25,8 @@ public:
     std::unordered_set<PlayerId> allValid(const GameSession &session) const; // for making gray players he cant chose
     PlayerId getVictimPlayerId() const {return m_victimPlayerId; }
     void setVictimPlayerId(PlayerId victimPlayerId) { m_victimPlayerId = victimPlayerId; }
+
+    static ResourceCardType randomCard(ResourcePack pack, std::mt19937 &mt);
 };
 
 

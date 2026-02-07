@@ -10,7 +10,7 @@
 
 void Player::initStandardEmpty() {
 	for (auto r : {ResourceType::Wood, ResourceType::Brick, ResourceType::Wool, ResourceType::Wheat, ResourceType::Ore}) {
-		m_resources[r] =5; // TODO TODO TODO TODO
+		m_resources[r] =0;
 	}
 	for (auto d : {DevCardType::VictoryPoint, DevCardType::Monopoly, DevCardType::RoadBuilding, DevCardType::YearOfPlenty, DevCardType::Knight}) {
 		m_devCards[d] =0;

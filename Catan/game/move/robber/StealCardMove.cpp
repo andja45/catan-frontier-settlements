@@ -37,8 +37,9 @@ void StealCardMove::apply(GameSession& session) const {
     if (victim.getNumOfResourceCards() == 0)
         return; // safety, should not happen if isValid passed
 
-    ResourceType stolen = victim.takeRandomResource();
+    ResourceType stolen = randomCard(victim.getResources(), session.getRng());
     thief.addResource(stolen, 1);
+    victim.removeResource(stolen,1);
 }
 
 std::unordered_set<PlayerId> StealCardMove::allValid(const GameSession &session) const {
@@ -56,5 +57,15 @@ std::unordered_set<PlayerId> StealCardMove::allValid(const GameSession &session)
     }
 
     return validPlayers;
+}
+
+ResourceCardType StealCardMove::randomCard(ResourcePack pack, std::mt19937 &mt) {
+    std::uniform_int_distribution<std::size_t> dist(0, pack.size() - 1);
+    auto it = std::next(pack.begin(), dist(mt));
+
+    while (it->second == 0){
+        it=std::next(pack.begin(), dist(mt));
+    }
+    return it->first;
 }
 
