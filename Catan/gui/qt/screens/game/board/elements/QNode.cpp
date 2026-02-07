@@ -151,6 +151,13 @@ void QNode::drawCity(QPainter& p, double size){
 void QNode::paint(QPainter& p, double size) {
     if (!m_node) return;
 
+    // Draw settlement/city if present
+    if (m_node->isCity()) {
+        drawCity(p, size);
+    } else if (m_node->isSettlement()) {
+        drawSettlement(p, size);
+    }
+
     // Hover ring: only over empty or settlement nodes
     if (m_hovered && hoverAllowed()) {
         p.save();
@@ -190,12 +197,5 @@ void QNode::paint(QPainter& p, double size) {
         p.drawEllipse(m_center, r, r);
 
         p.restore();
-    }
-
-    // Draw settlement/city if present
-    if (m_node->isCity()) {
-        drawCity(p, size);
-    } else if (m_node->isSettlement()) {
-        drawSettlement(p, size);
     }
 }

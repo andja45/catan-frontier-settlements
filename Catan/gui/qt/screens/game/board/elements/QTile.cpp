@@ -56,10 +56,10 @@ static void drawRobber(QPainter& p, const QPointF& c, double size)
     p.save();
     p.setRenderHint(QPainter::Antialiasing, true);
 
-    const double r = size * 0.18;                 // robber “head” radius
+    const double r = size * 0.18;
     const QPointF headC(c.x(), c.y() - size*0.06);
 
-    QColor fill(50, 50, 50, 240);
+    QColor fill(50, 50, 50, 260);
     QPen pen(Qt::black);
     pen.setWidthF(std::max(1.2, size * 0.02));
     p.setPen(pen);

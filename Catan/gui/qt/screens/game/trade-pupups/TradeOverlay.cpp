@@ -115,7 +115,7 @@ void TradeOverlay::addRespondWidget(const Trade &trade) {
     auto* player=m_players[m_currentId];
     TradeOffer offer={trade.receive(),trade.give()}; // we exchange give and receive for responding player
     auto tradeId=trade.id();
-    auto* widget=new RespondPlayerTradePopup(player,offer,tradeId,this);
+    auto* widget=new RespondPlayerTradePopup(player,offer,tradeId,trade.hasAccepted(player->getPlayerId()),this);
     connect(widget,&RespondPlayerTradePopup::tradeAccepted,this,&TradeOverlay::onTradeResponsePositive);
     connect(widget,&RespondPlayerTradePopup::tradeDeclined,this,&TradeOverlay::onTradeResponseNegative);
     m_root->addWidget(widget);

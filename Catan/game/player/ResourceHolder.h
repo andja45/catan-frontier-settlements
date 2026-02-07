@@ -16,8 +16,6 @@ enum class ResourceType;
 
 class ResourceHolder {
 protected:
-	int m_numOfDevCards =0;
-	int m_numOfResourceCards =0;
     std::map<ResourceType, int> m_resources;
     std::map<DevCardType, int> m_devCards;
     bool m_hasLongestRoad=false;
@@ -39,19 +37,31 @@ public:
         return true;
     }
 
-    void removeResource(ResourceType resourceType, int amount) { m_resources[resourceType]-= amount; m_numOfResourceCards-=amount;}
+    void removeResource(ResourceType resourceType, int amount) { m_resources[resourceType]-= amount;}
     void addResource(ResourceType resourceType, int amount) { removeResource(resourceType,-amount);}
-    void addDevCard(DevCardType devType) { m_devCards[devType]++; m_numOfDevCards++;}
-    void removeDevCard(DevCardType devType) { m_devCards[devType]--; m_numOfDevCards--;}
+    void addDevCard(DevCardType devType) { m_devCards[devType]++;}
+    void removeDevCard(DevCardType devType) { m_devCards[devType]--; }
     void removeResources(const ResourcePack& pack) { for (auto r:pack) removeResource(r.first,r.second);}
     void addResources(const ResourcePack& pack) { for (auto r:pack) addResource(r.first,r.second);}
 
     bool hasLongestRoad() const {return m_hasLongestRoad;}
     bool hasLargestMilitary() const {return m_hasLargestMilitary;}
 
-    int getNumOfDevCards() const {return m_numOfDevCards;}
+    int getNumOfDevCards() const {
+        int total=0;
+        for (auto d:m_devCards) {
+            total+=d.second;
+        }
+        return total;
+    }
     int getNumOfDevCards(DevCardType d) const {return m_devCards.at(d);}
-    int getNumOfResourceCards() const {return m_numOfResourceCards;};
+    int getNumOfResourceCards() const {
+        int total=0;
+        for (auto r:m_resources) {
+            total+=r.second;
+        }
+        return total;
+    };
     int getNumOfResourceCards(ResourceType r)  {return m_resources[r];}
     std::map<ResourceType, int> getResources() { return m_resources; }
     std::map<DevCardType, int> getDevCards() const {return m_devCards; }
@@ -64,7 +74,7 @@ public:
         if (it == m_devCards.end()) return false;
         return it->second > 0;
     }
-    bool hasDevCards() const {return m_numOfDevCards>0;}
+    bool hasDevCards() const {return getNumOfDevCards()>0;}
 
     std::string getName() { return m_name; }
     ResourcePack getResources() const {return m_resources;}

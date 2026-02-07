@@ -10,6 +10,11 @@ PopupService::PopupService()
     m_parentWidget = nullptr;
 }
 
+PopupService& PopupService::instance() {
+    static PopupService p;
+    return p;
+}
+
 void PopupService::showError(const QString& title, const QString& message)
 {
     QMessageBox::critical(m_parentWidget, title, message);

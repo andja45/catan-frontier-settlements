@@ -1,9 +1,10 @@
 #include "RespondPlayerTradePopup.h"
 
+#include <QButtonGroup>
 #include "../../../../common/audio/AudioManager.h"
 #include "player/Player.h"
 
-RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offer, TradeId tradeId , QWidget *parent) : FloatingPanel(parent), m_tradeId(tradeId)
+RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offer, TradeId tradeId, bool checked , QWidget *parent) : FloatingPanel(parent), m_tradeId(tradeId)
 {
 
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -15,30 +16,30 @@ RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offe
   //  setAttribute(Qt::WA_StyledBackground, false);
 
     setStyleSheet(R"(
-    QPushButton {
-        padding: 6px 10px;
-        border-radius: 8px;
-        background: rgba(0,0,0,0);
-    }
-    QPushButton:hover {
-        background: rgba(0,0,0,18);
-    }
-    QPushButton:pressed {
-        background: rgba(0,0,0,32);
-    }
-    QPushButton:disabled {
-        color: rgba(0,0,0,120);
-    }
-    QPushButton:checked {
-        font-weight: 700;
-        color: rgb(60,130,255);
-    }
-    QLabel.section {
-        font-weight: 600;
-        color: rgba(0,0,0,160);
-        padding-left: 4px;
-    }
-)");
+        QPushButton {
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0);
+        }
+        QPushButton:hover {
+            background: rgba(0,0,0,18);
+        }
+        QPushButton:pressed {
+            background: rgba(0,0,0,32);
+        }
+        QPushButton:disabled {
+            color: rgba(0,0,0,120);
+        }
+        QPushButton:checked {
+            font-weight: 700;
+            color: rgb(60,130,255);
+        }
+        QLabel.section {
+            font-weight: 600;
+            color: rgba(0,0,0,160);
+            padding-left: 4px;
+        }
+    )");
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(8, 12, 8, 12);
@@ -85,30 +86,33 @@ RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offe
     m_declineButton->setFixedSize(32, 24);
 
     m_declineButton->setCheckable(true);
-    m_declineButton->setAutoExclusive(false);
-
     m_acceptButton->setCheckable(true);
+
+    m_declineButton->setChecked(!checked);
+    m_acceptButton->setChecked(checked);
+
+    auto* group = new QButtonGroup(this);
+    group->setExclusive(true);
+    group->addButton(m_acceptButton);
+    group->addButton(m_declineButton);
+
     m_acceptButton->setEnabled(isOfferAcceptable());
 
     buttons->addWidget(m_declineButton);
     buttons->addWidget(m_acceptButton);
-
     layout->addLayout(buttons);
 
     connect(m_acceptButton, &QPushButton::clicked, this, [this]() {
         AudioManager::instance().playClick();
-
-        m_declineButton->setChecked(false);
         m_acceptButton->setChecked(true);
+        m_acceptButton->update();
         emit tradeAccepted(m_playerId,m_tradeId);
     });
 
     connect(m_declineButton, &QPushButton::clicked, this, [this]() {
         AudioManager::instance().playClick();
-
         m_declineButton->setChecked(true);
-        m_acceptButton->setChecked(false);
-
+        m_declineButton->update();
         emit tradeDeclined(m_playerId,m_tradeId);
     });
 }
