@@ -14,12 +14,12 @@ friend MoveProtoFactory;
 private:
     int m_diceRoll1;
     int m_diceRoll2;
-    void setDiceRoll(int d1, int d2){m_diceRoll1=d1; m_diceRoll2=d2;}
 public:
     explicit RollDiceMove(PlayerId playerId) : Move(playerId) {
         m_diceRoll1 = 0;
         m_diceRoll2 = 0;
     }
+    void setDiceRoll(int d1, int d2){m_diceRoll1=d1; m_diceRoll2=d2;}
     void setDiceRoll(GameSession& session);
     std::pair<int,int> getDiceRoll() const { return {m_diceRoll1, m_diceRoll2}; }
     MoveType type() const override { return MoveType::RollDice; }

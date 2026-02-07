@@ -76,25 +76,41 @@ TEST_CASE("RollDiceMove::isValid basic gate checks", "[RollDiceMove][isValid]") 
     REQUIRE(session.phase() == TurnPhase::InitialPlacement); // document current state
 
     // We can't RollDiceMove in InitialPlacement
-    RollDiceMove m0(/*player*/0, /*d1*/3, /*d2*/4);
+    RollDiceMove m0(/*player*/0);
+    m0.setDiceRoll(/*d1*/3, /*d2*/4);
     REQUIRE_FALSE(m0.isValid(session));
 
     session.forcePhase(TurnPhase::RollDice);
     REQUIRE(session.currentPlayer() == 0);
 
     SECTION("invalid if not current player") {
-        RollDiceMove mWrong(1, 3, 4);
+        RollDiceMove mWrong(1);
+        mWrong.setDiceRoll(3, 4);
         REQUIRE_FALSE(mWrong.isValid(session));
     }
 
     SECTION("invalid if dice out of range") {
-        REQUIRE_FALSE(RollDiceMove(0, 0, 4).isValid(session));
-        REQUIRE_FALSE(RollDiceMove(0, 7, 4).isValid(session));
-        REQUIRE_FALSE(RollDiceMove(0, 3, 9).isValid(session));
+        {
+            RollDiceMove m(0);
+            m.setDiceRoll(0, 4);
+            REQUIRE_FALSE(m.isValid(session));
+        }
+        {
+            RollDiceMove m(0);
+            m.setDiceRoll(7, 4);
+            REQUIRE_FALSE(m.isValid(session));
+        }
+        {
+            RollDiceMove m(0);
+            m.setDiceRoll(3, 9);
+            REQUIRE_FALSE(m.isValid(session));
+        }
     }
 
     SECTION("valid when current player, phase RollDice, dice in range and local") {
-        REQUIRE(RollDiceMove(0, 3, 4).isValid(session));
+        RollDiceMove m(0);
+        m.setDiceRoll(3, 4);
+        REQUIRE(m.isValid(session));
     }
 }
 
@@ -112,14 +128,16 @@ TEST_CASE("RollDiceMove::isValid remote verification uses copyRng sum", "[RollDi
     REQUIRE(d2 >= 1);
     REQUIRE(d2 <= 6);
 
-    RollDiceMove ok(1, d1, d2);
+    RollDiceMove ok(1);
+    ok.setDiceRoll(d1, d2);
     REQUIRE(ok.isValid(session));
 
     // Wrong sum should fail
     int bad2 = d2 == 6 ? 5 : 6;
     int bad1 = d1; // keep in range
     if (bad1 + bad2 == d1 + d2) bad2 = 4; // ensure mismatch
-    RollDiceMove bad(1, bad1, bad2);
+    RollDiceMove bad(1);
+    bad.setDiceRoll(bad1, bad2);
     REQUIRE_FALSE(bad.isValid(session));
     SUCCEED("Enable this test once you expose a test helper to set phase=current player to RollDice/1.");
 }
@@ -148,7 +166,8 @@ TEST_CASE("RollDiceMove::apply distributes resources for matched tiles") {
     int before = session.player(owner).getNumOfResourceCards(produced);
     int rolls8Before = session.gameData().getDiceRolls()[8];
 
-    RollDiceMove m(owner, 4, 4); // 8
+    RollDiceMove m(owner);
+    m.setDiceRoll(4, 4); // 8
     m.apply(session);
 
     int after = session.player(owner).getNumOfResourceCards(produced);
@@ -190,7 +209,8 @@ TEST_CASE("RollDiceMove::apply gives 2 resources for city", "[RollDiceMove][appl
 
     int before = session.player(owner).getNumOfResourceCards(produced);
 
-    RollDiceMove m(owner, 4, 4);
+    RollDiceMove m(owner);
+    m.setDiceRoll(4, 4);
     m.apply(session);
 
     int after = session.player(owner).getNumOfResourceCards(produced);
