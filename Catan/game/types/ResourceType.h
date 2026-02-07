@@ -1,5 +1,6 @@
 #ifndef RESOURCETYPE_H
 #define RESOURCETYPE_H
+#include <algorithm>
 #include <map>
 #include <string>
 #include <array>
@@ -15,19 +16,25 @@ enum class ResourceType {
     Sea, // for sea tiles
 };
 static const inline std::map<std::string,ResourceType> mapStringToRes = {
-    {"None",ResourceType::None},
-    {"Wood",ResourceType::Wood},
-    {"Wool",ResourceType::Wool},
-    {"Brick",ResourceType::Brick},
-    {"Ore",ResourceType::Ore},
-    {"Desert",ResourceType::Desert},
-    {"Sea",ResourceType::Sea},
-    {"Wheat",ResourceType::Wheat}
+    {"none",ResourceType::None},
+    {"wood",ResourceType::Wood},
+    {"wool",ResourceType::Wool},
+    {"brick",ResourceType::Brick},
+    {"ore",ResourceType::Ore},
+    {"desert",ResourceType::Desert},
+    {"sea",ResourceType::Sea},
+    {"wheat",ResourceType::Wheat}
 
 };
 static ResourceType fromString(const std::string& s) {
-    return mapStringToRes.at(s);
-    }
+    std::string s2 = s;
+    std::transform(s2.begin(), s2.end(), s2.begin(),
+        [](unsigned char c){ return std::tolower(c); });
+    if (mapStringToRes.find(s2) != mapStringToRes.end())
+        return mapStringToRes.at(s);
+    return ResourceType::None;
+}
+
 static bool resourceFromString(const std::string& s, ResourceType &outType) {
     auto it = mapStringToRes.find(s);
     if (it == mapStringToRes.end())

@@ -27,7 +27,11 @@ protected:
 public:
     ResourceHolder(const std::string &name="") : m_name(name)  {}
 
-    bool hasResource(ResourceType resourceType, int amount) const { return m_resources.at(resourceType)>=amount; }
+    bool hasResource(ResourceType resourceType, int amount) const {
+        auto it = m_resources.find(resourceType);
+        const int have = (it == m_resources.end()) ? 0 : it->second;
+        return have >= amount;
+    }
     bool hasResources(ResourcePack pack) const {
         for (auto r:pack) {
             if (!hasResource(r.first,r.second)) return false;
@@ -50,13 +54,17 @@ public:
     int getNumOfResourceCards() const {return m_numOfResourceCards;};
     int getNumOfResourceCards(ResourceType r)  {return m_resources[r];}
     std::map<ResourceType, int> getResources() { return m_resources; }
-    std::map<DevCardType, int> getDevCards() {return m_devCards; }
+    std::map<DevCardType, int> getDevCards() const {return m_devCards; }
 
     void setLongestRoad(bool longestRoad) {m_hasLongestRoad=longestRoad;}
     void setLargestArmy(bool largestMilitary) {m_hasLargestMilitary=largestMilitary;}
 
-    bool hasDevCard(DevCardType dev_card) const; // TODO implement
-    bool hasDevCards() const; // TODO implement, remove if makes no sense for both bank and player to have these two
+    bool hasDevCard(DevCardType dev_card) const {
+        auto it = m_devCards.find(dev_card);
+        if (it == m_devCards.end()) return false;
+        return it->second > 0;
+    }
+    bool hasDevCards() const {return m_numOfDevCards>0;}
 
     std::string getName() { return m_name; }
     ResourcePack getResources() const {return m_resources;}

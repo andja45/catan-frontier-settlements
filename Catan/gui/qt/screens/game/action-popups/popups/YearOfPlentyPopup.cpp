@@ -16,6 +16,8 @@
 #include <common/cards/QCard.h>
 #include <player/Bank.h>
 
+#include "common/audio/AudioManager.h"
+
 
 YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)
     : FloatingPanel( parent,Qt::Dialog), m_bank(bank)
@@ -26,7 +28,6 @@ YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)
     setAttribute(Qt::WA_TranslucentBackground, true);
     setAttribute(Qt::WA_StyledBackground, false);
 
-    // only styles controls, not QFrame
     setStyleSheet(R"(
         QPushButton {
             padding: 6px 10px;
@@ -59,7 +60,14 @@ YearOfPlentyPopup::YearOfPlentyPopup(Bank* bank, QWidget* parent)
 
     connect(m_playBtn, &QPushButton::clicked, this, [this]() {
         // valid only when exactly 2 selected
-        emit yearOfPlentySubmitted(m_choice);
+        AudioManager::instance().playClick();
+        ResourcePack rp;
+        for (auto [rt, cnt] : m_choice.receive) {
+            if (cnt!=0) {
+                rp[rt] = cnt;
+            }
+        }
+        emit yearOfPlentySubmitted({rp});
         closePopup();
     });
 
@@ -97,9 +105,10 @@ void YearOfPlentyPopup::updateUiState() {
         CardSpec s = c->spec();
         s.countBadge = m_choice.receive[rt];
 
-        // Optional: “disable look” when bank is empty
+        // “disable look” when bank is empty
         const bool bankHasAny = (m_bankResources.count(rt) ? m_bankResources.at(rt) : 0) > 0;
-        s.disabled=true;
+        if (!bankHasAny)
+            s.disabled=true;
         c->setSpec(s);
 
         (void)bankHasAny;
@@ -107,11 +116,9 @@ void YearOfPlentyPopup::updateUiState() {
 }
 
 void YearOfPlentyPopup::rebuild() {
-
+    m_bankResources= m_bank->getResources();
     // init data
-    std::vector<ResourceType> m_types;
-    for (auto rt : m_types) {
-        m_bankResources[rt] = m_bank->getNumOfResourceCards(rt);
+    for (auto [rt,_] : m_bank->getResources()) {
         m_types.push_back(rt);
         m_choice.receive[rt] = 0;
     }
@@ -124,7 +131,7 @@ void YearOfPlentyPopup::rebuild() {
         CardSpec spec;
         spec.kind = CardKind::Resource;
         spec.resource = rt;
-        spec.dev = DevCardType::None;     // adjust if your CardSpec expects this
+        spec.dev = DevCardType::None;
         spec.countBadge = 0;              // selected amount
         QCard* card = m_row->addCard(spec);
 

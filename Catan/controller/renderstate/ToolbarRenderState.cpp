@@ -18,7 +18,7 @@ void ToolbarRenderState::updateFromPhase(TurnPhase phase) {
             ToolbarActionType::BuildSettlement,
             ToolbarActionType::BuildCity,
             ToolbarActionType::BuyDevCard,
-            ToolbarActionType::BuyDevCard,
+            ToolbarActionType::PlayDevCard,
             ToolbarActionType::PlayerTrade,
             ToolbarActionType::BankTrade,
             ToolbarActionType::EndTurn
@@ -59,6 +59,14 @@ bool ToolbarRenderState::isEnabled(ToolbarActionType button) const {
 void ToolbarRenderState::clear() {
     m_enabledButtons.clear();
     m_enabledPopups.clear();
+}
+
+bool ToolbarRenderState::isEnabled(GamePopups popup) const {
+    return m_enabledPopups.find(popup) != m_enabledPopups.end();
+}
+
+void ToolbarRenderState::disableDev() {
+    m_enabledButtons.erase(ToolbarActionType::BuyDevCard);
 }
 
 // maybe setenabled and setselected and then in roadbuilding auto selected

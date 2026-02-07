@@ -22,8 +22,8 @@ ActionManager::ActionManager(std::vector<Player*> players,PlayerId local, Bank *
 
 }
 
-void ActionManager::setStealCandidates(const std::vector<Player *> &candidates) {
-    m_stealPopup->setCandidates(QVector<Player*>(candidates.begin(), candidates.end()));
+void ActionManager::setStealCandidates(const std::unordered_set<PlayerId>& set) {
+    openStealCardPopup(std::vector<PlayerId>(set.begin(), set.end()));
 }
 
 void ActionManager::openActionPopup(DevCardType type) {
@@ -39,7 +39,8 @@ void ActionManager::setAnchorWidget(QWidget* anchorWidget) {
 void ActionManager::openDiscardPopup() {
     auto* popup = ensureDiscardPopup();
     if (!popup) return;
-
+    if (popup->isVisible())
+        return;
     hideAllExcept(popup);
     popup->restart();
     //popup->openAtGlobal(m_player,m_bank , globalPos.isNull() ? defaultGlobalPos() : globalPos);

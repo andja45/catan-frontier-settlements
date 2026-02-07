@@ -17,7 +17,7 @@
 #include <common/theme/GameTheme.h>
 #include <player/Bank.h>
 
-#include "common/AudioManager.h"
+#include "../../../../common/audio/AudioManager.h"
 
 static const std::vector<ResourceType> kResourceCardTypes = {
     ResourceType::Wood,

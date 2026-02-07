@@ -18,10 +18,12 @@ class GameWindow : public QWidget
     Q_OBJECT
 public:
 
-    GameWindow(Board *board, std::vector<Player *> players, PlayerId currentPlayer, Bank *bank,
+    GameWindow(Board *board, std::vector<Player *> players, PlayerId currentPlayer, Bank *bank, const std::pair<int,int>*dice,
                std::unordered_map<TradeId,Trade> *trades, QWidget *parent);
 
     ~GameWindow();
+
+    void changeEvent(QEvent *event);
 
     QBoard* getBoard() { return m_qboard; }
     BoardToolbar* getToolbar() { return m_toolbar; }
@@ -32,7 +34,7 @@ public:
     GameOverlay* getOverlay() { return m_gameOverlay; }
     void paintEvent(QPaintEvent*);
 protected:
-
+    void closeEvent(QCloseEvent *event);
     void keyPressEvent(QKeyEvent* event) override;
 private:
     QBoard* m_qboard;
@@ -50,5 +52,8 @@ private:
     Bank* m_bank;
 
     std::unordered_map<TradeId,Trade>* m_trades;
+
+signals:
+    void closed();
 };
 #endif // WIDGET_H

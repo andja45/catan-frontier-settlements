@@ -9,8 +9,10 @@
 #include <board/BoardSerializer.hpp>
 #include <config/ConfigFactory.hpp>
 #include <config/ConfigSerializer.hpp>
+#include <google/protobuf/util/json_util.h>
 
 LobbyNetworkAdapter::LobbyNetworkAdapter(QObject *parent) {
+    m_transport=nullptr;
 }
 
 void LobbyNetworkAdapter::sendLeave() const {
@@ -26,15 +28,28 @@ void LobbyNetworkAdapter::sendStartRequest(const Board &board) const {
     m_transport->sendEnvelope(wrapStartRequest(board));
 }
 
-std::unique_ptr<NetworkTransport> LobbyNetworkAdapter::getTransport() {
-    return std::move(m_transport);
+void LobbyNetworkAdapter::sendJoined() {
+    m_transport->sendAck();
 }
 
-void LobbyNetworkAdapter::setTransport(std::unique_ptr<NetworkTransport> transport) {
-    m_transport = std::move(transport);
-    connect(m_transport.get(), &NetworkTransport::envelopeReceived,
-            this, &LobbyNetworkAdapter::onEnvelope);
+void LobbyNetworkAdapter::onError(const std::string &error) {
+    emit errored(error);
 }
+
+void LobbyNetworkAdapter::onDisconnected() {
+    emit disconnected();
+}
+
+void LobbyNetworkAdapter::setTransport(NetworkTransport *transport) {
+    m_transport=transport;
+    connect(m_transport, &NetworkTransport::envelopeReceived,
+                this, &LobbyNetworkAdapter::onEnvelope);
+    connect(m_transport, &NetworkTransport::errored,
+                this, &LobbyNetworkAdapter::onError);
+    connect(m_transport, &NetworkTransport::disconnected,
+                this, &LobbyNetworkAdapter::onDisconnected);
+}
+
 
 net::Envelope LobbyNetworkAdapter::wrapConfig(const GameConfig &config) const {
     net::Envelope env=prepareEnvelope();
@@ -63,13 +78,15 @@ net::Envelope LobbyNetworkAdapter::wrapLeave() const {
 net::Envelope LobbyNetworkAdapter::prepareEnvelope() const {
     net::Envelope env;
     env.set_msg_type(net::MSG_SETUP);
-    env.set_seq(m_transport->getNextSeqToSend());
-
     return env;
 }
 
 
 void LobbyNetworkAdapter::onEnvelope(const net::Envelope &env) {
+    std::string jsonString;
+    google::protobuf::util::MessageToJsonString(env, &jsonString);
+    qDebug() << "[Lobby] Received message: \n" << jsonString.c_str();
+
     if (env.msg_type() == net::MSG_SETUP) {
         auto protoSetup = env.setup();
         if (protoSetup.type() == net::Setup_MessageType_GAME_CONFIG)
@@ -78,7 +95,11 @@ void LobbyNetworkAdapter::onEnvelope(const net::Envelope &env) {
             handleGameStarted(env);
     }
     else {
-        qDebug() << "Received unknown message: " << env.msg_type(); // TODO
+        std::string jsonString;
+        google::protobuf::util::MessageToJsonString(env, &jsonString);
+
+        qDebug() << "Received unknown message: " << jsonString.c_str();
+        onError("Received unknown message");
     }
 }
 
@@ -93,5 +114,5 @@ void LobbyNetworkAdapter::handleGameStarted(const net::Envelope &env) {
     auto seed=data.seed();
     auto protoConfig=data.game_config();
     auto protoBoard=data.board_info();
-    emit gameStarted(myId, seed, ConfigFactory::fromProto(protoConfig), BoardFactory::fromProto(protoBoard));
+    emit gameStarted(myId, seed, ConfigFactory::fromProto(protoConfig), BoardFactory::fromProto(protoBoard).release());
 }

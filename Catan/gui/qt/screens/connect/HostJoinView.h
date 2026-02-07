@@ -1,15 +1,16 @@
 #ifndef GAMEJOINVIEW_H
 #define GAMEJOINVIEW_H
 
+#include <QDialog>
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
-#include <host-join/RoleType.hpp>
+#include <RoleType.hpp>
 
-class HostJoinView : public QWidget {
+class HostJoinView : public QDialog {
     Q_OBJECT
 
 private:
@@ -19,16 +20,18 @@ private:
     QLabel *m_errorLabel;
     RoleType m_type;
 
+    void closeEvent(QCloseEvent *event) override;
 public:
     explicit HostJoinView(RoleType type,QWidget *parent = nullptr);
 
 public slots:
     void onRejected(const std::string &reason);
-    void onAccepted();
 public:
     void clearError();
 
 signals:
     void requestSent(const QString &gameName, const QString &playerName);
+    void closed();
+
 };
 #endif // GAMEJOINVIEW_H

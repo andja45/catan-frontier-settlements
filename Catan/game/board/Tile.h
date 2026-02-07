@@ -38,7 +38,7 @@ public:
     int getNumber() const { return m_number; }
 
     bool isRobberOnTile() const { return m_robberOnTile; }
-    void setRobber(){ m_robberOnTile = true;}
+    void setRobber(bool set=true){ m_robberOnTile = set;}
 
     TileCoords getTileCoord() const { return m_tileCoord; }
     TileId getTileId() const { return m_tileId; }

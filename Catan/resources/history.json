@@ -1,6 +1,6 @@
 [
   {
-    "gameId": 1001,
+    "gameId": "Moja partija",
     "numOfPlayers": 4,
     "numOfTurns": 31,
     "datetime": "2026-01-09 18:42:11",
@@ -42,7 +42,7 @@
     }
   },
   {
-    "gameId": 1002,
+    "gameId": "Kurose",
     "numOfPlayers": 3,
     "numOfTurns": 28,
     "datetime": "2026-01-07 13:11:14",
@@ -79,7 +79,7 @@
     }
   },
   {
-    "gameId": 1003,
+    "gameId": "Coce",
     "numOfPlayers": 4,
     "numOfTurns": 34,
     "datetime": "2026-01-07 09:47:18",

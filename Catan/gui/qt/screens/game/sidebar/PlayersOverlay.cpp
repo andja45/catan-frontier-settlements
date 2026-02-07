@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <common/player/PlayerDetailedView.hpp>
 #include <common/player/PlayerView.hpp>
+#include <common/theme/GameTheme.h>
 #include <player/Bank.h>
 #include <player/Player.h>
 
@@ -16,7 +17,7 @@ PlayersOverlay::PlayersOverlay(std::vector<Player*>players,Bank* bank,PlayerId a
     stackBox->setContentsMargins(0, 0, 0, 0);
     stackBox->setSpacing(10);
 
-    m_bankView= new PlayerDetailedView(bank,this);
+    m_bankView= new PlayerDetailedView(bank,QString::fromStdString("Bank"),this);
     stackBox->addWidget(m_bankView);
 
     m_playerPanels =  std::vector<PlayerView*>();
@@ -26,7 +27,7 @@ PlayersOverlay::PlayersOverlay(std::vector<Player*>players,Bank* bank,PlayerId a
         stackBox->addWidget(pv);
     }
 
-    m_localPlayerView = new PlayerDetailedView(players[activePlayerId],this);
+    m_localPlayerView = new PlayerDetailedView(players[activePlayerId],"You",this,true,GameTheme::getPlayerColor(activePlayerId));
 
     stackBox->addWidget(m_localPlayerView);
     stackBox->addStretch(1);
@@ -48,7 +49,13 @@ void PlayersOverlay::refreshTurnGlow()
     if (m_activePlayerId != -1)
         m_playerPanels[m_activePlayerId]->setActiveHighlight(true);
 }
-void PlayersOverlay::setActivePlayer(PlayerId pid) {
+void PlayersOverlay::update(PlayerId pid) {
     m_activePlayerId=pid;
     refreshTurnGlow();
+    for (auto p:m_playerPanels) {
+        p->refresh();
+    }
+    m_localPlayerView->refresh();
+    m_bankView->refresh();
+    QWidget::update();
 }

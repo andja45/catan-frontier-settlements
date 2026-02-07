@@ -5,7 +5,7 @@
 #include"../../game/types/ResourceType.h"
 #include <model/MoveCosts.h>
 
-BoardToolbar::BoardToolbar(Player* player,QWidget* parent) : QWidget(parent), m_player(player) {
+BoardToolbar::BoardToolbar(Player* player,const std::pair<int,int>* dice,QWidget* parent) : QWidget(parent), m_player(player) {
     setAttribute(Qt::WA_StyledBackground, true);
     setStyleSheet("background: transparent;");
     setAutoFillBackground(false);
@@ -40,32 +40,50 @@ BoardToolbar::BoardToolbar(Player* player,QWidget* parent) : QWidget(parent), m_
 
     buttonsLayout->addStretch(1);
 
-    auto* diceWidget = new DiceWidget(this);
-    buttonsLayout->addWidget(diceWidget);
+    m_dice = new DiceWidget(dice,this);
+    buttonsLayout->addWidget(m_dice);
+    connect(m_dice, &DiceWidget::clicked, this, [this]() {
 
-    buttonsLayout->addWidget(createButtonForType(ToolbarActionType::EndTurn));
+        emit diceRolled();
+    });
 
+    //m_buttons[ToolbarActionType::RollDice] = m_dice;
 
-
-
-    connect(m_tradePopup, &RequestPlayerTradePopup::tradeSubmitted,
-            this, &BoardToolbar::playerTradeRequested);
-    connect(m_requestBankTradePopup, &RequestBankTradePopup::tradeSubmitted,
-            this, &BoardToolbar::bankTradeRequested);
-    connect(m_chooseDevCardPopup, &ChooseDevCardPopup::devCardChosen,this, &BoardToolbar::devCardChosen);
+    auto btn=createButtonForType(ToolbarActionType::EndTurn);
+    buttonsLayout->addWidget(btn);
+    m_buttons[ToolbarActionType::EndTurn] = btn;
 
 }
 
-void BoardToolbar::updateState(ToolbarRenderState rs) {
+void BoardToolbar::updateState(const ToolbarRenderState& rs) {
     // we unclick build buttons here, consider changing
     clearBuildSelection();
+
     for (auto& [action, button] : m_buttons.toStdMap()) {
         if (rs.isEnabled(action)) {
             button->setEnabled(true);
         } else {
             button->setEnabled(false);
         }
+
+        if (!MoveCosts::costFor(action).empty()) {
+            ResourcePack rp;
+            for (auto r: MoveCosts::costFor(action)) {
+                rp[r]++;
+            }
+            if (!m_player->hasResources(rp))
+                button->setEnabled(false);
+        }
     }
+    if (rs.isEnabled(ToolbarActionType::RollDice)) {
+        m_dice->setEnabled(true);
+    }
+    else {
+        m_dice->setEnabled(false);
+    }
+
+
+    QWidget::update();
 }
 
 void BoardToolbar::showPlayerTradePopup()
@@ -102,6 +120,8 @@ void BoardToolbar::showDevCardPopup() {
     auto* button = qobject_cast<QWidget*>(sender());
     if (!button) return;
 
+    m_chooseDevCardPopup->rebuild();
+
     QPoint pos = button->mapToGlobal(
         QPoint(button->width()/2 - m_chooseDevCardPopup->sizeHint().width()/2,
                 - m_chooseDevCardPopup->sizeHint().height() - 8));
@@ -116,6 +136,8 @@ void BoardToolbar::disableAllButtons() {
     for (auto* btn : m_buttons) {
         btn->setEnabled(false);
     }
+    m_dice->setEnabled(false);
+
 }
 
 void BoardToolbar::enableAllButtons() {
@@ -137,14 +159,17 @@ FloatingButton *BoardToolbar::createButtonForType( ToolbarActionType action) {
 
     if (action == ToolbarActionType::BuildSettlement) {
         m_countSettlements = new QCountBadge(m_player->getNumOfSettlementsLeft(), btn);
+        m_countSettlements->setColor(GameTheme::getPlayerColor(m_player->getPlayerId()));
         btn->addWidget(m_countSettlements);
     }
     else if (action == ToolbarActionType::BuildCity) {
         m_countCities = new QCountBadge(m_player->getNumOfCitiesLeft(), btn);
+        m_countCities->setColor(GameTheme::getPlayerColor(m_player->getPlayerId()));
         btn->addWidget(m_countCities);
     }
     else if (action == ToolbarActionType::BuildRoad) {
         m_countRoads = new QCountBadge(m_player->getNumOfRoadsLeft(), btn);
+        m_countRoads->setColor(GameTheme::getPlayerColor(m_player->getPlayerId()));
         btn->addWidget(m_countRoads);
     }
 
@@ -204,6 +229,7 @@ void BoardToolbar::clearBuildSelection()
         btn->setChecked(false);
     }
     m_buildGroup->setExclusive(true);
+
 }
 
 bool BoardToolbar::eventFilter(QObject* obj, QEvent* event)

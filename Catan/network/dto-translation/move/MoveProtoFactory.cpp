@@ -31,24 +31,26 @@ std::unique_ptr<Move> MoveProtoFactory::fromProto(const net::Move& proto) {
 
     PlayerId pId = proto.player_id();
 
-    switch (proto.payload_case()) {
+    switch (proto.type()) {
 
-      case net::Move::kRollDice:
-            return std::make_unique<RollDiceMove>(pId);
-
-        case net::Move::kEndTurn:
+        case net::Move_MoveType_RollDice: {
+            auto move= std::make_unique<RollDiceMove>(pId);
+            static_cast<RollDiceMove*>(move.get())->setDiceRoll(proto.roll_dice().dice_1(), proto.roll_dice().dice_2());
+            return std::move(move);
+        }
+        case net::Move_MoveType_EndTurn:
             return std::make_unique<EndTurnMove>(pId);
 
-        case net::Move::kBuildRoad:
+        case net::Move_MoveType_BuildRoad:
             return std::make_unique<BuildRoadMove>(pId, proto.build_road().edge_id());
 
-        case net::Move::kBuildSettlement:
+        case net::Move_MoveType_BuildSettlement:
             return std::make_unique<BuildSettlementMove>(pId, proto.build_settlement().node_id());
 
-        case net::Move::kBuildCity:
+        case net::Move_MoveType_BuildCity:
             return std::make_unique<BuildCityMove>(pId, proto.build_city().node_id());
 
-        case net::Move::kDiscardCards: {
+        case net::Move_MoveType_DiscardCards: {
             ResourcePack discarded;
             for (auto const& [res_int, count] : proto.discard_cards().discarded()) {
                 discarded[static_cast<ResourceType>(res_int)] = count;
@@ -56,49 +58,53 @@ std::unique_ptr<Move> MoveProtoFactory::fromProto(const net::Move& proto) {
             return std::make_unique<DiscardCardsMove>(pId, discarded);
         }
 
-        case net::Move::kSetRobber:
+        case net::Move_MoveType_SetRobber:
             return std::make_unique<SetRobberMove>(pId, proto.set_robber().tile_id());
 
-        case net::Move::kStealCard:
+        case net::Move_MoveType_StealCard:
             return std::make_unique<StealCardMove>(pId, proto.steal_card().victim_player_id());
 
-        case net::Move::kBuyDevCard:
-            return std::make_unique<BuyDevCardMove>(pId);
-
-        case net::Move::kMonopoly:
+        case net::Move_MoveType_BuyDevCard: {
+            auto dev=std::make_unique<BuyDevCardMove>(pId);
+            dev->setDevCard(static_cast<DevCardType>(proto.buy_dev_card().card_type()));
+            return std::move(dev);
+        }
+        case net::Move_MoveType_Monopoly:
             return std::make_unique<MonopolyMove>(pId, static_cast<ResourceType>(proto.monopoly().resource_type()));
 
-        case net::Move::kPlayDevCard:
+        case net::Move_MoveType_PlayDevCard:
             return std::make_unique<PlayDevCardMove>(pId, static_cast<DevCardType>(proto.play_dev_card().card_type()));
 
-        case net::Move::kYearOfPlenty:
+        case net::Move_MoveType_YearOfPlenty:
             return std::make_unique<YearOfPlentyMove>(pId,
                 static_cast<ResourceType>(proto.year_of_plenty().resource_1()),
                 static_cast<ResourceType>(proto.year_of_plenty().resource_2()));
 
-        case net::Move::kBankTrade:
+        case net::Move_MoveType_BankTrade:
             return std::make_unique<BankTradeMove>(pId,
                 static_cast<ResourceType>(proto.bank_trade().give_resource()),
                 static_cast<ResourceType>(proto.bank_trade().get_resource()));
 
-        case net::Move::kTradeRequest: {
+        case net::Move_MoveType_PlayerTradeRequest: {
             ResourcePack give, receive;
             for (auto const& [res, count] : proto.trade_request().give_resource())
                 give[static_cast<ResourceType>(res)] = count;
             for (auto const& [res, count] : proto.trade_request().get_resource())
                 receive[static_cast<ResourceType>(res)] = count;
-            return std::make_unique<PlayerTradeRequestMove>(pId, give, receive);
+            auto move= std::make_unique<PlayerTradeRequestMove>(pId, give, receive);
+            move->setTradeId(proto.trade_request().trade_request_id());
+            return move;
         }
 
-        case net::Move::kTradeResponse:
-            return std::make_unique<PlayerTradeResponseMove>(pId, proto.trade_response().trade_request_id());
+        case net::Move_MoveType_PlayerTradeResponse:
+            return std::make_unique<PlayerTradeResponseMove>(pId, proto.trade_response().trade_request_id(),proto.trade_response().is_positive());
 
-        case net::Move::kTradeAccept:
+        case net::Move_MoveType_PlayerTradeAccept:
             return std::make_unique<PlayerTradeAcceptMove>(pId,
                 proto.trade_accept().accept_player_id(),
                 proto.trade_accept().trade_id());
 
-    case net::Move::kLeaveMove:
+    case net::Move_MoveType_PlayerLeave:
         return std::make_unique<PlayerLeaveMove>(pId);
 
         default:

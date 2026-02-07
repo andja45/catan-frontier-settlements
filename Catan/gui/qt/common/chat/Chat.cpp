@@ -11,6 +11,9 @@
 
 #include <QRegularExpression>
 
+#include "common/audio/AudioManager.h"
+#include "screens/game/action-popups/ActionManager.hpp"
+
 QString Chat::emojify(QString text)
 {
     struct Replace {
@@ -33,16 +36,17 @@ QString Chat::emojify(QString text)
         );
         text.replace(re, r.emoji);
     }
+    return text;
 }
 
 QSize Chat::sizeHint() const {
-    return {300,0};
+    return {500,0};
 }
 
 Chat::Chat(QWidget *parent) {
     setAttribute(Qt::WA_TransparentForMouseEvents, false);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    setMinimumHeight(100);
+    setMinimumHeight(250);
     setMinimumWidth(150);
     buildChatUi();
 }
@@ -75,12 +79,16 @@ void Chat::buildChatUi() {
 
     auto sendNow = [this]() {
         const QString text = m_chatInput->text().trimmed();
-        if (text.isEmpty()) return;
+        if (text.isEmpty()) {
+        AudioManager::instance().playError();
+            return;
+        }
+        AudioManager::instance().playClick();
         emit chatSendRequested(text);
         m_chatInput->clear();
     };
-    QObject::connect(m_sendBtn, &QPushButton::clicked, this, sendNow);
-    QObject::connect(m_chatInput, &QLineEdit::returnPressed, this, sendNow);
+    connect(m_sendBtn, &QPushButton::clicked, this, sendNow);
+    connect(m_chatInput, &QLineEdit::returnPressed, this, sendNow);
 }
 
 void Chat::addChatMessage(const QString& author, const QString& message) {

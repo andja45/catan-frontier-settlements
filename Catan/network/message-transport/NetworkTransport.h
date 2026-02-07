@@ -17,17 +17,17 @@ class NetworkTransport : public QObject {
     Q_OBJECT
   public:
     explicit NetworkTransport(QObject* parent = nullptr);
-    void connectTo(const std::string& addr, uint16_t port);
-    void connectTo(const QHostAddress& addr, uint16_t port) const;
     void sendEnvelope(const net::Envelope& env);
-    void setSocket(QTcpSocket* socket) { this->m_socket = socket; }
-
-    int32_t getNextSeqToSend() { return m_nextSeqToSend++; }
-
+    void setSocket(QTcpSocket* socket);
+    void sendError(const std::string& error);
+    void sendAck();
+    QTcpSocket::SocketState state() const;
     signals:
         void envelopeReceived(const net::Envelope& env);
-        void disconnected();
-        void errored(); // TODO
+
+        void disconnected(); // just propagate
+        void errored(const std::string&);
+
 
 private:
     int32_t m_nextSeqToSend = 0;

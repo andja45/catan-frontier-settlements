@@ -37,7 +37,9 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
 
         case MoveType::RollDice: {
             proto.set_type(net::Move::RollDice);
-            proto.mutable_roll_dice();
+            auto* m = static_cast<const RollDiceMove*>(&move);
+            proto.mutable_roll_dice()->set_dice_1(m->getDiceRoll().first);
+            proto.mutable_roll_dice()->set_dice_2(m->getDiceRoll().second);
             break;
         }
 
@@ -97,7 +99,8 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
 
         case MoveType::BuyDevCard: {
             proto.set_type(net::Move::BuyDevCard);
-            proto.mutable_buy_dev_card();
+            auto* m=(static_cast<const BuyDevCardMove*>(&move));
+            proto.mutable_buy_dev_card()->set_card_type(static_cast<net::DevCardType>(static_cast<int32_t>(m->getDevCard())));
             break;
         }
 
@@ -128,8 +131,8 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
             proto.set_type(net::Move::BankTrade);
             auto* m = static_cast<const BankTradeMove*>(&move);
             auto* bank_proto = proto.mutable_bank_trade();
-            bank_proto->set_get_resource(static_cast<net::ResourceType>(m->getGive()));
             bank_proto->set_get_resource(static_cast<net::ResourceType>(m->getReceive()));
+            bank_proto->set_give_resource(static_cast<net::ResourceType>(m->getGive()));
             break;
         }
 
@@ -137,6 +140,7 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
             proto.set_type(net::Move::PlayerTradeRequest);
             auto* m = static_cast<const PlayerTradeRequestMove*>(&move);
             auto* req_proto = proto.mutable_trade_request();
+            req_proto->set_trade_request_id(m->getTradeId());
             for (auto const& [res, count] : m->getGive()) {
                 (*req_proto->mutable_give_resource())[static_cast<int32_t>(res)] = count;
             }
@@ -150,6 +154,7 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
             proto.set_type(net::Move::PlayerTradeResponse);
             auto* m = static_cast<const PlayerTradeResponseMove*>(&move);
             proto.mutable_trade_response()->set_trade_request_id(m->getTradeRequestId());
+            proto.mutable_trade_response()->set_is_positive(m->getIsPositive());
             break;
         }
 
@@ -164,6 +169,7 @@ net::Move MoveProtoSerializer::toProto(const Move& move) {
 
         case MoveType::PlayerLeave: {
             proto.set_type(net::Move::PlayerLeave);
+            proto.mutable_leave_move();
             break;
         }
         default:

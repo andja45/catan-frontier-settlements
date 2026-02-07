@@ -81,7 +81,7 @@ message SetRobberMove { uint32 tile_id = 1; }
 
 message StealCardMove { uint32 victim_player_id = 1; }
 
-message BuyDevCardMove {}
+message BuyDevCardMove { DevCardType card_type = 1; }
 
 message PlayDevCardMove { DevCardType card_type = 1; }
 
@@ -106,6 +106,7 @@ message PlayerTradeRequestMove {
 
 message PlayerTradeResponseMove {
   uint32 trade_request_id = 1;
+  bool is_positive = 2;
 }
 
 message PlayerTradeAcceptMove {

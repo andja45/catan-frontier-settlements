@@ -47,14 +47,15 @@ void Bank::initializeBank(const ResourcePack &res, const DevPack &devCards) {
 }
 
 DevCardType Bank::takeRandomDev() {
+	DevCardType dev_card;
 	std::random_device rd;
 	std::mt19937 g(rd());
 	std::uniform_int_distribution<std::size_t> dist(0, m_devCards.size() - 1);
 	auto it = std::next(m_devCards.begin(), dist(g));
-
+	
 	while (it->second == 0){
 		it=std::next(m_devCards.begin(), dist(g));
 	}
-		removeDevCard(it->first);
+	removeDevCard(it->first);
 	return it->first;
 }

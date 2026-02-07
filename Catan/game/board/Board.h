@@ -17,13 +17,13 @@
 // helper struct to specify board layout and pass parameters to create tiles
 struct TileDef { int q, r; ResourceType res; int number; };
 struct PortDef { int q, r, i; TradeType tradeType;};
-//TODO consider trade and houses saved here?
+
 class Board {
 private:
     void clearBoard();
-    // TODO add ports, load ports, from file
+    // TODO load ports, from file
 
-    TileId m_robberTile = types::InvalidTileId; // TODO maybe just in board? no need for every tile to know isrobbery maybe?
+    TileId m_robberTile = types::InvalidTileId;
 
     // board is owner of all its elements, raw pointers are used inside to connect elements for convinience and optimization
     // make sure element id corresponds to index in these vectors during creation
@@ -42,20 +42,22 @@ public:
     Board() = default;
     ~Board()=default;
 
-    void initializeBoard(std::vector<TileDef> tileDefs);
-    void addTrade(NodeCoords nodeCoords, TradeType tradeType);
-    void addTrade(EdgeCoords edgeCoords, TradeType tradeType);
+    void initializeBoard(std::vector<TileDef> tileDefs); // constructs board from tiles
     void loadTrades(std::vector<PortDef> portDefs);
+    void addTrade(NodeCoords nodeCoords, TradeType tradeType);
+    void addTrade(EdgeCoords edgeCoords, TradeType tradeType); // adds trade to two nodes incident to edge
 
     std::vector<NodeCoords> getTradeCoords() const {return m_tradeCoords;}
 
     std::vector<Tile*> getTilesWithNumber(int num);
 
-    TileId robberTile() const {} // TODO implement, this returns id
+    TileId robberTileId() const {
+        return m_robberTile;
+    }
 
-    Tile* getTileAt(TileCoords coords); // TODO make const and implement guards
+    Tile* getTileAt(TileCoords coords) const;
     Node* getNodeAt(NodeCoords) const;
-    Edge* getEdgeAt(EdgeCoords);
+    Edge* getEdgeAt(EdgeCoords) const;
 
     Node* getNodeById(NodeId nodeId) const;
     Edge* getEdgeById(EdgeId edgeId) const;
@@ -83,7 +85,7 @@ public:
     bool edgeTouchesPlayersBuilding(PlayerId playerId, EdgeId edgeId) const; // checks if edge is incident with node belonging to player with given player id
     bool edgeTouchesPlayersRoad(PlayerId playerId, EdgeId edgeId) const; // similar to above but for edges
     bool nodeTouchesPlayerRoad(PlayerId playerId, NodeId nodeId) const;
-    bool tileTouchesPlayerBuilding(PlayerId playerId, TileId tileId) const; // TODO implement, maybe already has similar function?
+    bool tileTouchesPlayerBuilding(PlayerId playerId, TileId tileId) const;
 
     bool edgeTouchesNode(NodeId nodeId, EdgeId edgeId) const; // checks if edge is incident with given node
     bool nodeTouchesAnyBuilding(NodeId nodeId) const;
@@ -91,18 +93,21 @@ public:
     void placeRoad(PlayerId playerId, EdgeId edgeId) const;
     void placeSettlement(PlayerId playerId, NodeId nodeId);
     void placeCity(PlayerId playerId, NodeId nodeId);
-    void placeRobber(TileId tileId) { getTileById(tileId)->setRobber(); }
+    void placeRobber(TileId tileId) { getTileById(m_robberTile)->setRobber(false);  getTileById(tileId)->setRobber(); m_robberTile=tileId; }
 
     bool isBuildingOwnedBy(PlayerId playerId, NodeId nodeId) const; // consider removing, use get node owner and check yourself
     bool isNodeSettlement(NodeId nodeId) const;
+    bool isNodeCity(NodeId nodeId) const;
 
     std::vector<AxialCoords> getBoardCords() const;
     std::vector<TileDef> getTileDefs() const;
     std::vector<PortDef> getPortDefs() const;
 
-    std::vector<EdgeId> edgeIds() const; // TODO add
+    std::vector<EdgeId> edgeIds() const;
     std::vector<NodeId> nodeIds() const;
     std::vector<TileId> tileIds() const;
+
+    void loadPorts(std::vector<PortDef> portDefs);
 };
 
 

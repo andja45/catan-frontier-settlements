@@ -2,7 +2,7 @@
 #include <common/theme/GameTheme.h>
 #include <QPainter>
 #include <QMouseEvent>
-#include <common/AudioManager.h>
+#include <common/audio/AudioManager.h>
 
 static QString devLabel(DevCardType t) {
     switch (t) {
@@ -41,7 +41,7 @@ void QCard::flicker(const QColor& color)
     m_flickerTimer.start();
     update();
 }
-QSize QCard::sizeHint() const { return QSize(44, 58); } // tweak later
+QSize QCard::sizeHint() const { return QSize(44, 58); }
 
 QSize QCard::minimumSizeHint() const { return QSize(20, 35); }
 
@@ -89,7 +89,7 @@ void QCard::paintEvent(QPaintEvent*) {
             base = QColor(60, 70, 180);
         else base = GameTheme::getColorByResource(m_spec.resource);
     } else {
-        base = QColor(120, 90, 160); // dev card tint for now
+        base = QColor(120, 90, 160); // dev card tint
     }
 
     // Card body
@@ -155,13 +155,14 @@ void QCard::paintEvent(QPaintEvent*) {
         p.drawRoundedRect(r, radius, radius);
     }
     if (m_spec.disabled) {
-        QColor c = GameTheme::getColorByResource(ResourceType::None);
+        QColor c = GameTheme::getColorByResource(m_spec.resource).darker(100);
+        c.setAlpha(200);
         p.setPen(Qt::NoPen);
         p.setBrush(c);
         p.drawRoundedRect(r, radius, radius);
     }
     // Count badge
-        if (m_spec.countBadge >= 0) {
+        if (m_spec.countBadge > 0) {
         const int badge = m_spec.countBadge;
         qreal number_radius = 25;
         QRectF b((r.right() + r.left()) / 2 - number_radius / 2, (r.top() + r.bottom()) / 2 - number_radius / 2,

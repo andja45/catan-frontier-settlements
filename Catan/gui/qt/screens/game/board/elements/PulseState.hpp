@@ -14,14 +14,14 @@ public:
     explicit PulseState(QObject* parent = nullptr)
         : QObject(parent)
     {
-        m_timer.setInterval(16);
+        m_timer.setInterval(30);
         connect(&m_timer, &QTimer::timeout, this, &PulseState::tick);
         m_timer.start();
     }
     QColor pulseColor(QColor base) {
         float t = m_value;
-        auto col=base.lighter(100 + int(80 * t));
-        col.setAlphaF(0.6 + 0.4 * t);
+        auto col=base.lighter(80 + int(80 * t));
+        col.setAlphaF(0.4 + 0.4 * t);
         return col;
     }
 

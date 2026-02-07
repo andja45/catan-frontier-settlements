@@ -21,8 +21,8 @@ private:
     void setId(TradeId tradeId) { m_id = tradeId; }
     friend  class GameSession;
 public:
-    Trade(PlayerId requester, ResourcePack give, ResourcePack receive)
-        : m_requester(requester), m_give(give), m_receive(receive) {}
+    Trade(PlayerId requester, ResourcePack give, ResourcePack receive, TradeId tradeId=-1)
+        : m_requester(requester), m_give(give), m_receive(receive), m_id(tradeId) {}
 
     TradeId id() const { return m_id; }
     PlayerId requester() const { return m_requester; }
@@ -34,14 +34,18 @@ public:
         return m_respondedPlayers.find(playerId) != m_respondedPlayers.end();
     }
 
-    bool canRespond(PlayerId player) const { // so he cant accept twice
-        return player != m_requester && !hasAccepted(player);
+    bool canRespond(PlayerId player) const {
+        return player != m_requester;
     }
 
-    void markResponded(PlayerId player) {
+    void markResponded(PlayerId player, bool wantsTrade) {
         if (!canRespond(player))
             return;
-        m_respondedPlayers.insert(player);
+        if (wantsTrade)
+            m_respondedPlayers.insert(player);
+        else {
+            m_respondedPlayers.erase(player);
+        }
     }
 
     std::vector<PlayerId> respondedPlayers() const { return std::vector<PlayerId>(m_respondedPlayers.begin(), m_respondedPlayers.end()); }

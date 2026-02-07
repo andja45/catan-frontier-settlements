@@ -7,15 +7,13 @@
 
 #include <vector>
 #include <memory>
+#include <ServerTypes.hpp>
 #include <model/GameConfig.h>
 
 #include "ClientConnection.hpp"
 #include "model/GameSession.h"
 
-enum class RoomState {
-    Lobby,
-    InGame
-};
+
 
 class Room {
 public:
@@ -26,16 +24,15 @@ public:
 
     void kickPlayer(ClientConnection * client_connection);
 
-    void processMove(ClientConnection *, net::Move &move);
+    void processMove(ClientConnection *, const net::Move &move);
     void processMessage(ClientConnection*, const std::string&);
 
     void processConfig(ClientConnection*,const net::GameConfig&);
     void processStartRequest(ClientConnection*, const net::StartGameRequest&);
 
-    void broadcast(const net::Envelope&);
+    void processError(ClientConnection * client, const std::string & error);
 
-    void processDice(net::Move &move);
-    void processTradeRequest(net::Move &move);
+    void broadcast(const net::Envelope&);
 
     bool isEmpty() const;
     bool isFull() const;
@@ -44,7 +41,19 @@ public:
     void broadcastMove(net::Move);
     void broadcastStartGame();
 
+    void setHost(ClientConnection * host);
 
+    void kickInactivePlayers();
+
+    void kickEveryone();
+
+    void setPlayerReady(ClientConnection * client_connection);
+
+    bool checkStartGame();
+
+    void lobbyToGame();
+
+    RoomState getState() const;
 
 private:
     std::string m_name;
@@ -52,14 +61,9 @@ private:
     ClientConnection* m_host=nullptr;
     std::vector<ClientConnection*> m_players;
 
-    std::unique_ptr<GameSession> m_session;
+    std::unique_ptr<GameSession> m_session; // session for in game config for lobby
     std::unique_ptr<GameConfig> m_config;
-
-    int m_currTradeId=0;
     int m_seed;
-
-    std::mt19937 m_rng;
-    std::uniform_int_distribution<int> m_d6{1, 6};
 };
 
 

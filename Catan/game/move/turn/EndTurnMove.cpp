@@ -17,5 +17,5 @@ bool EndTurnMove::isValid(const GameSession& session) const {
 }
 
 void EndTurnMove::apply(GameSession& session) const {
-    //TODO GameSession changes phases and advances players
+    // GameSession changes phases and advances players ?
 }

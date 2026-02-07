@@ -43,8 +43,8 @@ add_library(catan_gui_qt
         screens/mainmenu/MainMenu.cpp
         screens/mainmenu/MainMenu.h
         resources/resources.qrc
-        common/AudioManager.cpp
-        common/AudioManager.h
+        common/audio/AudioManager.cpp
+        common/audio/AudioManager.h
         screens/game/trade-pupups/TradeOverlay.cpp
         screens/game/trade-pupups/TradeOverlay.hpp
         common/player/PlayerView.cpp
@@ -65,6 +65,13 @@ add_library(catan_gui_qt
         screens/game/game-overlay/GameOverlay.hpp
         screens/game/board/elements/PulseState.cpp
         screens/game/board/elements/PulseState.hpp
+        screens/messageservice/PopupService.cpp
+        screens/messageservice/PopupService.hpp
+        screens/messageservice/MessageIntent.hpp
+        common/panels/FloatingTextPill.cpp
+        common/panels/FloatingTextPill.hpp
+        common/style/QtAppStyle.cpp
+        common/style/QtAppStyle.hpp
 )
 
 target_include_directories(catan_gui_qt

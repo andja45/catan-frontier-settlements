@@ -5,7 +5,8 @@
 #include <QPaintEvent>
 #include <QtMultimedia/QSoundEffect>
 #include <screens/mainmenu/MainMenu.h>
-#include "common/AudioManager.h"
+#include "../../common/audio/AudioManager.h"
+#include <QGuiApplication>
 
 MainMenu::MainMenu(QWidget *parent) : QWidget(parent)
 {
@@ -52,9 +53,9 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent)
 
     auto playClick = []() { AudioManager::instance().play(AudioManager::Sfx::Click); };
 
-    connect(btnHost, &QPushButton::pressed, this, playClick);
-    connect(btnJoin, &QPushButton::pressed, this, playClick);
-    connect(btnHistory, &QPushButton::pressed, this, playClick);
+    connect(btnHost, &QPushButton::pressed, this, [playClick, this](){playClick(); emit hostGame();});
+    connect(btnJoin, &QPushButton::pressed, this, [playClick, this](){playClick(); emit joinGame();});
+    connect(btnHistory, &QPushButton::pressed, this, [playClick, this](){playClick(); emit history();});
 
     update();
 }
@@ -67,4 +68,9 @@ void MainMenu::paintEvent(QPaintEvent *event)
 
     painter.fillRect(rect(), Qt::red);
     painter.drawPixmap(rect(), bg);
+}
+
+void MainMenu::closeEvent(QCloseEvent *event) {
+    emit quit();
+    QWidget::closeEvent(event);
 }

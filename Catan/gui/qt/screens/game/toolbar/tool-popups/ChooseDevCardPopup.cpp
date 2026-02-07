@@ -1,6 +1,6 @@
 #include "ChooseDevCardPopup.h"
 
-#include "common/AudioManager.h"
+#include "../../../../common/audio/AudioManager.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -70,7 +70,7 @@ ChooseDevCardPopup::ChooseDevCardPopup(Player* player,QWidget* parent)
 
 void ChooseDevCardPopup::rebuild() {
     m_selected = -1;
-
+    reset();
     m_displayOrder.clear();
 
     for (const auto& [type, count] : m_player->getDevCards()) {
@@ -113,7 +113,7 @@ void ChooseDevCardPopup::rebuild() {
 
         m_cardWidgets.push_back(card);
     }
-
+    updateUiState();
     adjustSize();
 }
 

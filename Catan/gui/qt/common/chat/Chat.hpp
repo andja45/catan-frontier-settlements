@@ -13,7 +13,6 @@ class Chat : public FloatingPanel {
     Q_OBJECT
 
 private:
-    // --- chat ---
     QListWidget* m_chatList = nullptr;
     QLineEdit*   m_chatInput = nullptr;
     QPushButton* m_sendBtn = nullptr;

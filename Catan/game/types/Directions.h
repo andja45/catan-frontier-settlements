@@ -113,8 +113,6 @@ namespace directions {
         return s2;
     }
 
-    // TODO DIR IS ITERATOR!!!!!!!!!
-    // TODO TEMPLATES
 
 }
 

@@ -3,12 +3,14 @@
 #include <common/theme/GameTheme.h>
 
 bool QEdge::hoverAllowed() const {
-    if (!m_edge & highlighted) return false;
+    if (!m_edge) return false;
     return !m_edge->isOccupied();
 }
 
 QColor QEdge::playerColor() const {
-    return QColor(40, 40, 40);
+    auto owner = m_edge->getOwner();
+    if (owner != types::InvalidPlayerId)
+        return GameTheme::playerColors.at(owner);
 }
 
 void QEdge::updateGeometry(const QPointF& p, const QPointF& q, double size) {
@@ -23,7 +25,6 @@ void QEdge::updateGeometry(const QPointF& p, const QPointF& q, double size) {
 bool QEdge::contains(const QPointF& p) const {
     return m_hit.contains(p);
 }
-
 
 void QEdge::drawRoad(QPainter& p, double size) {
     const double w = 0.15; // width
@@ -88,7 +89,7 @@ void QEdge::paint(QPainter& p, double size) {
     // Hover ring: only over empty or settlement edges
     if (m_hovered && hoverAllowed()) {
         p.save();
-        const double r = size / 3.2;
+        const double r = size / 4.2;
 
         // Ring (no fill)
         QPen ring(GameTheme::getGrayColorStrong());
@@ -108,7 +109,7 @@ void QEdge::paint(QPainter& p, double size) {
 
     if (m_highlighted) {
         p.save();
-        const double r = size / 3.2;
+        const double r = size / 4.2;
 
         // Ring (no fill)
 

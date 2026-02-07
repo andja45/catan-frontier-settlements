@@ -7,20 +7,23 @@
 
 #include <QObject>
 #include <memory>
+#include <renderstate/ChoosePlayerRenderState.h>
 #include <screens/game/GameWindow.h>
 
 #include "GameNetworkAdapter.h"
 #include "model/GameSession.h"
 #include "renderstate/BoardRenderState.h"
 #include "renderstate/ToolbarRenderState.h"
-#
+
 class GameController : public QObject {
     Q_OBJECT
 private:
     GameSession& m_session;
-    PlayerId m_localPlayerId = m_session.localPlayer();
+    GameWindow& m_gameWindow;
+    PlayerId m_localPlayerId;
+
     bool isLocalPlayersTurn(const char* action) const;
-    GameNetworkAdapter& m_adapter;
+    GameNetworkAdapter* m_adapter;
 
     BoardRenderState m_boardRenderState;
     ToolbarRenderState m_toolbarRenderState;
@@ -28,12 +31,18 @@ private:
     std::unique_ptr<Move> m_activeTool;
     void setActiveTool(std::unique_ptr<Move> tool);
     void clearActiveTool();
+    void connectElements();
 public:
-    GameController(GameSession &session, GameNetworkAdapter &adapter, GameWindow &gameWindow, QObject *parent);
+    GameController(GameSession &session, NetworkTransport* transport, GameWindow &gameWindow, QObject *parent);
 
     // GLOBAL
-    void sendMove(const Move* move);
-    void update();
+    bool sendMove(const Move *move);
+
+    void onError(const std::string &error);
+
+    void onGameOver();
+
+    void updateState();
     void updateActiveToolOnPhase();
 public slots:
     // TOOLBAR
@@ -54,7 +63,7 @@ public slots:
 
     // TRADE:
     void onPlayerTradeRequestSent(const ResourcePack& give, const ResourcePack& receive);
-    void onPlayerTradeResponseSent(TradeId tradeRequestId);
+    void onPlayerTradeResponseSent(TradeId tradeRequestId, bool response);
     void onPlayerTradeAcceptSent(TradeId tradeId, PlayerId acceptedPlayerId);
 
     void onBankTradeSent(ResourceType give, ResourceType receive);
@@ -69,11 +78,28 @@ public slots:
     // NETWORK
     void onMoveReceived(Move* move);
 
-    signals:
-        void onModelChanged(const BoardRenderState& state,
-                            const ToolbarRenderState& toolbarState);
+    void updateView();
 
-        void buildPlaced();
+    void onGameStart();
+
+signals:
+    void buildPlaced();
+    void gameClosed();
+
+    void updateToolbar(const ToolbarRenderState&);
+    void updateBoard(const BoardRenderState&);
+    void updateActivePlayer(int id);
+
+    void setChoosePlayer(const std::unordered_set<PlayerId>& rs);
+    void setDiscard();
+
+    void gameOver();
+    void gameWon();
+
+    void gameOverlay(GameOverlayType);
+
+    void update();
+
 };
 
 #endif //CATAN_GAMECONTROLLER_HPP

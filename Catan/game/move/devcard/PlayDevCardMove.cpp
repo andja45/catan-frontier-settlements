@@ -31,6 +31,9 @@ void PlayDevCardMove::apply(GameSession& session) const {
     player.removeDevCard(m_card);
     session.markDevCardPlayedThisTurn(); // session translates it into equivalent phase
 
+    if (m_card == DevCardType::Knight)
+        player.addKnightUsed();
+
     session.enterDevCardPhase(m_card);
 }
 

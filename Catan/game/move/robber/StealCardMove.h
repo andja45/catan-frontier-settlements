@@ -9,12 +9,12 @@
 
 #include "move/BoardMove.h"
 
-class StealCardMove final : public BoardMove {
+class StealCardMove final : public Move {
 private:
     PlayerId m_victimPlayerId;
 public:
     StealCardMove(PlayerId playerId, PlayerId victimPlayerId)
-        : BoardMove(playerId), m_victimPlayerId(victimPlayerId) {}
+        : Move(playerId), m_victimPlayerId(victimPlayerId) {}
 
     MoveType type() const override { return MoveType::StealCard; }
     bool isValid(const GameSession& session) const override;
@@ -23,8 +23,7 @@ public:
     bool providesAllValid() const override { return true; }
     std::unordered_set<PlayerId> allValid(const GameSession &session) const; // for making gray players he cant chose
     PlayerId getVictimPlayerId() const {return m_victimPlayerId; }
-
-    void setBoardElementId(int elementId) { m_victimPlayerId = static_cast<PlayerId>(elementId); }
+    void setVictimPlayerId(PlayerId victimPlayerId) { m_victimPlayerId = victimPlayerId; }
 };
 
 

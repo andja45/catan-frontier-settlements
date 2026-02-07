@@ -7,7 +7,7 @@
 #include <player/Player.h>
 #include <screens/game/toolbar/BoardToolbar.h>
 
-GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId currentPlayer, Bank *bank,std::unordered_map<TradeId,Trade>* trades, QWidget *parent)
+GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId currentPlayer, Bank *bank,const std::pair<int,int>*dice,std::unordered_map<TradeId,Trade>* trades, QWidget *parent)
     : QWidget(parent), m_board(board), m_currentPlayerId(currentPlayer), m_bank(bank), m_players(players), m_trades(trades)
 {m_currentPlayer=players[currentPlayer];
 
@@ -22,30 +22,26 @@ GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId cur
     m_qboard = new QBoard(this, board);
     m_qboard->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    m_toolbar = new BoardToolbar(m_currentPlayer,this);
+    m_toolbar = new BoardToolbar(m_currentPlayer,dice,this);
     m_toolbar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_toolbar->setMinimumHeight(60);
-
 
     // setting right overlay
     QWidget* rightOverlay=new QWidget(this);
     rightOverlay->setAttribute(Qt::WA_TranslucentBackground);
     QVBoxLayout* rightOverlayBox = new QVBoxLayout(rightOverlay);
-    m_chat->setMaximumHeight(330);
+    m_chat->setMaximumHeight(700);
     rightOverlay->setMinimumWidth(380);
-    rightOverlay->setMaximumWidth(600);
-    rightOverlay->setMinimumHeight(850);
+    rightOverlay->setMaximumWidth(500);
     rightOverlay->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    rightOverlayBox->addWidget(m_chat,3);
+    rightOverlayBox->addWidget(m_chat);
     rightOverlayBox->addStretch(1);
-    rightOverlayBox->addWidget(m_playersOverlay,4);
-
+    rightOverlayBox->addWidget(m_playersOverlay);
 
     // left part board+tool
     auto* leftBox = new QVBoxLayout;
     leftBox->setContentsMargins(0, 0, 0, 0);
     leftBox->setSpacing(0);
-
 
     // center board, floating trades
     QWidget* mainArea=new QWidget(this);
@@ -55,10 +51,7 @@ GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId cur
     centerBox->addWidget(m_qboard);
 
     m_tradeOverlay = new TradeOverlay(m_players,currentPlayer,trades,mainArea);
-    m_tradeOverlay->setParent(mainArea);
     m_tradeOverlay->raise();
-    m_tradeOverlay->setGeometry(mainArea->rect());
-    //add BULSHIT
 
     leftBox->addWidget(mainArea, 1);
     leftBox->addWidget(m_toolbar, 0);
@@ -74,6 +67,7 @@ GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId cur
 
     connect(m_toolbar,&BoardToolbar::devCardChosen,
             m_actionManager,&ActionManager::openActionPopup);
+
 }
 
 void GameWindow::paintEvent(QPaintEvent *paint_event) {
@@ -82,6 +76,11 @@ void GameWindow::paintEvent(QPaintEvent *paint_event) {
     QPainter p(this);
     p.fillRect(rect(), GameTheme::getColorByResource(ResourceType::Sea)); // sea
 
+}
+
+void GameWindow::closeEvent(QCloseEvent *event) {
+    emit closed();
+    QWidget::closeEvent(event);
 }
 
 void GameWindow::keyPressEvent(QKeyEvent* event)
@@ -106,3 +105,29 @@ void GameWindow::keyPressEvent(QKeyEvent* event)
 
 
 GameWindow::~GameWindow(){}
+
+
+void GameWindow::changeEvent(QEvent* event)
+{
+    switch (event->type()) {
+
+    case QEvent::WindowStateChange:
+        if (!isMinimized()) {
+            m_gameOverlay->updateGeometry();
+            m_tradeOverlay->updateOverlayGeometry();
+        }
+        break;
+
+    case QEvent::ActivationChange:
+        if (isActiveWindow()) {
+            m_gameOverlay->updateGeometry();
+            m_tradeOverlay->updateOverlayGeometry();
+        }
+        break;
+
+    default:
+        break;
+    }
+
+    QWidget::changeEvent(event);
+}

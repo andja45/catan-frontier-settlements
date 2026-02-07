@@ -1,9 +1,9 @@
 #include "RespondPlayerTradePopup.h"
 
-#include "common/AudioManager.h"
+#include "../../../../common/audio/AudioManager.h"
 #include "player/Player.h"
 
-RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offer, TradeId tradeId , QWidget *parent) : FloatingPanel(parent)
+RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offer, TradeId tradeId , QWidget *parent) : FloatingPanel(parent), m_tradeId(tradeId)
 {
 
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -48,15 +48,14 @@ RespondPlayerTradePopup::RespondPlayerTradePopup(Player *player, TradeOffer offe
     m_receiveRow = new QCardRow(this);
     QCard* helperCard;
     for(auto [resource,num]: m_offer.receive){
+        if (num<=0) continue;
         helperCard = m_receiveRow->addCard(CardSpec({CardKind::Resource, resource, DevCardType::None, num}));
-
         m_accepterGives.push_back(helperCard);
     }
 
-
     for(auto [resource,num]: m_offer.give){ // acc receives what requester gives
+        if (num<=0) continue;
         helperCard = m_giveRow->addCard(CardSpec({CardKind::Resource, resource, DevCardType::None, num}));
-
         m_accepterReceives.push_back(helperCard);
     }
     m_receiveRow->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);

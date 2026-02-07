@@ -40,6 +40,7 @@ private:
     QMap<ToolbarActionType, FloatingButton*> m_buttons;
 
     FloatingButton *createButtonForType(ToolbarActionType action);
+    DiceWidget* m_dice;
 
     void paintEvent(QPaintEvent*) override;
     bool eventFilter(QObject* obj, QEvent* event) override;
@@ -56,7 +57,7 @@ private:
 
 
 public:
-    BoardToolbar(Player* player,QWidget* parent=nullptr);
+    BoardToolbar(Player *player, const std::pair<int, int> *dice, QWidget *parent);
 signals:
     void actionTriggered(ToolbarActionType action);
 
@@ -64,14 +65,15 @@ signals:
     void playerTradeRequested(const TradeOffer& offer);
     void bankTradeRequested(const TradeOffer& offer);
 
-    void diceRolled(int dice1,int dice2);
+    void diceRolled();
     void buyDevCardRequested();
     void endTurnRequested();
     void buildRoadClicked();
     void buildSettlementClicked();
     void buildCityClicked();
 
+
 public slots:
-    void updateState(ToolbarRenderState rs);
+    void updateState(const ToolbarRenderState& rs);
 };
 #endif // BOARDTOOLBAR_H
