@@ -61,7 +61,10 @@ void RollDiceMove::apply(GameSession& session) const {
             if (owner == -1)
                 continue;
 
-            int amount = node->isCity() ? 2 : 1;
+            int amount = 0;
+            if (node->isCity()) amount = 2;
+            else if (node->isSettlement()) amount = 1;
+            else std::cerr << "Has owner but isnt City or Settlement";
             if (amount>(session.bank().getResources())[resource]) // if bank doesnt have enough, we give what we can
             {
                 amount=session.bank().getResources()[resource];

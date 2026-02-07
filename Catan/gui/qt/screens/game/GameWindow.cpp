@@ -24,7 +24,7 @@ GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId cur
 
     m_toolbar = new BoardToolbar(m_currentPlayer,dice,this);
     m_toolbar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_toolbar->setMinimumHeight(60);
+    m_toolbar->setMinimumHeight(65);
 
     // setting right overlay
     QWidget* rightOverlay=new QWidget(this);
@@ -67,7 +67,6 @@ GameWindow::GameWindow(Board *board, std::vector<Player *> players, PlayerId cur
 
     connect(m_toolbar,&BoardToolbar::devCardChosen,
             m_actionManager,&ActionManager::openActionPopup);
-
 }
 
 void GameWindow::paintEvent(QPaintEvent *paint_event) {

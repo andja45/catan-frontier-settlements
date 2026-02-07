@@ -37,8 +37,9 @@ PlayersOverlay::PlayersOverlay(std::vector<Player*>players,Bank* bank,PlayerId a
     // t->start(100);
     m_activePlayerId=0;
     refreshTurnGlow();
+    adjustSize();
+    setMinimumSize(sizeHint());
 }
-
 
 void PlayersOverlay::refreshTurnGlow()
 {
@@ -49,6 +50,7 @@ void PlayersOverlay::refreshTurnGlow()
     if (m_activePlayerId != -1)
         m_playerPanels[m_activePlayerId]->setActiveHighlight(true);
 }
+
 void PlayersOverlay::update(PlayerId pid) {
     m_activePlayerId=pid;
     refreshTurnGlow();
