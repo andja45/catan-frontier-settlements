@@ -12,6 +12,7 @@
 class PopupService {
 public:
     explicit PopupService();
+    static PopupService& instance();
 
     void showError(const QString& title, const QString& message);
     void showWarning(const QString& title, const QString& message);

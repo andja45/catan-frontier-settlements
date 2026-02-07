@@ -10,7 +10,7 @@ class RespondPlayerTradePopup : public FloatingPanel
 {
     Q_OBJECT
 public:
-    explicit RespondPlayerTradePopup(Player *m_player, TradeOffer offer,TradeId tradeId ,QWidget *parent);
+    RespondPlayerTradePopup(Player *player, TradeOffer offer, TradeId tradeId, bool checked, QWidget *parent);
 
 signals:
     void tradeAccepted(PlayerId, TradeId);
@@ -28,6 +28,7 @@ private:
     QCardRow* m_receiveRow;
     QPushButton* m_acceptButton;
     QPushButton* m_declineButton;
+
 
     bool isOfferAcceptable() const;
 
