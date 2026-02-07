@@ -3,7 +3,7 @@
 #include "../../../common/theme/GameTheme.h"
 #include "common/cards/QCountBadge.h"
 #include"../../game/types/ResourceType.h"
-#include <model/MoveCosts.h>
+#include "types/Costs.h"
 
 BoardToolbar::BoardToolbar(Player* player,const std::pair<int,int>* dice,QWidget* parent) : QWidget(parent), m_player(player) {
     setAttribute(Qt::WA_StyledBackground, true);
@@ -66,14 +66,17 @@ void BoardToolbar::updateState(const ToolbarRenderState& rs) {
             button->setEnabled(false);
         }
 
-        if (!MoveCosts::costFor(action).empty()) {
-            ResourcePack rp;
-            for (auto r: MoveCosts::costFor(action)) {
-                rp[r]++;
-            }
-            if (!m_player->hasResources(rp))
-                button->setEnabled(false);
+        const ResourcePack* cost = nullptr;
+        switch (action) {
+            case ToolbarActionType::BuildRoad:       cost = &Costs::Road; break;
+            case ToolbarActionType::BuildSettlement: cost = &Costs::Settlement; break;
+            case ToolbarActionType::BuildCity:       cost = &Costs::City; break;
+            case ToolbarActionType::BuyDevCard:      cost = &Costs::DevCard; break;
+            default: break;
         }
+
+        if (cost && !m_player->hasResources(*cost))
+            button->setEnabled(false);
     }
     if (rs.isEnabled(ToolbarActionType::RollDice)) {
         m_dice->setEnabled(true);
@@ -176,18 +179,18 @@ FloatingButton *BoardToolbar::createButtonForType( ToolbarActionType action) {
         btn->addWidget(m_countRoads);
     }
 
+    const bool hasCost =
+        action == ToolbarActionType::BuildRoad ||
+        action == ToolbarActionType::BuildSettlement ||
+        action == ToolbarActionType::BuildCity ||
+        action == ToolbarActionType::BuyDevCard;
+
     const bool isBuildAction =
         action == ToolbarActionType::BuildRoad ||
-        action == ToolbarActionType::BuildCity ||
-        action == ToolbarActionType::BuildSettlement;
+        action == ToolbarActionType::BuildSettlement ||
+        action == ToolbarActionType::BuildCity;
 
-    btn->setCheckable(isBuildAction);
-
-    if (isBuildAction) {
-        m_buildGroup->addButton(btn);
-    }
-
-    if(not MoveCosts::costFor(action).empty()){
+    if (hasCost) {
         btn->setProperty("action", QVariant::fromValue(action));
         btn->setAttribute(Qt::WA_Hover);
         btn->installEventFilter(this);

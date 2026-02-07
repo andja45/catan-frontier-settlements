@@ -89,8 +89,7 @@
         move/trade/PlayerTradeAcceptMove.cpp
         move/trade/PlayerTradeAcceptMove.h
         types/ToolbarActionType.h
-        model/MoveCosts.h model/MoveCosts.cpp
-        move/build/BuildSettlementMove.cpp
+            move/build/BuildSettlementMove.cpp
             types/BoardType.hpp
             move/turn/PlayerLeaveMove.cpp
             move/turn/PlayerLeaveMove.hpp

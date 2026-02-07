@@ -2,7 +2,7 @@
 
 #include <QPainter>
 
-#include "model/MoveCosts.h"
+#include "types/Costs.h"
 #include<QVBoxLayout>
 #include <QPainterPath>
 #include <common/cards/CardSpec.h>
@@ -46,9 +46,23 @@ void CostPopup::paintEvent(QPaintEvent*) {
 void CostPopup::refresh()
 {
     m_row->clear();
-    for(ResourceType resource : MoveCosts::costFor(m_action))
-        m_row->addCard(CardSpec({CardKind::Resource, resource}));
+
+    const ResourcePack* pack = nullptr;
+    switch (m_action) {
+        case ToolbarActionType::BuildRoad:       pack = &Costs::Road; break;
+        case ToolbarActionType::BuildSettlement: pack = &Costs::Settlement; break;
+        case ToolbarActionType::BuildCity:       pack = &Costs::City; break;
+        case ToolbarActionType::BuyDevCard:      pack = &Costs::DevCard; break;
+        default: break;
+    }
+
+    if (pack) {
+        for (auto const& [resource, count] : *pack) {
+            for (int i = 0; i < count; ++i)
+                m_row->addCard(CardSpec({CardKind::Resource, resource}));
+        }
+    }
+
     m_row->adjustSize();
     adjustSize();
 }
-
