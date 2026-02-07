@@ -130,7 +130,7 @@ Node * Board::getNodeBetweenEdges(EdgeId edge1Id, EdgeId edge2Id) const {
     return edge1->getStart()==edge2->getEnd()?edge1->getStart():edge1->getEnd();
 }
 
-// remove in future, use get incidentEdges and filter by get node between?
+
 std::vector<Edge *> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
     Edge* edge=getEdgeById(edgeId);
     std::vector<Edge*> edges;
@@ -141,19 +141,24 @@ std::vector<Edge *> Board::getIncidentContinuousEdges(EdgeId edgeId) const {
 
     std::vector<Edge*> adjacentEdges1;
     if (edge->getStart() != nullptr) {
-        if (edge->getStart()->getOwner()==edge->getOwner())
+        if (edge->getStart()->isEmpty() || edge->getStart()->getOwner()==edge->getOwner())
             adjacentEdges1=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getStart()->getNodeId()));
     }
 
     std::vector<Edge*> adjacentEdges2;
     if (edge->getEnd() != nullptr) {
-        if (edge->getEnd()->getOwner()==edge->getOwner())
+        if (edge->getEnd()->isEmpty() || edge->getEnd()->getOwner()==edge->getOwner())
             adjacentEdges2=std::vector<Edge*>(getEdgesAdjacentToNode(edge->getEnd()->getNodeId()));
     }
+    std::vector<Edge*> continuousEdges;
     adjacentEdges1.insert(adjacentEdges1.end(),adjacentEdges2.begin(),adjacentEdges2.end());
-    adjacentEdges1.erase(std::remove_if(adjacentEdges1.begin(), adjacentEdges1.end(), [edgeId](Edge* e){return e->getEdgeId()==edgeId;}), adjacentEdges1.end());
 
-    return adjacentEdges1;
+    for (Edge* e : adjacentEdges1) {
+        if (e->getOwner()==edge->getOwner() && e->getEdgeId()!=edgeId)
+            continuousEdges.push_back(e);
+    }
+
+    return continuousEdges;
 }
 
 std::vector<Edge *> Board::getIncidentEdges(EdgeId edgeId) const {

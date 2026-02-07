@@ -83,7 +83,9 @@ public:
     bool isActive() const {return m_isActive;}
     void setLeft() {m_isActive=false;}
 
-    int getRoadLength()const {return m_lenOfRoad;};
+    int getRoadLength()const {
+        return m_lenOfRoad;
+    }
     void setRoadLength(int length){m_lenOfRoad=length;}
 };
 

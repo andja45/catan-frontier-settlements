@@ -3,164 +3,147 @@
 //
 
 #include "LongestRoadRule.h"
+
+#include <unordered_map>
+#include <unordered_set>
 #include <model/GameSession.h>
-#include <types/TypeAliases.h>
+
 #include "queue"
 
-void LongestRoadRule::createRoadGraph(GameSession& session, Player p) {
-    road_graph.assign(total_possible_roads, std::vector<int>());
-    visited.assign(total_possible_roads, false);
+std::unordered_map<int,std::vector<int>>  LongestRoadRule::createRoadGraph(GameSession& session, Player& p) {
+    std::unordered_map<int,std::unordered_set<int>> roadGraph;
+    auto& board = session.board();
 
-    for (auto road : p.getRoads()) {
-        if (road == nullptr) continue;
+    const auto& roads = p.getRoads();
+    std::unordered_set<bool> visited;
 
-        int road_index = int(road->getEdgeId());
-        visited[road_index] = true;
+    for (auto road : roads) {
+        EdgeId id = road->getEdgeId();
 
-        std::vector<Edge *> neighbours = session.board().getIncidentContinuousEdges(road_index);
+        for (Edge* adj : board.getIncidentContinuousEdges(id)) {
+            roadGraph[id].insert(adj->getEdgeId());
+            roadGraph[adj->getEdgeId()].insert(id);
+        }
+    }
 
-        for (auto neighbour : neighbours) {
-            int neighbour_index = int(neighbour->getEdgeId());
+    std::unordered_map<int, std::vector<int>> result;
+    result.reserve(roadGraph.size());
 
+    for (auto& [k, s] : roadGraph) {
+        result.emplace(k, std::vector<int>(s.begin(), s.end()));
+    }
+    return result;
+}
 
-            if (session.board().getEdgeOwner(neighbour_index) == p.getPlayerId()) {
-                NodeId commonNode = getCommonNode(session, road_index, neighbour_index);
-                PlayerId nodeOwner = session.board().getNodeOwner(commonNode);
+int LongestRoadRule::dfsLongest(EdgeId current, const std::unordered_map<EdgeId, std::vector<EdgeId>>& graph,std::unordered_set<EdgeId>& used) {
+    used.insert(current);
 
-                if (nodeOwner == types::InvalidPlayerId || nodeOwner == p.getPlayerId()) {
-                    if (road_index < neighbour_index) {
-                        addRoadInGraph(road_index, neighbour_index);
-                    }
-                }
+    int best = 0;
+    auto it = graph.find(current);
+    if (it != graph.end()) {
+        for (EdgeId next : it->second) {
+            if (used.count(next) == 0) {
+                best = std::max(best, dfsLongest(next, graph, used));
             }
         }
     }
-}
 
-void LongestRoadRule::addRoadInGraph(EdgeId edgeId1, EdgeId edgeId2) {
-    road_graph[int(edgeId1)].push_back(int(edgeId2));
-    road_graph[int(edgeId2)].push_back(int(edgeId1));
-}
-
-NodeId LongestRoadRule::getCommonNode(GameSession& session, int e1, int e2) {
-    auto n1 = session.board().getNodesAdjacentToEdge(e1);
-    auto n2 = session.board().getNodesAdjacentToEdge(e2);
-    for (auto i : n1) {
-        if (i == nullptr) continue;
-        for (auto j : n2) {
-            if (j == nullptr) continue;
-            if (i->getNodeId() == j->getNodeId())
-                return i->getNodeId();
-        }
-    }
-    return types::InvalidNodeId;
-}
-
-int LongestRoadRule::dfs(int current_road, std::vector<bool>& edge_visited) {
-    edge_visited[current_road] = true;
-    int max_depth = 0;
-
-    for (int neighbour : road_graph[current_road]) {
-        if (!edge_visited[neighbour]) {
-            max_depth = std::max(max_depth, dfs(neighbour, edge_visited));
-        }
-    }
-
-    edge_visited[current_road] = false;
-    return max_depth + 1;
+    used.erase(current);
+    return best + 1;
 }
 
 
-int LongestRoadRule::findLongestRoad() {
+int LongestRoadRule::playerLongestRoad(GameSession& session, Player& p) {
+    const auto& graph=createRoadGraph(session,p);
+
     int longest = 0;
-    for (int i = 0; i < total_possible_roads; i++) {
-        if (visited[i]) {
-            std::vector<bool> edge_visited(total_possible_roads, false);
-            longest = std::max(longest, dfs(i, edge_visited));
-        }
+    std::unordered_set<EdgeId> used;
+
+    // dfs from every edge
+    for (auto& [edgeId, _] : graph) {
+        longest = std::max(longest, dfsLongest(edgeId, graph, used));
     }
+
     return longest;
 }
 
+
 void LongestRoadRule::evaluate(GameSession& session) {
     const auto& players = session.players();
 
-    if (players.empty()) {
-
-        return;
-    }
-
-    PlayerId currentOwner = session.longestRoadOwner();
-    int currentLongest = (currentOwner == types::InvalidPlayerId) ? 4 : 0;
-    PlayerId bestPlayer = currentOwner;
+    PlayerId bestPlayer = session.longestRoadOwner();
+    int currentLongest = (bestPlayer != types::InvalidPlayerId)? session.player(bestPlayer).getRoadLength(): -1;
 
     for (const auto& p : players) {
-        if (!p) continue;
 
-
-
-        createRoadGraph(session, *p);
-        int length = findLongestRoad();
-
-
-
-        p->setRoadLength(length);
-
-        if (p->getPlayerId() == currentOwner) {
-            currentLongest = std::max(4, length);
-        }
-    }
-
-
-    for (const auto& p : players) {
-        if (p->getRoadLength() > currentLongest) {
-            currentLongest = p->getRoadLength();
+        int longestRoad = playerLongestRoad(session, *p);
+        p->setRoadLength(longestRoad);
+        if (longestRoad >= 5 && longestRoad > currentLongest) {
+            currentLongest = longestRoad;
             bestPlayer = p->getPlayerId();
         }
+
     }
 
-    if (currentLongest < 5) {
-        bestPlayer = types::InvalidPlayerId;
-    }
+    if (bestPlayer == types::InvalidPlayerId)
+        return;
 
     if (session.longestRoadOwner() != bestPlayer) {
         session.setLongestRoadOwner(bestPlayer);
     }
 }
 
-/*
-void LongestRoadRule::evaluate(GameSession& session) {
 
-    const auto& players = session.players();
-    PlayerId currentOwner = session.longestRoadOwner();
+std::pair<int, int> LongestRoadRule::bfsFarthest(int start, const std::unordered_map<int,std::vector<int>>& graph, std::unordered_set<EdgeId>& visited) {
+    std::queue<std::pair<int,int>> q;
+    q.push({start, 0});
+    std::unordered_set<EdgeId> localVisited;
 
-    int currentLongest = (currentOwner == types::InvalidPlayerId) ? 4 : 0;
-    PlayerId bestPlayer = currentOwner;
+    int farNode = start;
+    int maxDist = 0;
 
-    for (const auto& p : players) {
-         createRoadGraph(session, *p);
-         int length = findLongestRoad();
-         p->setRoadLength(length);
+    while(!q.empty()) {
+        auto [node, dist] = q.front();
+        q.pop();
 
-         if (p->getPlayerId() == currentOwner) {
-            currentLongest = std::max(4, length);
-         }
-    }
+        if(localVisited.find(node)!=localVisited.end()) continue;
+        localVisited.insert(node);
 
-    for (const auto& p : players) {
-        if (p->getRoadLength() > currentLongest) {
-             currentLongest = p->getRoadLength();
-             bestPlayer = p->getPlayerId();
+        if(dist > maxDist) {
+            maxDist = dist;
+            farNode = node;
+        }
+
+        for(int neighbor : graph.at(node)) {
+            if(localVisited.count(neighbor)==0)
+                q.push({neighbor, dist + 1});
         }
     }
 
-    if (currentLongest < 5) {
-        bestPlayer = types::InvalidPlayerId;
+    // visit all nodes in main graph
+    for(int node : localVisited) {
+        visited.insert(node);
     }
 
-    if (session.longestRoadOwner() != bestPlayer) {
-        session.setLongestRoadOwner(bestPlayer);
-    }
+    return {farNode, maxDist};
 }
 
-*/
+int LongestRoadRule::playerLongestRoadDiameter(GameSession& session, Player& p) {
+    const auto& roads=p.getRoads();
+    const auto& board=session.board();
+    const auto& graph=createRoadGraph(session,p);
+
+    std::unordered_set<EdgeId> visited;
+    int maxDiameter=0;
+
+    for(auto [edgeId,_]:graph) {
+        if(visited.count(edgeId)==0) {
+            // one leaf
+            auto [farNode, _] = bfsFarthest(edgeId, graph, visited);
+            // to other leaf to find diameter
+            auto [otherEnd, diameter] = bfsFarthest(farNode, graph, visited);
+            maxDiameter=std::max(maxDiameter,diameter);
+        }
+    }
+    return maxDiameter;
+}

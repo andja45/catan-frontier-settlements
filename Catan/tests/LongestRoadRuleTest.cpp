@@ -6,18 +6,39 @@
 static GameSession makeTestSession() {
     std::vector<std::string> names = {"Ana", "Marko"};
     auto board = std::make_unique<Board>();
-    board->initializeBoard({TileDef{0, 0, ResourceType::Wheat, 8}});
+    board->initializeBoard({TileDef{0, 0, ResourceType::Wheat, 8},{TileDef{2, 2, ResourceType::Wheat, 8}}});
     return GameSession(names, 0, 1, std::move(board), 10, "test");
+}
+static void placeRoad(
+    GameSession& session,PlayerId p,const EdgeCoords& c) {
+    auto* edge = session.board().getEdgeAt(c);
+    REQUIRE(edge != nullptr);
+    session.board().placeRoad(p, edge->getEdgeId());
+    session.player(p).addRoad(edge);
+
+}
+static void placeRoads(
+    GameSession& session,PlayerId p,const std::vector<EdgeCoords>& coords) {
+    for (const auto& c : coords)
+        placeRoad(session, p, c);
 }
 
 TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
-    GameSession session = makeTestSession();
     LongestRoadRule rule;
     PlayerId p0 = 0;
     PlayerId p1 = 1;
 
     SECTION("No one gets the title with less than 5 roads") {
-        for (int i = 0; i < 4; i++) session.board().placeRoad(p0, i);
+        GameSession session = makeTestSession();
+
+        std::vector<EdgeCoords> roads = {
+            {{0,0}, EdgeDirection::TopRight},
+            {{0,0}, EdgeDirection::Right},
+            {{0,0}, EdgeDirection::BottomRight},
+            {{0,0}, EdgeDirection::BottomLeft},
+        };
+
+        placeRoads(session, p0, roads);
 
         rule.evaluate(session);
 
@@ -25,8 +46,19 @@ TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
         REQUIRE(session.longestRoadOwner() == types::InvalidPlayerId);
     }
 
+
     SECTION("First player to reach 5 roads gets the title") {
-        for (int i = 0; i < 5; i++) session.board().placeRoad(p0, i);
+        GameSession session = makeTestSession();
+
+        std::vector<EdgeCoords> roads = {
+            {{0,0}, EdgeDirection::TopRight},
+            {{0,0}, EdgeDirection::Right},
+            {{0,0}, EdgeDirection::BottomRight},
+            {{0,0}, EdgeDirection::BottomLeft},
+            {{0,0}, EdgeDirection::Left},
+        };
+
+        placeRoads(session, p0, roads);
 
         rule.evaluate(session);
 
@@ -34,38 +66,82 @@ TEST_CASE("LongestRoadRule Tests", "[LongestRoad]") {
         REQUIRE(session.longestRoadOwner() == p0);
     }
 
-    SECTION("Must have STREICTLY more roads to take the title") {
-        for (int i = 0; i < 5; i++) session.board().placeRoad(p0, i);
-        rule.evaluate(session);
 
-        for (int i = 10; i < 15; i++) session.board().placeRoad(p1, i);
-        rule.evaluate(session);
+    SECTION("Must have STRICTLY more roads to take the title") {
+        GameSession session = makeTestSession();
 
+        placeRoads(session, p0, {
+            {{0,0}, EdgeDirection::TopRight},
+            {{0,0}, EdgeDirection::Right},
+            {{0,0}, EdgeDirection::BottomRight},
+            {{0,0}, EdgeDirection::BottomLeft},
+            {{0,0}, EdgeDirection::Left},
+        });
+
+        rule.evaluate(session);
         REQUIRE(session.longestRoadOwner() == p0);
 
-        session.board().placeRoad(p1, 15);
+        placeRoads(session, p1, {
+            {{2,2}, EdgeDirection::TopLeft},
+            {{2,2}, EdgeDirection::Left},
+            {{2,2}, EdgeDirection::BottomLeft},
+            {{2,2}, EdgeDirection::BottomRight},
+            {{2,2}, EdgeDirection::Right},
+        });
+
         rule.evaluate(session);
+        REQUIRE(session.longestRoadOwner() == p0);
+
+        placeRoad(session, p1, {{2,2}, EdgeDirection::TopRight});
+        rule.evaluate(session);
+
         REQUIRE(session.longestRoadOwner() == p1);
     }
 
-    SECTION("Enemy settlement interrupts the road") {
-        session.board().placeRoad(p0, 0);
-        session.board().placeRoad(p0, 1);
-        session.board().placeRoad(p0, 2);
 
-        NodeId middleNode = rule.getCommonNode(session, 0, 1);
-        session.board().placeSettlement(p1, middleNode);
+    SECTION("Enemy settlement interrupts continuous road") {
+        GameSession session = makeTestSession();
+
+        EdgeCoords e1 = {{0,0}, EdgeDirection::TopRight};
+        EdgeCoords e2 = {{0,0}, EdgeDirection::Right};
+        EdgeCoords e3 = {{0,0}, EdgeDirection::BottomRight};
+
+        placeRoad(session, p0, e1);
+        placeRoad(session, p0, e2);
+        placeRoad(session, p0, e3);
+
+        auto* edge1 = session.board().getEdgeAt(e1);
+        auto* edge2 = session.board().getEdgeAt(e2);
+
+        NodeId blockNode =
+            session.board().getNodeBetweenEdges(
+                edge1->getEdgeId(),
+                edge2->getEdgeId()
+            )->getNodeId();
+
+        session.board().placeSettlement(p1, blockNode);
 
         rule.evaluate(session);
 
         REQUIRE(session.player(p0).getRoadLength() == 2);
     }
 
-    SECTION("Cycles (Hexagon) are counted correctly") {
-        for (int i = 20; i < 26; i++) session.board().placeRoad(p0, i);
+
+    SECTION("Cycle (hexagon) counts as longest simple path") {
+        GameSession session = makeTestSession();
+
+        placeRoads(session, p0, {
+            {{0,0}, EdgeDirection::TopRight},
+            {{0,0}, EdgeDirection::Right},
+            {{0,0}, EdgeDirection::BottomRight},
+            {{0,0}, EdgeDirection::BottomLeft},
+            {{0,0}, EdgeDirection::Left},
+            {{0,0}, EdgeDirection::TopLeft},
+        });
 
         rule.evaluate(session);
 
         REQUIRE(session.player(p0).getRoadLength() == 6);
     }
+
 }

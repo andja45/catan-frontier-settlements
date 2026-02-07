@@ -10,7 +10,7 @@
 #include "GameOverRule.h"
 
 RulesEngine::RulesEngine() { // good enough for now
-    //m_rules.push_back(std::make_unique<LongestRoadRule>());
+    m_rules.push_back(std::make_unique<LongestRoadRule>());
     m_rules.push_back(std::make_unique<LargestArmyRule>());
     m_rules.push_back(std::make_unique<GameOverRule>());
 }
