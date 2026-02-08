@@ -19,6 +19,7 @@ public:
 
     void send(const net::Envelope& env);
     void ack();
+    void sendError(const std::string& error);
 
     bool hasRoom() const { return m_roomId.has_value(); }
     std::string roomId() const { return m_roomId.value(); }
@@ -33,16 +34,18 @@ public:
     ClientStatus status() const { return m_status; }
     bool wasActive() const { return m_wasActive; }
     void resetActive() { m_wasActive=false; }
+    bool isConnected() const { return m_envelopeTransporter->isConnected(); }
+    void sendDisconnect();
 
 signals:
     void envelopeReceived(ClientConnection*, const net::Envelope&);
     void disconnected(ClientConnection*);
-    void errored(ClientConnection*, const std::string&);
-    
+    void softErrored(ClientConnection*, const std::string&);
 public slots:
     void onEnvelope(const net::Envelope& env);
     void onDisconnected();
-    void onError(const std::string &error);
+    void onSoftError(const std::string&);
+
 
 private:
     NetworkTransport* m_envelopeTransporter;

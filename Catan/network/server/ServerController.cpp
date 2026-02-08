@@ -43,11 +43,9 @@ void ServerController::onNewConnection()
 {
     auto* socket = m_server->nextPendingConnection();
     // for debug
-    connect(socket, &QTcpSocket::connected, this, [socket] {
     qDebug() << "[Socket] Connected to"
              << socket->peerAddress().toString()
              << socket->peerPort();
-    });
     connect(socket, &QTcpSocket::disconnected, this, [socket] {
         qDebug() << "[Socket] Disconnected from client";
     });
@@ -68,8 +66,8 @@ void ServerController::onNewConnection()
             this, &ServerController::onEnvelope);
     connect(conn, &ClientConnection::disconnected,
             this, &ServerController::onDisconnected);
-    connect(conn, &ClientConnection::errored,
-            this, &ServerController::onErrored);
+    connect(conn, &ClientConnection::softErrored,
+            this, &ServerController::onError);
 }
 
 void ServerController::onEnvelope(ClientConnection* c, const net::Envelope& env)
@@ -82,16 +80,18 @@ void ServerController::onEnvelope(ClientConnection* c, const net::Envelope& env)
 
 void ServerController::onDisconnected(ClientConnection *client) {
     if (client->hasRoom())
-        m_roomManager.handleDisconnect(client);
+        m_roomManager.removePlayer(client);
 
-    m_clients.erase(client);
     client->deleteLater();
+    m_clients.erase(client);
 }
 
-void ServerController::onErrored(ClientConnection *client, const std::string &error) {
+void ServerController::onError(ClientConnection *client, const std::string &error) {
     if (client->hasRoom())
-        m_roomManager.handleError(client,error);
+        m_roomManager.removePlayer(client);
 
-    m_clients.erase(client);
+    client->sendError(error);
     client->deleteLater();
+    m_clients.erase(client);
+
 }

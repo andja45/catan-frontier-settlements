@@ -16,10 +16,12 @@ public:
 
     void sendDecline(ClientConnection * host, const char * str);
 
+    void sendError(ClientConnection *client, const char *str);
+
     bool createRoom(ClientConnection* host, const std::string& roomName);
     bool requestJoinRoom(ClientConnection* client, const std::string& roomName, const std::string& playerName);
 
-    void handleDisconnect(ClientConnection*);
+    void removePlayer(ClientConnection*);
 
     void forwardMove(ClientConnection *sender, const net::Move &move);
     void forwardStartGame(ClientConnection* host, const net::StartGameRequest&);

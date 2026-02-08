@@ -30,8 +30,6 @@ public:
     void processConfig(ClientConnection*,const net::GameConfig&);
     void processStartRequest(ClientConnection*, const net::StartGameRequest&);
 
-    void processError(ClientConnection * client, const std::string & error);
-
     void broadcast(const net::Envelope&);
 
     bool isEmpty() const;
@@ -54,6 +52,8 @@ public:
     void lobbyToGame();
 
     RoomState getState() const;
+
+    ~Room();
 
 private:
     std::string m_name;

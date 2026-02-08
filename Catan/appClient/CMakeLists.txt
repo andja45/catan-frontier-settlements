@@ -17,4 +17,12 @@ add_custom_command(TARGET Catan POST_BUILD
         $<TARGET_FILE_DIR:Catan>/resources
 )
 
+install(
+        DIRECTORY ${CMAKE_SOURCE_DIR}/resources/
+        DESTINATION share/catan/resources
+)
+
+install(TARGETS Catan
+        RUNTIME DESTINATION bin)
+
 #set_target_properties(Catan PROPERTIES WIN32_EXECUTABLE TRUE)

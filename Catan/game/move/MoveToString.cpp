@@ -114,9 +114,16 @@ std::string moveToString(const Move& move, const GameSession* session) {
         }
         case MoveType::PlayerTradeAccept: {
             auto const& m = static_cast<const PlayerTradeAcceptMove&>(move);
-            oss << actor << " completed trade #" << m.getTradeId()
-                << " with " << playerName(session, m.getAcceptedPlayerId());
-            break;
+            if (m.getAcceptedPlayerId()!=types::InvalidPlayerId) {
+                oss << actor << " completed trade #" << m.getTradeId()
+                    << " with " << playerName(session, m.getAcceptedPlayerId());
+                break;
+            }
+            else {
+                oss << actor << " canceled trade #" << m.getTradeId();
+                break;
+
+            }
         }
 
         case MoveType::BuyDevCard: {

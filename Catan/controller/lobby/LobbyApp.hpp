@@ -4,7 +4,6 @@
 
 #ifndef CATAN_LOBBYAPP_HPP
 #define CATAN_LOBBYAPP_HPP
-#include <RoleType.hpp>
 #include <model/GameConfig.h>
 #include <screens/lobby/LobbyView.h>
 

@@ -67,7 +67,7 @@ public:
 
     void loadFromJson(const nlohmann::json &jsonData);
 
-    void writeToFile() const;
+    void writeToFile(const std::string &path) const;
 
     nlohmann::json toJson() const;
 

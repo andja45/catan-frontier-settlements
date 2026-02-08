@@ -15,17 +15,14 @@ Room::Room(const std::string &name, ClientConnection *host) {
     m_name  =name;
     m_host  =host;
     m_config=std::make_unique<GameConfig>();
-    m_seed = 333460; //std::random_device{}(); //TODO for debug
+    m_seed = std::random_device{}();
     m_config->setNumPlayers(4); // so host can join!
     m_config->setName(name);
 
 }
 
 void Room::addPlayer(ClientConnection *c, std::string name) {
-    if (isFull()) {
-        kickPlayer(c);
-        return;
-    }
+    c->setStatus(ClientStatus::InLobby);
     m_players.push_back(c);
 
     m_config->addPlayer(name);
@@ -42,10 +39,6 @@ void Room::removePlayer(ClientConnection *c) {
     c->setRoomId(std::nullopt);
     c->setHost(false);
     c->setStatus(ClientStatus::Connected);
-    if (m_state==RoomState::Lobby && m_config) {
-        m_config->removePlayer(c->name());
-        broadcastConfig();
-    }
 }
 
 void Room::kickPlayer(ClientConnection *c) {
@@ -54,6 +47,10 @@ void Room::kickPlayer(ClientConnection *c) {
         move.set_player_id(c->playerId());
         move.set_type(net::Move_MoveType_PlayerLeave);
         broadcastMove(move);
+    }
+    if (m_state==RoomState::Lobby && m_config) {
+        m_config->removePlayer(c->name());
+        broadcastConfig();
     }
     removePlayer(c);
 }
@@ -66,7 +63,6 @@ void Room::processMove(ClientConnection *c,const net::Move & move) {
         return;
     }
 
-
     auto gameMove=MoveProtoFactory::fromProto(move);
     bool valid=gameMove->isValid(*m_session.get());
     if (!valid) {
@@ -75,7 +71,8 @@ void Room::processMove(ClientConnection *c,const net::Move & move) {
     }
     m_session->applyMove(*gameMove.get());
     if (move.type()==net::Move_MoveType_PlayerLeave) {
-        removePlayer(c);
+        kickPlayer(c);
+        return;
     }
     broadcastMove(move);
 }
@@ -211,6 +208,6 @@ RoomState Room::getState() const {
     return m_state;
 }
 
-void Room::processError(ClientConnection *client, const std::string &error) {
-    kickPlayer(client);
+Room::~Room() {
+    kickEveryone();
 }

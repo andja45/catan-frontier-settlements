@@ -61,16 +61,16 @@ QHBoxLayout* GameDetailsView::SetChartsLayout(const GameData &game){
 
         auto resources = game.getResourceRolls();
 
-        for (ResourceType type : ResourceCardTypes) {
+        for (ResourceType type : resourceCardTypes) {
             categories << QString::fromStdString(toString(type));
         }
-        for (int i = 0; i < ResourceCardTypes.size(); i++) {
-            ResourceType type = ResourceCardTypes[i];
+        for (int i = 0; i < resourceCardTypes.size(); i++) {
+            ResourceType type = resourceCardTypes[i];
             auto *set = new QBarSet(QString::fromStdString(toString(type)));
 
-            for (int j = 0; j < ResourceCardTypes.size(); j++) {
+            for (int j = 0; j < resourceCardTypes.size(); j++) {
                 if (i == j){
-                    set->append(resources.at(type));
+                    set->append(resources[type]);
                 }
                 else{
                     set->append(0);

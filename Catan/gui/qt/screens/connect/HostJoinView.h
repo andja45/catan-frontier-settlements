@@ -8,7 +8,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
-#include <RoleType.hpp>
+#include <common/RoleType.hpp>
 
 class HostJoinView : public QDialog {
     Q_OBJECT

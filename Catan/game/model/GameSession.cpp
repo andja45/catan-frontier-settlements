@@ -336,7 +336,6 @@ void GameSession::endGame() {
     }
 
     m_isOver=true;
-    m_gameData.writeToFile();
 } // gui gets renderstate that behaves differently in gameover phase, onphasechanged triggers redrawing
 
 void GameSession::leavePlayer(PlayerId player_id) {

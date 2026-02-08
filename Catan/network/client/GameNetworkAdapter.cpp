@@ -46,7 +46,7 @@ void GameNetworkAdapter::setTransport(NetworkTransport* transport) {
     m_transport=transport;
     connect(m_transport, &NetworkTransport::envelopeReceived,
             this, &GameNetworkAdapter::onEnvelope);
-    connect(m_transport, &NetworkTransport::errored,
+    connect(m_transport, &NetworkTransport::protocolError,
                 this, &GameNetworkAdapter::onError);
     connect(m_transport, &NetworkTransport::disconnected,
                 this, &GameNetworkAdapter::onDisconnected);

@@ -6,6 +6,7 @@
 
 #include <utility>
 #include <QDebug>
+#include <common/PathService.hpp>
 #include <screens/game/action-popups/popups/DiscardPopup.h>
 #include <screens/game/action-popups/popups/YearOfPlentyPopup.h>
 
@@ -448,4 +449,7 @@ void GameController::onGameOver() {
         emit gameOverlay(GameOverlayType::GameOver);
         emit gameOver();
     }
+    auto path=PathService::instance().resourceDir().toStdString();
+    auto data = m_session.gameData();
+    data.writeToFile(path);
 }

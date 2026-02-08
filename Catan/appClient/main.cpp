@@ -12,10 +12,11 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setQuitOnLastWindowClosed(false);
+    //a.setQuitOnLastWindowClosed(false);
     Q_INIT_RESOURCE(resources);
 
     catan::gui::qt::applyDefaultQtStyle(a);
+    QCoreApplication::setApplicationName("Catan");
 
     AbstractBoardCreator *creator = new RandomExtendedMapCreator();
     auto board=(creator->getBoard());
