@@ -30,12 +30,8 @@ void Room::addPlayer(ClientConnection *c, std::string name) {
 }
 
 void Room::removePlayer(ClientConnection *c) {
-    for (auto it =m_players.begin(); it !=m_players.end(); ++it) {
-        if (*it == c) {
-            m_players.erase(it);
-            break;
-        }
-    }
+    m_players.erase(std::remove(m_players.begin(), m_players.end(), c), m_players.end());
+
     c->setRoomId(std::nullopt);
     c->setHost(false);
     c->setStatus(ClientStatus::Connected);

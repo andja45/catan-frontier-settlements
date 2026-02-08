@@ -76,9 +76,6 @@ void RoomManager::forwardMove(ClientConnection *sender, const net::Move &move) {
     auto roomId = sender->roomId();
     auto room=m_rooms.at(roomId).get();
     room->processMove(sender, move);
-    if (room->isEmpty()) {
-        removeRoom(roomId);
-    }
 
     if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
 }

@@ -1,104 +1,12 @@
-    add_library(catan_game
-        board/Edge.h
-        board/Tile.h
-        board/Edge.h
-        types/NodeType.h
-        player/Player.cpp
-        player/Player.h
-        board/Board.cpp
-        board/Board.h
-        move/Move.cpp
-        move/Move.h
-        move/build/BuildRoadMove.cpp
-        move/build/BuildRoadMove.h
-        move/build/BuildSettlementMove.cpp
-        move/build/BuildSettlementMove.h
-        move/build/BuildCityMove.cpp
-        move/build/BuildCityMove.h
-        move/turn/RollDiceMove.cpp
-        move/turn/RollDiceMove.h
-        move/turn/EndTurnMove.cpp
-        move/turn/EndTurnMove.h
-        model/GameSession.cpp
-        model/GameSession.h
-        types/TypeAliases.h
-        types/DevCardType.h
-        board/Board.cpp
-        types/Costs.h
-        player/Bank.cpp
-        board/coords/AxialCoords.cpp
-        board/coords/AxialCoords.hpp
-        board/coords/ElementCoords.hpp
-        types/Directions.h
-        board/coords/EdgeCoords.cpp
-        board/coords/EdgeCoords.hpp
-        board/coords/NodeCoords.cpp
-        board/coords/NodeCoords.hpp
-        board/factory/AbstractBoardCreator.hpp
-        board/factory/BoardCatalog.hpp
-        board/serialization/BoardLayoutToJson.cpp
-        board/serialization/BoardLayoutToJson.hpp
-        board/serialization/AbstractBoardSerializer.hpp
-        board/factory/RandomStandardMapCreator.cpp
-        board/factory/RandomStandardMapCreator.hpp
-        board/factory/RandomExtendedMapCreator.cpp
-        board/factory/RandomExtendedMapCreator.hpp
-        board/factory/LoadFromFileCreator.cpp
-        board/factory/LoadFromFileCreator.hpp
-        move/trade/BankTradeMove.h
-        move/robber/SetRobberMove.h
-        move/trade/BankTradeMove.cpp
-        model/GameData.h
-        model/GameData.cpp
-        types/ResourceType.h
-        rules/Rule.h
-        rules/LargestArmyRule.cpp
-        rules/LargestArmyRule.h
-        rules/LongestRoadRule.cpp
-        rules/LongestRoadRule.h
-            rules/GameOverRule.cpp
-            rules/GameOverRule.h
-        rules/RulesEngine.cpp
-        rules/RulesEngine.h
-        model/GameConfig.cpp
-        model/GameConfig.h
-        types/MapType.h
-        board/Edge.cpp
-        phase/TurnPhase.h
-        move/robber/DiscardCardsMove.cpp
-        move/robber/DiscardCardsMove.h
-        move/robber/StealCardMove.cpp
-        move/robber/StealCardMove.h
-        move/devcard/BuyDevCardMove.cpp
-        move/devcard/BuyDevCardMove.h
-        move/devcard/YearOfPlentyMove.cpp
-        move/devcard/YearOfPlentyMove.h
-        move/devcard/MonopolyMove.cpp
-        move/devcard/MonopolyMove.h
-        move/devcard/PlayDevCardMove.cpp
-        move/devcard/PlayDevCardMove.h
-        move/MoveType.h
-        move/MoveToString.h
-        move/MoveToString.cpp
-        move/trade/PlayerTradeRequestMove.cpp
-        move/trade/PlayerTradeRequestMove.h
-        move/trade/PlayerTradeResponseMove.cpp
-        move/trade/PlayerTradeResponseMove.h
-        move/robber/SetRobberMove.cpp
-        model/Trade.h
-        move/trade/PlayerTradeAcceptMove.cpp
-        move/trade/PlayerTradeAcceptMove.h
-        types/ToolbarActionType.h
-            move/build/BuildSettlementMove.cpp
-            types/BoardType.hpp
-            move/turn/PlayerLeaveMove.cpp
-            move/turn/PlayerLeaveMove.hpp
-            rules/SkipPlayerRule.cpp
-            rules/SkipPlayerRule.hpp
-            move/BoardMove.h
-            player/ResourceHolder.h
-            board/Node.h
-    )
+add_library(catan_game)
+
+add_subdirectory(board)
+add_subdirectory(model)
+add_subdirectory(move)
+add_subdirectory(phase)
+add_subdirectory(player)
+add_subdirectory(rules)
+add_subdirectory(types)
 
 target_include_directories(catan_game
         PUBLIC
