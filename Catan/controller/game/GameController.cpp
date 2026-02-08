@@ -6,6 +6,7 @@
 
 #include <utility>
 #include <QDebug>
+#include <common/PathService.hpp>
 #include <screens/game/action-popups/popups/DiscardPopup.h>
 #include <screens/game/action-popups/popups/YearOfPlentyPopup.h>
 
@@ -207,6 +208,8 @@ void GameController::connectElements() {
     connect(this,&GameController::setChoosePlayer,qactionManager,&ActionManager::setStealCandidates);
     connect(this,&GameController::setDiscard,qactionManager,&ActionManager::openDiscardPopup);
 
+    connect(this, &GameController::onBuildFeedback,
+        qtoolbar, &BoardToolbar::onBuildFeedback);
 }
 
 void GameController::updateActiveToolOnPhase(){
@@ -225,6 +228,7 @@ void GameController::updateActiveToolOnPhase(){
 
         case TurnPhase::InitialPlacement:
             if (m_session.lastMoveType() == MoveType::InvalidMoveType || // for first move of the game
+                m_session.lastMoveType() == MoveType::PlayerLeave ||
                 m_session.lastMoveType() == MoveType::BuildRoad)
                 setActiveTool(std::make_unique<BuildSettlementMove>(m_localPlayerId, types::InvalidNodeId));
             else if (m_session.lastMoveType() == MoveType::BuildSettlement)
@@ -269,8 +273,10 @@ void GameController::onBoardElementClicked(int elementId){
     if (!boardMove) return;
 
     boardMove->setBoardElementId(elementId);
-    if (sendMove(m_activeTool.get()))
+    if (sendMove(m_activeTool.get())) {
         emit buildPlaced(); // shake only after successful placement
+        emit onBuildFeedback();
+    }
 }
 
 void GameController::onBuyDevCardClicked() {
@@ -448,4 +454,7 @@ void GameController::onGameOver() {
         emit gameOverlay(GameOverlayType::GameOver);
         emit gameOver();
     }
+    auto path=PathService::instance().resourceDir().toStdString();
+    auto data = m_session.gameData();
+    data.writeToFile(path);
 }

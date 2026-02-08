@@ -29,7 +29,7 @@ bool BuildSettlementMove::isValid(const GameSession& session) const {
     }
     else if (session.phase() == TurnPhase::InitialPlacement &&
         (session.lastMoveType() == MoveType::InvalidMoveType || // for first move of the game
-         session.lastMoveType() == MoveType::BuildRoad)) { // regular flow
+         session.lastMoveType() == MoveType::BuildRoad || session.lastMoveType() == MoveType::PlayerLeave)) { // regular flow
         return true; // in initial phase settlements can be placed anywhere, dont need to be connected to roads
         }
 

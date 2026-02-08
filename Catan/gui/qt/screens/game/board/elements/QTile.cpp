@@ -59,7 +59,7 @@ static void drawRobber(QPainter& p, const QPointF& c, double size)
     const double r = size * 0.18;
     const QPointF headC(c.x(), c.y() - size*0.06);
 
-    QColor fill(55, 55, 55, 255);
+    QColor fill(60, 60, 60, 255);
     QPen pen(Qt::black);
     pen.setWidthF(std::max(1.2, size * 0.02));
     p.setPen(pen);

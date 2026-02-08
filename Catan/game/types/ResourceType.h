@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <array>
+#include <cctype>
 
 enum class ResourceType {
     Wood,
@@ -26,39 +27,41 @@ static const inline std::map<std::string,ResourceType> mapStringToRes = {
     {"wheat",ResourceType::Wheat}
 
 };
-static ResourceType fromString(const std::string& s) {
-    std::string s2 = s;
-    std::transform(s2.begin(), s2.end(), s2.begin(),
-        [](unsigned char c){ return std::tolower(c); });
-    if (mapStringToRes.find(s2) != mapStringToRes.end())
-        return mapStringToRes.at(s);
+
+static ResourceType fromString(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+        [](unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+        });
+
+    if (auto it = mapStringToRes.find(s); it != mapStringToRes.end()) {
+        return it->second;
+    }
+
     return ResourceType::None;
 }
 
-static bool resourceFromString(const std::string& s, ResourceType &outType) {
-    auto it = mapStringToRes.find(s);
-    if (it == mapStringToRes.end())
-        return false;
 
-    outType = it->second;
-    return true;
+static bool resourceFromString(const std::string& s, ResourceType &outType) {
+    outType=fromString(s);
+    return outType != ResourceType::None;
 }
 
-inline std::string toString (ResourceType resource)
+inline std::string toString (const ResourceType resource)
 {
     switch (resource) {
-    case ResourceType::Wood:  return "Wood";
-    case ResourceType::Brick: return "Brick";
-    case ResourceType::Wool: return "Wool";
-    case ResourceType::Wheat: return "Wheat";
-    case ResourceType::Ore:   return "Ore";
-    case ResourceType::Sea:  return "Sea";
-    case ResourceType::Desert:  return "Desert";
-    default: return "None";
+    case ResourceType::Wood:  return "wood";
+    case ResourceType::Brick: return "brick";
+    case ResourceType::Wool: return "wool";
+    case ResourceType::Wheat: return "wheat";
+    case ResourceType::Ore:   return "ore";
+    case ResourceType::Sea:  return "sea";
+    case ResourceType::Desert:  return "desert";
+    default: return "none";
     }
 }
 
-static const std::array<ResourceType, 5> ResourceCardTypes = {
+static constexpr std::array<ResourceType, 5> resourceCardTypes = {
     ResourceType::Wood,
     ResourceType::Brick,
 	ResourceType::Wheat,

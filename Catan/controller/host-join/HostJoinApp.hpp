@@ -8,7 +8,6 @@
 #include <qobjectdefs.h>
 #include <QString>
 #include <qtmetamacros.h>
-#include <RoleType.hpp>
 #include <common/AbstractApplet.hpp>
 #include <common/ApplicationRoot.hpp>
 #include <host-join/HostJoinController.hpp>

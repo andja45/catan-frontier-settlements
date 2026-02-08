@@ -10,15 +10,15 @@ NetworkTransport::NetworkTransport(QObject* parent) : QObject(parent)
     m_framer.setMessageCallback([this](const QByteArray& msg) {
         net::Envelope env;
         if (!env.ParseFromArray(msg.data(), msg.size())) {
-            emit errored("Invalid envelope received");
+            emit protocolError("Invalid envelope received");
             return;
         }
         if (env.seq()!= m_nextSeqToReceive) {
-            emit errored("Invalid sequence number received:");
+            emit protocolError("Invalid sequence number received:");
             return;
         }
         if (env.msg_type()==net::MSG_ERROR) {
-            emit errored(env.error().message());
+            emit protocolError(env.error().message());
         }
         m_nextSeqToReceive++;
         emit envelopeReceived(env);
@@ -43,11 +43,15 @@ void NetworkTransport::setSocket(QTcpSocket *socket) {
         m_framer.onBytes(m_socket->readAll());
     });
     connect(socket, &QTcpSocket::disconnected,this, [this] {
+        qDebug() << "Socket disconnected";
         emit disconnected();
     });
     connect(socket,&QTcpSocket::errorOccurred, this, [socket, this](QAbstractSocket::SocketError error){
         qDebug() << "Socket error:" << socket->errorString();
-        emit errored(socket->errorString().toStdString());
+        if (socket->state() != QAbstractSocket::UnconnectedState) {
+            socket->abort();
+        }
+        emit protocolError(socket->errorString().toStdString());
     });
 
 }
@@ -67,4 +71,14 @@ void NetworkTransport::sendAck() {
 
 QTcpSocket::SocketState NetworkTransport::state() const {
     return m_socket->state();
+}
+
+bool NetworkTransport::isConnected() const {
+    return state() == QAbstractSocket::ConnectedState;
+}
+
+void NetworkTransport::disconnectSocket() {
+    if (m_socket->state() != QAbstractSocket::UnconnectedState) {
+        m_socket->disconnectFromHost();
+    }
 }

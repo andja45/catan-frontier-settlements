@@ -95,6 +95,8 @@ void GameSession::advancePhaseAfterMove() {
             m_activeTrades.clear();
             m_nextTradeId=0; // we restart trades each turn
             m_gameData.addTurn();
+            m_discardedPlayers.clear();
+            m_phaseMoveCount = 0;
             setPhase(TurnPhase::RollDice);
             break;
     case MoveType::YearOfPlenty:
@@ -168,8 +170,8 @@ void GameSession::advancePlayerInitial() {
     m_currentPlayerId = m_players[playerIndex]->getPlayerId(); // if player needs to be changed, he changes
 
     if (!player(m_currentPlayerId).isActive()) {
-        m_phaseMoveCount+=2;
-        advancePlayerInitial();
+        m_phaseMoveCount+=1;
+        advanceInitialPlacement();
     }
 }
 
@@ -336,12 +338,14 @@ void GameSession::endGame() {
     }
 
     m_isOver=true;
-    m_gameData.writeToFile();
 } // gui gets renderstate that behaves differently in gameover phase, onphasechanged triggers redrawing
 
 void GameSession::leavePlayer(PlayerId player_id) {
     player(player_id).setLeft();
     m_numOfActivePlayers--;
+    if (m_phase == TurnPhase::InitialPlacement) {
+        m_phaseMoveCount+=1-m_phaseMoveCount%2; // we advance moves he didnt make
+    }
 }
 
 void GameSession::dealInitial() {

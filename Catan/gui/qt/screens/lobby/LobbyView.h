@@ -9,8 +9,8 @@
 #include <QSlider>
 #include <QButtonGroup>
 #include <QFrame>
+#include <common/RoleType.hpp>
 
-#include <RoleType.hpp>
 #include <model/GameConfig.h>
 
 class LobbyView : public QWidget {

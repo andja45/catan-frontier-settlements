@@ -76,83 +76,74 @@ void RoomManager::forwardMove(ClientConnection *sender, const net::Move &move) {
     auto roomId = sender->roomId();
     auto room=m_rooms.at(roomId).get();
     room->processMove(sender, move);
-    if (room->isEmpty()) {
-        removeRoom(roomId);
-    }
-    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
 
+    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
 }
 
 void RoomManager::forwardStartGame(ClientConnection *host, const net::StartGameRequest &req) {
     auto roomId = host->roomId();
     auto room=m_rooms.at(roomId).get();
     room->processStartRequest(host, req);
-    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
 
+    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
 }
 
 void RoomManager::forwardMessage(ClientConnection *sender, const std::string &msg) {
     auto roomId = sender->roomId();
     m_rooms.at(roomId)->processMessage(sender, msg);
-    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
 
+    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
 }
 
 void RoomManager::forwardConfig(ClientConnection *host, const net::GameConfig & cfg) {
     auto roomId = host->roomId();
     auto room=m_rooms.at(roomId).get();
     room->processConfig(host, cfg);
+
     if (room->isEmpty()) {
         m_rooms.erase(roomId);
     }
 }
 
 void RoomManager::ackPlayer(ClientConnection *c) {
-    if (c->hasRoom()&&c->status()==ClientStatus::WaitingForRoom) {
+    if (c->hasRoom()&&c->status()==ClientStatus::WaitingForRoom && !m_rooms[c->roomId()]->isFull()) {
         m_rooms[c->roomId()]->addPlayer(c,c->name());
-        c->setStatus(ClientStatus::InLobby);
     }
     else if (c->hasRoom()&&c->status()==ClientStatus::WaitingForGame) {
         m_rooms[c->roomId()]->setPlayerReady(c);
     }
     else {
-        c->onError("Client cant be accepted to room");
+        sendDecline(c,"Client cant be accepted to room");
     }
 }
 
-void RoomManager::handleDisconnect(ClientConnection *client) {
+void RoomManager::removePlayer(ClientConnection *client) {
     auto roomId = client->roomId();
+    if (m_rooms.find(roomId)==m_rooms.end())
+        return;
     if (!m_rooms.at(roomId)) {
         m_rooms.erase(roomId);
         return;
     }
-    m_rooms.at(roomId)->removePlayer(client);
+    m_rooms.at(roomId)->kickPlayer(client);
 
     if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
-}
-
-void RoomManager::handleError(ClientConnection *client, const std::string &error) {
-    auto roomId = client->roomId();
-    m_rooms.at(roomId)->processError(client, error);
-    if (m_rooms.at(roomId)->isEmpty()) m_rooms.erase(roomId);
-
 }
 
 void RoomManager::cleanEmptyRooms() {
     for (auto it=m_rooms.begin();it!=m_rooms.end();) {
         if (it->second == nullptr || it->second->isEmpty()) {
             it = m_rooms.erase(it);
-        }
-        else if (it->second->isEmpty()) {
-            m_rooms.erase(it);
-        } else {
+        }else {
             ++it;
         }
     }
 }
 
 void RoomManager::removeRoom(const std::string &roomName) {
-    m_rooms.at(roomName)->kickEveryone();
+    if (m_rooms.find(roomName)==m_rooms.end()) return;
+    if (m_rooms.at(roomName))
+        m_rooms.at(roomName)->kickEveryone();
     m_rooms.erase(roomName);
 }
 

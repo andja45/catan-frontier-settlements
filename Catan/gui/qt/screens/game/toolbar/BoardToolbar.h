@@ -20,6 +20,7 @@
 
 #include <screens/game/toolbar/tool-popups/RequestBankTradePopup.h>
 #include "buttons/DiceWidget.h"
+#include <screens/game/board/QBoard.h>
 
 class BoardToolbar : public QWidget
 {Q_OBJECT
@@ -71,9 +72,11 @@ signals:
     void buildRoadClicked();
     void buildSettlementClicked();
     void buildCityClicked();
+    void onBuildCleared();
 
 
 public slots:
     void updateState(const ToolbarRenderState& rs);
+    void onBuildFeedback() { clearBuildSelection();}
 };
 #endif // BOARDTOOLBAR_H

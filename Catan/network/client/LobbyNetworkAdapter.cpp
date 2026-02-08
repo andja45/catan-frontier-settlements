@@ -44,7 +44,7 @@ void LobbyNetworkAdapter::setTransport(NetworkTransport *transport) {
     m_transport=transport;
     connect(m_transport, &NetworkTransport::envelopeReceived,
                 this, &LobbyNetworkAdapter::onEnvelope);
-    connect(m_transport, &NetworkTransport::errored,
+    connect(m_transport, &NetworkTransport::protocolError,
                 this, &LobbyNetworkAdapter::onError);
     connect(m_transport, &NetworkTransport::disconnected,
                 this, &LobbyNetworkAdapter::onDisconnected);

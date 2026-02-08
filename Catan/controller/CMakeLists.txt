@@ -19,7 +19,7 @@ add_library(catan_controller
         renderstate/ToolbarRenderState.cpp
         renderstate/ChoosePlayerRenderState.cpp
         renderstate/ChoosePlayerRenderState.h
-        RoleType.hpp
+        common/RoleType.hpp
 
         game/GameApp.cpp
         game/GameApp.hpp
@@ -28,7 +28,7 @@ add_library(catan_controller
         common/ApplicationRoot.cpp
         common/ApplicationRoot.hpp
         common/AbstractApplet.hpp
-        RoleType.hpp
+        common/RoleType.hpp
         menu/MenuApp.hpp
         host-join/HostJoinApp.hpp
         host-join/HostJoinController.cpp
@@ -39,6 +39,7 @@ add_library(catan_controller
         renderstate/PopupRenderState.cpp
         renderstate/PopupRenderState.hpp
         history/HistoryApp.hpp
+        common/PathService.hpp
 
 )
 target_link_libraries(catan_controller

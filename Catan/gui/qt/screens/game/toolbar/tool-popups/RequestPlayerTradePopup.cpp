@@ -40,7 +40,7 @@ RequestPlayerTradePopup::RequestPlayerTradePopup(Player* p,QWidget* parent)
     m_sendButton->setEnabled(false);
     layout->addWidget(m_sendButton);
 
-    for(ResourceType resource : ResourceCardTypes){
+    for(ResourceType resource : resourceCardTypes){
         m_offer.give[resource] = 0;
         helperCard = m_giveRow->addCard(CardSpec({CardKind::Resource, resource, DevCardType::None, 0}));
 

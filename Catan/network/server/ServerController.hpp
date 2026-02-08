@@ -23,7 +23,8 @@ private slots:
     void onNewConnection();
     void onEnvelope(ClientConnection *, const net::Envelope &env);
     void onDisconnected(ClientConnection*);
-    void onErrored(ClientConnection *, const std::string &error);
+
+    void onError(ClientConnection *client, const std::string &error);
 
 private:
     QTcpServer* m_server;
