@@ -207,6 +207,8 @@ void GameController::connectElements() {
     connect(this,&GameController::setChoosePlayer,qactionManager,&ActionManager::setStealCandidates);
     connect(this,&GameController::setDiscard,qactionManager,&ActionManager::openDiscardPopup);
 
+    connect(this, &GameController::onBuildFeedback,
+        qtoolbar, &BoardToolbar::onBuildFeedback);
 }
 
 void GameController::updateActiveToolOnPhase(){
@@ -269,8 +271,10 @@ void GameController::onBoardElementClicked(int elementId){
     if (!boardMove) return;
 
     boardMove->setBoardElementId(elementId);
-    if (sendMove(m_activeTool.get()))
+    if (sendMove(m_activeTool.get())) {
         emit buildPlaced(); // shake only after successful placement
+        emit onBuildFeedback();
+    }
 }
 
 void GameController::onBuyDevCardClicked() {

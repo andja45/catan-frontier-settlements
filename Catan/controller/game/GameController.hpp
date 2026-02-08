@@ -84,6 +84,7 @@ public slots:
 
 signals:
     void buildPlaced();
+    void onBuildFeedback();
     void gameClosed();
 
     void updateToolbar(const ToolbarRenderState&);

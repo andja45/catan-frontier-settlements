@@ -53,11 +53,18 @@ BoardToolbar::BoardToolbar(Player* player,const std::pair<int,int>* dice,QWidget
     buttonsLayout->addWidget(btn);
     m_buttons[ToolbarActionType::EndTurn] = btn;
 
+    if (auto* board = parent ? parent->findChild<QBoard*>() : nullptr) {
+        connect(this, &BoardToolbar::onBuildCleared, board, &QBoard::onBuildCleared);
+    }
+
 }
 
 void BoardToolbar::updateState(const ToolbarRenderState& rs) {
-    // we unclick build buttons here, consider changing
-    clearBuildSelection();
+    if (!rs.isEnabled(ToolbarActionType::BuildRoad) &&
+        !rs.isEnabled(ToolbarActionType::BuildSettlement) &&
+        !rs.isEnabled(ToolbarActionType::BuildCity)) {
+        clearBuildSelection();
+    }
 
     for (auto& [action, button] : m_buttons.toStdMap()) {
         if (rs.isEnabled(action)) {
@@ -159,8 +166,30 @@ void BoardToolbar::disableButton(ToolbarActionType action) {
 FloatingButton *BoardToolbar::createButtonForType( ToolbarActionType action) {
 
     FloatingButton* btn = new FloatingButton(this);
+
+    const bool isBuildAction =
+        action == ToolbarActionType::BuildRoad ||
+        action == ToolbarActionType::BuildSettlement ||
+        action == ToolbarActionType::BuildCity;
+
+    btn->setCheckable(isBuildAction);
+    btn->setChecked(false);
+    if (isBuildAction && m_buildGroup) {
+        m_buildGroup->addButton(btn);
+    }
+
     QString text=nameFromToolbarActionType.at(action).c_str();
     QLabel* label = new QLabel(text, btn);
+    label->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    label->setStyleSheet("font-weight: 400; color: #2c3e50;");
+
+    if (isBuildAction) {
+        connect(btn, &QPushButton::toggled, this, [label](bool checked) {
+            if (checked) label->setStyleSheet("font-weight: 700; color: rgb(80, 140, 200);");
+            else         label->setStyleSheet("font-weight: 400; color: #2c3e50;");
+        });
+    }
+
     btn->addWidget(label);
 
     if (action == ToolbarActionType::BuildSettlement) {
@@ -185,11 +214,6 @@ FloatingButton *BoardToolbar::createButtonForType( ToolbarActionType action) {
         action == ToolbarActionType::BuildCity ||
         action == ToolbarActionType::BuyDevCard;
 
-    const bool isBuildAction =
-        action == ToolbarActionType::BuildRoad ||
-        action == ToolbarActionType::BuildSettlement ||
-        action == ToolbarActionType::BuildCity;
-
     if (hasCost) {
         btn->setProperty("action", QVariant::fromValue(action));
         btn->setAttribute(Qt::WA_Hover);
@@ -199,11 +223,11 @@ FloatingButton *BoardToolbar::createButtonForType( ToolbarActionType action) {
     btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     btn->setMinimumHeight(70);
 
-
-
-    connect(btn, &QPushButton::clicked, this, [this, action, isBuildAction]() {
-        if (!isBuildAction)
+    connect(btn, &QPushButton::clicked, this, [this, action, isBuildAction, label, btn]() {
+        if (!isBuildAction) {
             clearBuildSelection();
+            emit onBuildCleared();
+        }
 
         if (action == ToolbarActionType::PlayerTrade) {
             showPlayerTradePopup();
@@ -216,10 +240,13 @@ FloatingButton *BoardToolbar::createButtonForType( ToolbarActionType action) {
         } else if (action==ToolbarActionType::EndTurn){
             emit endTurnRequested();
         } else if (action==ToolbarActionType::BuildRoad) {
+            btn->setChecked(true);
             emit buildRoadClicked();
         } else if (action==ToolbarActionType::BuildSettlement) {
+            btn->setChecked(true);
             emit buildSettlementClicked();
         } else if (action==ToolbarActionType::BuildCity) {
+            btn->setChecked(true);
             emit buildCityClicked();
         }
 
@@ -271,7 +298,6 @@ bool BoardToolbar::eventFilter(QObject* obj, QEvent* event)
     return QWidget::eventFilter(obj, event);
 }
 
-void BoardToolbar::paintEvent(QPaintEvent*) {
-    QPainter p(this);
-    p.fillRect(rect(), GameTheme::getColorByResource(ResourceType::Sea)); // sea
+void BoardToolbar::paintEvent(QPaintEvent* e) {
+    QWidget::paintEvent(e);
 }

@@ -30,6 +30,7 @@ public:
 public slots:
     void update(const BoardRenderState& renderState);
     void onPlayBuildFeedback();
+    void onBuildCleared() { clearHighlights(); }
 
 signals:
     void tileClicked(TileId tileId);

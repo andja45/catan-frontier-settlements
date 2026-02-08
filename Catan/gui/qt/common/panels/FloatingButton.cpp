@@ -7,7 +7,7 @@
 FloatingButton::FloatingButton(QWidget* parent)
     : QPushButton(parent)
 {
-    setCheckable(true);
+    setCheckable(false);
     setCursor(Qt::PointingHandCursor);
     setAttribute(Qt::WA_StyledBackground, true);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -28,12 +28,13 @@ FloatingButton::FloatingButton(QWidget* parent)
         }
 
         FloatingButton:checked {
-            background: rgba(180,205,255,240);
-            color: #1e6bd6;
+            background: rgba(245,245,245,235);
+            color: rgb(80, 140, 200);
+            font-weight: 600;
         }
 
         FloatingButton:disabled {
-            background: rgba(240,240,240,160);
+            background: rgba(200,200,200,200);
             color: rgba(0,0,0,120);
         }
     )");
