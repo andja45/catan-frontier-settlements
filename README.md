@@ -7,8 +7,8 @@ In addition to the full core gameplay, this version includes several extra featu
 - Customizable Game Rooms: The host can configure settings such as the number of players, victory point threshold, and map options.
 - In-Game Chat: Players can communicate and negotiate during the match.
 - Game History and Statistics: After each game, players can review match data and statistics. 
-- Custom and Random maps: The game supports both randomized boards and custom map configurations, including extended maps for up to 6 players.
-
+- Custom and Random maps: The game supports randomized standard and extended boards from the original game, along with any custom map configuration.
+- Ascii map: Made in the initial phase of the project for testing.
 
 ## Installation
 
