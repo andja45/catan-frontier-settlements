@@ -24,7 +24,7 @@ void MessageDispatcher::dispatch(ClientConnection* c,const net::Envelope& env)
             m_roomManager.ackPlayer(c);
             break;
         default:
-            c->onError("Received unknown message");
+            c->softErrored(c,"Received unknown message");
             break;
     }
 }
@@ -40,7 +40,7 @@ void MessageDispatcher::dispatchSetup(ClientConnection *c,const net::Setup &setu
             m_roomManager.requestJoinRoom(c, setup.join_request().game_name(), setup.join_request().player_name());
         break;
         case net::Setup_MessageType_LEAVE:
-            m_roomManager.handleDisconnect(c);
+            m_roomManager.removePlayer(c);
         break;
         case net::Setup_MessageType_GAME_CONFIG:
             m_roomManager.forwardConfig(c,setup.game_config());
@@ -49,7 +49,7 @@ void MessageDispatcher::dispatchSetup(ClientConnection *c,const net::Setup &setu
             m_roomManager.forwardStartGame(c,setup.start_game_request());
         break;
         default:
-            c->onError("Received unknown setup");
-            break;
+            c->softErrored(c,"Received unknown message");
+        break;
     }
 }

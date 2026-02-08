@@ -31,9 +31,8 @@ class GameHistory : public QWidget
     Q_OBJECT
 
 private:
-    const QColor m_colorLose = QColor(250, 184, 162);
-    const QColor m_colorWin= QColor(206, 250, 147);
-    const char* m_historyPath = "./resources/history.json";
+    const QColor kColorLose = QColor(250, 184, 162);
+    const QColor kColorWin= QColor(206, 250, 147);
     std::map<ColumnNames, int> m_nameToCol = {
         {ColumnNames::m_playerNames, 1},
         {ColumnNames::m_date, 0}
@@ -44,7 +43,6 @@ private:
     QPushButton *m_backButton;
     std::vector<GameData> m_historyGames;
     void loadGameHistoryToTable();
-    void setupTable();
     void colorRow(int row, const QColor &color);
 signals:
     void backToMainMenuRequested();
@@ -53,7 +51,6 @@ private slots:
 
 public:
     GameHistory(QWidget *parent = nullptr);
-    void loadFromFile(const QString &path);
 };
 
 #endif // GAMEHISTORY_H

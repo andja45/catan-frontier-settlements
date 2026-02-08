@@ -18,8 +18,8 @@ ClientConnection::ClientConnection(NetworkTransport* socket, QObject* parent)
     connect(m_envelopeTransporter, &NetworkTransport::disconnected,
             this, &ClientConnection::onDisconnected);
 
-    connect(m_envelopeTransporter, &NetworkTransport::errored,
-            this, &ClientConnection::onError);
+    connect(m_envelopeTransporter, &NetworkTransport::protocolError,
+            this, &ClientConnection::onSoftError);
 }
 
 void ClientConnection::send(const net::Envelope& env)
@@ -32,6 +32,10 @@ void ClientConnection::ack() {
     m_envelopeTransporter->sendAck();
 }
 
+void ClientConnection::sendError(const std::string &error) {
+    m_envelopeTransporter->sendError(error);
+}
+
 void ClientConnection::onEnvelope(const net::Envelope& env) {
     emit envelopeReceived(this, env);
 }
@@ -40,6 +44,10 @@ void ClientConnection::onDisconnected() {
     emit disconnected(this);
 }
 
-void ClientConnection::onError(const std::string& error) {
-    emit errored(this,error);
+void ClientConnection::onSoftError(const std::string &err) {
+    emit softErrored(this,err);
+}
+
+void ClientConnection::sendDisconnect() {
+    m_envelopeTransporter->disconnectSocket();
 }

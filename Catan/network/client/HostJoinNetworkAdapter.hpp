@@ -31,7 +31,7 @@ public:
     void sendJoin(std::string gameName, std::string playerName);
 
     bool isConnected() const {
-        return m_transport != nullptr && m_transport->state() == QAbstractSocket::ConnectedState;
+        return m_transport != nullptr && m_transport->isConnected();
     }
 
 signals:

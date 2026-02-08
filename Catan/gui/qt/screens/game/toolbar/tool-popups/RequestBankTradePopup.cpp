@@ -44,7 +44,7 @@ RequestBankTradePopup::RequestBankTradePopup(Player* player, QWidget* parent)
     m_sendButton->setEnabled(false);
     layout->addWidget(m_sendButton);
 
-    for (ResourceType resource : ResourceCardTypes) {
+    for (ResourceType resource : resourceCardTypes) {
         std::string labelname = "4:1";
         auto* rateLabel = new QLabel(QString::fromStdString(labelname));
 
@@ -165,7 +165,7 @@ RequestBankTradePopup::RequestBankTradePopup(Player* player, QWidget* parent)
 
 void RequestBankTradePopup::updateTradeRates(){
     std::string labelname;
-    for (ResourceType resource : ResourceCardTypes) {
+    for (ResourceType resource : resourceCardTypes) {
         int rate = m_player->minBankTradeRatio(resource);
 
         m_tradeRates[resource] = rate;

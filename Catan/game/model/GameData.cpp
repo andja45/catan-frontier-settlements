@@ -35,7 +35,7 @@ void GameData::initialize() {
     oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
     m_datetime= oss.str();
 
-    for (ResourceType resource : ResourceCardTypes) {
+    for (ResourceType resource : resourceCardTypes) {
         m_resourceRolls[resource]=0;
     }
     for (int i = 2; i<=12; i++) {
@@ -59,8 +59,12 @@ nlohmann::json GameData::toJson() const {
     jsonData["largestArmyOwner"] = m_largestArmyOwner;
     jsonData["longestRoadOwner"] = m_longestRoadOwner;
     jsonData["pointsByPlayer"] = m_pointsByPlayer;
-    jsonData["diceRolls"]      = m_diceRolls;
 
+    nlohmann::json diceJson = nlohmann::json::object();
+    for (const auto& [dice, count] : m_diceRolls) {
+        diceJson[std::to_string(dice)] = count;
+    }
+    jsonData["diceRolls"] = diceJson;
     nlohmann::json resourceRollsJson = nlohmann::json::object();
     for (const auto &[resource, count] : m_resourceRolls) {
         resourceRollsJson[toString(resource)] = count;
@@ -71,7 +75,7 @@ nlohmann::json GameData::toJson() const {
 }
 
 std::string GameData::getHistoryPath() {
-    return "./resources/history.json";
+    return "history.json";
 }
 
 void GameData::loadFromJson(const nlohmann::json &jsonData) {
@@ -81,7 +85,7 @@ void GameData::loadFromJson(const nlohmann::json &jsonData) {
     m_isGameWon    = jsonData.at("isGameWon").get<bool>();
     m_playerNames  = jsonData.at("playerNames").get<std::vector<std::string>>();
     m_winningPlayer = jsonData.at("winningPlayer").get<std::string>();
-    m_largestArmyOwner = jsonData.at("biggestArmyOwner").get<std::string>();
+    m_largestArmyOwner = jsonData.at("largestArmyOwner").get<std::string>();
     m_longestRoadOwner = jsonData.at("longestRoadOwner").get<std::string>();
     m_pointsByPlayer = jsonData.at("pointsByPlayer").get<std::map<std::string, int>>();
 
@@ -101,16 +105,31 @@ void GameData::loadFromJson(const nlohmann::json &jsonData) {
     }
 }
 
-void GameData::writeToFile() const
+void GameData::writeToFile(const std::string& path) const
 {
-    const char* historyPath = GameData::getHistoryPath().data();
+    nlohmann::json history = nlohmann::json::array();
+    std::string historyPath = path+getHistoryPath();
 
-    std::ofstream out(historyPath, std::ios::app);
-    if (!out) {
-        throw std::runtime_error("Failed to open file");
+    std::ifstream in(historyPath);
+    if (in.good()) {
+        try {
+            in >> history;
+            if (!history.is_array()) {
+                std::cerr << ("History file is not a JSON array");
+            }
+        } catch (...) {
+            std::cerr<<("Failed to parse history.json");
+        }
     }
 
-    out << toJson().dump(4)<<'\n';
+
+    history.push_back(toJson());
+
+    std::ofstream out(historyPath, std::ios::trunc);
+    if (!out) {
+        std::cerr << "Failed to open history file: "
+               << std::strerror(errno) << "\n";
+    }
+
+    out << history.dump(4);
 }
-
-

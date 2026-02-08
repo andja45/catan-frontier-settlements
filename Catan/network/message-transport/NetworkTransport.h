@@ -19,14 +19,17 @@ class NetworkTransport : public QObject {
     explicit NetworkTransport(QObject* parent = nullptr);
     void sendEnvelope(const net::Envelope& env);
     void setSocket(QTcpSocket* socket);
+    QTcpSocket* socket() const { return m_socket; }
     void sendError(const std::string& error);
     void sendAck();
     QTcpSocket::SocketState state() const;
+    bool isConnected() const;
+    void disconnectSocket();
     signals:
         void envelopeReceived(const net::Envelope& env);
 
         void disconnected(); // just propagate
-        void errored(const std::string&);
+        void protocolError(const std::string&);
 
 
 private:

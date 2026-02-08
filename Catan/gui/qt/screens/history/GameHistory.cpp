@@ -4,6 +4,7 @@
 #include <QPalette>
 #include <QHeaderView>
 #include <QAbstractItemView>
+#include <common/PathService.hpp>
 
 #include <common/theme/GameTheme.h>
 #include <types/TypeAliases.h>
@@ -95,6 +96,7 @@ void GameHistory::loadGameHistoryToTable() {
     m_historyTable->setRowCount(0);
     m_historyTable->setColumnCount(2);
 
+    std::string m_historyPath = PathService::instance().resourceFile(QString::fromStdString(GameData::getHistoryPath())).toStdString();
     std::ifstream file(m_historyPath);
     if (!file.is_open()) {
         return;
@@ -137,9 +139,9 @@ void GameHistory::loadGameHistoryToTable() {
                                     new QTableWidgetItem(QString::fromStdString(playersJoined)));
 
             if (game.isGameWon()){
-                colorRow(row, m_colorWin);
+                colorRow(row, kColorWin);
             } else{
-                colorRow(row, m_colorLose);
+                colorRow(row, kColorLose);
             }
             row++;
         } catch (const std::exception &e) {
