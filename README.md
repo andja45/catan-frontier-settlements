@@ -2,6 +2,8 @@
 
 **Catan: Frontier Settlements** is our implementation of the famous board game. The project is built as a networked multiplayer application, allowing players to connect from different devices and play together in real time.
 
+![Gameplay](Catan/gui/qt/assets/gameplay.png)
+
 In addition to the full core gameplay, this version includes several extra features:
 - **Parallel Game Sessions:** The server supports multiple game rooms at once, allowing different groups to play separate matches simultaneously.
 - **Customizable Game Rooms:** The host can configure settings such as the number of players, victory point threshold, and map options.
