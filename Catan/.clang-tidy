@@ -14,13 +14,18 @@ Checks: >
   bugprone-*,
   performance-*,
   modernize-*,
+  readability-*,
+  -readability-magic-numbers,
+  -readability-identifier-length,
+  -readability-implicit-bool-conversion,
+  -readability-function-cognitive-complexity,
   -modernize-use-trailing-return-type,
   -modernize-use-nodiscard,
-  readability-*,
+  -bugprone-easily-swappable-parameters,
 
 WarningsAsErrors: ''
 
-# Don't check third party libs 
+# Don't check third party libs
 HeaderFilterRegex: '^(?!.*libs).*'
 
 
