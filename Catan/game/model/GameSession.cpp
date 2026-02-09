@@ -40,8 +40,8 @@ bool GameSession::applyMove(const Move& move){
     move.apply(*this);
     m_lastMoveType = move.type(); // this is where we remember last move
 
-    m_rules.evaluate(*this); // after every move, cus someone can interrupt longest road for example
     advancePhaseAfterMove(); // only session can advance phases, move only reads them
+    m_rules.evaluate(*this); // after every move, cus someone can interrupt longest road for example
 
     return true;
 }
@@ -144,6 +144,9 @@ void GameSession::advanceInitialPlacement() {
         m_phaseMoveCount = 0;
         m_turnIndex = 0;
         m_currentPlayerId = m_players[m_turnIndex]->getPlayerId(); // first player starts
+        if (!player(m_currentPlayerId).isActive()) {
+            advancePlayer();
+        }
         setPhase(TurnPhase::RollDice);
         dealInitial();
         return;
@@ -350,6 +353,7 @@ void GameSession::leavePlayer(PlayerId player_id) {
 
 void GameSession::dealInitial() {
     for (auto &p:m_players) {
+        if (!p->isActive()) continue;
         Node* lastHouse=p->getLastBuildingBuilt();
         auto tiles=lastHouse->getIncidentTiles();
         ResourcePack rs;

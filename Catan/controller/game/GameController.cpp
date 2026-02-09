@@ -401,11 +401,8 @@ void GameController::onMoveReceived(Move* receivedMove){
         qchat->addChatMessage("", QString::fromStdString(logLine), true);
     }
 
-    if (m_session.currentPlayer()==m_localPlayerId) {
-        updateState();
-    }
-    updateView(); // renderstates will be cleared since im not active player rn, this will only make view redraw for me since someone else played
     updateState();
+    updateView(); // renderstates will be cleared since im not active player rn, this will only make view redraw for me since someone else played
 }
 
 void GameController::updateView() {

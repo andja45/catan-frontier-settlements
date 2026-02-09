@@ -14,7 +14,14 @@ private:
 public:
     void setColor(QColor col);
 
-    void setGolden(bool golden){setColor(GameTheme::getGoldenColor());}
+    void setGolden(bool golden) {
+        if (golden) {
+            setColor(GameTheme::getGoldenColor());
+        }
+        else {
+            setColor(Qt::black);
+        }
+    }
     explicit QCountBadge(int count, QWidget* parent);
     void incrementCount(int add){addToCount(1);}
     void decrementCount(int add){subtractFromCount(1);}

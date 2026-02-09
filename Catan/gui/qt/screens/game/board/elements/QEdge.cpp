@@ -128,14 +128,14 @@ void QEdge::paint(QPainter& p, double size) {
         p.restore();
     }
 
-    // Draw road if present
-    if (m_edge->isOccupied()) {
-        drawRoad(p, size);
-    }
-
     // Draw port if present
     if (m_edge->hasTrade()) {
         drawPort(p, size);
+    }
+
+    // Draw road if present
+    if (m_edge->isOccupied()) {
+        drawRoad(p, size);
     }
 }
 

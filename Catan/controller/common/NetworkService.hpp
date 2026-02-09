@@ -6,6 +6,7 @@
 #define CATAN_NETWORKSERVICE_HPP
 #include <NetworkTransport.h>
 #include <QSettings>
+#include <common/PathService.hpp>
 
 class NetworkService {
 private:
@@ -15,7 +16,8 @@ public:
     NetworkService() = default;
     NetworkTransport* getTransport() {
         if (m_transport == nullptr) {
-            QSettings settings("./resources/client.ini", QSettings::IniFormat);
+            QString path = PathService::instance().resourceFile("client.ini");
+            QSettings settings(path, QSettings::IniFormat);
 
             QString host = settings.value("network/host", "127.0.0.1").toString();
             quint16 port = settings.value("network/port", 3460).toUInt();

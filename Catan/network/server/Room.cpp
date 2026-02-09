@@ -42,7 +42,7 @@ void Room::kickPlayer(ClientConnection *c) {
         net::Move move; // we kick player (force them to leave kindly)
         move.set_player_id(c->playerId());
         move.set_type(net::Move_MoveType_PlayerLeave);
-        broadcastMove(move);
+        processMove(c,move);
     }
     if (m_state==RoomState::Lobby && m_config) {
         m_config->removePlayer(c->name());
@@ -67,8 +67,7 @@ void Room::processMove(ClientConnection *c,const net::Move & move) {
     }
     m_session->applyMove(*gameMove.get());
     if (move.type()==net::Move_MoveType_PlayerLeave) {
-        kickPlayer(c);
-        return;
+        removePlayer(c);
     }
     broadcastMove(move);
 }
@@ -161,12 +160,10 @@ void Room::setHost(ClientConnection *host) {
 }
 
 void Room::kickInactivePlayers() {
-    for (auto it=m_players.begin();it!=m_players.end();) {
-        if (!(*it)->wasActive()) {
-            kickPlayer(*it);
-        } else {
-            ++it;
-        }
+    for (int i=m_players.size()-1;i>=0;--i) {
+        if (!(m_players[i])->wasActive()) {
+            kickPlayer(m_players[i]);
+        } else {}
     }
     for (auto p:m_players) {
         p->resetActive();
