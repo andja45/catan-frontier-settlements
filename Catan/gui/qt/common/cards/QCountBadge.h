@@ -28,5 +28,6 @@ public:
     void addToCount(int add){m_count+=add;refresh();}
     void subtractFromCount(int sub){m_count-=sub;refresh();}
     void refresh(){setText(QString::number(m_count));}
+    void setCount(int count){m_count=count;refresh();}
 };
 #endif // COUNTBADGE_H

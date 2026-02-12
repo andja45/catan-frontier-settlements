@@ -14,6 +14,4 @@ void GameOverRule::evaluate(GameSession& session) {
         }
     }
 
-    if (session.activePlayersLeft()<=0)
-        session.endGame();
 }

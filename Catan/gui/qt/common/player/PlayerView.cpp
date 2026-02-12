@@ -45,9 +45,9 @@ void PlayerView::refresh() {
         });
     }
 
-    m_roadBadge->setNum(m_player->getRoadLength());
+    m_roadBadge->setCount((m_player->getRoadLength()));
     m_roadBadge->setGolden(m_player->hasLongestRoad());
-    m_knBadge->setNum(m_player->getKnightsUsed());
+    m_knBadge->setCount((m_player->getKnightsUsed()));
     m_knBadge->setGolden(m_player->hasLargestMilitary());
     //m_vpBadge->setNum(m_player->getVictoryPointsUsed());
     m_pointsDot->setText(std::to_string(m_player->getTotalPoints()).data());

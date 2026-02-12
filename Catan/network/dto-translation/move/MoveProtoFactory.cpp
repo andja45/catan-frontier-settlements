@@ -29,13 +29,14 @@
 
 std::unique_ptr<Move> MoveProtoFactory::fromProto(const net::Move& proto) {
 
-    PlayerId pId = proto.player_id();
+    PlayerId pId = static_cast<PlayerId>(proto.player_id());
 
     switch (proto.type()) {
 
         case net::Move_MoveType_RollDice: {
             auto move= std::make_unique<RollDiceMove>(pId);
-            static_cast<RollDiceMove*>(move.get())->setDiceRoll(proto.roll_dice().dice_1(), proto.roll_dice().dice_2());
+            static_cast<RollDiceMove*>(move.get())
+                ->setDiceRoll(static_cast<int>(proto.roll_dice().dice_1()), static_cast<int>(proto.roll_dice().dice_2()));
             return std::move(move);
         }
         case net::Move_MoveType_EndTurn:
@@ -86,13 +87,16 @@ std::unique_ptr<Move> MoveProtoFactory::fromProto(const net::Move& proto) {
                 static_cast<ResourceType>(proto.bank_trade().get_resource()));
 
         case net::Move_MoveType_PlayerTradeRequest: {
-            ResourcePack give, receive;
-            for (auto const& [res, count] : proto.trade_request().give_resource())
+            ResourcePack give;
+            ResourcePack receive;
+            for (auto const& [res, count] : proto.trade_request().give_resource()) {
                 give[static_cast<ResourceType>(res)] = count;
-            for (auto const& [res, count] : proto.trade_request().get_resource())
+            }
+            for (auto const& [res, count] : proto.trade_request().get_resource()) {
                 receive[static_cast<ResourceType>(res)] = count;
+            }
             auto move= std::make_unique<PlayerTradeRequestMove>(pId, give, receive);
-            move->setTradeId(proto.trade_request().trade_request_id());
+            move->setTradeId(static_cast<TradeId>(proto.trade_request().trade_request_id()));
             return move;
         }
 
