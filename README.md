@@ -35,7 +35,7 @@ Note: The Catch2 library will be installed by running the cmake file.
 
 Before running the application, you need to configure the client to connect to the server:
 
-- File path: resources/config.ini
+- File path: System local app storage location resources/config.ini
 - Settings: Update the server_ip in this file to the address of the machine running the server.
 
 ## Build process
