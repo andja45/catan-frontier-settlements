@@ -17,6 +17,11 @@ public:
     NetworkTransport* getTransport() {
         if (m_transport == nullptr) {
             QString path = PathService::instance().resourceFile("client.ini");
+
+            if (!QFile::exists(path)) {
+                QFile::copy(":/config/client.ini", path);
+            }
+
             QSettings settings(path, QSettings::IniFormat);
 
             QString host = settings.value("network/host", "127.0.0.1").toString();
