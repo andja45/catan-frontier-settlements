@@ -70,7 +70,7 @@ make
 ## Contributions
 
 This project was developed as part of a university team assignment.  
-The following describes ***my primary personal contributions to the project***.
+The following describes ***my primary individual contributions to the project***.
 
 My work focused on the **core gameplay engine**, responsible for controlling the rules, progression, and state of the game.
 I authored the **GameSession**, **GameController**, and **Move system**, which together implement gameplay logic.
@@ -106,7 +106,7 @@ This architecture allowed the **GameSession and controller to drive the GUI stat
 
 ### Collaboration
 
-I collaborated on the **design of move synchronization and GUI–model communication flow**, ensuring proper integration between the gameplay engine, session management, move processing system and the networking layer which was primarily implemented by @MatijaRadulovic, finalizing real‑time multiplayer communication between clients and the server.
+I collaborated on the **design of move synchronization and GUI–model communication flow**, ensuring proper integration between the gameplay engine, session management, move processing system and the networking layer which was primarily implemented by [@MatijaRadulovic](https://github.com/MatijaRadulovic), finalizing real‑time multiplayer communication between clients and the server.
 
 ## Team members:
 
