@@ -70,7 +70,7 @@ make
 ## Contributions
 
 This project was developed as part of a university team assignment.  
-The following describes **my primary personal contributions to the project**.
+The following describes ***my primary personal contributions to the project***.
 
 My work focused on the **core gameplay engine**, responsible for controlling the rules, progression, and state of the game.
 I authored the **GameSession**, **GameController**, and **Move system**, which together implement gameplay logic.
