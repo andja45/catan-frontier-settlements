@@ -75,7 +75,7 @@ The following describes ***my primary individual contributions to the project***
 My work focused on the **core gameplay engine**, responsible for controlling the rules, progression, and state of the game.
 I authored the **GameSession**, **GameController**, and **Move system**, which together implement gameplay logic.
 
-### Primary contributions:
+#### Primary contributions:
 
 - Designed and implemented the **GameSession system**, managing the full lifecycle of a match.
 - Designed and implemented the **game state machine**, handling turn order, game phases, and valid state transitions.
@@ -83,7 +83,7 @@ I authored the **GameSession**, **GameController**, and **Move system**, which t
 - Implemented the **complete move system**, defining all player actions and their effects on the game state.
 - Implemented **global gameplay rules and move validation logic**, later used to drive **GUI move highlighting and visual feedback (e.g., board shake) during building actions**.
 
-### Architecture and design patterns used:
+#### Architecture and design patterns used:
 
 - **State Machine** – controlling game phases, turn progression, and enabling/disabling available actions in the GUI.
 - **Command Pattern** – representing player actions as game moves.
@@ -91,7 +91,7 @@ I authored the **GameSession**, **GameController**, and **Move system**, which t
   
 This architecture allowed the **GameSession and controller to drive the GUI state**, ensuring that actions are only available when valid within the current game phase.
 
-### Additional contributions:
+#### Additional contributions:
 
 - Implemented most **unit tests using Catch2**.
 - Implemented the **AudioManager** and integrated gameplay audio.
@@ -104,7 +104,7 @@ This architecture allowed the **GameSession and controller to drive the GUI stat
 - Created **architecture sketches** used by the team and worked on **initial UML class diagram**.
 - Helped coordinate development tasks and made issues for others.
 
-### Collaboration
+#### Collaboration
 
 I collaborated on the **design of move synchronization and GUI–model communication flow**, ensuring proper integration between the gameplay engine, session management, move processing system and the networking layer which was primarily implemented by [@MatijaRadulovic](https://github.com/MatijaRadulovic), finalizing real‑time multiplayer communication between clients and the server.
 
