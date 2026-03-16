@@ -2,10 +2,10 @@
 
 Multiplayer implementation of the classic Catan board game built in **C++ and Qt**, featuring a **client–server architecture**, real‑time gameplay synchronization, customizable game sessions, in‑game chat, and match statistics.
 
+![Gameplay](Catan/gui/qt/assets/gameplay.png)
+
 **Tech focus:**  
 C++17 • Qt6 • Client–Server Architecture • Network Programming • Protobuf • CMake • State Machine Architecture • Design Patterns
-
-![Gameplay](Catan/gui/qt/assets/gameplay.png)
 
 ## Features
 
@@ -13,19 +13,14 @@ In addition to the full core gameplay, this version includes several additional 
 
 - **Parallel Game Sessions**  
   The server supports multiple game rooms simultaneously, allowing different groups to play separate matches.
-
 - **Customizable Game Rooms**  
   The host can configure game parameters such as number of players, victory point threshold, and map options.
-
 - **In‑Game Chat**  
   Players can communicate and negotiate during gameplay.
-
 - **Game History and Statistics**  
   Match statistics and history are recorded and available for review after each game.
-
 - **Custom and Random Maps**  
   Supports both randomized standard/extended maps and fully custom board configurations.
-
 - **ASCII Map Prototype**  
   Used during early development phases for testing core game mechanics.
 
@@ -80,7 +75,7 @@ The following describes **my primary personal contributions to the project**.
 My work focused on the **core gameplay engine**, responsible for controlling the rules, progression, and state of the game.
 I authored the **GameSession**, **GameController**, and **Move system**, which together implement gameplay logic.
 
-Primary contributions:
+### Primary contributions:
 
 - Designed and implemented the **GameSession system**, managing the full lifecycle of a match.
 - Designed and implemented the **game state machine**, handling turn order, game phases, and valid state transitions.
@@ -88,7 +83,7 @@ Primary contributions:
 - Implemented the **complete move system**, defining all player actions and their effects on the game state.
 - Implemented **global gameplay rules and move validation logic**, later used to drive **GUI move highlighting and visual feedback (e.g., board shake) during building actions**.
 
-Architecture and design patterns used:
+### Architecture and design patterns used:
 
 - **State Machine** – controlling game phases, turn progression, and enabling/disabling available actions in the GUI.
 - **Command Pattern** – representing player actions as game moves.
@@ -96,7 +91,7 @@ Architecture and design patterns used:
   
 This architecture allowed the **GameSession and controller to drive the GUI state**, ensuring that actions are only available when valid within the current game phase.
 
-Additional contributions:
+### Additional contributions:
 
 - Implemented most **unit tests using Catch2**.
 - Implemented the **AudioManager** and integrated gameplay audio.
