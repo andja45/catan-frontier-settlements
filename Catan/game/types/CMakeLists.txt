@@ -1,4 +1,4 @@
-target_sources(catan_game PRIVATE
+add_library(catan_types_lib
         NodeType.h
         TypeAliases.h
         DevCardType.h
@@ -10,4 +10,4 @@ target_sources(catan_game PRIVATE
         ToolbarActionType.h
 )
 
-target_include_directories(catan_game PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(catan_types_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

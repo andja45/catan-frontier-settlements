@@ -16,6 +16,13 @@ target_include_directories(catan_game
 target_link_libraries(catan_game
         PUBLIC
         catan_libs
+        catan_board_lib
+        catan_model_lib
+        catan_move_lib
+        catan_phase_lib
+        catan_player_lib
+        catan_rules_lib
+        catan_types_lib
 )
 
 target_compile_features(catan_game PUBLIC cxx_std_17)

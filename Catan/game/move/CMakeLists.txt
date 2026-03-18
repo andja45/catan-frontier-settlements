@@ -1,4 +1,4 @@
-target_sources(catan_game PRIVATE
+add_library(catan_move_lib
         Move.cpp
         Move.h
         MoveType.h
@@ -47,7 +47,7 @@ target_sources(catan_game PRIVATE
         MoveToString.h
 )
 
-target_include_directories(catan_game PUBLIC
+target_include_directories(catan_move_lib PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/build
         ${CMAKE_CURRENT_SOURCE_DIR}/turn
