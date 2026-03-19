@@ -7,7 +7,7 @@
 
 #include <unordered_set>
 
-#include "move/BoardMove.h"
+#include <move/BoardMove.h>
 
 class BuildRoadMove final : public BoardMove{ // final - no classes than extend this class
 private:

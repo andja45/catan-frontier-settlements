@@ -4,4 +4,7 @@ add_library(catan_player_lib
         Bank.cpp
 )
 
-target_include_directories(catan_player_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(catan_player_lib PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)

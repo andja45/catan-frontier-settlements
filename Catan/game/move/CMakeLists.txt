@@ -48,10 +48,17 @@ add_library(catan_move_lib
 )
 
 target_include_directories(catan_move_lib PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/build
         ${CMAKE_CURRENT_SOURCE_DIR}/turn
         ${CMAKE_CURRENT_SOURCE_DIR}/trade
         ${CMAKE_CURRENT_SOURCE_DIR}/robber
         ${CMAKE_CURRENT_SOURCE_DIR}/devcard
+)
+
+target_link_libraries(catan_move_lib
+        PRIVATE
+        catan_libs
+        catan_types_lib
 )

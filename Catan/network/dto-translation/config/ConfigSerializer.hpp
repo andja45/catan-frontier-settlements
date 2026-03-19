@@ -6,7 +6,7 @@
 #define CATAN_CONFIGSERIALIZER_HPP
 
 #include <model/GameConfig.h>
-#include <types/BoardType.hpp>
+#include <types/BoardType.h>
 
 #include "ProtoHeaders.hpp"
 

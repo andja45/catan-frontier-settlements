@@ -7,7 +7,7 @@
 
 #include "ResourceType.h"
 #include  "../types/TypeAliases.h"
-#include <types/ResourceType.h>
+#include "ResourceType.h"
 
 namespace Costs {
         inline const ResourcePack Road {

@@ -1,4 +1,4 @@
-add_library(catan_types_lib
+add_library(catan_types_lib INTERFACE
         NodeType.h
         TypeAliases.h
         DevCardType.h
@@ -6,8 +6,8 @@ add_library(catan_types_lib
         Directions.h
         ResourceType.h
         MapType.h
-        BoardType.hpp
+        BoardType.h
         ToolbarActionType.h
 )
 
-target_include_directories(catan_types_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(catan_types_lib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/..)

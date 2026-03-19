@@ -28,8 +28,15 @@ add_library(catan_board_lib
 )
 
 target_include_directories(catan_board_lib PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/coords
         ${CMAKE_CURRENT_SOURCE_DIR}/factory
         ${CMAKE_CURRENT_SOURCE_DIR}/serialization
+)
+
+target_link_libraries(catan_board_lib
+        PRIVATE
+        catan_libs
+        catan_types_lib
 )
