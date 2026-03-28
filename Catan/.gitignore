@@ -79,4 +79,7 @@ CMakeLists.txt.user*
 .pch/
 .rcc/
 .uic/
-/build*/
+/build*/ 
+
+# Conan
+CMakeUserPresets.json

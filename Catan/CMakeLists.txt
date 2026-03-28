@@ -33,7 +33,7 @@ add_subdirectory(libs)
 add_subdirectory(game)
 
 if(BUILD_CLIENT OR BUILD_SERVER)
-    add_subdirectory(network) #
+    add_subdirectory(network) 
 endif()
 
 if(BUILD_CLIENT)
