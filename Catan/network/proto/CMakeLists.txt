@@ -1,29 +1,39 @@
-find_package(Protobuf REQUIRED)
+set(protobuf_MODULE_COMPATIBLE TRUE)
+
+find_package(protobuf CONFIG QUIET)
+if(protobuf_FOUND)
+    set(CATAN_USE_CONAN_PROTOBUF TRUE)
+else()
+    find_package(Protobuf REQUIRED)
+    set(CATAN_USE_CONAN_PROTOBUF FALSE)
+endif()
 
 set(PROTO_FILES
-        common.proto
-        move.proto
-        envelope.proto
-        setup.proto
+    common.proto
+    move.proto
+    envelope.proto
+    setup.proto
 )
-set(PROTO_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
-
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES}
-        #        PROTOC_OUT_DIR ${PROTO_GEN_DIR}
-)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILES})
 
 add_library(catan_proto STATIC
-        ${PROTO_SRCS}
-        ${PROTO_HDRS}
-        ProtoHeaders.hpp
+    ${PROTO_SRCS}
+    ${PROTO_HDRS}
+    ProtoHeaders.hpp
 )
 
-target_link_libraries(catan_proto PUBLIC protobuf::libprotobuf)
+if(CATAN_USE_CONAN_PROTOBUF)
+    target_link_libraries(catan_proto PUBLIC protobuf::libprotobuf)
+else()
+    target_link_libraries(catan_proto PUBLIC ${Protobuf_LIBRARIES})
+    target_include_directories(catan_proto PUBLIC ${Protobuf_INCLUDE_DIRS})
+endif()
 
-target_include_directories(catan_proto PUBLIC ${CMAKE_CURRENT_BINARY_DIR} .
+target_include_directories(catan_proto PUBLIC
+    ${CMAKE_CURRENT_BINARY_DIR}
+    .
 )
-
 
 source_group("Generated" FILES ${PROTO_SRCS} ${PROTO_HDRS})
 
