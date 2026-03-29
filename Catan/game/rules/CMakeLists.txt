@@ -1,4 +1,4 @@
-target_sources(catan_game PRIVATE
+add_library(catan_rules_lib
         Rule.h
         RulesEngine.cpp
         RulesEngine.h
@@ -12,4 +12,13 @@ target_sources(catan_game PRIVATE
         SkipPlayerRule.hpp
 )
 
-target_include_directories(catan_game PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(catan_rules_lib PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(catan_rules_lib
+        PRIVATE
+        catan_libs
+        catan_types_lib
+)

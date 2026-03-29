@@ -1,4 +1,4 @@
-target_sources(catan_game PRIVATE
+add_library(catan_board_lib
         Board.cpp
         Board.h
         Edge.cpp
@@ -27,9 +27,16 @@ target_sources(catan_game PRIVATE
         serialization/AbstractBoardSerializer.hpp
 )
 
-target_include_directories(catan_game PUBLIC
+target_include_directories(catan_board_lib PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/coords
         ${CMAKE_CURRENT_SOURCE_DIR}/factory
         ${CMAKE_CURRENT_SOURCE_DIR}/serialization
+)
+
+target_link_libraries(catan_board_lib
+        PRIVATE
+        catan_libs
+        catan_types_lib
 )

@@ -1,5 +1,5 @@
-target_sources(catan_game PRIVATE
+add_library(catan_phase_lib INTERFACE
         TurnPhase.h
 )
 
-target_include_directories(catan_game PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(catan_phase_lib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/..)

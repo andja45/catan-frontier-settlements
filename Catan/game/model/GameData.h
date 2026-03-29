@@ -7,7 +7,7 @@
 #include <string>
 #include<ctime>
 #include "../types/ResourceType.h"
-#include<json.hpp>
+#include <json.hpp>
 #include<iostream>
 
 class GameData {

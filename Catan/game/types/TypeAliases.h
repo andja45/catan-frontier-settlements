@@ -7,7 +7,7 @@
 #include <map>
 #include <unordered_set>
 #include <vector>
-#include <types/Directions.h>
+#include "Directions.h"
 
 enum class DevCardType;
 class Edge;

@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <types/BoardType.hpp>
+#include <types/BoardType.h>
 #include "types/TypeAliases.h"
 
 
