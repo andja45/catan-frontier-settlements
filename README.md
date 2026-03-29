@@ -30,7 +30,7 @@ The following is required to build and run the project:
 
 Additional libraries (nlohmann, protobuf, and catch2) can be installed using the command:
 
-```
+```bash
 vcpkg install json nlohmann-json protobuf catch2
 ```
 
