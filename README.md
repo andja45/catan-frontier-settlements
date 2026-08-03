@@ -34,7 +34,7 @@ The game includes the full core Catan gameplay, along with several additional fe
 - **Command:** `isValid()`/`apply()` on every move type
 - **State Machine:** dual-mode TurnPhase transitions with input-blocking guards
 - **Observer** (Qt signals/slots): GUI reacts to engine state changes
-- **Fake** test double: `makeTestBoard()` for isolated unit testing
+- **Fake test double:** `makeTestBoard()` for isolated unit testing
 
 ### Additional contributions
 
