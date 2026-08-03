@@ -1,6 +1,6 @@
 # Catan Frontier Settlements
 
-Multiplayer implementation of the classic Catan board game built in **C++ and Qt**, featuring a **client–server architecture**, real‑time gameplay synchronization, customizable game sessions, in‑game chat, and match statistics.
+Multiplayer implementation of the classic Catan board game built in **C++ and Qt**, featuring a **client-server architecture**, real‑time gameplay synchronization, customizable game sessions, in‑game chat, and match statistics.
 
 ![Gameplay](Catan/gui/qt/assets/gameplay.png)
 
@@ -9,109 +9,137 @@ C++17 • Qt6 • Client–Server Architecture • Network Programming • Proto
 
 ## Features
 
-In addition to the full core gameplay, this version includes several additional features:
+The game includes the full core Catan gameplay, along with several additional features:
 
-- **Parallel Game Sessions**  
-  The server supports multiple game rooms simultaneously, allowing different groups to play separate matches.
-- **Customizable Game Rooms**  
-  The host can configure game parameters such as number of players, victory point threshold, and map options.
-- **In‑Game Chat**  
-  Players can communicate and negotiate during gameplay.
-- **Game History and Statistics**  
-  Match statistics and history are recorded and available for review after each game.
-- **Custom and Random Maps**  
-  Supports both randomized standard/extended maps and fully custom board configurations.
-- **ASCII Map Prototype**  
-  Used during early development phases for testing core game mechanics.
+- **Parallel Game Sessions:** the server supports multiple game rooms simultaneously, allowing different groups to play separate matches.
+- **Customizable Game Rooms:** the host can configure game parameters such as number of players, victory point threshold, and map options.
+- **In‑Game Chat:** players can communicate and negotiate during gameplay.
+- **Game History and Statistics:** match statistics and history are recorded and available for review after each game.
+- **Custom and Random Maps:** supports both randomized standard/extended maps and fully custom board configurations.
+- **ASCII Map Prototype:** used during early development phases for testing core game mechanics.
+
+## Contributions
+
+**GameSession**, **GameController**, and the **Move system** were my area: the engine layer for rules, state, and everything that happens on a player's turn.
+
+### Primary contributions
+
+- **GameSession and GameController:** full match lifecycle. Turn order, phase transitions, which actions are valid when. The GUI doesn't decide any of this; it just reflects what the engine says.
+- **The move system:** every player action is a move with `isValid()` and `apply()`. The same `isValid()` that enforces rules also drives GUI highlighting and board shake on invalid placement.
+- **Server-authoritative design:** all moves are validated on the server before taking effect. Every client sees the same game state.
+- **Dual-mode phase state machine:** tracks both game phase and current move sequence, with input-blocking guards. Invalid actions aren't filtered in the UI, they're not offered in the first place.
+
+### Architecture and design patterns
+
+- **Command:** `isValid()`/`apply()` on every move type
+- **State Machine:** dual-mode TurnPhase transitions with input-blocking guards
+- **Observer** (Qt signals/slots): GUI reacts to engine state changes
+- **Fake** test double: `makeTestBoard()` for isolated unit testing
+
+### Additional contributions
+
+- Built `TestHelper.h`, the shared Catch2 infrastructure used across the team. Fake board with `forcePhase()`/`forceCurrent()` helpers, covering move validation and phase transitions. Found several real move-validation and phase-transition bugs before integration.
+- Houses, cities, roads, robber (Qt); **AudioManager**; game config system.
+- GUI refactoring and styling improvements across the application.
+- Maintained and populated **GameHistory**.
+- Set up Git hooks and kept the development workflow sane. Coordinated refactoring and helped the team figure out where things fit.
+- Designed architecture sketches and the initial UML class diagram.
+
+### Collaboration
+
+[@MatijaRadulovic](https://github.com/MatijaRadulovic) built the networking layer; we worked out how moves and game events get passed between the engine and the network.
+
+## Demo
+
+[demo video](https://drive.google.com/file/d/1Pya67nALP-7X76x5xOPm5f9Pppxsmphd/view?usp=sharing)
 
 ## Installation
 
 The following is required to build and run the project:
 
-- C++ compiler, version at least C++17
-- Qt 6 SDK, recommended version at least 6.2
-- CMake, version at least 3.16
-- [nlohmann](https://github.com/nlohmann/json)
-- [protobuf](https://protobuf.dev/)
-- [Catch2](https://github.com/catchorg/Catch2)
+- C++ compiler with C++17 support
+- Qt 6 SDK, recommended version 6.2 or newer
+- CMake 3.16 or newer
 
-Additional libraries (nlohmann, protobuf, and catch2) can be installed using the command:
+### Optional
 
+- Conan 2, if building with Conan
+- Protobuf, if building with plain CMake
+- Catch2, if building tests with plain CMake
+
+Protobuf and Catch2 can be installed using:
+
+```bash
+vcpkg install protobuf catch2
 ```
-vcpkg install json nlohmann-json protobuf catch2
-```
-
-Note: The Catch2 library will be installed by running the cmake file.
 
 ## Client configuration
 
-Before running the application, you need to configure the client to connect to the server:
+Before running the application, configure the client to connect to the server:
 
-- File path: System local app storage location resources/config.ini
-- Settings: Update the server_ip in this file to the address of the machine running the server.
+- File path: local app storage location `resources/config.ini`
+- Setting to update: `server_ip`
+- Set it to the address of the machine running the server
 
 ## Build process
 
-- clone the repository:
-```
-git clone https://gitlab.com/matf-bg-ac-rs/course-rs/projects-2025-2026/catan-frontier-settlements
-cd catan-frontier-settlements
-```
-- create build directory and run cmake:
-```
-mkdir build && cd build
-cmake ..
-make
+Clone the repository:
+
+```bash
+git clone https://github.com/andja45/catan-frontier-settlements
+cd catan-frontier-settlements/Catan
 ```
 
-## Demo:
-[demo video](https://drive.google.com/file/d/1Pya67nALP-7X76x5xOPm5f9Pppxsmphd/view?usp=sharing)
+### Plain CMake build
 
-## Contributions
+If you build without Conan, make sure Qt and Protobuf are installed locally and available to CMake.
 
-This project was developed as part of a university team assignment.  
-The following describes ***my primary individual contributions to the project***.
+You may need to point CMake to your Qt installation:
 
-My work focused on the **core gameplay engine**, responsible for controlling the rules, progression, and state of the game.
-I authored the **GameSession**, **GameController**, and **Move system**, which together implement gameplay logic.
+```bash
+cmake -B build -DCMAKE_PREFIX_PATH=/path/to/Qt/6.x/gcc_64
+cmake --build build
+```
 
-#### Primary contributions:
+### Conan build
 
-- Designed and implemented the **GameSession system**, managing the full lifecycle of a match.
-- Designed and implemented the **game state machine**, handling turn order, game phases, and valid state transitions.
-- Implemented the **core GameController**, coordinating gameplay logic and interaction with the GUI.
-- Implemented the **complete move system**, defining all player actions and their effects on the game state.
-- Implemented **global gameplay rules and move validation logic**, later used to drive **GUI move highlighting and visual feedback (e.g., board shake) during building actions**.
+If you build with Conan, make sure Conan is installed and provide your local Qt path.
 
-#### Architecture and design patterns used:
+**Option 1: environment variable**
 
-- **State Machine** – controlling game phases, turn progression, and enabling/disabling available actions in the GUI.
-- **Command Pattern** – representing player actions as game moves.
-- **Observer Pattern (Qt signals/slots)** – synchronizing gameplay state changes with the GUI layer.
-  
-This architecture allowed the **GameSession and controller to drive the GUI state**, ensuring that actions are only available when valid within the current game phase.
+```bash
+export QT_DIR=/path/to/Qt/6.x/gcc_64
+```
 
-#### Additional contributions:
+**Option 2: Conan profile/config**
 
-- Implemented most **unit tests using Catch2**.
-- Implemented the **AudioManager** and integrated gameplay audio.
-- Implemented several **Qt GUI elements** (houses, cities, roads, robber).
-- Performed **GUI refactoring and styling improvements** across the application.
-- Implemented the **game configuration system**.
-- Maintained and populated **GameHistory match data tracking**.
-- Organized **code refactoring and project structure improvements**.
-- Set up **Git hooks and development workflow**.
-- Created **architecture sketches** used by the team and worked on **initial UML class diagram**.
-- Helped coordinate development tasks and made issues for others.
+Add this to your local Conan profile:
 
-#### Collaboration
+```ini
+[conf]
+user.qt:path=/path/to/Qt/6.x/gcc_64
+```
 
-I collaborated on the **design of move synchronization and GUI–model communication flow**, ensuring proper integration between the gameplay engine, session management, move processing system and the networking layer which was primarily implemented by [@MatijaRadulovic](https://github.com/MatijaRadulovic), finalizing real‑time multiplayer communication between clients and the server.
+Then run:
 
-## Team members:
+```bash
+conan install . --build=missing
+conan build .
+```
 
- - <a href="https://gitlab.com/markocv">Marko Cvijetinović 7/2022</a>
- - <a href="https://gitlab.com/andjaa">Andjela Spasic 166/2022</a>
- - <a href="https://gitlab.com/jov580">Jovana Lazic 21/2022</a>
- - <a href="https://gitlab.com/LazarRajcic">Lazar Rajcic 50/2022</a>
- - <a href="https://gitlab.com/MatijaRadulovic">Matija Radulovic 5/2022</a>
+### Optional: create a Conan package
+
+If you want to package the project into your local Conan cache:
+
+```bash
+export QT_DIR=/path/to/Qt/6.x/gcc_64
+conan create . --build=missing
+```
+
+## Team members
+
+ - <a href="https://gitlab.com/markocv">Marko Cvijetinović</a>
+ - <a href="https://gitlab.com/andjaa">Andjela Spasic</a>
+ - <a href="https://gitlab.com/jov580">Jovana Lazic</a>
+ - <a href="https://gitlab.com/LazarRajcic">Lazar Rajcic</a>
+ - <a href="https://gitlab.com/MatijaRadulovic">Matija Radulovic</a>
